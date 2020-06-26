@@ -1,6 +1,4 @@
-/.idea
-/android
-/interface
+**/build
 /research
 /tools
-/webapp
+/.idea

@@ -1,0 +1,63 @@
+﻿#colborders .ui-collapsible-heading .ui-btn {
+    border-top-width: 1px !important;
+}
+.rs-control .rs-range-color {
+    background-color: #54bbe0;
+}
+.rs-control .rs-path-color {
+    background-color: white
+}
+.rs-control .rs-handle {
+    background-color: grey
+}
+.rs-control .rs-bg-color {
+    background-color: #282828;
+}
+.rs-tooltip {
+    font-size: 100%;
+}
+.sliderBackColor {
+    height: 100%;
+    width: 33.33%;
+    float: left;
+    /*margin-left: 0px;*/
+    color: white;
+    text-align: center;
+    font-size: 0px;
+    font-weight: normal;
+    text-shadow: 0px 1px 2px #333;
+}
+.bg-blue {
+    background-color: #54BBE0;
+}
+.bg-red {
+    background-color: #BD1550;
+}
+.bg-green {
+    background-color: #8A9B0F;
+}
+.bg-orange {
+    background-color: #E97F02;
+}
+.my-slider .ui-slider-track > div.sliderBackColor:first-child {
+    border-top-left-radius: 0.3125em;
+    border-bottom-left-radius: 0.3125em;
+}
+.my-slider .ui-slider-track > div.sliderBackColor:last-of-type {
+    border-top-right-radius: 0.3125em;
+    border-bottom-right-radius: 0.3125em;
+}
+.ui-slider .ui-slider-handle {
+    background: #54BBE0;
+}
+.full-width-slider input {
+    display: none;
+}
+.my-slider .ui-slider-track {
+    position: relative;
+}
+.my-slider .ui-slider-track {
+}
+.full-width-slider .ui-slider-track {
+    margin-left: 15px;
+}

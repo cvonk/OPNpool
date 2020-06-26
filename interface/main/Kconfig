@@ -1,0 +1,69 @@
+menu "Pool debugging"
+
+config POOL_RS485_RXPIN
+    int "RS485 Rx GPIO# on ESP32"
+    default 25
+    help
+        Receive GPIO# on ESP32 that connects to RO on the RS-485 Transceiver
+
+config POOL_RS485_TXPIN
+    int "RS485 Tx GPIO# on ESP32"
+    default 26
+    help
+        Transmit GPIO# on ESP32 that connects to DI on the RS-485 Transceiver
+
+config POOL_RS485_RTSPIN
+    int "RS485 RTS GPIO# on ESP32"
+    default 27
+    help
+        Request-To-Send GPIO# on ESP32 that connects to DE/!RE on the RS-485 Transceiver
+
+config POOL_RS485_TIMEOUT
+    int "RS485 timeout [ms]"
+    default 100
+    help
+        Maximum time to wait for a byte on RS485
+
+config POOL_JSON_BUFSIZE
+    int "JSON buffer size"
+    default 1200
+    help
+        Maximum size of the StaticJsonBuffer (>=1200)
+
+config POOL_MSGDATA_BUFSIZE
+    int "RS485 msg data size"
+    default 37
+    help
+        Maximum size of the data byte array in a RS485 message (>=32)
+
+config POOL_DBG_RAW
+    bool "Debug raw bytes"
+    default y
+    help
+        Print RS485 bytes to serial port
+
+config POOL_DBG_RAW_ONERROR
+    bool "Debug raw bytes on decode error"
+    default y
+    help
+        Print RS485 bytes on decoding error to serial port
+
+config POOL_DBG_DECODED_CTRL
+    bool "Debug decoded control msgs"
+    default y
+    help
+        Print decoded RS485 control messages to serial port
+
+config POOL_DBG_DECODED_PUMP
+    bool "Debug decoded pump msgs"
+    default y
+    help
+        Print decoded pump messages to serial port
+
+config POOL_DBG_DECODED_CHLORINATOR
+    bool "Debug chlorinator messages"
+    default y
+    help
+        Print decoded chlorinator messages to serial port
+
+endmenu

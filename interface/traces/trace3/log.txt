@@ -1,0 +1,739 @@
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (22900) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (22900) pool_main: query var, aux1-active=1
+I (22900) pool_transmitqueue: queuing circuitmsg set 1
+
+I (22910) pool_encode: setting circuit to 1
+I (22920) pool_main: query var, _=1560308913845
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 00 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BB (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (24550) pool_transmitqueue: requesting 86
+I (24560) pool_transmitter: sending 86
+DBG typ=86 dataLen=2 data.circuitSet=(02 01) 02 01
+decodeCtrl_circuitSet_a5 msg=(02 01)
+{"ctrl":{"circuitSet":{"aux1":1}},"raw":{"header":["01","10","20","86","02"]},"data":["02-3","01"]}
+I (24580) pool_transmitter: sent.
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 20 10 01 01 (header)
+ 86 (data)
+ 15E (checksum)
+{"ctrl":{"setAck":{"typ":"circuitSet"}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateReq":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateResp":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 01 04 (header)
+ 02 C4 0A BE (data)
+ 2A8 (checksum)
+{"pump":{"setReguReq":{"rpm":2750}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 01 02 (header)
+ 0A BE (data)
+ 1E0 (checksum)
+{"pump":{"setReguResp":{"now":2750}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 0A 00 00 01 48 07 08 00 00 00 00 00 0B 15 17 (data)
+ 1C4 (checksum)
+{"pump":{"status":{"running":true,"mode":"filter","status":0,"pwr":328,"rpm":1800,"err":0,"timer":11,"time":"21:23"}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (33760) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (33760) pool_main: query var, _=1560308913846
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateReq":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateResp":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 01 04 (header)
+ 02 C4 0A BE (data)
+ 2A8 (checksum)
+{"pump":{"setReguReq":{"rpm":2750}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 01 02 (header)
+ 0A BE (data)
+ 1E0 (checksum)
+{"pump":{"setReguResp":{"now":2750}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 58 58 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3BD (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":88,"src":"none","heating":false},"spa":{"temp":88,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (43810) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (43810) pool_main: query var, _=1560308913847
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 56 56 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B9 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":86,"src":"none","heating":false},"spa":{"temp":86,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 56 56 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B9 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":86,"src":"none","heating":false},"spa":{"temp":86,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 56 56 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B9 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":86,"src":"none","heating":false},"spa":{"temp":86,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 56 56 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B9 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":86,"src":"none","heating":false},"spa":{"temp":86,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 56 56 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B9 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":86,"src":"none","heating":false},"spa":{"temp":86,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (53730) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (53730) pool_main: query var, _=1560308913848
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 55 55 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B7 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":85,"src":"none","heating":false},"spa":{"temp":85,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 0A 00 00 04 24 0A BE 00 00 00 00 00 01 15 17 (data)
+ 252 (checksum)
+{"pump":{"status":{"running":true,"mode":"filter","status":0,"pwr":1060,"rpm":2750,"err":0,"timer":1,"time":"21:23"}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 55 55 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B7 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:23","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":85,"src":"none","heating":false},"spa":{"temp":85,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 17 02 00 00 00 00 00 00 00 00 00 00 01 55 55 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B7 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:29","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":85,"src":"none","heating":false},"spa":{"temp":85,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 05 08 (header)
+ 15 18 04 0B 06 13 00 00 (data)
+ 127 (checksum)
+{"ctrl":{"time":{"time":"21:24","date":"2019-06-11"}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 55 55 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B8 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":85,"src":"none","heating":false},"spa":{"temp":85,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (63760) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (63760) pool_main: query var, _=1560308913849
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (73790) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (73800) pool_main: query var, _=1560308913850
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateReq":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateResp":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 01 04 (header)
+ 02 C4 0A BE (data)
+ 2A8 (checksum)
+{"pump":{"setReguReq":{"rpm":2750}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 01 02 (header)
+ 0A BE (data)
+ 1E0 (checksum)
+{"pump":{"setReguResp":{"now":2750}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (83730) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (83730) pool_main: query var, _=1560308913851
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":":","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":":","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 0A 00 00 04 29 0A BE 00 00 00 00 00 01 15 18 (data)
+ 258 (checksum)
+{"pump":{"status":{"running":true,"mode":"filter","status":0,"pwr":1065,"rpm":2750,"err":0,"timer":1,"time":"a:a"}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"f:f","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":":","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (93760) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (93760) pool_main: query var, _=1560308913852
+Guru Meditation Error: Core  0 panic'ed (InstrFetchProhibited). Exception was unhandled.
+Core 0 register dump:
+PC      : 0x00c0003a  PS      : 0x00060330  A0      : 0x8000bec5  A1      : 0x3ffcb480
+A2      : 0x3f40234c  A3      : 0x00000000  A4      : 0x00000000  A5      : 0x0000ff00
+A6      : 0x00000000  A7      : 0x40404040  A8      : 0x8000be99  A9      : 0x3ffcac80
+A10     : 0x00c0003a  A11     : 0x3ffcacc0  A12     : 0x0000016d  A13     : 0x0000007d
+A14     : 0x3ffcb358  A15     : 0x3f4041a0  SAR     : 0x00000004  EXCCAUSE: 0x00000014
+EXCVADDR: 0x00c00038  LBEG    : 0x400012e5  LEND    : 0x40001309  LCOUNT  : 0x800d56ac
+
+ELF file SHA256: 4aff7f792fbb30009497c8a7a0c270bb815fa06144f3913c5de98b1c9c175cb9
+
+Backtrace: 0x00c0003a:0x3ffcb480 0x4000bec2:0x3ffcb4a0 0x400d37d8:0x3ffcb4c0 0x4012d26b:0x3ffcb6b0 0x4012ceb1:0x3ffcb6f0 0x4012cf48:0x3ffcb780 0x4012e1ec:0x3ffcb7a0 0x4012d996:0x3ffcb7c0 0x4012da08:0x3ffcb800 0x400
+8e81d:0x3ffcb820
+0x400d37d8: _httpdJsonHandler(httpd_req*) at C:/Users/Coert/embedded/ESP32_Pool-Interface/interface/main/main.cpp:142
+
+0x4012d26b: httpd_uri at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp_http_server/src/httpd_uri.c:311
+
+0x4012ceb1: httpd_parse_req at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp_http_server/src/httpd_parse.c:806
+
+0x4012cf48: httpd_req_new at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp_http_server/src/httpd_parse.c:806
+
+0x4012e1ec: httpd_sess_process at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp_http_server/src/httpd_sess.c:326
+
+0x4012d996: httpd_server at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp_http_server/src/httpd_main.c:113
+
+0x4012da08: httpd_thread at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp_http_server/src/httpd_main.c:113
+
+0x4008e81d: vPortTaskWrapper at C:/Espressif/ESP32/msys32/opt/esp-idf/components/freertos/port.c:403
+
+
+I (13287) esp_core_dump_flash: Save core dump to flash...
+I (13293) esp_core_dump_common: Found tasks: (13)!
+I (13447) esp_core_dump_flash: Core dump has been saved to flash.
+Rebooting...
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:6388
+load:0x40078000,len:11308
+load:0x40080400,len:6700
+entry 0x40080764
+I (29) boot: ESP-IDF v3.3-beta3-34-g8c57aa024-dirty 2nd stage bootloader
+I (29) boot: compile time 14:49:22
+I (30) boot: Enabling RNG early entropy source...
+I (36) boot: SPI Speed      : 40MHz
+I (40) boot: SPI Mode       : DIO
+I (44) boot: SPI Flash Size : 4MB
+I (48) boot: Partition Table:
+I (51) boot: ## Label            Usage          Type ST Offset   Length
+I (59) boot:  0 nvs              WiFi data        01 02 00009000 00004000
+I (66) boot:  1 otadata          OTA data         01 00 0000d000 00002000
+I (74) boot:  2 phy_init         RF data          01 01 0000f000 00001000
+I (81) boot:  3 factory          factory app      00 00 00010000 00150000
+I (89) boot:  4 ota_0            OTA app          00 10 00160000 00100000
+I (96) boot:  5 ota_1            OTA app          00 11 00260000 00100000
+I (104) boot:  6 coredump         Unknown data     01 03 00360000 00010000
+I (111) boot: End of partition table
+I (115) esp_image: segment 0: paddr=0x00160020 vaddr=0x3f400020 size=0x23ecc (147148) map
+I (176) esp_image: segment 1: paddr=0x00183ef4 vaddr=0x3ffb0000 size=0x0378c ( 14220) load
+I (182) esp_image: segment 2: paddr=0x00187688 vaddr=0x40080000 size=0x00400 (  1024) load
+0x40080000: _WindowOverflow4 at C:/Espressif/ESP32/msys32/opt/esp-idf/components/freertos/xtensa_vectors.S:1779
+
+I (183) esp_image: segment 3: paddr=0x00187a90 vaddr=0x40080400 size=0x08580 ( 34176) load
+I (206) esp_image: segment 4: paddr=0x00190018 vaddr=0x400d0018 size=0x9f230 (651824) map
+0x400d0018: _stext at ??:?
+
+I (434) esp_image: segment 5: paddr=0x0022f250 vaddr=0x40088980 size=0x08c10 ( 35856) load
+0x40088980: esp_core_dump_image_get at C:/Espressif/ESP32/msys32/opt/esp-idf/components/espcoredump/src/core_dump_common.c:200 (discriminator 2)
+
+I (460) boot: Loaded app from partition at offset 0x160000
+I (460) boot: Disabling RNG early entropy source...
+I (461) cpu_start: Pro cpu up.
+I (464) cpu_start: Application information:
+I (469) cpu_start: Project name:     interface
+I (474) cpu_start: App version:      a575dab-dirty
+I (480) cpu_start: Compile time:     Jun 11 2019 20:04:55
+I (486) cpu_start: ELF file SHA256:  4aff7f792fbb3000...
+I (492) cpu_start: ESP-IDF:          v3.3-beta3-34-g8c57aa024
+I (498) cpu_start: Starting app cpu, entry point is 0x40081204
+0x40081204: call_start_cpu1 at C:/Espressif/ESP32/msys32/opt/esp-idf/components/esp32/cpu_start.c:267
+
+I (490) cpu_start: App cpu up.
+I (509) heap_init: Initializing. RAM available for dynamic allocation:
+I (516) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (522) heap_init: At 3FFBA5A0 len 00025A60 (150 KiB): DRAM
+I (528) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (534) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (541) heap_init: At 40091590 len 0000EA70 (58 KiB): IRAM
+I (547) cpu_start: Pro cpu start user code
+I (229) esp_core_dump_flash: Init core dump to flash
+I (230) esp_core_dump_flash: Found partition 'coredump' @ 360000 65536 bytes
+I (234) cpu_start: Found core dump 11616 bytes in flash @ 0x360000
+I (239) cpu_start: Starting scheduler on PRO CPU.
+I (0) cpu_start: Starting scheduler on APP CPU.
+I (311) gpio: GPIO[27]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+I (311) pool_transmitqueue: queuing init C8
+I (321) pool_transmitqueue: queuing init DE
+I (321) pool_transmitqueue: queuing init C5
+I (331) wifi: wifi driver task: 3ffc26ac, prio:23, stack:3584, core=0
+I (331) wifi: wifi firmware version: 7c00966
+I (331) wifi: config NVS flash: enabled
+I (341) wifi: config nano formating: disabled
+I (341) system_api: Base MAC address is not set, read default base MAC address from BLK0 of EFUSE
+I (351) system_api: Base MAC address is not set, read default base MAC address from BLK0 of EFUSE
+I (381) wifi: Init dynamic tx buffer num: 32
+I (381) wifi: Init data frame dynamic rx buffer num: 32
+I (381) wifi: Init management frame dynamic rx buffer num: 32
+I (391) wifi: Init management short buffer num: 32
+I (391) wifi: Init static rx buffer size: 1600
+I (401) wifi: Init static rx buffer num: 10
+I (401) wifi: Init dynamic rx buffer num: 32
+I (501) phy: phy_version: 4100, 2a5dd04, Jan 23 2019, 21:00:07, 0, 0
+I (501) wifi: mode : sta (b4:e6:2d:96:53:71)
+I (501) pool_main: SYSTEM_EVENT_STA_START
+I (501) pool_reset: waiting for BOOT/RESET button ..
+I (621) wifi: new:<11,2>, old:<1,0>, ap:<255,255>, sta:<11,2>, prof:1
+I (1611) wifi: state: init -> auth (b0)
+I (1621) wifi: state: auth -> assoc (0)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+I (1621) wifi: state: assoc -> run (10)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+I (1641) wifi: connected with Farm Field, channel 11, bssid = e0:3f:49:f2:29:52
+I (1651) wifi: pm start, type: 1
+
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (1661) pool_transmitqueue: requesting C8
+I (1671) pool_transmitter: sending C8
+DBG typ=C8 dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"heatReq":{}},"raw":{"header":["01","10","20","C8","00"]},"data":[]}
+I (1691) pool_transmitter: sent.
+ FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 08 0D (header)
+ 54 54 59 0F 63 04 00 00 FF 00 00 00 00 (data)
+ 350 (checksum)
+{"ctrl":{"heat":{"pool":{"temp":84,"sp":15,"src":"none"},"spa":{"temp":84,"sp":99,"src":"heater"}}}}
+I (1771) pool_transmitqueue: requesting DE
+I (1771) pool_transmitter: sending DE
+DBG typ=DE dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"schedReq":{}},"raw":{"header":["01","10","20","DE","00"]},"data":[]}
+I (1791) pool_transmitter: sent.
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 1E 10 (header)
+ 01 00 00 0F 06 00 01 FE 03 0C 00 00 00 00 00 00 (data)
+ 217 (checksum)
+{"ctrl":{"sched":{"pool":{"start":"08:30","stop":"13:00"}}}}
+I (1871) pool_transmitqueue: requesting C5
+I (1871) pool_transmitter: sending C5
+DBG typ=C5 dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"timeReq":{}},"raw":{"header":["01","10","20","C5","00"]},"data":[]}
+I (1881) pool_transmitter: sent.
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 05 08 (header)
+ 15 18 04 0B 06 13 00 00 (data)
+ 127 (checksum)
+{"ctrl":{"time":{"time":"21:24","date":"2019-06-11"}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (3831) event: sta ip: 10.0.1.195, mask: 255.255.255.0, gw: 10.0.1.1
+I (3831) pool_main: Connected at IP '10.0.1.195'
+I (3831) pool_main: Starting server on port: '80'
+I (3841) pool_main: Registering URI handlers
+I (3841) system_api: Base MAC address is not set, read default base MAC address from BLK0 of EFUSE
+I (3841) pool_ota: Starting OTA
+I (3851) pool_mdns: mDNS hostname [pool]
+I (3851) pool_ota: Running partition ota_0 at offset 0x00160000
+I (3901) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (3911) pool_main: query var, _=1560308913852
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+I (6221) pool_ota: Writing to partition ota_1 at offset 0x260000
+I (6221) pool_ota: Firmware on server: interface.a575dab-dirty (Jun 11 2019 20:04:55)
+I (6231) pool_ota: Firmware running:   interface.a575dab-dirty (Jun 11 2019 20:04:55)
+W (6241) pool_ota: No update available
+I (6241) pool_ota: When a new firmware is available on the server, press the reset button to download it
+I (6251) pool_ota: Exiting task ..
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (9471) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (9481) pool_main: query var, _=1560308913853
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateReq":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateResp":{"running":true}}}
+ FF 00 FF A5 (preamble)
+ 00 60 10 01 04 (header)
+ 02 C4 0A BE (data)
+ 2A8 (checksum)
+{"pump":{"setReguReq":{"rpm":2750}}}
+ FF 00 FF A5 (preamble)
+ 00 10 60 01 02 (header)
+ 0A BE (data)
+ 1E0 (checksum)
+{"pump":{"setReguResp":{"now":2750}}}
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 15 18 02 00 00 00 00 00 00 00 00 00 00 01 54 54 02 50 59 FF 02 16 04 00 00 00 00 29 0B (data)
+ 3B6 (checksum)
+{"ctrl":{"state":{"system":{"time":"21:24","fw":2.799999952},"active":["aux1"],"delay":[],"pool":{"temp":84,"src":"none","heating":false},"spa":{"temp":84,"src":"heater","heating":false},"temp":{"air":89}}}}
+I (19441) pool_main: query var, callback=jQuery21008440730063872712_1560308913834
+I (19441) pool_main: query var, _=1560308913854
+
+
+Coert@coert-ub MINGW32 /c/Users/Coert/embedded/ESP32_Pool-Interface/interface
+$

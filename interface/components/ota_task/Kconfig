@@ -1,0 +1,9 @@
+menu "Pool OTA Updates"
+
+config FIRMWARE_UPGRADE_URL
+    string "firmware upgrade url endpoint"
+    default "https://coertvonk.com/jvonk/pool/interface.bin"
+    help
+        URL of server which hosts the firmware
+        image.
+endmenu

@@ -1,0 +1,15 @@
+menu "Pool - RESET"
+
+    config POOL_RESET_PIN
+        int "RESET GPIO# on ESP32"
+        default 0
+        help
+            RESET input GPIO pin on ESP32 that connects to a pull down switch
+
+    config POOL_RESET_SECONDS
+        int "RESET press duration"
+        default 3
+        help
+            Number of seconds that RESET needs to be hold low before erasing WiFi credentials
+
+    endmenu

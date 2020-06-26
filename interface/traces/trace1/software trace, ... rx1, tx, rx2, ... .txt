@@ -1,0 +1,12 @@
+{"ctrl":{"state":{"system":{"time":"15:25","fw":2.8},"active":[],"delay":[],"pool":{"temp":66,"src":"none","heating":false},"spa":{"temp":66,"src":"heater","heating":false},"temp":{"air":72}}}}
+{"ctrl":{"state":{"system":{"time":"15:25","fw":2.8},"active":[],"delay":[],"pool":{"temp":66,"src":"none","heating":false},"spa":{"temp":66,"src":"heater","heating":false},"temp":{"air":71}}}}
+{"ctrl":{"state":{"system":{"time":"15:25","fw":2.8},"active":[],"delay":[],"pool":{"temp":66,"src":"none","heating":false},"spa":{"temp":66,"src":"heater","heating":false},"temp":{"air":71}}}}
+queuing circuitmsg
+setting circuit
+{"ctrl":{"state":{"system":{"time":"15:25","fw":2.8},"active":[],"delay":[],"pool":{"temp":66,"src":"none","heating":false},"spa":{"temp":66,"src":"heater","heating":false},"temp":{"air":71}}}}
+requesting 0x86
+{"ctrl":{"circuitSet":{"pool":1}}}
+287608
+{"ctrl":{"setAck":{"typ":"circuitSet"}}}
+{"ctrl":{"state":{"system":{"time":"15:25","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":66,"src":"none","heating":false},"spa":{"temp":66,"src":"heater","heating":false},"temp":{"air":71}}}}
+{"ctrl":{"state":{"system":{"time":"15:25","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":66,"src":"none","heating":false},"spa":{"temp":66,"src":"heater","heating":false},"temp":{"air":71}}}}

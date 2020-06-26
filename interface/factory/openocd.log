@@ -1,0 +1,32 @@
+none separate
+adapter speed: 20000 kHz
+Info : Configured 2 cores
+esp32 interrupt mask on
+debug_level: 2
+Info : ftdi: if you experience problems at higher adapter clocks, try the command "ftdi_tdo_sample_edge falling"
+Info : clock speed 20000 kHz
+Info : JTAG tap: esp32.cpu0 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+Info : JTAG tap: esp32.cpu1 tap/device found: 0x120034e5 (mfg: 0x272 (Tensilica), part: 0x2003, ver: 0x1)
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+Info : accepting 'gdb' connection from pipe
+Error: No symbols for FreeRTOS
+Info : Target halted. PRO_CPU: PC=0x401AD40E (active)    APP_CPU: PC=0x401AD40E 
+Info : Target halted. PRO_CPU: PC=0x4009171A (active)    APP_CPU: PC=0x401AD40E 
+Info : Flash mapping 0: 0x10020 -> 0x3f400020, 231 KB
+Info : Flash mapping 1: 0x50018 -> 0x400d0018, 897 KB
+Info : Target halted. PRO_CPU: PC=0x4009171A (active)    APP_CPU: PC=0x401AD40E 
+Info : Auto-detected flash size 4096 KB
+Info : Using flash size 4096 KB
+Info : Target halted. PRO_CPU: PC=0x4009171A (active)    APP_CPU: PC=0x401AD40E 
+Info : Flash mapping 0: 0x10020 -> 0x3f400020, 231 KB
+Info : Flash mapping 1: 0x50018 -> 0x400d0018, 897 KB
+Info : Using flash size 900 KB
+Info : Target halted. PRO_CPU: PC=0x4009171A (active)    APP_CPU: PC=0x401AD40E 
+Info : Flash mapping 0: 0x10020 -> 0x3f400020, 231 KB
+Info : Flash mapping 1: 0x50018 -> 0x400d0018, 897 KB
+Info : Using flash size 232 KB
+Info : dropped 'gdb' connection
+Warn : Flash driver of esp32.flash does not support free_driver_priv()
+Warn : Flash driver of irom does not support free_driver_priv()
+Warn : Flash driver of drom does not support free_driver_priv()
