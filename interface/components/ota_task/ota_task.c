@@ -133,7 +133,7 @@ ota_task(void * pvParameter)
                     esp_app_desc_t invalid_app_info;
                     if (esp_ota_get_partition_description(last_invalid_app, &invalid_app_info) == ESP_OK) {
                         ESP_LOGI(TAG, "Firmware marked invalid: %s.%s (%s %s)",
-                            invalid_app_info.project_name, invalid_app_info.version, invalid_app_info.date, invalid_app_info_info.time);
+                            invalid_app_info.project_name, invalid_app_info.version, invalid_app_info.date, invalid_app_info.time);
                     }
                     if (last_invalid_app != NULL) {
                         if (_versions_match(&invalid_app_info, &new_app_info)) {
