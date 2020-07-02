@@ -67,7 +67,7 @@ _versions_match(esp_app_desc_t const * const desc1, esp_app_desc_t const * const
 void
 ota_task(void * pvParameter)
 {
-    ESP_LOGI(TAG, "Starting OTA");
+    ESP_LOGI(TAG, "Starting OTA (%s)", CONFIG_FIRMWARE_UPGRADE_URL);
 
     esp_partition_t const * const configured_part = esp_ota_get_boot_partition();
     esp_partition_t const * const running_part = esp_ota_get_running_partition();
@@ -122,18 +122,18 @@ ota_task(void * pvParameter)
 
                     memcpy(&new_app_info, &ota_write_data[sizeof(esp_image_header_t) + sizeof(esp_image_segment_header_t)], sizeof(esp_app_desc_t));
                     ESP_LOGI(TAG, "Firmware on server: %s.%s (%s %s)",
-                    new_app_info.project_name, new_app_info.version, new_app_info.date, new_app_info.time);
+                        new_app_info.project_name, new_app_info.version, new_app_info.date, new_app_info.time);
 
                     esp_app_desc_t running_app_info;
                     if (esp_ota_get_partition_description(running_part, &running_app_info) == ESP_OK) {
                         ESP_LOGI(TAG, "Firmware running:   %s.%s (%s %s)",
-                            running_app_info.project_name, running_app_info.version, new_app_info.date, new_app_info.time);
+                            running_app_info.project_name, running_app_info.version, running_app_info.date, running_app_info.time);
                     }
                     esp_partition_t const * const last_invalid_app = esp_ota_get_last_invalid_partition();
                     esp_app_desc_t invalid_app_info;
                     if (esp_ota_get_partition_description(last_invalid_app, &invalid_app_info) == ESP_OK) {
                         ESP_LOGI(TAG, "Firmware marked invalid: %s.%s (%s %s)",
-                            invalid_app_info.project_name, invalid_app_info.version, new_app_info.date, new_app_info.time);
+                            invalid_app_info.project_name, invalid_app_info.version, invalid_app_info.date, invalid_app_info_info.time);
                     }
                     if (last_invalid_app != NULL) {
                         if (_versions_match(&invalid_app_info, &new_app_info)) {
@@ -163,6 +163,7 @@ ota_task(void * pvParameter)
                 }
             }
             if (esp_ota_write( update_handle, (const void *)ota_write_data, data_read) != ESP_OK) {
+                ESP_LOGE(TAG, "OTA write err, is partition large enough?");
                 _http_cleanup(client);
                 _delete_task();
             }

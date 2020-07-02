@@ -1,4 +1,5 @@
-**/build
 /research
 /tools
 /.idea
+**/build
+**/sdkconfig

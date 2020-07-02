@@ -23,7 +23,7 @@
 #include <esp_ota_ops.h>
 
 #include "ble_prov.h"
-#include "pool_ota.h"
+#include "ota_task.h"
 
 static const char *TAG = "pool_factory";
 
@@ -72,7 +72,7 @@ static esp_err_t _event_handler(void *ctx, system_event_t *event)
         case SYSTEM_EVENT_STA_GOT_IP:
             ESP_LOGI(TAG, "got ip:%s", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
             s_retry_num_ap_auth_fail = 0;
-            xTaskCreate(&pool_ota_task, "pool_ota_task", 8192, NULL, 5, NULL);
+            xTaskCreate(&ota_task, "ota_task", 8192, NULL, 5, NULL);
             break;
         case SYSTEM_EVENT_AP_STACONNECTED:
             ESP_LOGI(TAG, "station:"MACSTR" join, AID=%d", MAC2STR(event->event_info.sta_connected.mac), event->event_info.sta_connected.aid);
