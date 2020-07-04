@@ -1,9 +1,15 @@
 menu "Pool OTA Updates"
 
-config FIRMWARE_UPGRADE_URL
+config OTA_FIRMWARE_URL
     string "firmware upgrade url endpoint"
     default "https://coertvonk.com/cvonk/pool/interface.bin"
     help
         URL of server which hosts the firmware
         image.
 endmenu
+
+config OTA_RECV_TIMEOUT
+    int "OTA Receive Timeout"
+    default 5000
+    help
+        Maximum time for reception
