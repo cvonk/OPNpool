@@ -1,3 +1,4 @@
+# erase sdkconfig after changing this file, so it gets rebuild
 menu "Pool OTA Updates"
 
 config OTA_FIRMWARE_URL
