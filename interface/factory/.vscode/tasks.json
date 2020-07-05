@@ -31,7 +31,10 @@
             "problemMatcher": [
                 {
                     "owner": "cpp",
-                    "fileLocation": ["relative", "${workspaceFolder}"],
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder}"
+                    ],
                     "pattern": {
                         "regexp": "^\\.\\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                         "file": 1,
@@ -74,7 +77,7 @@
                     "severity": 4,
                     "message": 5
                 }
-            },
+            }
         },
         {
             "label": "Clean - Clean the project",
@@ -91,7 +94,10 @@
             "problemMatcher": [
                 {
                     "owner": "cpp",
-                    "fileLocation": ["relative", "${workspaceFolder}"],
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder}"
+                    ],
                     "pattern": {
                         "regexp": "^\\.\\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                         "file": 1,
@@ -113,7 +119,7 @@
                         "message": 5
                     }
                 }
-            ],
+            ]
         },
         {
             "label": "Flash - Flash the device",
@@ -130,7 +136,10 @@
             "problemMatcher": [
                 {
                     "owner": "cpp",
-                    "fileLocation": ["relative", "${workspaceFolder}"],
+                    "fileLocation": [
+                        "relative",
+                        "${workspaceFolder}"
+                    ],
                     "pattern": {
                         "regexp": "^\\.\\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
                         "file": 1,
@@ -152,7 +161,7 @@
                         "message": 5
                     }
                 }
-            ],
+            ]
         },
         {
             "label": "Monitor: Start the monitor",
@@ -163,25 +172,28 @@
             },
             "options": {
                 "env": {
-                    "PATH": "${config:idf.customExtraPaths}",
+                    "PATH": "${config:idf.customExtraPaths}"
                 }
             },
             "dependsOn": "Flash - Flash the device",
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
-            "label":"OpenOCD: Start openOCD",
-            "type":"shell",
+            "label": "OpenOCD: Start openOCD",
+            "type": "shell",
             "presentation": {
                 "echo": true,
                 "reveal": "never",
                 "focus": false,
-                "panel":"new"
+                "panel": "new"
             },
-            "command":"openocd -s ${command:espIdf.getOpenOcdScriptValue} ${command:espIdf.getOpenOcdConfigs}",
+            "command": "openocd -s ${command:espIdf.getOpenOcdScriptValue} ${command:espIdf.getOpenOcdConfigs}",
             "windows": {
                 "command": "openocd.exe -s ${command:espIdf.getOpenOcdScriptValue} ${command:espIdf.getOpenOcdConfigs}"
             },
@@ -201,7 +213,7 @@
                     "severity": 4,
                     "message": 5
                 }
-            },
+            }
         },
         {
             "label": "adapter",
@@ -231,20 +243,28 @@
             },
             "args": [
                 "${command:espIdf.getExtensionPath}/esp_debug_adapter/debug_adapter_main.py",
-                "-e", "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
-                "-s", "${command:espIdf.getOpenOcdScriptValue}",
-                "-ip", "localhost",
-                "-dn", "${config:idf.adapterTargetName}",
+                "-e",
+                "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
+                "-s",
+                "${command:espIdf.getOpenOcdScriptValue}",
+                "-ip",
+                "localhost",
+                "-dn",
+                "${config:idf.adapterTargetName}",
                 "-om",
                 "connect_to_instance"
             ],
             "windows": {
                 "args": [
                     "${command:espIdf.getExtensionPath}/esp_debug_adapter/debug_adapter_main.py",
-                    "-e", "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
-                    "-s", "${command:espIdf.getOpenOcdScriptValue}",
-                    "-ip", "localhost",
-                    "-dn", "${config:idf.adapterTargetName}",
+                    "-e",
+                    "${workspaceFolder}/build/${command:espIdf.getProjectName}.elf",
+                    "-s",
+                    "${command:espIdf.getOpenOcdScriptValue}",
+                    "-ip",
+                    "localhost",
+                    "-dn",
+                    "${config:idf.adapterTargetName}",
                     "-om",
                     "connect_to_instance"
                 ]

@@ -173,7 +173,7 @@ void ota_task(void * pvParameter)
                 _delete_task();
             }
             binary_file_length += data_read;
-            ESP_LOGD(TAG, "Wrote %d bytes", binary_file_length);
+            ESP_LOGI(TAG, "wrote %d bytes", binary_file_length);
         } else if (data_read == 0) {
            // esp_http_client_read never returns negative error code, we rely on `errno` to check for underlying transport connectivity closure if any
             if (errno == ECONNRESET || errno == ENOTCONN) {
@@ -188,7 +188,7 @@ void ota_task(void * pvParameter)
             break;
         }
     }
-    //ESP_LOGI(TAG, "Finished, wrote %d bytes", binary_file_length);
+    ESP_LOGI(TAG, "Finished, wrote %d bytes", binary_file_length);
     if (esp_http_client_is_complete_data_received(client) != true) {
         ESP_LOGE(TAG, "Error in receiving complete file");
         _http_cleanup(client);
