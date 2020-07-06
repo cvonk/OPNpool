@@ -8,7 +8,7 @@
     "editor.quickSuggestions": true
   },
   "C_Cpp.intelliSenseEngineFallback": "Enabled",
-  "idf.portWin": "COM18",
+  "idf.portWin": "COM10",
   "idf.adapterTargetName": "esp32",
   "idf.openOcdConfigs": [
     "interface/ftdi/esp32_devkitj_v1.cfg",
