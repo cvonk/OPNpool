@@ -1,0 +1,13 @@
+{
+    "meta": {
+        "notifications": {
+            "version": {
+                "remote": {
+                    "version": "",
+                    "tag_name": "",
+                    "dismissUntilNextRemoteVersionBump": false
+                }
+            }
+        }
+    }
+}
