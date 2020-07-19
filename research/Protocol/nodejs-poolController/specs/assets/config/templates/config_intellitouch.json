@@ -1,0 +1,18 @@
+{
+    "equipment": {
+        "controller": {
+            "intellicom": {
+                "installed": 0,
+                "friendlyName": ""
+            },
+            "intellitouch": {
+                "installed": 1,
+                "friendlyName": ""
+            },
+            "virtual": {
+                "pumpController": "default",
+                "chlorinatorController": "default"
+            }
+        }
+    }
+}
