@@ -1,7 +1,0 @@
-SPDXVersion: SPDX-2.1
-DataLicense: CC0-1.0
-Creator: Coert Vonk
-PackageName: ReferenceCode
-PackageOriginator: Coert Vonk
-PackageHomePage: https://github.com/cvonk/ESP32_coredump-to-server/
-PackageLicenseDeclared: LICENSE
