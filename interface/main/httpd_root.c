@@ -37,6 +37,15 @@ httpd_root_cb(httpd_req_t * req)
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Content too long");
         return ESP_FAIL;
     }
+#if 1
+    const char * resp_str = "<html>\n"
+        "<head>\n"
+        "</head>\n"
+        "<body>\n"
+        "  <h1>Welcome to device world</h1>\n"
+        "</body>\n"
+        "</html>";
+#else
     // +1 so even for no content body, we have a buf
     char * const buf = malloc(req->content_len + 1);  // https_client_task reads from Q and frees mem
     assert(buf);
@@ -52,9 +61,9 @@ httpd_root_cb(httpd_req_t * req)
     }
 
     buf[req->content_len] = '\0';
-    sendToMqtt(TO_MQTT_MSGTYPE_DBG, "{ \"response\": \"httpd root req\" }", ipc);
-
     free(buf);
-    httpd_resp_sendstr(req, "thank you");
+#endif
+
+    httpd_resp_send(req, resp_str, strlen(resp_str));
     return ESP_OK;
 }

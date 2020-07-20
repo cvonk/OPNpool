@@ -90,11 +90,45 @@
 
 static char const * const TAG = "main";
 
+#if 0
+/* Request Methods */
+#define HTTP_METHOD_MAP(XX)         \
+  XX(0,  DELETE,      DELETE)       \
+  XX(1,  GET,         GET)          \
+  XX(2,  HEAD,        HEAD)         \
+  XX(3,  POST,        POST)         \
+  XX(4,  PUT,         PUT)          \
+
+enum http_method
+  {
+#define XX(num, name, string) HTTP_##name = num,
+  HTTP_METHOD_MAP(XX)
+#undef XX
+  };
+static const char *method_strings[] =
+  {
+#define XX(num, name, string) #string,
+  HTTP_METHOD_MAP(XX)
+#undef XX
+  };
+
+#ifndef ELEM_AT
+# define ELEM_AT(a, i, v) ((unsigned int) (i) < ARRAY_SIZE(a) ? (a)[(i)] : (v))
+#endif
+
+static const char *
+http_method_str (enum http_method m)
+{
+  return ELEM_AT(method_strings, m, "<unknown>");
+}
+#endif
+
 typedef struct wifi_connect_priv_t {
     ipc_t * ipc;
     httpd_handle_t httpd_handle;
-    uint httpd_uris_len;
-    httpd_uri_t const httpd_uris[];
+    httpd_uri_match_func_t httpd_uri_match_func;
+    uint const httpd_uris_len;
+    httpd_uri_t httpd_uris[];
 } wifi_connect_priv_t;
 
 static void
@@ -106,24 +140,6 @@ _initNvsFlash(void)
       ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-}
-
-static esp_err_t
-_httpd_handler(httpd_req_t * req)
-{
-    if (req->method != HTTP_GET) {
-        httpd_resp_send_err(req, HTTPD_405_METHOD_NOT_ALLOWED, "No such method");
-        return ESP_FAIL;
-    }
-    const char * resp_str = "<html>\n"
-        "<head>\n"
-        "</head>\n"
-        "<body>\n"
-        "  <h1>Welcome to device world</h1>\n"
-        "</body>\n"
-        "</html>";
-    httpd_resp_send(req, resp_str, strlen(resp_str));
-    return ESP_OK;
 }
 
 static void
@@ -160,13 +176,16 @@ _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
 	_mac2devname(mac, ipc->dev.name, WIFI_DEVNAME_LEN);
 
     httpd_config_t httpd_config = HTTPD_DEFAULT_CONFIG();
-    httpd_config.uri_match_fn = httpd_uri_match_wildcard;
+    httpd_config.uri_match_fn = priv->httpd_uri_match_func;
     ESP_ERROR_CHECK(httpd_start(&priv->httpd_handle, &httpd_config));
 
+    ESP_LOGI(TAG, "Registering URI handlers");
     httpd_uri_t const * httpd_uri = priv->httpd_uris;
-    for (uint ii = 0; ii < priv->httpd_uris_len; ii++) {
-        ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, httpd_uri++));
-        ESP_LOGI(TAG, "Listening at http://" IPSTR "%s%s", IP2STR(ip), httpd_uri->uri,
+    for (uint ii = 0; ii < priv->httpd_uris_len; ii++, httpd_uri++) {
+        ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, httpd_uri));
+        ESP_LOGI(TAG, "Listening %s http://" IPSTR "%s%s",
+                 http_method_str(httpd_config.method),
+                 IP2STR(ip), httpd_uri->uri,
                  (httpd_config.uri_match_fn == httpd_uri_match_wildcard) ? "*" : "");
     }
     ipc->dev.count.wifiConnect++;
@@ -195,19 +214,21 @@ _wifi_disconnect_cb(void * const priv_void, bool const auth_err)
 static void
 _connect2wifi_and_start_httpd(ipc_t * const ipc)
 {
-    static httpd_uri_t const httpd_uris[] = {
-        {
-            .uri       = "/",
-            .method    = HTTP_GET,
-            .handler   = httpd_root_cb,
-            .user_ctx  = (void * const)ipc, // can't pass here ..
+    static wifi_connect_priv_t priv = {
+        .httpd_uri_match_func = httpd_uri_match_wildcard,
+        .httpd_uris_len = 1,  // MUST match array size of .httpd_uris
+        .httpd_uris = {
+            {
+                .uri       = "/*",
+                .method    = HTTP_GET,
+                .handler   = httpd_root_cb,
+            },
         },
     };
-    static wifi_connect_priv_t priv = {
-        .ipc = ipc,
-        .httpd_uris = httpd_uris,
-        .httpd_uris_len = ARRAYSIZE(httpd_uris).
-    };
+    priv.ipc = ipc;
+    for (uint ii = 0; ii < priv.httpd_uris_len; ii++) {
+        priv.httpd_uris[ii].user_ctx = ipc;
+    }
     wifi_connect_config_t wifi_connect_config = {
         .onConnect = _wifi_connect_cb,
         .onDisconnect = _wifi_disconnect_cb,
@@ -234,6 +255,5 @@ app_main()
     // from here the tasks take over
 
     xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
-    xTaskCreate(&https_client_task, "https_client_task", 4096, &ipc, 5, NULL);
     xTaskCreate(&mqtt_task, "mqtt_task", 2*4096, &ipc, 5, NULL);
 }
