@@ -84,11 +84,28 @@
 #include <esp_http_server.h>
 
 #include <factory_reset_task.h>
-#include "httpd_root.h"
+#include "board_name.h"
+#include "httpd_cb.h"
 #include "mqtt_task.h"
 #include "ipc_msgs.h"
 
 static char const * const TAG = "main";
+
+typedef struct wifi_connect_priv_t {
+    ipc_t * ipc;
+    httpd_handle_t httpd_handle;
+} wifi_connect_priv_t;
+
+static void
+_initNvsFlash(void)
+{
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+}
 
 #if 0
 /* Request Methods */
@@ -123,47 +140,6 @@ http_method_str (enum http_method m)
 }
 #endif
 
-typedef struct wifi_connect_priv_t {
-    ipc_t * ipc;
-    httpd_handle_t httpd_handle;
-    httpd_uri_match_func_t httpd_uri_match_func;
-    uint const httpd_uris_len;
-    httpd_uri_t httpd_uris[];
-} wifi_connect_priv_t;
-
-static void
-_initNvsFlash(void)
-{
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-      ESP_ERROR_CHECK(nvs_flash_erase());
-      ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
-}
-
-static void
-_mac2devname(uint8_t const * const mac, char * const name, size_t name_len) {
-
-	typedef struct {
-		uint8_t const mac[WIFI_DEVMAC_LEN];
-		char const * const name;
-	} knownBrd_t;
-	static knownBrd_t knownBrds[] = {
-        { {0xb4, 0xe6, 0x2d, 0x96, 0x53, 0x71}, "pool" },
-        { {0x30, 0xae, 0xa4, 0xcc, 0x45, 0x04}, "esp32-wrover-1" },
-        { {0x30, 0xAE, 0xA4, 0xCC, 0x42, 0x78}, "esp32-wrover-2" },
-	};
-	for (uint ii=0; ii < ARRAYSIZE(knownBrds); ii++) {
-		if (memcmp(mac, knownBrds[ii].mac, WIFI_DEVMAC_LEN) == 0) {
-			strncpy(name, knownBrds[ii].name, name_len);
-			return;
-		}
-	}
-	snprintf(name, name_len, "esp32_%02x%02x",
-			 mac[WIFI_DEVMAC_LEN-2], mac[WIFI_DEVMAC_LEN-1]);
-}
-
 static esp_err_t
 _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
 {
@@ -171,23 +147,29 @@ _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
     ipc_t * const ipc = priv->ipc;
 
     snprintf(ipc->dev.ipAddr, WIFI_DEVIPADDR_LEN, IPSTR, IP2STR(ip));
-    uint8_t mac[WIFI_DEVMAC_LEN];
-    ESP_ERROR_CHECK(esp_base_mac_addr_get(mac));
-	_mac2devname(mac, ipc->dev.name, WIFI_DEVNAME_LEN);
+	board_name(ipc->dev.name, WIFI_DEVNAME_LEN);
 
     httpd_config_t httpd_config = HTTPD_DEFAULT_CONFIG();
-    httpd_config.uri_match_fn = priv->httpd_uri_match_func;
+    httpd_config.uri_match_fn = httpd_uri_match_wildcard;
     ESP_ERROR_CHECK(httpd_start(&priv->httpd_handle, &httpd_config));
 
-    ESP_LOGI(TAG, "Registering URI handlers");
-    httpd_uri_t const * httpd_uri = priv->httpd_uris;
-    for (uint ii = 0; ii < priv->httpd_uris_len; ii++, httpd_uri++) {
-        ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, httpd_uri));
-        ESP_LOGI(TAG, "Listening %s http://" IPSTR "%s%s",
-                 http_method_str(httpd_config.method),
-                 IP2STR(ip), httpd_uri->uri,
-                 (httpd_config.uri_match_fn == httpd_uri_match_wildcard) ? "*" : "");
-    }
+    static httpd_uri_t httpdGet = {
+        .uri       = "/*",
+        .method    = HTTP_GET,
+        .handler   = httpd_cb,
+    };
+    static httpd_uri_t httpdPost = {
+        .uri       = "/*",
+        .method    = HTTP_POST,
+        .handler   = httpd_cb,
+    };
+    httpdGet.user_ctx = ipc;
+    httpdPost.user_ctx = ipc;
+
+    ESP_LOGI(TAG, "Listening at http://" IPSTR "/* for GET/POST", IP2STR(ip));
+    ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, &httpdGet));
+    ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, &httpdPost));
+
     ipc->dev.count.wifiConnect++;
     ESP_LOGI(TAG, "WiFi connect ipAddr=%s, devName=%s, connectCnt=%u", ipc->dev.ipAddr, ipc->dev.name, ipc->dev.count.wifiConnect);
     return ESP_OK;
@@ -214,21 +196,9 @@ _wifi_disconnect_cb(void * const priv_void, bool const auth_err)
 static void
 _connect2wifi_and_start_httpd(ipc_t * const ipc)
 {
-    static wifi_connect_priv_t priv = {
-        .httpd_uri_match_func = httpd_uri_match_wildcard,
-        .httpd_uris_len = 1,  // MUST match array size of .httpd_uris
-        .httpd_uris = {
-            {
-                .uri       = "/*",
-                .method    = HTTP_GET,
-                .handler   = httpd_root_cb,
-            },
-        },
-    };
+    static wifi_connect_priv_t priv = {};
     priv.ipc = ipc;
-    for (uint ii = 0; ii < priv.httpd_uris_len; ii++) {
-        priv.httpd_uris[ii].user_ctx = ipc;
-    }
+
     wifi_connect_config_t wifi_connect_config = {
         .onConnect = _wifi_connect_cb,
         .onDisconnect = _wifi_disconnect_cb,

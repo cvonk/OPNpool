@@ -29,7 +29,10 @@
         "led_strip.h": "c",
         "*.gs": "javascript",
         "random": "cpp",
-        "esp_event.h": "c"
+        "esp_event.h": "c",
+        "*.tcc": "c",
+        "cstring": "c",
+        "algorithm": "c"
     },
     "clang-format.executable": "C:/Program Files/LLVM/bin/clang-format.exe",
     "workbench.tree.indent": 20,
