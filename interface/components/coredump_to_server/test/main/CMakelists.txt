@@ -1,3 +1,0 @@
-set(COMPONENT_SRCS coredump_to_server_test.c)
-set(COMPONENT_ADD_INCLUDEDIRS .)
-register_component()
