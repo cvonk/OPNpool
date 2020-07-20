@@ -7,7 +7,6 @@
 //#define MIN(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a < _b ? _a : _b; })
 //#define MAX(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a > _b ? _a : _b; })
 
-#define WIFI_DEVMAC_LEN (6)
 #define WIFI_DEVNAME_LEN (32)
 #define WIFI_DEVIPADDR_LEN (16)
 

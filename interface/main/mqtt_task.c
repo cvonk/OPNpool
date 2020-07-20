@@ -171,7 +171,7 @@ _type2subtopic(toMqttMsgType_t const type)
         { TO_MQTT_MSGTYPE_WHO, "who" },
         { TO_MQTT_MSGTYPE_DBG, "dbg" },
     };
-    for (uint ii = 0; ii < ARRAYSIZE(mapping); ii++) {
+    for (uint ii = 0; ii < ARRAY_SIZE(mapping); ii++) {
         if (type == mapping[ii].type) {
             return mapping[ii].subtopic;
         }

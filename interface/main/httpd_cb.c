@@ -21,17 +21,17 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 
-#include "httpd_root.h"
+#include "httpd_cb.h"
 #include "ipc_msgs.h"
 
 #define MAX_CONTENT_LEN (2048)
 
-static const char * TAG = "httpd_root";
+//static const char * TAG = "httpd_root";
 
 esp_err_t
-httpd_root_cb(httpd_req_t * req)
+httpd_cb(httpd_req_t * req)
 {
-    ipc_t const * const ipc = req->user_ctx;
+    //ipc_t const * const ipc = req->user_ctx;
 
     if (req->content_len >= MAX_CONTENT_LEN) {
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Content too long");
