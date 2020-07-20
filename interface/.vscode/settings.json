@@ -32,7 +32,8 @@
         "esp_event.h": "c",
         "*.tcc": "c",
         "cstring": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "esp_system.h": "c"
     },
     "clang-format.executable": "C:/Program Files/LLVM/bin/clang-format.exe",
     "workbench.tree.indent": 20,

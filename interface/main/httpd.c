@@ -21,7 +21,7 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 
-#include "httpd_cb.h"
+#include "httpd.h"
 #include "ipc_msgs.h"
 
 #define MAX_CONTENT_LEN (2048)
