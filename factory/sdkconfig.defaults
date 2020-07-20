@@ -6,8 +6,7 @@ CONFIG_BTDM_CONTROLLER_MODE_BTDM=
 
 # factory binary is larger than default size
 CONFIG_PARTITION_TABLE_CUSTOM=y
-CONFIG_PARTITION_TABLE_CUSTOM_FILENAME=../partitions.csv
-CONFIG_PARTITION_TABLE_FILENAME=../partitions.csv
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="../interface/partitions.csv"
 
 # need 4 MByte flash for OTA updates
 CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
