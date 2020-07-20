@@ -1,0 +1,9 @@
+# to propegate changes in this file, delete `sdkconfig`
+
+# ensure there is a coredump partition
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# need 4 MByte flash for OTA updates
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y

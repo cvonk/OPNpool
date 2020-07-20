@@ -1,0 +1,15 @@
+menu "OTA Updates"
+
+    config OTA_UPDATE_FIRMWARE_URL
+        string "Firmware upgrade url endpoint"
+        default "http://host:port/directory/ota_update_test.bin"
+        help
+            URL of server which hosts the firmware image.
+
+    config OTA_UPDATE_RECV_TIMEOUT
+        int "OTA Update receive Timeout"
+        default 5000
+        help
+            Maximum time for reception [sec]
+
+endmenu

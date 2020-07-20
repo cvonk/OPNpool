@@ -1,0 +1,53 @@
+menu "Clock - main"
+
+    config WIFI_CONNECT_SSID
+        string "WiFi SSID"
+        default ""
+        help
+            SSID (network name). Leave empty for BLE provisioning.
+
+    config WIFI_CONNECT_PASSWD
+        string "WiFi Password"
+        default ""
+        help
+            WiFi password (WPA or WPA2). Leave empty for BLE provisioning.
+
+    config CLOCK_WS2812_PIN
+        int "GPIO# to WS2812 DATA"
+        default 18
+        help
+            Transmit GPIO pin on ESP32 that connects to DATA on the LED circle
+
+    config CLOCK_WS2812_COUNT
+        int "Number of LEDs"
+        default 60
+        help
+            Number of WS2812 pixels on LED circle
+
+    config CLOCK_GAS_CALENDAR_URL
+        string "Google script uri"
+        default "https://script.google.com/macros/s/SCRIPTID/exec"
+        help
+            Public URL of the Google Apps script that supplies JSON of the
+            calendar events.
+
+    config CLOCK_MQTT_DATA_TOPIC
+        string "MQTT broker uri"
+        default "calclock/data"
+        help
+            MQTT topic for iBeacons received over BLE
+
+    config CLOCK_MQTT_CTRL_TOPIC
+        string "MQTT broker uri"
+        default "calclock/ctrl"
+        help
+            MQTT topic for control messages
+
+    config CLOCK_MQTT_URL
+        string "MQTT broker uri"
+        default "mqtt://user:passwd@mqtt.vonk:1883"
+        help
+            URL of the MQTT broker.  For authentication include the username
+            and password.
+
+endmenu

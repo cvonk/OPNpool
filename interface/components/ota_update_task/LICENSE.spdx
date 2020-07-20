@@ -1,0 +1,7 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CC0-1.0
+Creator: Coert Vonk
+PackageName: ESP32_ota_update_task
+PackageOriginator: Coert Vonk
+PackageHomePage: https://github.com/cvonk/ESP32_ota_update_task/
+PackageLicenseDeclared: LICENSE

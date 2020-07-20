@@ -1,0 +1,4 @@
+set(COMPONENT_SRCS "src/coredump_to_server.c")
+set(COMPONENT_ADD_INCLUDEDIRS "include")
+set(COMPONENT_REQUIRES spi_flash app_update mbedtls esp_rom soc)
+register_component()
