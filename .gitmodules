@@ -1,20 +1,9 @@
 [submodule "interface/components/coredump_to_server"]
 	path = interface/components/coredump_to_server
 	url = https://github.com/cvonk/ESP32_coredump-to-server
-	branch = master
 [submodule "interface/components/ota_update_task"]
 	path = interface/components/ota_update_task
 	url = https://github.com/cvonk/ESP32_ota-update-task.git
-	branch = master
 [submodule "interface/components/factory_reset_task"]
 	path = interface/components/factory_reset_task
 	url = https://github.com/cvonk/ESP32_factory-reset-task.git
-	branch = master
-[submodule "factory/interface/components/factory_ble_prov"]
-	path = factory/interface/components/factory_ble_prov
-	url = https://github.com/cvonk/ESP32_factory-ble-prov.git
-	branch = master
-[submodule "interface/components/wifi_connect"]
-	path = interface/components/wifi_connect
-	url = https://github.com/cvonk/ESP32_wifi-connect.git
-	branch = master
