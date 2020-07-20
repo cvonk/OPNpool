@@ -1,0 +1,15 @@
+menu "WiFi Connect"
+
+    config WIFI_CONNECT_SSID
+        string "WiFi SSID"
+        default ""
+        help
+            SSID (network name). Leave empty for BLE provisioning.
+
+    config WIFI_CONNECT_PASSWD
+        string "WiFi Password"
+        default ""
+        help
+            WiFi password (WPA or WPA2). Leave empty for BLE provisioning.
+
+endmenu

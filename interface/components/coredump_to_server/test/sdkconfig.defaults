@@ -1,0 +1,14 @@
+# to propegate changes in this file, delete `sdkconfig`
+
+# ensure there is a coredump partition
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# need 4 MByte flash for OTA updates
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+
+# coredumping
+CONFIG_ESP32_ENABLE_COREDUMP_TO_FLASH=y
+CONFIG_ESP32_COREDUMP_DATA_FORMAT_ELF=y
+CONFIG_ESP32_CORE_DUMP_STACK_SIZE=1024

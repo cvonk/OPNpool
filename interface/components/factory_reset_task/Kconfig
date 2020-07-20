@@ -1,0 +1,17 @@
+# erase sdkconfig after changing this file, so it gets rebuild
+menu "Factory Reset"
+
+    config FACTORY_RESET_PIN
+        int "GPIO# used for Factory reset"
+        default 0
+        help
+            GPIO pin on ESP32 that connects to a pull down switch.
+
+    config FACTORY_RESET_SECONDS
+        int "Factory reset key press duration"
+        default 3
+        help
+            Number of seconds that GPIO needs to be hold low before triggering
+            a factory reset (switch to factory app partition and erase WiFi credentials)
+
+endmenu
