@@ -1,8 +1,11 @@
 /**
 * @brief mqtt_client_task, interface with the MQTT broker
+ *
+ * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
+ * (c) Copyright 2020, Coert Vonk
+ * All rights reserved. Use of copyright notice does not imply publication.
+ * All text above must be included in any redistribution
  **/
-// Copyright © 2020, Coert Vonk
-// SPDX-License-Identifier: MIT
 
 #include <sdkconfig.h>
 #include <stdlib.h>
@@ -90,17 +93,16 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
 
 	switch (event->event_id) {
         case MQTT_EVENT_DISCONNECTED:
-            ESP_LOGW(TAG, "Broker disconnected");
             xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
+            ESP_LOGW(TAG, "Broker disconnected");
         	// reconnect is part of the SDK
             break;
         case MQTT_EVENT_CONNECTED:
-            ESP_LOGI(TAG, "Broker connected");
             xEventGroupSetBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
             ipc->dev.count.mqttConnect++;
             esp_mqtt_client_subscribe(event->client, _topic.ctrl, 1);
             esp_mqtt_client_subscribe(event->client, _topic.ctrlGroup, 1);
-            ESP_LOGI(TAG, " subscribed to \"%s\", \"%s\"", _topic.ctrl, _topic.ctrlGroup);
+            ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\", \"%s\"", _topic.ctrl, _topic.ctrlGroup);
             break;
         case MQTT_EVENT_DATA:
             if (event->topic && event->data_len == event->total_data_len) {  // quietly ignore chunked messaegs
@@ -180,10 +182,9 @@ _type2subtopic(toMqttMsgType_t const type)
 }
 
 void
-mqtt_task(void * ipc_void) {
-
-    ESP_LOGI(TAG, "starting ..");
-	ipc_t * ipc = ipc_void;
+mqtt_task(void * ipc_void)
+{
+ 	ipc_t * ipc = ipc_void;
 
     _topic.ctrl = malloc(strlen(CONFIG_POOL_MQTT_CTRL_TOPIC) + 1 + strlen(ipc->dev.name) + 1);
     _topic.ctrlGroup = malloc(strlen(CONFIG_POOL_MQTT_CTRL_TOPIC) + 1);

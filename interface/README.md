@@ -9,6 +9,68 @@ I used this to remind me of upcoming appointments now that school moved online.
 ![Backward facing glass clock with LED circle](media/forward_facing.jpg)
 ![Forward facing glass clock with LED circle](media/backward_facing.jpg)
 
+
+ * Sniffs the Pentair RS-485 bus to collect pool state information.  The pool state is output
+ * in JavaScript Object Notation (JSON).  The Arduino program allows sending select parameters
+ * to the pool controller.
+ *
+ * Platform: ESP32 using Espressif ESP-IDF SDK
+ * Documentation : https://coertvonk.com/sw/embedded/pentair-interface-11554
+ *
+ * Getting started
+ *   Install Microsoft Visual Studio Code
+ *     - add Microsoft C/C++ extension
+ *     - add Espressif IDF" extension, see
+ *       https://github.com/cvonk/vscode-starters/blob/master/ESP32/README.md
+ *
+ * VS Code
+ *   Checkout a local copy of 'ESP32-SDK_Pool-interface"
+ *     git clone ssh://nas/volume2/git/cvonk/ESP32-Arduino_Pool-interface.git
+ *     (Do not use a copy on the file server.  It causes problems and is slow)
+ *   Start Visual Studio Code (vscode), in directory
+ *     ESP32-SDK_Pool-interface\interface
+ *   Start compile/flash/monitor, using keyboard shortcut ctrl-e d
+ *
+ * VS Code JTAG Debugging
+ *   Find a board with a JTAG connector, either
+ *     - ESP-WROVER-KIT, the micro-USB port carries both JTAG and Serial
+ *         - make sure the jumpers are set for JTAG
+ *     - My Pool Interface board (build around Wemos LOLIN D32), the micro USB
+ *       carries Serial and the 10-pin connector carries JTAG.  Connect it
+ *       using a short (6 inch) cable to ESP-PROG that connects to your computer
+ *       using miro-USB
+ *         - see https://github.com/espressif/esp-iot-solution/blob/master/documents/evaluation_boards/ESP-Prog_guide_en.md
+ *         - set `JTAG PWR SEL` jumper for 3.3V
+ *         - we will not use the PROG interface, so the jumpers are `don't care
+ *   Connect Serial and JTAG to your computer
+ *     Use Windows device manageer to find (and opt change) the name of the COM
+ *     port and update `settings.json` accordingly.
+ *   Install the FTDI D2xx driver and use Zadig as described in "JTAG Debugging"
+ *     https://github.com/cvonk/vscode-starters/blob/master/ESP32/README.md
+ *   Debugging the OTA image is a bit tricky, because you don't know the offset in flash.
+ *   Instead we load this "interrace app" as a factory app.
+ *     1. clear the OTA apps in flash, so that they don't start instead
+ *         - open a ESP-IDF terminal ([F1] ESP-IDF: Open ESP-IDF Terminal)
+ *         - idf.py erase_otadata
+ *     2. remove https://coertvonk.com/cvonk/pool/interface.bin on the server
+ *     3. provision the board
+ *         - open "factory" folder in another vscode instance
+ *         - build, flash and monitor (ctrl-e d) the `factory` app
+ *         - use the Android app to provision the WiFi credentials
+ *     4. run the interface app on the board
+ *         - open "interface folder" in a vscode instance
+ *         - build, flash and monitor (ctrl-e d) the `interface` app
+ *         - if you haven't already, connect the JTAG interface
+ *         - in the "debug" panel, click `Launch`
+ *    Start debugging using JTAG
+ *      - Built/upload/monitor
+ *      - Debug > Launch
+ *          - note that after hitting a break point, you may still have to
+ *            select the corresponding task
+ *
+ * Board: Wemos LOLIN D32 (ESP32-WVROOM)
+ *
+
 ## Features:
 
 - Shows calendar events in different colors using an LED circle placed behind the faceplate of a clock.
