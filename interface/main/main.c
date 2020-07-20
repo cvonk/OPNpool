@@ -83,6 +83,40 @@ _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
     ESP_LOGI(TAG, "%s / %s / %u", ipc->dev.ipAddr, ipc->dev.name, ipc->dev.connectCnt.wifi);
 }
 
+static void
+_wifi_disconnect_cb(void * const priv_void, bool const auth_err)
+{
+    // should probably reprovision on repeated auth_err
+}
+
+static void
+_connect2wifi(ipc_t * const ipc)
+{
+    wifi_connect_config_t wifi_connect_config = {
+        .onConnect = _wifi_connect_cb,
+        .onDisconnect = _wifi_disconnect_cb,
+        .priv = ipc,
+    };
+    ESP_ERROR_CHECK(wifi_connect_init(&wifi_connect_config));
+
+#if defined(CONFIG_WIFI_CONNECT_SSID) && defined(CONFIG_WIFI_CONNECT_PASSWD)
+    if (strlen(CONFIG_WIFI_CONNECT_SSID)) {
+        ESP_LOGW(TAG, "Using SSID from Kconfig");
+        wifi_config_t wifi_config = {
+            .sta = {
+                .ssid = CONFIG_WIFI_CONNECT_SSID,
+                .password = CONFIG_WIFI_CONNECT_PASSWD,
+            }
+        };
+        ESP_ERROR_CHECK(wifi_connect_start(&wifi_config));
+    } else
+#endif
+    {
+        ESP_LOGW(TAG, "Using SSID from flash");
+        wifi_connect_start(NULL);
+    }
+}
+
 void
 app_main()
 {
@@ -99,13 +133,7 @@ app_main()
     ipc.dev.connectCnt.mqtt = 0;
     assert(ipc.toDisplayQ && ipc.toClientQ && ipc.toMqttQ);
 
-    wifi_connect_config_t wifi_connect_config = {
-        .onConnect = _wifi_connect_cb,
-        .priv = &ipc,
-    };
-    if (wifi_connect(&wifi_connect_config) != ESP_OK) {
-        // should switch to factory partition for provisioning
-    }
+    _connect2wifi(&ipc);
 
     // from here the tasks take over
 
