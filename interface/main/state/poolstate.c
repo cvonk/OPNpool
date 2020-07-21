@@ -7,9 +7,7 @@
  * All text above must be included in any redistribution
  **/
 
-#include <stdio.h>
 #include <string.h>
-#include <sdkconfig.h>
 #include <esp_system.h>
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>

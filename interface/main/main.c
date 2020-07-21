@@ -7,8 +7,6 @@
  * All text above must be included in any redistribution
  **/
 
-#include <stdio.h>
-#include <sdkconfig.h>
 #include <esp_system.h>
 #include <esp_log.h>
 #include <esp_wifi.h>
@@ -27,6 +25,7 @@
 #include "mqtt/mqtt_task.h"
 #include "httpd/httpd.h"
 #include "datalink/packetizer_task.h"
+#include "state/poolstate.h"
 #include "utils/board_name.h"
 #include "ipc_msgs.h"
 

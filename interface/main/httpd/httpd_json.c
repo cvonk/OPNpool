@@ -8,6 +8,7 @@
  **/
 
 #include <string.h>
+#include <esp_system.h>
 #include <esp_log.h>
 #include <esp_http_server.h>
 #include <freertos/FreeRTOS.h>
@@ -17,6 +18,8 @@
 #include "httpd.h"
 #include "httpd_json.h"
 #include "ipc_msgs.h"
+#include "../state/poolstate.h"
+#include "../state/to_json.h"
 
 static char const * const TAG = "httpd_json";
 
@@ -123,7 +126,7 @@ httpd_json(httpd_req_t * const req)
     poolstate_t state;
     poolstate_get(&state);
     uint const len = strlen(resp);
-    state_to_json(state, resp + len, sizeof(resp) - len);
+    state_to_json(&state, resp + len, sizeof(resp) - len);
 
     if (callback) _strlcat(resp, ")", sizeof(resp));
     free(callback);

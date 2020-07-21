@@ -9,7 +9,7 @@
     },
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "idf.adapterTargetName": "esp32",
-    "idf.portWin": "COM10",
+    "idf.portWin": "COM4",
     "idf.baudRate": "115200",
     "idf.espIdfPathWin": "C:/users/coert/espressif/esp-idf-master",
     "idf.toolsPathWin": "C:/users/coert/espressif/bin-master",
@@ -36,7 +36,8 @@
         "esp_system.h": "c",
         "ipc_msgs.h": "c",
         "packetizer_task.h": "c",
-        "factory_reset_task.h": "c"
+        "factory_reset_task.h": "c",
+        "esp_types.h": "c"
     },
     "clang-format.executable": "C:/Program Files/LLVM/bin/clang-format.exe",
     "workbench.tree.indent": 20,

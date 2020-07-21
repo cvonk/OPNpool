@@ -1,6 +1,6 @@
 #pragma once
-#include <sdkconfig.h>
-#include <inttypes.h>
+
+#include <esp_system.h>
 
 // struct/emum mapping
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))

@@ -1,7 +1,6 @@
 #pragma once
-//#include <inttypes.h>
-#include <stdint.h>
-#include <stdbool.h>
+
+#include <esp_system.h>
 #include "../proto/pentair.h"
 
 typedef struct {
