@@ -299,7 +299,7 @@ name_heat_src(uint8_t const value)
 	return strHex8(value);
 }
 
-uint_least8_t
+uint
 name_heat_src_nr(char const * const name)
 {
 	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(_heat_srcs); ii++) {

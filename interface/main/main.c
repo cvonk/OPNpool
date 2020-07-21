@@ -25,10 +25,10 @@
 #include <factory_reset_task.h>
 
 #include "mqtt/mqtt_task.h"
-#include "ipc_msgs.h"
 #include "httpd/httpd.h"
 #include "datalink/packetizer_task.h"
 #include "utils/board_name.h"
+#include "ipc_msgs.h"
 
 static char const * const TAG = "main";
 
@@ -159,6 +159,8 @@ app_main()
     static ipc_t ipc = {};
     ipc.toMqttQ = xQueueCreate(2, sizeof(toMqttMsg_t));
     assert(ipc.toMqttQ);
+
+    poolstate_init();
 
     _connect2wifi_and_start_httpd(&ipc);
 

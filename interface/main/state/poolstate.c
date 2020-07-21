@@ -16,6 +16,7 @@
 #include <freertos/task.h>
 #include <freertos/semphr.h>
 
+#include "../proto/pentair.h"
 #include "poolstate.h"
 
 static struct poolstate_prot_t {

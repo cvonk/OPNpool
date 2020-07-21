@@ -12,9 +12,9 @@
 #include <sdkconfig.h>
 #include <esp_system.h>
 #include <esp_log.h>
-#include "cJSON.h"
+#include <cJSON.h>
 
-#include "pentair.h"
+#include "../proto/pentair.h"
 #include "poolstate.h"
 
 #ifndef ARRAY_SIZE
@@ -22,7 +22,7 @@
 #endif
 
 size_t
-state_to_json(poolstate_t * state, char * buffer, size_t bufferLen)
+state_to_json(poolstate_t * state, char * buf, size_t buf_len)
 {
 	_resetIdx();
 
@@ -83,29 +83,30 @@ state_to_json(poolstate_t * state, char * buffer, size_t bufferLen)
         poolStateSched_t * sched = &state->sched[ii];
         if (sched->circuit) {
 
-
-
-            Utils::schedule(obj, sched->circuit, sched->start, sched->stop);
-
-            char const * const key = Utils::circuitName(circuit);
-            JsonObject & sched = json.createNestedObject(key);
-            sched["start"] = Utils::strTime(start / 60, start % 60);
-            sched["stop"] = Utils::strTime(stop / 60, stop % 60);
-
-
+            char const * const key = name_circuit(sched->circuit);
+            cJSON * const ss = cJSON_CreateObject();
+            cJSON_AddItemToOjbect(schedule, name_circuit(sched->circuit), ss);
+            cJSON_AddStringToObject(ss "start", name_time(sched->start / 60, sched->start % 60));
+            cJSON_AddStringToObject(ss "stop", name_time(sched->stop / 60, sched->stop % 60));
         }
     }
-			}
-		} {
-			JsonObject & obj = json->createNestedObject("pump");
-			obj["running"] = sys->pump.running;
-			obj["mode"] = _pumpModeStr(sys->pump.mode);
-			obj["status"] = sys->pump.status;
-			obj["pwr"] = sys->pump.pwr;
-			obj["rpm"] = sys->pump.rpm;
-			obj["err"] = sys->pump.err;
-		}
-		return Utils::jsonPrint(json, buffer, bufferLen);
-	}
-	return 0;
+
+    cJSON * const pump = cJSON_CreateObject();
+    cJSON_AddItemToOjbect(root, "pump", pump);
+    if (state->pump.running) {
+        cJSON_AddTrueToObject(pump, "running");
+    } else {
+        cJSON_AddFalseToObject(pump, "running");
+    }
+    cJSON_AddStringToObject(pump, "mode", name_pump_mode(state->pump.mode));
+    cJSON_AddNumberToObject(pump, "status", state->pump.status);
+    cJSON_AddNumberToObject(pump, "pwr", state->pump.pwr);
+    cJSON_AddNumberToObject(pump, "rpm", state->pump.rpm);
+    cJSON_AddNumberToObject(pump, "err", state->pump.err);
+
+    assert(cJSON_PrintPreallocated(root, buf, buf_len, false));
+	cJSON_Delete(root);
+
+	ESP_LOGI(TAG, "%s", buf);
+	return strlen(buf);
 }
