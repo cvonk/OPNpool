@@ -23,11 +23,12 @@
 #include <ota_update_task.h>
 #include <wifi_connect.h>
 #include <factory_reset_task.h>
-#include "board_name.h"
-#include "httpd.h"
+
 #include "mqtt_task.h"
-#include "packetizer_task.h"
 #include "ipc_msgs.h"
+#include "httpd/httpd.h"
+#include "datalink/packetizer_task.h"
+#include "utils/board_name.h"
 
 static char const * const TAG = "main";
 
