@@ -12,7 +12,6 @@
 #include <driver/gpio.h>
 
 #include "rs485.h"
-#include "ipc_msgs.h"
 
 static size_t     _rxBufSize = 127;
 static TickType_t _rxTimeout = (100 / portTICK_RATE_MS);

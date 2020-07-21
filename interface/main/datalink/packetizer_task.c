@@ -14,11 +14,11 @@
 #include <time.h>
 #include <sdkconfig.h>
 
+#include "../proto/pentair.h"
+#include "../state/poolstate.h"
 #include "rs485.h"
 #include "packetizer_task.h"
-#include "pentair.h"
-#include "../poolstate/poolstate.h"
-#include "ipc_msgs.h"
+#include "../ipc_msgs.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
@@ -382,10 +382,10 @@ packetizer_task(void * ipc_void)
 
     while (1) {
 
-        poolstate_t poolstate;
-        if (_receive_packet(rs485_handle, &poolstate)) {
+        poolstate_t state;
+        if (_receive_packet(rs485_handle, &state)) {
 
-            poolstate_set(&poolstate);
+            poolstate_set(&state);
 
             // read incoming mailbox for things to transmit
             //   and transmit them

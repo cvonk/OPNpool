@@ -120,11 +120,10 @@ httpd_json(httpd_req_t * const req)
     if (callback) _strlcpy(resp, callback, sizeof(resp));
     if (callback) _strlcat(resp, "(", sizeof(resp));
 
-#if 0
-    uint_least8_t const len = strlen(resp);
-    PoolState * const state = (PoolState *) req->user_ctx;
-    state->getStateAsJson(resp + len, sizeof(resp) - len);
-#endif
+    poolstate_t state;
+    poolstate_get(&state);
+    uint const len = strlen(resp);
+    state_to_json(state, resp + len, sizeof(resp) - len);
 
     if (callback) _strlcat(resp, ")", sizeof(resp));
     free(callback);
