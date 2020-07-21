@@ -10,14 +10,14 @@
 #include <string.h>
 #include <esp_log.h>
 
-#include "state_names.h"
+#include "names.h"
 
 // also used to display date/time, add +50
-#define K_STR_BUF_SIZE ((sizeof(mHdr_a5_t) + sizeof(mCtrlState_a5_t) + 1) * 3 + 50)
+#define NAME_BUF_SIZE ((sizeof(mHdr_a5_t) + sizeof(mCtrlState_a5_t) + 1) * 3 + 50)
 
 // reusable global string
 static struct str_t {
-	char str[K_STR_BUF_SIZE];  // 3 bytes for each hex value when displaying raw; this is str.str[]
+	char str[NAME_BUF_SIZE];  // 3 bytes for each hex value when displaying raw; this is str.str[]
 	uint_least8_t idx;
 	char const * const noMem;
 	char const * const digits;
@@ -34,7 +34,7 @@ name_resetIdx(void) {
 }
 
 char const *
-name_dateStr(uint8_t const year, uint8_t const month, uint8_t const day)
+date_str(uint8_t const year, uint8_t const month, uint8_t const day)
 {
 	uint_least8_t const nrdigits = 10; // 2015-12-31
 
@@ -56,7 +56,7 @@ name_dateStr(uint8_t const year, uint8_t const month, uint8_t const day)
 }
 
 char const *
-name_timeStr(uint8_t const hours, uint8_t const minutes)
+time_str(uint8_t const hours, uint8_t const minutes)
 {
 	uint_least8_t const nrdigits = 5;  // 00:00
 
@@ -75,11 +75,11 @@ name_timeStr(uint8_t const hours, uint8_t const minutes)
 }
 
 /**
- * convert enum to string
+ * enum to string
  */
 
 char const *
-name_mtCtrlName(MT_CTRL_a5_t const mt, bool * const found)
+name_mtCtrl(MT_CTRL_a5_t const mt, bool * const found)
 {
 	char const * s = NULL;
 	switch (mt) {
@@ -110,7 +110,7 @@ name_mtCtrlName(MT_CTRL_a5_t const mt, bool * const found)
 }
 
 char const *
-name_mtPumpName(MT_PUMP_a5_t const mt, bool const request, bool * const found)
+name_mtPump(MT_PUMP_a5_t const mt, bool const request, bool * const found)
 {
 	char const * s = NULL;
 	char const * const ff = "FF";
@@ -140,7 +140,7 @@ name_mtPumpName(MT_PUMP_a5_t const mt, bool const request, bool * const found)
 }
 
 char const *
-name_mtChlorName(MT_CHLOR_ic_t const mt, bool * const found)
+name_mtChlor(MT_CHLOR_ic_t const mt, bool * const found)
 {
 	char const * s = NULL;
 	switch (mt) {
@@ -157,8 +157,12 @@ name_mtChlorName(MT_CHLOR_ic_t const mt, bool * const found)
 	return s;
 }
 
+/**
+ * hex
+ **/
+
 char const *
-name_hex8str(uint8_t const value)
+name_hex8(uint8_t const value)
 {
 	uint_least8_t const nrdigits = sizeof(value) << 1;
 
@@ -174,7 +178,7 @@ name_hex8str(uint8_t const value)
 }
 
 char const *
-name_hex16Str(uint16_t const value)
+name_hext16(uint16_t const value)
 {
 	uint_least8_t const nrdigits = sizeof(value) << 1;
 
@@ -192,7 +196,7 @@ name_hex16Str(uint16_t const value)
 }
 
 char const *
-name_strName(char const * const name, uint_least8_t const len)
+name_name(char const * const name, uint_least8_t const len)
 {
 	if (_str.idx + len + 1U >= ARRAY_SIZE(_str.str)) {
 		return _str.noMem;  // increase size of str.str[]
@@ -207,145 +211,35 @@ name_strName(char const * const name, uint_least8_t const len)
 	return s;
 }
 
-static char const * const kCircuitNames[] = {
-	"spa", "aux1", "aux2", "aux3", "ft1", "pool", "ft1", "ft2", "ft3", "ft4"
-};
-
-char const *
-name_circuitName(uint8_t const circuit)
-{
-	if (circuit > 0 && circuit <= ARRAY_SIZE(kCircuitNames)) {
-		return kCircuitNames[circuit - 1];
-	}
-	if (circuit == 0x85) {
-		return "heatBoost";
-	}
-	return strHex8(circuit);
-}
-
-static char const * const kChlorStateNames[] = {
+static char const * const _chlor_states[] = {
 	"ok", "highSalt", "lowSalt", "veryLowSalt", "lowFlow"
 };
 
 char const *
-name_chlorStateName(uint8_t const chlorstate)
+name_chlor_state(uint8_t const chlorstate)
 {
-	if (chlorstate < ARRAY_SIZE(kChlorStateNames)) {
-		return kChlorStateNames[chlorstate];
+	if (chlorstate < ARRAY_SIZE(_chlor_states)) {
+		return _chlor_states[chlorstate];
 	}
 	return strHex8(chlorstate);
 }
 
-uint_least8_t   // 1-based
-name_circuitNr(char const * const name)
-{
-	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(kCircuitNames); ii++) {
-		if (strcmp(name, kCircuitNames[ii]) == 0) {
-			return ii + 1;
-		}
-	}
-	return 0;
-}
-
-static char const * const kHeatSrcNames[] = {
-	"none", "heater", "solarPref", "solar"
-};
-
-char const *
-name_heatSrcStr(uint8_t const value)
-{
-	if (value < ARRAY_SIZE(kHeatSrcNames)) {
-		return kHeatSrcNames[value];
-	}
-	return strHex8(value);
-}
-
-uint_least8_t
-name_heatsrcNr(char const * const name)
-{
-	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(kHeatSrcNames); ii++) {
-		if (strcmp(name, kHeatSrcNames[ii]) == 0) {
-			return ii;
-		}
-	}
-	return 0;
-}
-
-static char const * const kPumpModeNames[] = {
+static char const * const _pump_modes[] = {
 	"filter", "man", "bkwash", "3", "4", "5",
 	"ft1", "7", "8", "ep1", "ep2", "ep3", "ep4"
 };
 
 char const *
-name_pumptModeStr(uint16_t const value)
+name_pump_mode(uint16_t const value)
 {
-	if (value < ARRAY_SIZE(kPumpModeNames)) {
-		return kPumpModeNames[value];
+	if (value < ARRAY_SIZE(_pump_modes)) {
+		return _pump_modes[value];
 	}
 	return strHex8(value);
 }
 
 char const *
-name_pumpNamePrgStr(uint16_t const address)
-{
-	char const * s;
-	switch (address) {
-		case 0x2BF0: s = "?"; break;
-		case 0x02E4: s = "pgm"; break;    // program GPM
-		case 0x02C4: s = "rpm"; break;    // program RPM
-#if 0
-		case 0x0321: s = "eprg"; break;  // select ext prog, 0x0000=P0, 0x0008=P1, 0x0010=P2,
-										 //                  0x0080=P3, 0x0020=P4
-		case 0x0327: s = "eRpm0"; break; // program ext program RPM0
-		case 0x0328: s = "eRpm1"; break; // program ext program RPM1
-		case 0x0329: s = "eRpm2"; break; // program ext program RPM2
-		case 0x032A: s = "eRpm3"; break; // program ext program RPM3
-#endif
-		default: s = Utils::strHex16(address);
-	}
-	return s;
-}
-
-char const * const kHeatSrcNames[] = {
-	"none", "heater", "solarPref", "solar"
-};
-
-char const *
-_heatSrcStr(uint8_t const value)
-{
-	if (value < ARRAY_SIZE(kHeatSrcNames)) {
-		return kHeatSrcNames[value];
-	}
-	return strHex8(value);
-}
-
-uint_least8_t
-_heatSrcNr(char const * const name)
-{
-	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(kHeatSrcNames); ii++) {
-		if (strcmp(name, kHeatSrcNames[ii]) == 0) {
-			return ii;
-		}
-	}
-	return 0;
-}
-
-static char const * const kPumpModeNames[] = {
-	"filter", "man", "bkwash", "3", "4", "5",
-	"ft1", "7", "8", "ep1", "ep2", "ep3", "ep4"
-};
-
-static char const *
-_pumpModeStr(uint16_t const value)
-{
-	if (value < ARRAY_SIZE(kPumpModeNames)) {
-		return kPumpModeNames[value];
-	}
-	return strHex8(value);
-}
-
-static char const *
-_strPumpPrgName(uint16_t const address)
+name_pump_prg(uint16_t const address)
 {
 	char const * s;
 	switch (address) {
@@ -365,18 +259,53 @@ _strPumpPrgName(uint16_t const address)
 	return s;
 }
 
-char const * const kCircuitNames[] = {
+static char const * const _circuits[] = {
 	"spa", "aux1", "aux2", "aux3", "ft1", "pool", "ft1", "ft2", "ft3", "ft4"
 };
 
 char const *
-name_circuit(uint8_t const circuit)
+name_circuit(uint const circuit)
 {
-	if (circuit > 0 && circuit <= ARRAY_SIZE(kCircuitNames)) {
-		return kCircuitNames[circuit - 1];
+	if (circuit && circuit <= ARRAY_SIZE(_circuits)) {
+		return _circuits[circuit - 1];
 	}
 	if (circuit == 0x85) {
 		return "heatBoost";
 	}
 	return strHex8(circuit);
+}
+
+uint   // 1-based
+name_circuit_nr(char const * const name)
+{
+	for (uint ii = 0; ii < ARRAY_SIZE(_circuits); ii++) {
+		if (strcmp(name, _circuits[ii]) == 0) {
+			return ii + 1;
+		}
+	}
+	return 0;
+}
+
+static char const * const _heat_srcs[] = {
+	"none", "heater", "solarPref", "solar"
+};
+
+char const *
+name_heat_src(uint8_t const value)
+{
+	if (value < ARRAY_SIZE(_heat_srcs)) {
+		return _heat_srcs[value];
+	}
+	return strHex8(value);
+}
+
+uint_least8_t
+name_heat_src_nr(char const * const name)
+{
+	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(_heat_srcs); ii++) {
+		if (strcmp(name, _heat_srcs[ii]) == 0) {
+			return ii;
+		}
+	}
+	return 0;
 }
