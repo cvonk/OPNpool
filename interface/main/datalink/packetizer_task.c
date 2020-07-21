@@ -11,8 +11,8 @@
  * All text above must be included in any redistribution
  **/
 
+#include <esp_system.h>
 #include <time.h>
-#include <sdkconfig.h>
 
 #include "../proto/pentair.h"
 #include "../state/poolstate.h"
