@@ -24,7 +24,7 @@
 #include <wifi_connect.h>
 #include <factory_reset_task.h>
 
-#include "mqtt_task.h"
+#include "mqtt/mqtt_task.h"
 #include "ipc_msgs.h"
 #include "httpd/httpd.h"
 #include "datalink/packetizer_task.h"
