@@ -8,6 +8,7 @@
  **/
 
 #include <string.h>
+#include <esp_system.h>
 #include <driver/uart.h>
 #include <driver/gpio.h>
 
