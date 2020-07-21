@@ -1,6 +1,6 @@
 #pragma once
 #include <inttypes.h>
-#include <pentair.h>
+#include "../datalink/pentair.h"
 
 typedef struct {
     uint16_t active;

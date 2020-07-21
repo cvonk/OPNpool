@@ -17,7 +17,7 @@
 #include "rs485.h"
 #include "packetizer_task.h"
 #include "pentair.h"
-#include "poolstate.h"
+#include "../poolstate/poolstate.h"
 #include "ipc_msgs.h"
 
 #ifndef ARRAY_SIZE
