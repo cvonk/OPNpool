@@ -1,23 +1,16 @@
 menu "Pool Interface"
 
-    config POOL_MQTT_DATA_TOPIC
-        string "MQTT broker uri"
-        default "pool/data"
+    config OTA_UPDATE_FIRMWARE_URL
+        string "Firmware upgrade url endpoint"
+        default "http://nas.vonk:84/embedded/interface.bin"
         help
-            MQTT topic for data from the Pool Interface
+            URL of server which hosts the firmware image. (make sure it matches Kconfig in factory dir)
 
-    config POOL_MQTT_CTRL_TOPIC
-        string "MQTT broker uri"
-        default "pool/ctrl"
+    config OTA_UPDATE_RECV_TIMEOUT
+        int "OTA Update receive Timeout"
+        default 5000
         help
-            MQTT topic for control messages to the Pool Interface
-
-    config POOL_MQTT_URL
-        string "MQTT broker uri"
-        default "mqtt://mqtt:GjRqHdcZM5UnxJ38@mqtt.vonk:1883"
-        help
-            URL of the MQTT broker.  For authentication include the username
-            and password.
+            Maximum time for reception [sec]
 
     config POOL_RS485_RXPIN
         int "RS485 Rx GPIO# on ESP32"
@@ -42,6 +35,32 @@ menu "Pool Interface"
         default 100
         help
             Maximum time to wait for a byte on RS485
+
+    config POOL_MQTT_URL
+        string "MQTT broker uri"
+        default "mqtt://mqtt:GjRqHdcZM5UnxJ38@mqtt.vonk:1883"
+        help
+            URL of the MQTT broker.  For authentication include the username
+            and password.
+
+    config POOL_MQTT_URL
+        string "MQTT broker uri"
+        default "mqtt://mqtt:GjRqHdcZM5UnxJ38@mqtt.vonk:1883"
+        help
+            URL of the MQTT broker.  For authentication include the username
+            and password.
+
+    config POOL_MQTT_DATA_TOPIC
+        string "MQTT broker uri"
+        default "pool/data"
+        help
+            MQTT topic for data from the Pool Interface
+
+    config POOL_MQTT_CTRL_TOPIC
+        string "MQTT broker uri"
+        default "pool/ctrl"
+        help
+            MQTT topic for control messages to the Pool Interface
 
     config POOL_JSON_BUFSIZE
         int "JSON buffer size"
