@@ -15,17 +15,18 @@
 #include <nvs_flash.h>
 #include <sys/param.h>
 #include <esp_ota_ops.h>
+#include <esp_http_server.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/queue.h>
+
 #include <ota_update_task.h>
 #include <wifi_connect.h>
-#include <esp_http_server.h>
-
 #include <factory_reset_task.h>
 #include "board_name.h"
 #include "httpd.h"
 #include "mqtt_task.h"
+#include "packetizer_task.h"
 #include "ipc_msgs.h"
 
 static char const * const TAG = "main";
@@ -164,4 +165,5 @@ app_main()
 
     xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
     xTaskCreate(&mqtt_task, "mqtt_task", 2*4096, &ipc, 5, NULL);
+    xTaskCreate(&packetizer_task, "packetizer_task", 2*4096, &ipc, 5, NULL);
 }
