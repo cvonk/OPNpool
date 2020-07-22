@@ -1,7 +1,7 @@
 #pragma once
 
 #include <esp_system.h>
-#include "../presentation/presentation.h"
+#include "../network/network.h"
 
 typedef struct {
     uint16_t active;
@@ -73,3 +73,4 @@ void poolstate_init(void);
 void poolstate_set(poolstate_t const * const state);
 void poolstate_get(poolstate_t * const state);
 
+bool poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const state);

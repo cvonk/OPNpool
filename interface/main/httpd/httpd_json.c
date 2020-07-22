@@ -18,8 +18,8 @@
 #include "httpd.h"
 #include "httpd_json.h"
 #include "ipc_msgs.h"
-#include "../state/poolstate.h"
-#include "../state/to_json.h"
+#include "../poolstate/poolstate.h"
+#include "../poolstate/to_json.h"
 
 static char const * const TAG = "httpd_json";
 

@@ -14,9 +14,8 @@
 //#include "poolstate.h"
 //#include "utils.h"
 #include "../datalink/datalink.h"
-#include "presentation.h"
+#include "network.h"
 #include "name.h"
-#include "decode.h"
 
 //static char const * const TAG = "decode";
 
@@ -461,7 +460,7 @@ decodeChlor_chlorSetResp_ic(mChlorLvlSetResp_ic_t  const * const datalink, uint 
 #endif
 
 static void
-_decodeA5_ctrl(datalink_msg_t const * const datalink, network_msg_t * const network)
+_decodeA5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
 	bool found;
 	MT_CTRL_A5_t const mt = (MT_CTRL_A5_t) datalink->hdr.typ;
@@ -582,9 +581,9 @@ _decodeA5_ctrl(datalink_msg_t const * const datalink, network_msg_t * const netw
 };
 
 static void
-_decodeA5_pump(datalink_msg_t const * const datalink, network_msg_t * const network)
+_decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
-	bool toPump = (network_group_addr(datalink->hdr.dst) == ADDRGROUP_PUMP);
+	bool toPump = (network_group_addr(datalink->hdr.dst) == NETWORK_ADDRGROUP_PUMP);
 	MT_PUMP_A5_t const mt = (MT_PUMP_A5_t)datalink->hdr.typ;
 	bool found;
 	(void)name_mtPump(mt, toPump, &found);
@@ -644,7 +643,7 @@ _decodeA5_pump(datalink_msg_t const * const datalink, network_msg_t * const netw
 }
 
 static void
-_decodeIC_chlor(datalink_msg_t const * const datalink, network_msg_t * const network)
+_decodeIC_chlor(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
 	bool found;
 	MT_CHLOR_IC_t const mt = (MT_CHLOR_IC_t) datalink->hdr.typ;
@@ -701,30 +700,31 @@ _decodeIC_chlor(datalink_msg_t const * const datalink, network_msg_t * const net
  * @param data   Pentair packet data
  */
 
-void
-network_decode(datalink_msg_t const * const datalink, network_msg_t * network)
+bool
+network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
-	ADDRGROUP_t src = network_group_addr(datalink->hdr.src);
-	ADDRGROUP_t dst = network_group_addr(datalink->hdr.dst);
+	NETWORK_ADDRGROUP_t src = network_group_addr(datalink->hdr.src);
+	NETWORK_ADDRGROUP_t dst = network_group_addr(datalink->hdr.dst);
 
-	if (dst == ADDRGROUP_unused9) {
-		return; // stick our head in the sand
+	if (dst == NETWORK_ADDRGROUP_UNUSED9) {
+		return false; // stick our head in the sand
 	}
 
 	name_reset_idx();
 
 	switch (datalink->proto) {
-		case PROTOCOL_A5:
-			if (src == ADDRGROUP_PUMP || dst == ADDRGROUP_PUMP) {
+		case NETWORK_PROT_A5:
+			if (src == NETWORK_ADDRGROUP_PUMP || dst == NETWORK_ADDRGROUP_PUMP) {
                 _decodeA5_pump(datalink, network);
 			} else {
                 _decodeA5_ctrl(datalink, network);
 			}
 			break;
-		case PROTOCOL_IC:
-			if (dst == ADDRGROUP_ALL || dst == ADDRGROUP_CHLOR) {
+		case NETWORK_PROT_IC:
+			if (dst == NETWORK_ADDRGROUP_ALL || dst == NETWORK_ADDRGROUP_CHLOR) {
                 _decodeIC_chlor(datalink, network);
 			}
 			break;
 	}
+    return network->typ != NETWORK_MSGTYP_NONE;
 }
