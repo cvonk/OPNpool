@@ -12,6 +12,7 @@
  **/
 
 #include <esp_system.h>
+#include <esp_log.h>
 #include <time.h>
 
 #include "../proto/pentair.h"
@@ -23,6 +24,8 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
+
+static char const * const TAG = "packetizer_task";
 
 static uint8_t preamble_a5[] = { 0x00, 0xFF, 0xA5 };
 static uint8_t preamble_ic[] = { 0x10, 0x02 };
@@ -288,9 +291,9 @@ _receive_packet(rs485_handle_t const rs485, poolstate_t * poolstate)
         STATE_DONE,
     } STATE_t;
 
-	pentairMsg_t msg;
+	static pentairMsg_t msg;
 	time_t start = _millis();
-	STATE_t state = STATE_FIND_PREAMBLE;
+	static STATE_t state = STATE_FIND_PREAMBLE;
 	bool txOpportunity = false;
 
 	if (state != STATE_FIND_PREAMBLE && _millis() - start > CONFIG_POOL_RS485_TIMEOUT) {
@@ -385,6 +388,7 @@ packetizer_task(void * ipc_void)
         poolstate_t state;
         if (_receive_packet(rs485_handle, &state)) {
 
+            ESP_LOGI(TAG, "received");
             poolstate_set(&state);
 
             // read incoming mailbox for things to transmit
