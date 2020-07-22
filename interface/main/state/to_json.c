@@ -12,8 +12,8 @@
 #include <esp_log.h>
 #include <cJSON.h>
 
-#include "../proto/pentair.h"
-#include "../proto/name.h"
+#include "../presentation/presentation.h"
+#include "../presentation/name.h"
 #include "poolstate.h"
 
 #ifndef ARRAY_SIZE

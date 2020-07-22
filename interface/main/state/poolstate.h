@@ -1,7 +1,7 @@
 #pragma once
 
 #include <esp_system.h>
-#include "../proto/pentair.h"
+#include "../presentation/presentation.h"
 
 typedef struct {
     uint16_t active;
@@ -61,7 +61,6 @@ typedef struct poolstate_t {
     poolstate_pump_t     pump;
     poolstate_chlor_t    chlor;
 } poolstate_t;
-
 
 typedef struct heatState_t {
   struct {

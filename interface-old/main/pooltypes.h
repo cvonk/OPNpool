@@ -311,6 +311,10 @@ typedef struct {
 } PACK8 mPumpStatus_a5_t;
 
 typedef struct {
+    uint8_t dummy[];
+} PACK8 mPumpStatusReq_a5_t;
+
+typedef struct {
     uint8_t UNKNOWN_0;
 } PACK8 mPump0xFF_a5_t;
 
@@ -340,7 +344,7 @@ typedef struct {
 
 typedef struct {
     uint8_t pct;
-} PACK8 mChlorLvlSet_ic_t;
+} PACK8 mChlorLevelSet_ic_t;
 
 typedef struct {
     uint8_t salt;

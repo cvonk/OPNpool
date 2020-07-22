@@ -1,26 +1,10 @@
 #pragma once
-
 #include <esp_system.h>
 
 // struct/emum mapping
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
 #define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
-
-typedef enum {
-    PROTOCOL_A5 = 0,
-    PROTOCOL_IC,
-} PROTOCOL_t;
-#define PROTOCOL_COUNT (2)
-
-typedef enum {
-    ADDRGROUP_ALL = 0x00,
-    ADDRGROUP_CTRL = 0x01,
-    ADDRGROUP_REMOTE = 0x02,
-    ADDRGROUP_CHLOR = 0x05,
-    ADDRGROUP_PUMP = 0x06,
-    ADDRGROUP_COUNT = 0x10,
-} ADDRGROUP_t;
 
 /* results of sending requests:
 MT_CTRL_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
@@ -51,11 +35,9 @@ typedef enum MT_CTRL_A5_t {
     MT_CTRL_SCHED = 0x1E,
     //MT_CTRL_SCHED_SET = 0x9E, //(MT_CTRL_SCHED | MT_CTRL_SET),
     MT_CTRL_SCHED_REQ = 0xDE, //(MT_CTRL_SCHED | MT_CTRL_REQ),
-#if 0
     MT_CTRL_LAYOUT = 0x21,
-    MT_CTRL_LAYOUT_SET = (MT_CTRL_LAYOUT | MT_CTRL_SET),
-    MT_CTRL_LAYOUT_REQ = (MT_CTRL_LAYOUT | MT_CTRL_REQ),
-#endif
+    MT_CTRL_LAYOUT_SET =  0xA1, //(MT_CTRL_LAYOUT | MT_CTRL_SET),
+    MT_CTRL_LAYOUT_REQ = 0xE1, //(MT_CTRL_LAYOUT | MT_CTRL_REQ),
 } MT_CTRL_A5_t;
 
 typedef enum MT_PUMP_A5_t {
@@ -72,8 +54,8 @@ typedef enum MT_CHLOR_IC_t {
     MT_CHLOR_PING_REQ = 0x00,
     MT_CHLOR_PING = 0x01,
     MT_CHLOR_NAME = 0x03,
-    MT_CHLOR_LVLSET = 0x11,
-    MT_CHLOR_LVLSET_RESP = 0x12,
+    MT_CHLOR_LEVEL_SET = 0x11,
+    MT_CHLOR_LEVEL_RESP = 0x12,
     MT_CHLOR_0x14 = 0x14, // has dst=0x50 data=[0x00]
 } MT_CHLOR_IC_t;
 
@@ -100,14 +82,6 @@ typedef enum CIRCUITNR_t {
 /*
  * A5 messages, used to communicate with components except IntelliChlor
  */
-
-typedef struct mHdr_a5_t {
-    uint8_t pro;  // protocol version
-    uint8_t dst;  // destination
-    uint8_t src;  // source
-    uint8_t typ;  // message type
-    uint8_t len;  // # of data bytes following
-} PACK8 mHdr_a5_t;
 
 typedef struct mCtrlSetAck_a5_t {
     uint8_t typ;
@@ -146,6 +120,8 @@ typedef struct mCtrlTime_a5_t {
     uint8_t clkSpeed;        // 6
     uint8_t daylightSavings; // 7
 } PACK8 mCtrlTime_a5_t;
+
+typedef mCtrlTime_a5_t mCtrlTimeSet_a5_t;
 
 typedef struct mCtrlHeat_a5_t {
     uint8_t poolTemp;          // 0
@@ -193,6 +169,8 @@ typedef struct mCtrlLayout_a5_t {
     uint8_t circuit[4];  // 0..3 corresponding to the buttons on the remote
 } PACK8 mCtrlLayout_a5_t;
 
+typedef mCtrlLayout_a5_t mCtrlLayoutSet_a5_t;
+
 typedef struct mPumpRegulateSet_a5_t {
     uint8_t addressHi;   // 0
     uint8_t addressLo;   // 1
@@ -205,9 +183,9 @@ typedef struct mPumpRegulateSetResp_a5_t {
     uint8_t valueLo;     // 1
 } PACK8 mPumpRegulateSetResp_a5_t;
 
-typedef struct mPumpControl_a5_t {
+typedef struct mPumpCtrl_a5_t {
     uint8_t control;     // 0
-} PACK8 mPumpControl_a5_t;
+} PACK8 mPumpCtrl_a5_t;
 
 typedef struct mPumpMode_a5_t {
     uint8_t mode;        // 0
@@ -235,18 +213,9 @@ typedef struct mPumpStatus_a5_t {
     uint8_t minute;      // 14
 } PACK8 mPumpStatus_a5_t;
 
-typedef struct mPump0xFF_a5_t {
-    uint8_t UNKNOWN_0;
-} PACK8 mPump0xFF_a5_t;
-
 /*
 * IC messages, use to communicate with IntelliChlor
 */
-
-typedef struct mHdr_ic_t {
-    uint8_t dst;  // destination
-    uint8_t typ;  // message type
-} PACK8 mHdr_ic_t;
 
 typedef struct mChlorPingReq_ic_t {
     uint8_t UNKNOWN_0;
@@ -262,22 +231,94 @@ typedef struct mChlorName_ic_t {
     char name[16];
 } PACK8 mChlorName_ic_t;
 
-typedef struct mChlorLvlSet_ic_t {
+typedef struct mChlorLevelSet_ic_t {
     uint8_t pct;
-} PACK8 mChlorLvlSet_ic_t;
+} PACK8 mChlorLevelSet_ic_t;
 
-typedef struct mChlorLvlSetResp_ic_t {
+typedef struct mChlorLevelResp_ic_t {
     uint8_t salt;
     uint8_t err;  // call ; cold water
-} PACK8 mChlorLvlSetResp_ic_t;
+} PACK8 mChlorLevelResp_ic_t;
 
 typedef struct mChlor0X14_ic_t {
     uint8_t UNKNOWN_0;
 } PACK8 mChlor0X14_ic_t;
 
-typedef struct pentairMsg_t {
-	PROTOCOL_t  proto;
-	mHdr_a5_t   hdr;
-	uint8_t     data[CONFIG_POOL_MSGDATA_BUFSIZE];
-    uint16_t    chk;
-} pentairMsg_t;
+typedef enum {
+    ADDRGROUP_ALL = 0x00,
+    ADDRGROUP_CTRL = 0x01,
+    ADDRGROUP_REMOTE = 0x02,
+    ADDRGROUP_CHLOR = 0x05,
+    ADDRGROUP_PUMP = 0x06,
+    ADDRGROUP_unused9 = 0x09,
+    ADDRGROUP_COUNT,
+} ADDRGROUP_t;
+
+
+typedef enum {
+    NETWORK_MSGTYP_NONE,
+    NETWORK_MSGTYP_PUMP_REG_SET,
+    NETWORK_MSGTYP_PUMP_REG_SET_RESP,
+    NETWORK_MSGTYP_PUMP_MODE,
+    NETWORK_MSGTYP_PUMP_STATE,
+    NETWORK_MSGTYP_PUMP_STATUS_REQ,
+    NETWORK_MSGTYP_PUMP_STATUS,
+    NETWORK_MSGTYP_CTRL_SET_ACK,
+    NETWORK_MSGTYP_CTRL_CIRCUIT_SET,
+    NETWORK_MSGTYP_CTRL_SCHED_REQ,
+    NETWORK_MSGTYP_CTRL_SCHED,
+    NETWORK_MSGTYP_CTRL_STATE_REQ,
+    NETWORK_MSGTYP_CTRL_STATE,
+    NETWORK_MSGTYP_CTRL_STATE_SET,
+    NETWORK_MSGTYP_CTRL_TIME_REQ,
+    NETWORK_MSGTYP_CTRL_TIME,
+    NETWORK_MSGTYP_CTRL_TIME_SET,
+    NETWORK_MSGTYP_CTRL_HEAT_REQ,
+    NETWORK_MSGTYP_CTRL_HEAT,
+    NETWORK_MSGTYP_CTRL_HEAT_SET,
+    NETWORK_MSGTYP_CTRL_LAYOUT_REQ,
+    NETWORK_MSGTYP_CTRL_LAYOUT,
+    NETWORK_MSGTYP_CTRL_LAYOUT_SET,
+    NETWORK_MSGTYP_CHLOR_PING_REQ,
+    NETWORK_MSGTYP_CHLOR_PING,
+    NETWORK_MSGTYP_CHLOR_NAME,
+    NETWORK_MSGTYP_CHLOR_LEVEL_SET,
+    NETWORK_MSGTYP_CHLOR_LEVEL_RESP,
+} NETWORK_MSGTYP_t;
+
+typedef struct network_msg_pump_reg_set {
+    char * prg_name;
+    uint16_t value;
+} network_msg_pump_reg_set;
+
+typedef struct network_msg_t {
+    NETWORK_MSGTYP_t typ;
+    union {
+        // poolstate_t poolstate;
+        mPumpRegulateSet_a5_t * pump_reg_set;
+        mPumpRegulateSetResp_a5_t * pump_reg_set_resp;
+        mPumpCtrl_a5_t * pump_ctrl;
+        mPumpMode_a5_t * pump_mode;
+        mPumpState_a5_t * pump_state;
+        mPumpStatus_a5_t * pump_status;
+        mCtrlSetAck_a5_t * ctrl_set_ack;
+        mCtrlCircuitSet_a5_t * ctrl_circuit_set;
+        mCtrlSched_a5_t * ctrl_sched;
+        mCtrlState_a5_t * ctrl_state;
+        mCtrlTime_a5_t * ctrl_time;
+        mCtrlTimeSet_a5_t * ctrl_time_set;
+        mCtrlHeat_a5_t * ctrl_heat;
+        mCtrlHeatSet_a5_t * ctrl_heat_set;
+        mCtrlLayout_a5_t * ctrl_layout;
+        mCtrlLayoutSet_a5_t * ctrl_layout_set;
+        mChlorPingReq_ic_t * chlor_ping_req;
+        mChlorPing_ic_t * chlor_ping;
+        mChlorName_ic_t * chlor_name;
+        mChlorLevelSet_ic_t * chlor_level_set;
+        mChlorLevelResp_ic_t * chlor_level_resp;
+    } u;
+} network_msg_t;
+
+uint8_t network_ic_len(uint8_t const ic_typ);
+ADDRGROUP_t network_group_addr(uint16_t const addr);
+uint8_t network_dev_addr(uint8_t group, uint8_t const id);

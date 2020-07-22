@@ -15,17 +15,18 @@
 #include <esp_log.h>
 #include <time.h>
 
-#include "../proto/pentair.h"
-#include "../state/poolstate.h"
 #include "rs485.h"
-#include "packetizer_task.h"
+#include "datalink.h"
+#include "../presentation/presentation.h"
+#include "../presentation/decode.h"
 #include "../ipc_msgs.h"
+//#include "../state/poolstate.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-static char const * const TAG = "packetizer_task";
+static char const * const TAG = "datalink";
 
 static uint8_t preamble_a5[] = { 0x00, 0xFF, 0xA5 };
 static uint8_t preamble_ic[] = { 0x10, 0x02 };
@@ -113,7 +114,7 @@ _read_header(rs485_handle_t const rs485, PROTOCOL_t const proto, mHdr_a5_t * con
 				if (CONFIG_POOL_DBG_RAW) {
 					printf(" %02X %02X %02X %02X %02X (header)\n", hdr->pro, hdr->dst, hdr->src, hdr->typ, hdr->len);
 				}
-				if (hdr->len > CONFIG_POOL_MSGDATA_BUFSIZE) {
+				if (hdr->len > CONFIG_POOL_DATALINK_LEN) {
 					return RESULT_ERROR;  // msg length exceeds what we have planned for
 				}
 				return RESULT_DONE;
@@ -126,16 +127,10 @@ _read_header(rs485_handle_t const rs485, PROTOCOL_t const proto, mHdr_a5_t * con
 				if (CONFIG_POOL_DBG_RAW) {
 					printf(" %02X %02X (header)\n", hdr->dst, hdr->typ);
 				}
-				uint8_t len;
-				switch (hdr_ic.typ) {
-					case MT_CHLOR_PING_REQ:    len = sizeof(mChlorPingReq_ic_t); break;
-					case MT_CHLOR_PING:        len = sizeof(mChlorPing_ic_t);    break;
-					case MT_CHLOR_NAME:        len = sizeof(mChlorName_ic_t);    break;
-					case MT_CHLOR_LVLSET:      len = sizeof(mChlorLvlSet_ic_t);  break;
-					case MT_CHLOR_LVLSET_RESP: len = sizeof(mChlorPing_ic_t);    break;
-					case MT_CHLOR_0x14:        len = sizeof(mChlor0X14_ic_t);    break;
-					default: return RESULT_ERROR;
-				};
+                uint8_t len = network_ic_len(hdr_ic.typ);
+                if (!len) {
+                    return RESULT_ERROR;
+                }
                 hdr->pro = 0x00;
                 hdr->dst = hdr_ic.dst;
                 hdr->src = 0x00;
@@ -150,7 +145,7 @@ _read_header(rs485_handle_t const rs485, PROTOCOL_t const proto, mHdr_a5_t * con
 					.len = len
 				};
 #endif
-				if (hdr->len > CONFIG_POOL_MSGDATA_BUFSIZE) {
+				if (hdr->len > CONFIG_POOL_DATALINK_LEN) {
 					return RESULT_ERROR;  // msg length exceeds what we have planned for
 				}
 				return RESULT_DONE;
@@ -244,7 +239,7 @@ _calc_crc_ic(mHdr_a5_t const * const hdr, uint8_t const * const data)
 }
 
 static bool
-_verify_crc(pentairMsg_t * msg)
+_crc_is_correct(datalink_msg_t * msg)
 {
 	uint16_t calc = 0;  // init to please compiler
 	switch (msg->proto) {
@@ -263,25 +258,13 @@ uint32_t _millis() {
 	return (uint32_t) (clock() * 1000 / CLOCKS_PER_SEC);
 }
 
-ADDRGROUP_t
-_addr_group(uint const addr)
-{
-	return (ADDRGROUP_t)(addr >> 4);
-}
-
-uint8_t
-_addr(uint8_t group, uint8_t const id)
-{
-	return (group << 4) | id;
-}
-
 /**
  * Receive messages from the Pentair RS-485 bus.
  * Returns true when a complete message has been received (a transmit opportunity)
  */
 
 static bool
-_receive_packet(rs485_handle_t const rs485, poolstate_t * poolstate)
+_receive_packet(rs485_handle_t const rs485, datalink_msg_t * msg)
 {
     typedef enum STATE_t {
         STATE_FIND_PREAMBLE,
@@ -291,10 +274,8 @@ _receive_packet(rs485_handle_t const rs485, poolstate_t * poolstate)
         STATE_DONE,
     } STATE_t;
 
-	static pentairMsg_t msg;
 	time_t start = _millis();
 	static STATE_t state = STATE_FIND_PREAMBLE;
-	bool txOpportunity = false;
 
 	if (state != STATE_FIND_PREAMBLE && _millis() - start > CONFIG_POOL_RS485_TIMEOUT) {
 		printf("TIMEOUT\n");
@@ -303,16 +284,16 @@ _receive_packet(rs485_handle_t const rs485, poolstate_t * poolstate)
 	RESULT_t result = RESULT_ERROR;  // init to please compiler
 	switch (state) {
 		case STATE_FIND_PREAMBLE:
-            result = _find_preamble(rs485, &msg.proto);
+            result = _find_preamble(rs485, &msg->proto);
             break;
 		case STATE_READ_HDR:
-            result = _read_header(rs485, msg.proto, &msg.hdr);
+            result = _read_header(rs485, msg->proto, &msg->hdr);
             break;
 		case STATE_READ_DATA:
-            result = _read_data(rs485, &msg.hdr, msg.data);
+            result = _read_data(rs485, &msg->hdr, msg->data);
             break;
 		case STATE_READ_CRC:
-            result = _read_crc(rs485, msg.proto, &msg.chk);
+            result = _read_crc(rs485, msg->proto, &msg->chk);
             break;
 		case STATE_DONE:
             break;
@@ -331,14 +312,6 @@ _receive_packet(rs485_handle_t const rs485, poolstate_t * poolstate)
 					state = STATE_READ_CRC;
 					break;
 				case STATE_READ_CRC:
-
-
-					if (_verify_crc(&msg) == true) {
-						// decode message to poolstate
-					} else {
-						// Utils::jsonRaw(&msg, root, "raw");
-					}
-
 					state = STATE_DONE;
 					break;
 				case STATE_DONE:
@@ -353,16 +326,23 @@ _receive_packet(rs485_handle_t const rs485, poolstate_t * poolstate)
 	}
 
 	if (state == STATE_DONE) {
-		txOpportunity = (msg.proto == PROTOCOL_A5) &&
-			(_addr_group(msg.hdr.src) == ADDRGROUP_CTRL) &&
-			(_addr_group(msg.hdr.dst) == ADDRGROUP_ALL);
 		state = STATE_FIND_PREAMBLE;
+        // 2BD: if checksum err, print as raw hex
+        return _crc_is_correct(msg);
 	}
-	return txOpportunity;
+	return false;
+}
+
+static bool
+_good_time_to_tx(datalink_msg_t * msg)
+{
+    return (msg->proto == PROTOCOL_A5) &&
+        (network_group_addr(msg->hdr.src) == ADDRGROUP_CTRL) &&
+        (network_group_addr(msg->hdr.dst) == ADDRGROUP_ALL);
 }
 
 void
-packetizer_task(void * ipc_void)
+datalink_task(void * ipc_void)
 {
  	//ipc_t * const ipc = ipc_void;
 
@@ -383,16 +363,30 @@ packetizer_task(void * ipc_void)
     };
     rs485_handle_t rs485_handle = rs485_init(&rs485_config);
 
+    datalink_msg_t datalink_msg; // poolstate_t state;
+
     while (1) {
+        if (_receive_packet(rs485_handle, &datalink_msg)) {
 
-        poolstate_t state;
-        if (_receive_packet(rs485_handle, &state)) {
+            ESP_LOGI(TAG, "received datalink pkt");
 
-            ESP_LOGI(TAG, "received data pkt");
-            poolstate_set(&state);
+            network_msg_t network_msg;
+            network_decode(&datalink_msg, &network_msg);
+            if (network_msg.typ == NETWORK_MSGTYP_NONE) {
+                ESP_LOGW(TAG, "received network pkt w/ errs");
+                // 2BD: print as raw hex
+        	} else {
 
-            // read incoming mailbox for things to transmit
-            //   and transmit them
+                ESP_LOGI(TAG, "received network pkt");
+
+                //interpetate and update the poolstate accordingly
+                //poolstate_set(&poolstate);
+            }
+
+            if (_good_time_to_tx(&datalink_msg)) {
+                // read incoming mailbox for things to transmit
+                //   and transmit them
+            }
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }

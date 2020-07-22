@@ -11,6 +11,8 @@
 #include <esp_system.h>
 #include <esp_log.h>
 
+#include "../datalink/datalink.h"
+#include "presentation.h"
 #include "name.h"
 
 #ifndef ARRAY_SIZE
@@ -150,13 +152,10 @@ name_mtCtrl(MT_CTRL_A5_t const mt, bool * const found)
 		case MT_CTRL_HEAT_SET:    s = "heatSet";    break;
 		case MT_CTRL_HEAT_REQ:    s = "heatReq";    break;
 		case MT_CTRL_SCHED:       s = "sched";      break;
-			// case MT_CTRL_SCHED_SET:   s = "schedSet";   break;
-		case MT_CTRL_SCHED_REQ:   s = "schedReq";   break;
-#if 0
-		case MT_CTRL_layout:      s = "layout";     break;
-		case MT_CTRL_layoutSet:  s = "layoutSet";  break;
-		case MT_CTRL_layoutReq:  s = "layoutReq";  break;
-#endif
+	    case MT_CTRL_SCHED_REQ:   s = "schedReq";   break;
+		case MT_CTRL_LAYOUT:      s = "layout";     break;
+		case MT_CTRL_LAYOUT_SET:  s = "layoutSet";  break;
+		case MT_CTRL_LAYOUT_REQ:  s = "layoutReq";  break;
 	}
 	if (found) {
 		*found = (s != NULL);
@@ -202,8 +201,8 @@ name_mtChlor(MT_CHLOR_IC_t const mt, bool * const found)
 		case MT_CHLOR_PING_REQ:    s = "pingReq";    break;
 		case MT_CHLOR_PING:        s = "ping";       break;
 		case MT_CHLOR_NAME:        s = "name";       break;
-		case MT_CHLOR_LVLSET:      s = "lvlSet";     break;
-		case MT_CHLOR_LVLSET_RESP: s = "lvlSetResp"; break;
+		case MT_CHLOR_LEVEL_SET:   s = "lvlSet";     break;
+		case MT_CHLOR_LEVEL_RESP:  s = "lvlSetResp"; break;
 		case MT_CHLOR_0x14:        s = "14";         break;
 	}
 	if (found) {
