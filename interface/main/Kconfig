@@ -68,7 +68,7 @@ menu "Pool Interface"
         help
             Maximum size of the StaticJsonBuffer (>=1200)
 
-    config POOL_MSGDATA_BUFSIZE
+    config POOL_DATALINK_LEN
         int "RS485 msg data size"
         default 37
         help
