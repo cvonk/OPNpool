@@ -322,4 +322,4 @@ typedef struct network_msg_t {
 NETWORK_ADDRGROUP_t network_group_addr(uint16_t const addr);
 uint8_t network_dev_addr(uint8_t group, uint8_t const id);
 
-bool network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network);
+bool network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity);

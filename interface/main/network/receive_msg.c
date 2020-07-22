@@ -701,7 +701,7 @@ _decodeIC_chlor(datalink_pkt_t const * const datalink, network_msg_t * const net
  */
 
 bool
-network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network)
+network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity)
 {
 	NETWORK_ADDRGROUP_t src = network_group_addr(datalink->hdr.src);
 	NETWORK_ADDRGROUP_t dst = network_group_addr(datalink->hdr.dst);
@@ -726,5 +726,9 @@ network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const
 			}
 			break;
 	}
+    *txOpportunity = (datalink->proto == NETWORK_PROT_A5) &&
+                    (network_group_addr(datalink->hdr.src) == NETWORK_ADDRGROUP_CTRL) &&
+                    (network_group_addr(datalink->hdr.dst) == NETWORK_ADDRGROUP_ALL);
+
     return network->typ != NETWORK_MSGTYP_NONE;
 }

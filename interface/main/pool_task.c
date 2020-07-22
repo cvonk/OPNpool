@@ -27,14 +27,6 @@
 
 static char const * const TAG = "pool_task";
 
-static bool
-_good_time_to_tx(datalink_pkt_t * msg)
-{
-    return (msg->proto == NETWORK_PROT_A5) &&
-        (network_group_addr(msg->hdr.src) == NETWORK_ADDRGROUP_CTRL) &&
-        (network_group_addr(msg->hdr.dst) == NETWORK_ADDRGROUP_ALL);
-}
-
 void
 pool_task(void * ipc_void)
 {
@@ -59,23 +51,23 @@ pool_task(void * ipc_void)
 
     datalink_pkt_t datalink_pkt; // poolstate_t state;
     network_msg_t network_msg;
+    bool txOpportunity;
     poolstate_t poolstate;
 
     while (1) {
         if (datalink_receive_pkt(rs485_handle, &datalink_pkt)) {
             ESP_LOGI(TAG, "received datalink pkt");
 
-            if (network_receive_msg(&datalink_pkt, &network_msg)) {
+            if (network_receive_msg(&datalink_pkt, &network_msg, &txOpportunity)) {
                 ESP_LOGI(TAG, "received network msg");
 
                 if (poolstate_receive_update(&network_msg, &poolstate)) {
-
+                    // forward update to subscribers (mqtt/push notifications/..)
                 }
 
-                //interpetate and update the poolstate accordingly
             }
 
-            if (_good_time_to_tx(&datalink_pkt)) {
+            if (txOpportunity) {
                 // read incoming mailbox for things to transmit
                 //   and transmit them
             }
