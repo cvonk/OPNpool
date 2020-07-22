@@ -14,7 +14,7 @@
 #include <freertos/task.h>
 #include <freertos/semphr.h>
 
-#include "../presentation/presentation.h"
+#include "../network/network.h"
 #include "poolstate.h"
 
 static struct poolstate_prot_t {
@@ -48,6 +48,14 @@ poolstate_get(poolstate_t * const state)
         memcpy(state, _protected.state, sizeof(poolstate_t));
     }
     xSemaphoreGive( _protected.xMutex );
+}
+
+bool
+poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const state)
+{
+
+
+    return true;
 }
 
 #if 0

@@ -2,36 +2,19 @@
 #include <sdkconfig.h>
 #include <esp_system.h>
 
+#include "../rs485/rs485.h"
+#include "../network/network_hdr.h"
+
 // struct/emum mapping
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
 #define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
 
-typedef enum {
-    PROTOCOL_A5 = 0,
-    PROTOCOL_IC,
-} PROTOCOL_t;
-#define PROTOCOL_COUNT (2)
-
-typedef struct mHdr_a5_t {
-    uint8_t pro;  // protocol version
-    uint8_t dst;  // destination
-    uint8_t src;  // source
-    uint8_t typ;  // message type
-    uint8_t len;  // # of data bytes following
-} PACK8 mHdr_a5_t;
-
-typedef struct mHdr_ic_t {
-    uint8_t dst;  // destination
-    uint8_t typ;  // message type
-} PACK8 mHdr_ic_t;
-
-typedef struct datalink_msg_t {
-	PROTOCOL_t  proto;
+typedef struct datalink_pkt_t {
+	NETWORK_PROT_t  proto;
 	mHdr_a5_t   hdr;
 	uint8_t     data[CONFIG_POOL_DATALINK_LEN];
     uint16_t    chk;
-} datalink_msg_t;
+} datalink_pkt_t;
 
-void datalink_task(void * ipc_void);
-
+bool datalink_receive_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);

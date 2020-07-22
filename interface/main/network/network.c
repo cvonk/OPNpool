@@ -11,7 +11,7 @@
 #include <esp_system.h>
 #include <esp_log.h>
 
-#include "presentation.h"
+#include "network.h"
 
 uint8_t
 network_ic_len(uint8_t const ic_typ)
@@ -27,10 +27,10 @@ network_ic_len(uint8_t const ic_typ)
     };
 }
 
-ADDRGROUP_t
+NETWORK_ADDRGROUP_t
 network_group_addr(uint16_t const addr)
 {
-	return (ADDRGROUP_t)(addr >> 4);
+	return (NETWORK_ADDRGROUP_t)(addr >> 4);
 }
 
 uint8_t

@@ -14,9 +14,8 @@
 //#include "poolstate.h"
 //#include "utils.h"
 #include "../datalink/datalink.h"
-#include "presentation.h"
+#include "network.h"
 #include "name.h"
-#include "encode.h"
 
 // static char const * const TAG = "encode";
 

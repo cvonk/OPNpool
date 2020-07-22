@@ -1,3 +1,12 @@
-set(COMPONENT_SRCS main.c mqtt/mqtt_task.c utils/board_name.c httpd/httpd.c httpd/httpd_root.c httpd/httpd_json.c httpd/httpd_api.c datalink/rs485.c datalink/datalink.c state/poolstate.c presentation/presentation.c presentation/name.c presentation/decode.c presentation/encode.c state/to_json.c)
+set(COMPONENT_SRCS main.c
+                   utils/board_name.c
+                   rs485/rs485.c
+                   datalink/datalink.c
+                   network/network.c network/receive_msg.c network/transmit_msg.c network/name.c
+                   poolstate/poolstate.c poolstate/to_json.c
+                   httpd/httpd.c httpd/httpd_root.c httpd/httpd_json.c httpd/httpd_api.c
+                   pool_task.c
+                   mqtt/mqtt_task.c
+                   )
 set(COMPONENT_ADD_INCLUDEDIRS .)
 register_component()

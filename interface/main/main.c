@@ -23,10 +23,12 @@
 #include <factory_reset_task.h>
 
 #include "datalink/datalink.h"
-#include "presentation/presentation.h"
-#include "state/poolstate.h"
-#include "mqtt/mqtt_task.h"
+#include "network/network.h"
+#include "poolstate/poolstate.h"
+#include "pool_task.h"
+
 #include "httpd/httpd.h"
+#include "mqtt/mqtt_task.h"
 #include "utils/board_name.h"
 #include "ipc_msgs.h"
 
@@ -168,5 +170,5 @@ app_main()
 
     xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
     xTaskCreate(&mqtt_task, "mqtt_task", 2*4096, &ipc, 5, NULL);
-    xTaskCreate(&datalink_task, "packetizer_task", 2*4096, &ipc, 5, NULL);
+    xTaskCreate(&pool_task, "pool_task", 2*4096, &ipc, 5, NULL);
 }

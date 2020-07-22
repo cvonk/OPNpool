@@ -1,9 +1,5 @@
 /**
-* @brief packet_task, packetizes RS485 byte stream from Pentair bus
- *
- * The Pentair controller uses two different protocols to communicate with its peripherals:
- *   - 	A5 has messages such as 0x00 0xFF <ldb> <sub> <dst> <src> <cfi> <len> [<data>] <chH> <ckL>
- *   -  IC has messages such as 0x10 0x02 <data0> <data1> <data2> .. <dataN> <ch> 0x10 0x03
+* @brief datalink layer: bytes from the RS485 transceiver to/from data packets
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -15,12 +11,9 @@
 #include <esp_log.h>
 #include <time.h>
 
-#include "rs485.h"
+#include "../rs485/rs485.h"
+#include "../network/network_hdr.h"
 #include "datalink.h"
-#include "../presentation/presentation.h"
-#include "../presentation/decode.h"
-#include "../ipc_msgs.h"
-//#include "../state/poolstate.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
@@ -46,11 +39,11 @@ static struct proto_info_t {
     },
 };
 
-typedef enum RESULT_t {
-    RESULT_DONE,
-    RESULT_INCOMPLETE,
-    RESULT_ERROR,
-} RESULT_t;
+typedef enum DATALINK_RESULT_t {
+    DATALINK_RESULT_DONE,
+    DATALINK_RESULT_INCOMPLETE,
+    DATALINK_RESULT_ERROR,
+} DATALINK_RESULT_t;
 
 static void
 _preamble_reset()
@@ -76,136 +69,123 @@ _preamble_is_done(struct proto_info_t * const pi, uint8_t const b, bool * found)
 	return false;
 }
 
-static RESULT_t
-_find_preamble(rs485_handle_t const rs485, PROTOCOL_t * const proto)
+static DATALINK_RESULT_t
+_find_preamble(rs485_handle_t const rs485, NETWORK_PROT_t * const proto)
 {
+    uint len = 0;
+    uint buf_size = 40;
+    char dbg[buf_size];
+
 	while (rs485->available()) {
-		uint8_t b = rs485->read();
+		uint8_t byt = rs485->read();
 		if (CONFIG_POOL_DBG_RAW) {
-			printf(" %02X", b);
+            len += snprintf(dbg + len, buf_size - len, " %02X", byt);
 		}
 		bool found = false;  // could be the next byte of a preamble
 		for (uint pp = 0; !found && pp < ARRAY_SIZE(_proto_infos); pp++) {
-			if (_preamble_is_done(&_proto_infos[pp], b, &found)) {
-				*proto = (PROTOCOL_t)pp;
+			if (_preamble_is_done(&_proto_infos[pp], byt, &found)) {
+				*proto = (NETWORK_PROT_t)pp;
 				if (CONFIG_POOL_DBG_RAW) {
-					printf(" (preamble)\n");
+                    ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
-				return RESULT_DONE;
+				return DATALINK_RESULT_DONE;
 			}
 		}
 		if (!found) {  // or, could be the beginning of a preamble
 			_preamble_reset();
 			for (uint pp = 0; pp < ARRAY_SIZE(_proto_infos); pp++) {
-				(void)_preamble_is_done(&_proto_infos[pp], b, &found);
+				(void)_preamble_is_done(&_proto_infos[pp], byt, &found);
 			}
 		}
 	}
-	return RESULT_INCOMPLETE;
+	return DATALINK_RESULT_INCOMPLETE;
 }
 
-static RESULT_t
-_read_header(rs485_handle_t const rs485, PROTOCOL_t const proto, mHdr_a5_t * const hdr)
+static DATALINK_RESULT_t
+_read_header(rs485_handle_t const rs485, NETWORK_PROT_t const proto, mHdr_a5_t * const hdr)
 {
 	switch (proto) {
-		case PROTOCOL_A5:
+		case NETWORK_PROT_A5:
 			if (rs485->available() >= (int)sizeof(mHdr_a5_t)) {
 				rs485->read_bytes((uint8_t *)hdr, sizeof(mHdr_a5_t));
 				if (CONFIG_POOL_DBG_RAW) {
-					printf(" %02X %02X %02X %02X %02X (header)\n", hdr->pro, hdr->dst, hdr->src, hdr->typ, hdr->len);
+					ESP_LOGI(TAG, " %02X %02X %02X %02X %02X (header)", hdr->pro, hdr->dst, hdr->src, hdr->typ, hdr->len);
 				}
 				if (hdr->len > CONFIG_POOL_DATALINK_LEN) {
-					return RESULT_ERROR;  // msg length exceeds what we have planned for
+					return DATALINK_RESULT_ERROR;  // pkt length exceeds what we have planned for
 				}
-				return RESULT_DONE;
+				return DATALINK_RESULT_DONE;
 			}
 			break;
-		case PROTOCOL_IC:
+		case NETWORK_PROT_IC:
 			if (rs485->available() >= (int)sizeof(mHdr_ic_t)) {
 				mHdr_ic_t hdr_ic;
 				rs485->read_bytes((uint8_t *)&hdr_ic, sizeof(hdr_ic));
 				if (CONFIG_POOL_DBG_RAW) {
-					printf(" %02X %02X (header)\n", hdr->dst, hdr->typ);
+					ESP_LOGI(TAG, " %02X %02X (header)\n", hdr->dst, hdr->typ);
 				}
                 uint8_t len = network_ic_len(hdr_ic.typ);
-                if (!len) {
-                    return RESULT_ERROR;
+                if (!len || len > CONFIG_POOL_DATALINK_LEN) {
+                    return DATALINK_RESULT_ERROR;
                 }
+                // // so we can treat it as a A5 message when reading data or while decoding
                 hdr->pro = 0x00;
                 hdr->dst = hdr_ic.dst;
                 hdr->src = 0x00;
                 hdr->typ = hdr_ic.typ;
                 hdr->len = len;
-#if 0
-				*hdr = {  // so we can treat it as a A5 message when reading data or while decoding
-					.pro = 0x00,
-					.dst = hdr_ic.dst,
-					.src = 0x00,
-					.typ = hdr_ic.typ,
-					.len = len
-				};
-#endif
-				if (hdr->len > CONFIG_POOL_DATALINK_LEN) {
-					return RESULT_ERROR;  // msg length exceeds what we have planned for
-				}
-				return RESULT_DONE;
+				return DATALINK_RESULT_DONE;
 			}
 	}
-	return RESULT_INCOMPLETE;
+	return DATALINK_RESULT_INCOMPLETE;
 }
 
-static RESULT_t
+static DATALINK_RESULT_t
 _read_data(rs485_handle_t const rs485, mHdr_a5_t const * const hdr, uint8_t * const data)
 {
+    uint len = 0;
+    uint buf_size = 80;
+    char buf[buf_size];
+
 	if (rs485->available() >= (int)sizeof(hdr->len)) {
 		rs485->read_bytes((uint8_t *)data, hdr->len);
 		if (CONFIG_POOL_DBG_RAW) {
 			for (uint ii = 0; ii < hdr->len; ii++) {
-				printf(" %02X", data[ii]);
+                len += snprintf(buf + len, buf_size - len, " %02X", data[ii]);
 			}
-			printf(" (data)\n");
+            ESP_LOGI(TAG, "%s (data)", buf);
 		}
-		return RESULT_DONE;
+		return DATALINK_RESULT_DONE;
 	}
-	return RESULT_INCOMPLETE;
+	return DATALINK_RESULT_INCOMPLETE;
 }
 
-static RESULT_t
-_read_crc(rs485_handle_t const rs485, PROTOCOL_t const proto, uint16_t * chk)
+static DATALINK_RESULT_t
+_read_crc(rs485_handle_t const rs485, NETWORK_PROT_t const proto, uint16_t * chk)
 {
 	switch (proto) {
-		case PROTOCOL_A5:
+		case NETWORK_PROT_A5:
 			if (rs485->available() >= (int)sizeof(uint16_t)) {
 				*chk = rs485->read() << 8 | rs485->read();
 				if (CONFIG_POOL_DBG_RAW) {
-					printf(" %03X (checksum)\n", *chk);
+					ESP_LOGI(TAG, " %03X (checksum)\n", *chk);
 				}
-				return RESULT_DONE;
+				return DATALINK_RESULT_DONE;
 			}
 			break;
 
-		case PROTOCOL_IC:
+		case NETWORK_PROT_IC:
 			if (rs485->available() >= (int)sizeof(uint8_t)) {
-				*chk = rs485->read();  // store it as uint16_t, so we can treat it as A5 msg
+				*chk = rs485->read();  // store it as uint16_t, so we can treat it as A5 pkt
 				if (CONFIG_POOL_DBG_RAW) {
-					printf(" %02X (checksum)\n", *chk);
+					ESP_LOGI(TAG, " %02X (checksum)\n", *chk);
 				}
-				return RESULT_DONE;
+				return DATALINK_RESULT_DONE;
 			}
 			break;
 	}
-	return RESULT_INCOMPLETE;
+	return DATALINK_RESULT_INCOMPLETE;
 }
-
-#if 0
-static void
-_checksumToJson(JsonObject * root, char const * const key, uint16_t const rx, uint16_t const calc)
-{
-	JsonObject & obj = root->createNestedObject(key);
-	obj["rx"] = Utils::strHex16(rx);
-	obj["ca"] = Utils::strHex16(calc);
-}
-#endif
 
 static uint16_t
 _calc_crc_a5(mHdr_a5_t const * const hdr, uint8_t const * const data)
@@ -239,19 +219,19 @@ _calc_crc_ic(mHdr_a5_t const * const hdr, uint8_t const * const data)
 }
 
 static bool
-_crc_is_correct(datalink_msg_t * msg)
+_crc_is_correct(datalink_pkt_t * pkt)
 {
 	uint16_t calc = 0;  // init to please compiler
-	switch (msg->proto) {
-		case PROTOCOL_A5:
-			calc = _calc_crc_a5(&msg->hdr, msg->data);
+	switch (pkt->proto) {
+		case NETWORK_PROT_A5:
+			calc = _calc_crc_a5(&pkt->hdr, pkt->data);
 			break;
-		case PROTOCOL_IC:
-			calc = _calc_crc_ic(&msg->hdr, msg->data);
+		case NETWORK_PROT_IC:
+			calc = _calc_crc_ic(&pkt->hdr, pkt->data);
 			break;
 	}
 
-	return calc == msg->chk;
+	return calc == pkt->chk;
 }
 
 uint32_t _millis() {
@@ -259,12 +239,12 @@ uint32_t _millis() {
 }
 
 /**
- * Receive messages from the Pentair RS-485 bus.
- * Returns true when a complete message has been received (a transmit opportunity)
+ * Receive packets from the Pentair RS-485 bus.
+ * Returns true when a complete packet has been received
  */
 
-static bool
-_receive_packet(rs485_handle_t const rs485, datalink_msg_t * msg)
+bool
+datalink_receive_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
     typedef enum STATE_t {
         STATE_FIND_PREAMBLE,
@@ -278,28 +258,28 @@ _receive_packet(rs485_handle_t const rs485, datalink_msg_t * msg)
 	static STATE_t state = STATE_FIND_PREAMBLE;
 
 	if (state != STATE_FIND_PREAMBLE && _millis() - start > CONFIG_POOL_RS485_TIMEOUT) {
-		printf("TIMEOUT\n");
+		ESP_LOGW(TAG, "timeout\n");
 		state = STATE_FIND_PREAMBLE;
 	}
-	RESULT_t result = RESULT_ERROR;  // init to please compiler
+	DATALINK_RESULT_t result = DATALINK_RESULT_ERROR;  // init to please compiler
 	switch (state) {
 		case STATE_FIND_PREAMBLE:
-            result = _find_preamble(rs485, &msg->proto);
+            result = _find_preamble(rs485, &pkt->proto);
             break;
 		case STATE_READ_HDR:
-            result = _read_header(rs485, msg->proto, &msg->hdr);
+            result = _read_header(rs485, pkt->proto, &pkt->hdr);
             break;
 		case STATE_READ_DATA:
-            result = _read_data(rs485, &msg->hdr, msg->data);
+            result = _read_data(rs485, &pkt->hdr, pkt->data);
             break;
 		case STATE_READ_CRC:
-            result = _read_crc(rs485, msg->proto, &msg->chk);
+            result = _read_crc(rs485, pkt->proto, &pkt->chk);
             break;
 		case STATE_DONE:
             break;
 	}
 	switch (result) {
-		case RESULT_DONE:
+		case DATALINK_RESULT_DONE:
 			switch (state) {
 				case STATE_FIND_PREAMBLE:
 					start = _millis();
@@ -315,79 +295,19 @@ _receive_packet(rs485_handle_t const rs485, datalink_msg_t * msg)
 					state = STATE_DONE;
 					break;
 				case STATE_DONE:
-					break;  // dummy
+					break;
 			}
 			break;
-		case RESULT_INCOMPLETE:
+		case DATALINK_RESULT_INCOMPLETE:
 			break;
-		case RESULT_ERROR:
+		case DATALINK_RESULT_ERROR:
 			state = STATE_FIND_PREAMBLE;
 			break;
 	}
 
 	if (state == STATE_DONE) {
 		state = STATE_FIND_PREAMBLE;
-        // 2BD: if checksum err, print as raw hex
-        return _crc_is_correct(msg);
+        return _crc_is_correct(pkt);
 	}
 	return false;
-}
-
-static bool
-_good_time_to_tx(datalink_msg_t * msg)
-{
-    return (msg->proto == PROTOCOL_A5) &&
-        (network_group_addr(msg->hdr.src) == ADDRGROUP_CTRL) &&
-        (network_group_addr(msg->hdr.dst) == ADDRGROUP_ALL);
-}
-
-void
-datalink_task(void * ipc_void)
-{
- 	//ipc_t * const ipc = ipc_void;
-
-    rs485_config_t rs485_config = {
-        .rx_pin = CONFIG_POOL_RS485_RXPIN,
-        .tx_pin = CONFIG_POOL_RS485_TXPIN,
-        .rts_pin = CONFIG_POOL_RS485_RTSPIN,
-        .uart_port = 2,
-        .uart_config = {
-            .baud_rate = 9600,
-            .data_bits = UART_DATA_8_BITS,
-            .parity = UART_PARITY_DISABLE,
-            .stop_bits = UART_STOP_BITS_1,
-            .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-            .rx_flow_ctrl_thresh = 122,
-            .use_ref_tick = false,
-        }
-    };
-    rs485_handle_t rs485_handle = rs485_init(&rs485_config);
-
-    datalink_msg_t datalink_msg; // poolstate_t state;
-
-    while (1) {
-        if (_receive_packet(rs485_handle, &datalink_msg)) {
-
-            ESP_LOGI(TAG, "received datalink pkt");
-
-            network_msg_t network_msg;
-            network_decode(&datalink_msg, &network_msg);
-            if (network_msg.typ == NETWORK_MSGTYP_NONE) {
-                ESP_LOGW(TAG, "received network pkt w/ errs");
-                // 2BD: print as raw hex
-        	} else {
-
-                ESP_LOGI(TAG, "received network pkt");
-
-                //interpetate and update the poolstate accordingly
-                //poolstate_set(&poolstate);
-            }
-
-            if (_good_time_to_tx(&datalink_msg)) {
-                // read incoming mailbox for things to transmit
-                //   and transmit them
-            }
-        }
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
 }

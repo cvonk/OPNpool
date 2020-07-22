@@ -1,6 +1,8 @@
 #pragma once
 #include <esp_system.h>
 
+#include "../datalink/datalink.h"
+
 // struct/emum mapping
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
@@ -245,15 +247,13 @@ typedef struct mChlor0X14_ic_t {
 } PACK8 mChlor0X14_ic_t;
 
 typedef enum {
-    ADDRGROUP_ALL = 0x00,
-    ADDRGROUP_CTRL = 0x01,
-    ADDRGROUP_REMOTE = 0x02,
-    ADDRGROUP_CHLOR = 0x05,
-    ADDRGROUP_PUMP = 0x06,
-    ADDRGROUP_unused9 = 0x09,
-    ADDRGROUP_COUNT,
-} ADDRGROUP_t;
-
+    NETWORK_ADDRGROUP_ALL = 0x00,
+    NETWORK_ADDRGROUP_CTRL = 0x01,
+    NETWORK_ADDRGROUP_REMOTE = 0x02,
+    NETWORK_ADDRGROUP_CHLOR = 0x05,
+    NETWORK_ADDRGROUP_PUMP = 0x06,
+    NETWORK_ADDRGROUP_UNUSED9 = 0x09,
+} NETWORK_ADDRGROUP_t;
 
 typedef enum {
     NETWORK_MSGTYP_NONE,
@@ -319,6 +319,7 @@ typedef struct network_msg_t {
     } u;
 } network_msg_t;
 
-uint8_t network_ic_len(uint8_t const ic_typ);
-ADDRGROUP_t network_group_addr(uint16_t const addr);
+NETWORK_ADDRGROUP_t network_group_addr(uint16_t const addr);
 uint8_t network_dev_addr(uint8_t group, uint8_t const id);
+
+bool network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network);
