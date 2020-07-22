@@ -388,7 +388,7 @@ packetizer_task(void * ipc_void)
         poolstate_t state;
         if (_receive_packet(rs485_handle, &state)) {
 
-            ESP_LOGI(TAG, "received");
+            ESP_LOGI(TAG, "received data pkt");
             poolstate_set(&state);
 
             // read incoming mailbox for things to transmit
