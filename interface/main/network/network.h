@@ -62,8 +62,8 @@ typedef struct mCtrlState_a5_t {
     uint8_t spaTemp;            // 15
     uint8_t major;              // 16
     uint8_t minor;              // 17
-    uint8_t airtemp;            // 18
-    uint8_t solartemp;          // 19
+    uint8_t airTemp;            // 18
+    uint8_t solarTemp;          // 19
     uint8_t UNKNOWN_20;         // 20
     uint8_t UNKNOWN_21;         // 21
     uint8_t heatSrc;            // 22
