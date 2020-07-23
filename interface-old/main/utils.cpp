@@ -130,7 +130,7 @@ Utils::mtPumpName(MT_PUMP_a5_t const mt, bool const request, bool * const found)
 			case MT_PUMP_regulate: s = "setReguReq";  break;
 			case MT_PUMP_control:  s = "setCtrlReq";  break;
 			case MT_PUMP_mode:     s = "setModeReq";  break;
-			case MT_PUMP_state:    s = "setStateReq"; break;
+			case MT_PUMP_RUNNING:    s = "setStateReq"; break;
 			case MT_PUMP_status:   s = "statusReq";   break;
 			case MT_PUMP_0xFF:     s = ff;            break;
 		}
@@ -140,7 +140,7 @@ Utils::mtPumpName(MT_PUMP_a5_t const mt, bool const request, bool * const found)
 			case MT_PUMP_regulate: s = "setReguResp";  break;
 			case MT_PUMP_control:  s = "setCtrlResp";  break;
 			case MT_PUMP_mode:     s = "setModeResp";  break;
-			case MT_PUMP_state:    s = "setStateResp"; break;
+			case MT_PUMP_RUNNING:    s = "setStateResp"; break;
 			case MT_PUMP_status:   s = "status";       break;
 			case MT_PUMP_0xFF:     s = ff;             break;
 		}
@@ -207,7 +207,7 @@ char const * const kCircuitNames[] = {
 	"spa", "aux1", "aux2", "aux3", "ft1", "pool", "ft1", "ft2", "ft3", "ft4"
 };
 
-char const * 
+char const *
 Utils::circuitName(uint8_t const circuit)
 {
 	if (circuit > 0 && circuit <= ARRAY_SIZE(kCircuitNames)) {
@@ -223,7 +223,7 @@ char const * const kChlorStateNames[] = {
 	"ok", "highSalt", "lowSalt", "veryLowSalt", "lowFlow"
 };
 
-char const * 
+char const *
 Utils::chlorStateName(uint8_t const chlorstate)
 {
 	if (chlorstate < ARRAY_SIZE(kChlorStateNames)) {
@@ -247,7 +247,7 @@ char const * const kHeatSrcNames[] = {
 	"none", "heater", "solarPref", "solar"
 };
 
-char const * 
+char const *
 Utils::strHeatSrc(uint8_t const value)
 {
 	if (value < ARRAY_SIZE(kHeatSrcNames)) {
@@ -256,7 +256,7 @@ Utils::strHeatSrc(uint8_t const value)
 	return strHex8(value);
 }
 
-uint_least8_t 
+uint_least8_t
 Utils::heatSrcNr(char const * const name)
 {
 	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(kHeatSrcNames); ii++) {
@@ -272,7 +272,7 @@ char const * const kPumpModeNames[] = {
 	"ft1", "7", "8", "ep1", "ep2", "ep3", "ep4"
 };
 
-char const * 
+char const *
 Utils::strPumpMode(uint16_t const value)
 {
 	if (value < ARRAY_SIZE(kPumpModeNames)) {
@@ -281,7 +281,7 @@ Utils::strPumpMode(uint16_t const value)
 	return strHex8(value);
 }
 
-char const * 
+char const *
 Utils::strPumpPrgName(uint16_t const address)
 {
 	char const * s;
@@ -312,7 +312,7 @@ Utils::addrGroup(uint_least8_t const addr)
 	return (addrGroup_t)(addr >> 4);
 }
 
-uint8_t 
+uint8_t
 Utils::addr(uint8_t group, uint8_t const id)
 {
 	return (group << 4) | id;

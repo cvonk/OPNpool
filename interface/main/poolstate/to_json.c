@@ -23,46 +23,57 @@
 static char const * const TAG = "poolstate";
 
 void
-cPool_AddSystemToObject(cJSON * const obj, char const * const key, uint8_t const hour, uint8_t const minute, float const fw)
+cPool_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value)
 {
-    cJSON * const item = cJSON_CreateObject();
-    cJSON_AddItemToObject(obj, key, item);
-    cJSON_AddStringToObject(item, "time", name_time(hour, minute));
-    cJSON_AddNumberToObject(item, "fw", fw);
+    cJSON_AddNumberToObject(obj, key, value);
 }
 
 void
-cPool_AddThermostatToObject(cJSON * const obj, char const * const key, uint8_t const temp, char const * const heat_src_str, uint8_t const heating)
+cPool_AddPumpCtrlToObject(cJSON * const obj, char const * const key, uint8_t const ctrl)
+{
+    char const * str;
+    switch (ctrl) {
+        case 0x00: str = "local"; break;
+        case 0xFF: str = "remote"; break;
+        default: str = name_hex8(ctrl);
+    }
+    cJSON_AddStringToObject(obj, key, str);
+}
+
+void
+cPool_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_t const mode)
+{
+    cJSON_AddStringToObject(obj, key, name_pump_mode(mode));
+}
+
+void
+cPool_AddFirmwareToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version)
+{
+    float const fw = version->major + (float)version->minor / 100;
+    cJSON_AddNumberToObject(obj, key, fw);
+}
+
+void
+cPool_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * const thermostat)
 {
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
-    cJSON_AddNumberToObject(item, "temp", temp);
-    if (heat_src_str) {
-        cJSON_AddStringToObject(item, "src", heat_src_str);
-        if (heating) {
-            cJSON_AddTrueToObject(item, "heating");
-        } else {
-            cJSON_AddFalseToObject(item, "heating");
-        }
+    cJSON_AddNumberToObject(item, "temp", thermostat->temp);
+    cJSON_AddStringToObject(item, "src", name_heat_src(thermostat->heat_src));
+    if (thermostat->heating) {
+        cJSON_AddTrueToObject(item, "heating");
+    } else {
+        cJSON_AddFalseToObject(item, "heating");
     }
 }
 
 void
-cPool_AddPumpRunningToObject(cJSON * const obj, char const * const key, uint8_t const pump_state)
+cPool_AddTempToObject(cJSON * const obj, char const * const key, uint8_t const temp)
 {
-    bool const running = pump_state == 0x0A;
-    bool const not_running = pump_state == 0x04;
-
-    cJSON * const item = cJSON_CreateObject();
-    cJSON_AddItemToObject(obj, key, item);
-    if (running) {
-        cJSON_AddTrueToObject(item, key);
-    }
-    if (not_running) {
-        cJSON_AddFalseToObject(item, key);
+    if (temp != 0xFF) {
+        cJSON_AddNumberToObject(obj, key, temp);
     }
 }
-
 
 void
 cPool_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, uint16_t const active)
@@ -80,93 +91,89 @@ cPool_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, uint1
     cJSON_AddItemToObject(obj, key, item);
 }
 
+void
+cPool_AddSchedToObject(cJSON * const obj, char const * const key, uint16_t const start, uint16_t const stop)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cJSON_AddStringToObject(item, "start", name_time(start / 60, start % 60));
+    cJSON_AddStringToObject(item, "stop", name_time(stop / 60, stop % 60));
+}
+
+void
+cPool_AddPumpRunningToObject(cJSON * const obj, char const * const key, bool const pump_state_running)
+{
+    if (pump_state_running) {
+        cJSON_AddTrueToObject(obj, key);
+    } else {
+        cJSON_AddFalseToObject(obj, key);
+    }
+}
+
+void
+cPool_AddDateToObject(cJSON * const obj, char const * const key, poolstate_date_t const * const date)
+{
+    cJSON_AddStringToObject(obj, key, name_date(date->year, date->month, date->day));
+}
+
+void
+cPool_AddTimeToObject(cJSON * const obj, char const * const key, poolstate_time_t const * const time)
+{
+    cJSON_AddStringToObject(obj, key, name_time(time->hour, time->minute));
+}
+
+void
+cPool_AddPumpStatusToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cPool_AddPumpRunningToObject(item, "running", state->pump.running);
+    cPool_AddPumpModeToObject(item, "mode", state->pump.mode);
+    cJSON_AddNumberToObject(item, "status", state->pump.status);
+    cJSON_AddNumberToObject(item, "pwr", state->pump.pwr);
+    cJSON_AddNumberToObject(item, "rpm", state->pump.rpm);
+    if (state->pump.gpm) {
+        cJSON_AddNumberToObject(item, "gpm", state->pump.gpm);
+    }
+    if (state->pump.pct) {
+        cJSON_AddNumberToObject(item, "pct", state->pump.pct);
+    }
+    cJSON_AddNumberToObject(item, "err", state->pump.mode);
+    cJSON_AddNumberToObject(item, "timer", state->pump.mode);
+    cPool_AddTimeToObject(item, "time", &state->pump.time);
+}
+
+void
+cPool_AddTodToObject(cJSON * const obj, char const * const key, poolstate_tod_t const * const state_tod)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cPool_AddTimeToObject(item, "time", &state_tod->time);
+    cPool_AddDateToObject(item, "date", &state_tod->date);
+}
+
+void
+cPool_AddStateToObject(cJSON * const obj, poolstate_t const * const state)
+{
+    cPool_AddTimeToObject(obj, "time", &state->tod.time);
+    cPool_AddFirmwareToObject(obj, "firmware", &state->version);
+    cPool_AddActiveCircuitsToObject(obj, "active", state->circuits.active);
+    cPool_AddThermostatToObject(obj, "pool", &state->pool);
+    cPool_AddThermostatToObject(obj, "spa", &state->spa);
+    cPool_AddTempToObject(obj, "air", state->air.temp);
+    cPool_AddTempToObject(obj, "solar", state->solar.temp);
+}
+
 size_t
 state_to_json(poolstate_t * state, char * buf, size_t buf_len)
 {
 	name_reset_idx();
 
-    cJSON * const root = cJSON_CreateObject();
+    cJSON * const obj = cJSON_CreateObject();
+    cPool_AddStateToObject(obj, state);
 
-    cJSON * const tod = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "tod", tod);
-    cJSON_AddStringToObject(tod, "time", name_time(state->time.hour, state->time.minute));
-	cJSON_AddStringToObject(tod, "date", name_date(state->date.year, state->date.month, state->date.day));
-
-    cJSON * const pool = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "pool", pool);
-    cJSON_AddNumberToObject(pool, "temp", state->pool.temp);
-    cJSON_AddNumberToObject(pool, "sp", state->pool.setPoint);
-    cJSON_AddStringToObject(pool, "src", name_heat_src(state->pool.heatSrc));
-    if (state->pool.heating) {
-        cJSON_AddTrueToObject(pool, "heating");
-    } else {
-        cJSON_AddFalseToObject(pool, "heating");
-    }
-
-    cJSON * const spa = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "spa", spa);
-    cJSON_AddNumberToObject(spa, "temp", state->spa.temp);
-    cJSON_AddNumberToObject(spa, "sp", state->spa.setPoint);
-    cJSON_AddStringToObject(spa, "src", name_heat_src(state->spa.heatSrc));
-    if (state->spa.heating) {
-        cJSON_AddTrueToObject(spa, "heating");
-    } else {
-        cJSON_AddFalseToObject(spa, "heating");
-    }
-
-    cJSON * const air = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "air", air);
-    cJSON_AddNumberToObject(air, "temp", state->air.temp);
-
-    cPool_AddActiveCircuitsToObject(root, "active", state->circuits.active);
-
-
-    uint active_len = 0;
-    char const * active_names[16];
-    uint16_t mask = 0x00001;
-    for (uint ii = 0; mask; ii++) {
-        if (state->circuits.active & mask) {
-            active_names[active_len++] = name_circuit(ii + 1);
-        }
-        mask <<= 1;
-    }
-    cJSON * const active = cJSON_CreateStringArray(active_names, active_len);
-	cJSON_AddItemToObject(root, "active", active);
-
-    cJSON * const chlor = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "chlor", chlor);
-    cJSON_AddNumberToObject(chlor, "salt", state->chlor.salt);
-    cJSON_AddNumberToObject(chlor, "pct", state->chlor.pct);
-    cJSON_AddStringToObject(chlor, "status", name_chlor_state(state->chlor.state));
-
-    cJSON * const schedule = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "schedule", schedule);
-    for (uint ii = 0; ii < ARRAY_SIZE(state->sched); ii++) {
-        poolstate_sched_t * sched = &state->sched[ii];
-        if (sched->circuit) {
-
-            cJSON * const ss = cJSON_CreateObject();
-            cJSON_AddItemToObject(schedule, name_circuit(sched->circuit), ss);
-            cJSON_AddStringToObject(ss, "start", name_time(sched->start / 60, sched->start % 60));
-            cJSON_AddStringToObject(ss, "stop", name_time(sched->stop / 60, sched->stop % 60));
-        }
-    }
-
-    cJSON * const pump = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "pump", pump);
-    if (state->pump.running) {
-        cJSON_AddTrueToObject(pump, "running");
-    } else {
-        cJSON_AddFalseToObject(pump, "running");
-    }
-    cJSON_AddStringToObject(pump, "mode", name_pump_mode(state->pump.mode));
-    cJSON_AddNumberToObject(pump, "status", state->pump.status);
-    cJSON_AddNumberToObject(pump, "pwr", state->pump.pwr);
-    cJSON_AddNumberToObject(pump, "rpm", state->pump.rpm);
-    cJSON_AddNumberToObject(pump, "err", state->pump.err);
-
-    assert(cJSON_PrintPreallocated(root, buf, buf_len, false));
-	cJSON_Delete(root);
+    assert( cJSON_PrintPreallocated(obj, buf, buf_len, false) );
+	cJSON_Delete(obj);
 
 	ESP_LOGI(TAG, "%s", buf);
 	return strlen(buf);

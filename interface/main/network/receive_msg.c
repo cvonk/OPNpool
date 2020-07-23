@@ -303,7 +303,7 @@ decodePump_mode_a5(mPumpMode_a5_t const * const datalink, uint datalink_len,
 }
 
 inline bool
-decodePump_state_a5(mPumpState_a5_t const * const datalink, uint datalink_len,
+decodePUMP_RUNNING_a5(mPumpRunning_a5_t const * const datalink, uint datalink_len,
 	                network_msg_t * network)
 {
 	if (datalink_len == sizeof(*datalink) && (datalink->state == 0x04 || datalink->state == 0x0A)) {
@@ -603,9 +603,9 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
             }
             break;
         case DATALINK_A5_PUMP_MSGTYP_STATE:
-            if (datalink->hdr.len == sizeof(mPumpState_a5_t)) {
-                network->typ = NETWORK_MSGTYP_PUMP_STATE;
-                network->u.pump_state = (mPumpState_a5_t *) datalink->data;
+            if (datalink->hdr.len == sizeof(mPumpRunning_a5_t)) {
+                network->typ = NETWORK_MSGTYP_PUMP_RUNNING;
+                network->u.pump_running = (mPumpRunning_a5_t *) datalink->data;
             }
             break;
         case DATALINK_A5_PUMP_MSGTYP_STATUS:

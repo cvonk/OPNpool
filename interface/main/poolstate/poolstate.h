@@ -10,14 +10,14 @@ typedef struct {
 
 typedef struct {
     uint8_t temp;
-    uint8_t setPoint;
-    uint8_t heatSrc;
+    uint8_t set_point;
+    uint8_t heat_src;
     bool heating;
-} poolstate_heat_t;
+} poolstate_thermostat_t;
 
 typedef struct {
     uint8_t temp;
-} poolstate_air_t;
+} poolstate_temp_t;
 
 typedef struct {
     uint8_t hour;
@@ -41,8 +41,12 @@ typedef struct {
     uint8_t  mode;
     uint8_t  status;
     uint16_t pwr;
+    uint16_t gpm;
     uint16_t rpm;
+    uint16_t pct;
     uint8_t  err;
+    uint8_t  timer;
+    poolstate_time_t time;
 } poolstate_pump_t;
 
 typedef struct {
@@ -51,23 +55,26 @@ typedef struct {
     CHLORSTATE_t state;
 } poolstate_chlor_t;
 
-typedef struct poolstate_t {
-    poolstate_time_t     time;
-    poolstate_date_t     date;
-    poolstate_heat_t     pool, spa;
-    poolstate_air_t      air;
-    poolstate_circuits_t circuits;
-    poolstate_sched_t    sched[2];
-    poolstate_pump_t     pump;
-    poolstate_chlor_t    chlor;
-} poolstate_t;
+typedef struct poolstate_version_t {
+    uint8_t major;
+    uint8_t minor;
+} poolstate_version_t;
 
-typedef struct heatState_t {
-  struct {
-    uint8_t setPoint;
-    uint8_t heatSrc;
-  } pool, spa;
-} heatState_t;
+typedef struct poolstate_tod_t {
+    poolstate_date_t  date;
+    poolstate_time_t  time;
+}poolstate_tod_t;
+
+typedef struct poolstate_t {
+    poolstate_tod_t        tod;
+    poolstate_version_t    version;
+    poolstate_thermostat_t pool, spa;
+    poolstate_temp_t       air, solar;
+    poolstate_circuits_t   circuits;
+    poolstate_sched_t      scheds[2];
+    poolstate_pump_t       pump;
+    poolstate_chlor_t      chlor;
+} poolstate_t;
 
 void poolstate_init(void);
 void poolstate_set(poolstate_t const * const state);
