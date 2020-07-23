@@ -576,8 +576,8 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
     network->typ = NETWORK_MSGTYP_NONE;
 	bool toPump = (network_group_addr(datalink->hdr.dst) == NETWORK_ADDRGROUP_PUMP);
 
-    switch ((MT_PUMP_A5_t)datalink->hdr.typ) {
-        case MT_PUMP_REGULATE:
+    switch ((DATALINK_A5_PUMP_MSGTYP_t)datalink->hdr.typ) {
+        case DATALINK_A5_PUMP_MSGTYP_REGULATE:
             if (toPump) {
                 if (datalink->hdr.len == sizeof(mPumpRegulateSet_a5_t)) {
                     network->typ = NETWORK_MSGTYP_PUMP_REG_SET;
@@ -590,25 +590,25 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
                 }
             }
             break;
-        case MT_PUMP_CTRL:
+        case DATALINK_A5_PUMP_MSGTYP_CTRL:
             if (datalink->hdr.len == sizeof(mPumpCtrl_a5_t)) {
                 network->typ = NETWORK_MSGTYP_PUMP_CTRL;
                 network->u.pump_ctrl = (mPumpCtrl_a5_t *) datalink->data;
             }
             break;
-        case MT_PUMP_MODE:
+        case DATALINK_A5_PUMP_MSGTYP_MODE:
             if (datalink->hdr.len == sizeof(mPumpMode_a5_t)) {
                 network->typ = NETWORK_MSGTYP_PUMP_MODE;
                 network->u.pump_mode = (mPumpMode_a5_t *) datalink->data;
             }
             break;
-        case MT_PUMP_STATE:
+        case DATALINK_A5_PUMP_MSGTYP_STATE:
             if (datalink->hdr.len == sizeof(mPumpState_a5_t)) {
                 network->typ = NETWORK_MSGTYP_PUMP_STATE;
                 network->u.pump_state = (mPumpState_a5_t *) datalink->data;
             }
             break;
-        case MT_PUMP_STATUS:
+        case DATALINK_A5_PUMP_MSGTYP_STATUS:
             if (toPump) {
                 if (datalink->hdr.len == 0) {
                     network->typ = NETWORK_MSGTYP_PUMP_STATUS_REQ;
@@ -620,7 +620,7 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
                 }
             }
             break;
-        case MT_PUMP_0xFF:
+        case DATALINK_A5_PUMP_MSGTYP_0xFF:
             // silently ignore
             break;
         default:
@@ -634,38 +634,38 @@ _decodeIC_chlor(datalink_pkt_t const * const datalink, network_msg_t * const net
 {
     network->typ = NETWORK_MSGTYP_NONE;
 
-    switch ((MT_CHLOR_IC_t) datalink->hdr.typ) {
-        case MT_CHLOR_PING_REQ:
+    switch ((DATALINK_IC_CHLOR_MSGTYP_t) datalink->hdr.typ) {
+        case DATALINK_IC_CHLOR_MSGTYP_PING_REQ:
             if (datalink->hdr.len == sizeof(mChlorPingReq_ic_t)) {
                 network->typ = NETWORK_MSGTYP_CHLOR_PING_REQ;
                 network->u.chlor_ping_req = (mChlorPingReq_ic_t *) datalink->data;
             }
             break;
-        case MT_CHLOR_PING:
+        case DATALINK_IC_CHLOR_MSGTYP_PING:
             if (datalink->hdr.len == sizeof(mChlorPing_ic_t)) {
                 network->typ = NETWORK_MSGTYP_CHLOR_PING;
                 network->u.chlor_ping = (mChlorPing_ic_t *) datalink->data;
             }
             break;
-        case MT_CHLOR_NAME:
+        case DATALINK_IC_CHLOR_MSGTYP_NAME:
             if (datalink->hdr.len == sizeof(mChlorName_ic_t)) {
                 network->typ = NETWORK_MSGTYP_CHLOR_NAME;
                 network->u.chlor_name = (mChlorName_ic_t *) datalink->data;
             }
             break;
-        case MT_CHLOR_LEVEL_SET:
+        case DATALINK_IC_CHLOR_MSGTYP_LEVEL_SET:
             if (datalink->hdr.len == sizeof(mChlorLevelSet_ic_t)) {
                 network->typ = NETWORK_MSGTYP_CHLOR_LEVEL_SET;
                 network->u.chlor_level_set = (mChlorLevelSet_ic_t *) datalink->data;
             }
             break;
-        case MT_CHLOR_LEVEL_RESP:
+        case DATALINK_IC_CHLOR_MSGTYP_LEVEL_RESP:
             if (datalink->hdr.len == sizeof(mChlorLevelResp_ic_t)) {
                 network->typ = NETWORK_MSGTYP_CHLOR_LEVEL_RESP;
                 network->u.chlor_level_resp = (mChlorLevelResp_ic_t *) datalink->data;
             }
             break;
-        case MT_CHLOR_0x14:  // ?? (len == 1, data[0] == 0x00)gr
+        case DATALINK_IC_CHLOR_MSGTYP_X14:  // ?? (len == 1, data[0] == 0x00)gr
             // silently ignore
             break;
         default:
