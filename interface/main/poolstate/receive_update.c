@@ -161,7 +161,8 @@ bool
 poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const state)
 {
     poolstate_t old_state;
-    memcpy(&old_state, state, sizeof(poolstate_t));
+    poolstate_get(&old_state);
+    memcpy(state, &old_state, sizeof(poolstate_t));
 
     cJSON * const root = cJSON_CreateObject();
     switch(msg->typ) {
@@ -241,5 +242,10 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
     cJSON_Delete(root);
     ESP_LOGI(TAG, "%s: %s", name_network_msgtyp(msg->typ), buf);
     free(buf);
-    return memcmp(&old_state, state, sizeof(poolstate_t)) != 0;
+
+    bool const state_changed = memcmp(state, &old_state, sizeof(poolstate_t));
+    if (state_changed) {
+        poolstate_set(state);
+    }
+    return state_changed;
 }

@@ -61,12 +61,14 @@ pool_task(void * ipc_void)
             if (network_receive_msg(&datalink_pkt, &network_msg, &txOpportunity)) {
                 ESP_LOGI(TAG, "received network msg");
 
-                if (poolstate_receive_update(&network_msg, &poolstate)) {
+                poolstate_t state;
+                if (poolstate_receive_update(&network_msg, &state)) {
+
                     // forward update to subscribers (mqtt/push notifications/..)
+
                 }
 
             }
-
             if (txOpportunity) {
                 // read incoming mailbox for things to transmit
                 //   and transmit them
