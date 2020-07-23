@@ -12,7 +12,7 @@ char const * name_name(char const * const name, uint_least8_t const len);
 char const * name_chlor_state(uint8_t const chlorstate);
 char const * name_pump_mode(uint16_t const value);
 char const * name_pump_prg(uint16_t const address);
-char const * name_circuit(uint const circuit);
+char const * name_circuit(uint8_t const circuit);
 uint name_circuit_nr(char const * const name);
 char const * name_heat_src(uint8_t const value);
 uint name_heat_src_nr(char const * const name);

@@ -122,7 +122,7 @@ typedef struct mCtrlSchedSub_a5_t {
 
 typedef struct mCtrlSched_a5_t {
     uint8_t UNKNOWN_0to3[4];      // 0,1,2,3
-    mCtrlSchedSub_a5_t sched[2];  // 4,5,6,7,8,9, 10,11,12,13,14,15
+    mCtrlSchedSub_a5_t scheds[2];  // 4,5,6,7,8,9, 10,11,12,13,14,15
 } PACK8 mCtrlSched_a5_t;
 
 typedef struct mCtrlLayout_a5_t {
@@ -144,19 +144,19 @@ typedef struct mPumpRegulateSetResp_a5_t {
 } PACK8 mPumpRegulateSetResp_a5_t;
 
 typedef struct mPumpCtrl_a5_t {
-    uint8_t control;     // 0
+    uint8_t ctrl;     // 0
 } PACK8 mPumpCtrl_a5_t;
 
 typedef struct mPumpMode_a5_t {
     uint8_t mode;        // 0
 } PACK8 mPumpMode_a5_t;
 
-typedef struct mPumpState_a5_t {
-    uint8_t state;       // 0
-} PACK8 mPumpState_a5_t;
+typedef struct mPumpRunning_a5_t {
+    uint8_t running;       // 0
+} PACK8 mPumpRunning_a5_t;
 
 typedef struct mPumpStatus_a5_t {
-    uint8_t state;       // 0
+    uint8_t running;     // 0
     uint8_t mode;        // 1
     uint8_t status;      // 2
     uint8_t powerHi;     // 3
@@ -220,7 +220,7 @@ typedef enum {
   XX( 2, PUMP_REG_SET_RESP) \
   XX( 3, PUMP_CTRL)         \
   XX( 4, PUMP_MODE)         \
-  XX( 5, PUMP_STATE)        \
+  XX( 5, PUMP_RUNNING)      \
   XX( 6, PUMP_STATUS_REQ)   \
   XX( 7, PUMP_STATUS)       \
   XX( 8, CTRL_SET_ACK)      \
@@ -259,7 +259,7 @@ typedef struct network_msg_t {
         mPumpRegulateSetResp_a5_t * pump_reg_set_resp;
         mPumpCtrl_a5_t * pump_ctrl;
         mPumpMode_a5_t * pump_mode;
-        mPumpState_a5_t * pump_state;
+        mPumpRunning_a5_t * pump_running;
         mPumpStatus_a5_t * pump_status;
         mCtrlSetAck_a5_t * ctrl_set_ack;
         mCtrlCircuitSet_a5_t * ctrl_circuit_set;

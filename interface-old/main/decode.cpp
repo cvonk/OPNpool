@@ -304,7 +304,7 @@ decodePump_mode_a5(mPumpMode_a5_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodePump_state_a5(mPumpState_a5_t const * const msg, uint_least8_t const len,
+decodePUMP_RUNNING_a5(mPumpRunning_a5_t const * const msg, uint_least8_t const len,
 	                sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg) && (msg->state == 0x04 || msg->state == 0x0A)) {
@@ -558,7 +558,7 @@ _decodeA5_pump(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_state:
-				decoded = decodePump_state_a5((mPumpState_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodePUMP_RUNNING_a5((mPumpRunning_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_status:

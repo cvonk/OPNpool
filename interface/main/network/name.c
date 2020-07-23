@@ -191,7 +191,7 @@ static char const * const _circuits[] = {
 };
 
 char const *
-name_circuit(uint const circuit)
+name_circuit(uint8_t const circuit)
 {
 	if (circuit && circuit <= ARRAY_SIZE(_circuits)) {
 		return _circuits[circuit - 1];
