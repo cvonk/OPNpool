@@ -50,39 +50,6 @@ _initNvsFlash(void)
     ESP_ERROR_CHECK(ret);
 }
 
-#if 0
-/* Request Methods */
-#define HTTP_METHOD_MAP(XX)         \
-  XX(0,  DELETE,      DELETE)       \
-  XX(1,  GET,         GET)          \
-  XX(2,  HEAD,        HEAD)         \
-  XX(3,  POST,        POST)         \
-  XX(4,  PUT,         PUT)          \
-
-enum http_method
-  {
-#define XX(num, name, string) HTTP_##name = num,
-  HTTP_METHOD_MAP(XX)
-#undef XX
-  };
-static const char *method_strings[] =
-  {
-#define XX(num, name, string) #string,
-  HTTP_METHOD_MAP(XX)
-#undef XX
-  };
-
-#ifndef ELEM_AT
-# define ELEM_AT(a, i, v) ((unsigned int) (i) < ARRAY_SIZE(a) ? (a)[(i)] : (v))
-#endif
-
-static const char *
-http_method_str (enum http_method m)
-{
-  return ELEM_AT(method_strings, m, "<unknown>");
-}
-#endif
-
 static esp_err_t
 _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
 {

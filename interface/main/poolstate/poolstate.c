@@ -50,14 +50,6 @@ poolstate_get(poolstate_t * const state)
     xSemaphoreGive( _protected.xMutex );
 }
 
-bool
-poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const state)
-{
-
-
-    return true;
-}
-
 #if 0
 bool
 poolstate_get_circuit(char const * const key)
