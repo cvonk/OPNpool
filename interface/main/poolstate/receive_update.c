@@ -27,31 +27,31 @@
 static char const * const TAG = "receive_updates";
 
 void
-_pump_reg_set(cJSON * const root, mPumpRegulateSet_a5_t const * const msg)
+_pump_reg_set(cJSON * const dbg, mPumpRegulateSet_a5_t const * const msg)
 {
     uint const address = (msg->addressHi << 8) | msg->addressLo;
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    cPool_AddPumpPrgToObject(root, name_pump_prg(address), value);
+    cPool_AddPumpPrgToObject(dbg, name_pump_prg(address), value);
 }
 
 void
-_pump_reg_set_resp(cJSON * const root, mPumpRegulateSetResp_a5_t const * const msg)
+_pump_reg_set_resp(cJSON * const dbg, mPumpRegulateSetResp_a5_t const * const msg)
 {
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    cPool_AddPumpPrgToObject(root, "now", value);
+    cPool_AddPumpPrgToObject(dbg, "now", value);
 }
 
 
 void
-_pump_ctrl(cJSON * const root, mPumpCtrl_a5_t const * const msg)
+_pump_ctrl(cJSON * const dbg, mPumpCtrl_a5_t const * const msg)
 {
-    cPool_AddPumpCtrlToObject(root, "ctrl", msg->ctrl);
+    cPool_AddPumpCtrlToObject(dbg, "ctrl", msg->ctrl);
 }
 
 void
-_pump_running(cJSON * const root, mPumpRunning_a5_t const * const msg, poolstate_t * const state)
+_pump_running(cJSON * const dbg, mPumpRunning_a5_t const * const msg, poolstate_t * const state)
 {
     bool const running = msg->running == 0x0A;
     bool const not_running = msg->running == 0x04;
@@ -59,19 +59,19 @@ _pump_running(cJSON * const root, mPumpRunning_a5_t const * const msg, poolstate
         return;
     }
     state->pump.running = running;
-    cPool_AddPumpRunningToObject(root, "running", state->pump.running);
+    cPool_AddPumpRunningToObject(dbg, "running", state->pump.running);
 }
 
 void
-_pump_mode(cJSON * const root, mPumpMode_a5_t const * const msg, poolstate_t * const state)
+_pump_mode(cJSON * const dbg, mPumpMode_a5_t const * const msg, poolstate_t * const state)
 {
     state->pump.mode = msg->mode;
 
-    cPool_AddPumpModeToObject(root, "mode", msg->mode);
+    cPool_AddPumpModeToObject(dbg, "mode", msg->mode);
 }
 
 void
-_pump_status(cJSON * const root, mPumpStatus_a5_t const * const msg, poolstate_t * const state)
+_pump_status(cJSON * const dbg, mPumpStatus_a5_t const * const msg, poolstate_t * const state)
 {
     bool const running = msg->running == 0x0A;
     bool const not_running = msg->running == 0x04;
@@ -90,29 +90,29 @@ _pump_status(cJSON * const root, mPumpStatus_a5_t const * const msg, poolstate_t
     state->pump.time.hour = msg->hour;
     state->pump.time.minute = msg->minute;
 
-    cPool_AddPumpStatusToObject(root, "status", &state->pump);
+    cPool_AddPumpStatusToObject(dbg, "status", &state->pump);
 }
 
 void
-_ctrl_set_ack(cJSON * const root, mCtrlSetAck_a5_t const * const msg)
+_ctrl_set_ack(cJSON * const dbg, mCtrlSetAck_a5_t const * const msg)
 {
-    cJSON_AddNumberToObject(root, "ack", msg->typ);
+    cJSON_AddNumberToObject(dbg, "ack", msg->typ);
 }
 
 void
-_ctrl_circuit_set(cJSON * const root, mCtrlCircuitSet_a5_t const * const msg)
+_ctrl_circuit_set(cJSON * const dbg, mCtrlCircuitSet_a5_t const * const msg)
 {
-    cJSON_AddNumberToObject(root, name_circuit(msg->circuit), msg->value);
+    cJSON_AddNumberToObject(dbg, name_circuit(msg->circuit), msg->value);
 }
 
 void
-_ctrl_sched(cJSON * const root, mCtrlSched_a5_t const * const msg, poolstate_t * state)
+_ctrl_sched(cJSON * const dbg, mCtrlSched_a5_t const * const msg, poolstate_t * state)
 {
     mCtrlSchedSub_a5_t const * msg_sched = msg->scheds;
     poolstate_sched_t * state_sched = state->scheds;
 
     cJSON * const item = cJSON_CreateObject();
-    cJSON_AddItemToObject(root, "schedules", item);
+    cJSON_AddItemToObject(dbg, "schedules", item);
 
     for (uint  ii = 0; ii < ARRAY_SIZE(state->scheds); ii++, msg_sched++, state_sched++) {
 
@@ -125,13 +125,24 @@ _ctrl_sched(cJSON * const root, mCtrlSched_a5_t const * const msg, poolstate_t *
 }
 
 void
-_ctrl_state(cJSON * const root, mCtrlState_a5_t const * const msg, poolstate_t * state)
+_ctrl_state(cJSON * const dbg, mCtrlState_a5_t const * const msg, poolstate_t * state)
 {
+#if 0
+    uint len = 0;
+    uint buf_size = 80;
+    char buf[buf_size];
+
+    uint8_t const * const asBytes = (uint8_t const * const) msg;
+    for (uint ii = 0; ii < sizeof(mCtrlState_a5_t); ii++) {
+        len += snprintf(buf + len, buf_size - len, " %02X", asBytes[ii]);
+    }
+#endif
+
     state->tod.time.minute = msg->minute;
     state->tod.time.hour = msg->hour;
     state->version.major = msg->major;
     state->version.minor = msg->minor;
-    state->circuits.active = (msg->activeHi << 8) | msg->activeLo;
+    state->circuits.active = ((uint16_t)msg->activeHi << 8) | msg->activeLo;
     state->circuits.delay = msg->delayLo;
     state->pool.temp = msg->poolTemp;
     state->pool.heat_src = msg->heatSrc & 0x03;
@@ -142,11 +153,11 @@ _ctrl_state(cJSON * const root, mCtrlState_a5_t const * const msg, poolstate_t *
     state->air.temp = msg->airTemp;
     state->solar.temp = msg->solarTemp;
 
-    cPool_AddStateToObject(root, "state", state);
+    cPool_AddStateToObject(dbg, "state", state);
 }
 
 void
-_ctrl_time(cJSON * const root, mCtrlTime_a5_t const * const msg, poolstate_t * const state)
+_ctrl_time(cJSON * const dbg, mCtrlTime_a5_t const * const msg, poolstate_t * const state)
 {
     state->tod.time.minute = msg->minute;
     state->tod.time.hour = msg->hour;
@@ -154,7 +165,7 @@ _ctrl_time(cJSON * const root, mCtrlTime_a5_t const * const msg, poolstate_t * c
     state->tod.date.month = msg->month;
     state->tod.date.year = msg->year;
 
-    cPool_AddTodToObject(root, "tod", &state->tod);
+    cPool_AddTodToObject(dbg, "tod", &state->tod);
 }
 
 bool
@@ -163,37 +174,37 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
     poolstate_t old_state;
     memcpy(&old_state, state, sizeof(poolstate_t));
 
-    cJSON * const root = cJSON_CreateObject();
+    cJSON * const dbg = cJSON_CreateObject();
     switch(msg->typ) {
         case NETWORK_MSGTYP_PUMP_REG_SET:
-            _pump_reg_set(root, msg->u.pump_reg_set);
+            _pump_reg_set(dbg, msg->u.pump_reg_set);
             break;
         case NETWORK_MSGTYP_PUMP_REG_SET_RESP:
-            _pump_reg_set_resp(root, msg->u.pump_reg_set_resp);
+            _pump_reg_set_resp(dbg, msg->u.pump_reg_set_resp);
             break;
         case NETWORK_MSGTYP_PUMP_CTRL:
-            _pump_ctrl(root, msg->u.pump_ctrl);
+            _pump_ctrl(dbg, msg->u.pump_ctrl);
             break;
         case NETWORK_MSGTYP_PUMP_MODE:
-            _pump_mode(root, msg->u.pump_mode, state);
+            _pump_mode(dbg, msg->u.pump_mode, state);
             break;
         case NETWORK_MSGTYP_PUMP_RUNNING:
-            _pump_running(root, msg->u.pump_running, state);
+            _pump_running(dbg, msg->u.pump_running, state);
             break;
         case NETWORK_MSGTYP_PUMP_STATUS_REQ:
              break;
         case NETWORK_MSGTYP_PUMP_STATUS:
-            _pump_status(root, msg->u.pump_status, state);
+            _pump_status(dbg, msg->u.pump_status, state);
             break;
 
         // response to various set requests
         case NETWORK_MSGTYP_CTRL_SET_ACK:
-            _ctrl_set_ack(root, msg->u.ctrl_set_ack);
+            _ctrl_set_ack(dbg, msg->u.ctrl_set_ack);
             break;
 
         // set circuit request (there appears to be no separate "get circuit request")
         case NETWORK_MSGTYP_CTRL_CIRCUIT_SET:
-            _ctrl_circuit_set(root, msg->u.ctrl_circuit_set);
+            _ctrl_circuit_set(dbg, msg->u.ctrl_circuit_set);
             break;
 
         // various get requests
@@ -206,12 +217,12 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
 
         // schedule: get response / set request
         case NETWORK_MSGTYP_CTRL_SCHED:
-            _ctrl_sched(root, msg->u.ctrl_sched, state);
+            _ctrl_sched(dbg, msg->u.ctrl_sched, state);
             break;
 
             // state: get response / set request
         case NETWORK_MSGTYP_CTRL_STATE:
-            _ctrl_state(root, msg->u.ctrl_state, state);
+            _ctrl_state(dbg, msg->u.ctrl_state, state);
             break;
 
         case NETWORK_MSGTYP_CTRL_STATE_SET:
@@ -220,7 +231,7 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
 
         case NETWORK_MSGTYP_CTRL_TIME:
         case NETWORK_MSGTYP_CTRL_TIME_SET:
-            _ctrl_time(root, msg->u.ctrl_time, state);
+            _ctrl_time(dbg, msg->u.ctrl_time, state);
             break;
 
 
@@ -237,8 +248,8 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
         case NETWORK_MSGTYP_NONE:
             break;  //  to make the compiler happy
     }
-    char * const buf = cJSON_Print(root);
-    cJSON_Delete(root);
+    char * const buf = cJSON_Print(dbg);
+    cJSON_Delete(dbg);
     ESP_LOGI(TAG, "%s: %s", name_network_msgtyp(msg->typ), buf);
     free(buf);
     return memcmp(&old_state, state, sizeof(poolstate_t)) != 0;

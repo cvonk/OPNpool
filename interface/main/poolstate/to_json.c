@@ -20,7 +20,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-static char const * const TAG = "poolstate";
+static char const * const TAG = "to_json";
 
 void
 cPool_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value)
@@ -119,6 +119,7 @@ cPool_AddDateToObject(cJSON * const obj, char const * const key, poolstate_date_
 void
 cPool_AddTimeToObject(cJSON * const obj, char const * const key, poolstate_time_t const * const time)
 {
+    ESP_LOGI(TAG, "%u:%02u", time->hour, time->minute);
     cJSON_AddStringToObject(obj, key, name_time(time->hour, time->minute));
 }
 
@@ -153,15 +154,17 @@ cPool_AddTodToObject(cJSON * const obj, char const * const key, poolstate_tod_t 
 }
 
 void
-cPool_AddStateToObject(cJSON * const obj, poolstate_t const * const state)
+cPool_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
-    cPool_AddTimeToObject(obj, "time", &state->tod.time);
-    cPool_AddFirmwareToObject(obj, "firmware", &state->version);
-    cPool_AddActiveCircuitsToObject(obj, "active", state->circuits.active);
-    cPool_AddThermostatToObject(obj, "pool", &state->pool);
-    cPool_AddThermostatToObject(obj, "spa", &state->spa);
-    cPool_AddTempToObject(obj, "air", state->air.temp);
-    cPool_AddTempToObject(obj, "solar", state->solar.temp);
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cPool_AddTimeToObject(item, "time", &state->tod.time);
+    cPool_AddFirmwareToObject(item, "firmware", &state->version);
+    cPool_AddActiveCircuitsToObject(item, "active", state->circuits.active);
+    cPool_AddThermostatToObject(item, "pool", &state->pool);
+    cPool_AddThermostatToObject(item, "spa", &state->spa);
+    cPool_AddTempToObject(item, "air", state->air.temp);
+    cPool_AddTempToObject(item, "solar", state->solar.temp);
 }
 
 size_t
@@ -170,7 +173,7 @@ state_to_json(poolstate_t * state, char * buf, size_t buf_len)
 	name_reset_idx();
 
     cJSON * const obj = cJSON_CreateObject();
-    cPool_AddStateToObject(obj, state);
+    cPool_AddStateToObject(obj, "state", state);
 
     assert( cJSON_PrintPreallocated(obj, buf, buf_len, false) );
 	cJSON_Delete(obj);

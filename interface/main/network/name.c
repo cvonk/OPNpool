@@ -25,6 +25,8 @@
 // also used to display date/time, add +50
 #define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(mCtrlState_a5_t) + 1) * 3 + 50)
 
+static char const * const TAG = "name";
+
 // reusable global string
 static struct str_t {
 	char str[NAME_BUF_SIZE];  // 3 bytes for each hex value when displaying raw; this is str.str[]
@@ -118,6 +120,8 @@ name_date(uint8_t const year, uint8_t const month, uint8_t const day)
 char const *
 name_time(uint8_t const hours, uint8_t const minutes)
 {
+    ESP_LOGI(TAG, "%u:%02u", hours, minutes);
+
 	uint_least8_t const nrdigits = 5;  // 00:00
 
 	if (_str.idx + nrdigits + 1U >= ARRAY_SIZE(_str.str)) {
@@ -131,6 +135,7 @@ name_time(uint8_t const hours, uint8_t const minutes)
 	s[4] = _str.digits[minutes % 10];
 	s[nrdigits] = '\0';
 	_str.idx += nrdigits + 1U;
+    ESP_LOGI(TAG, "%s", s);
 	return s;
 }
 
