@@ -19,54 +19,6 @@ DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00
 DATALINK_A5_CTRL_MSGTYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 */
 
-// #define DATALINK_A5_CTRL_MSGTYP_SET (0x80)
-// #define DATALINK_A5_CTRL_MSGTYP_REQ (0xC0)
-
-// use macro "magic" to get an enum and matching name_* function (in name.c)
-#define DATALINK_A5_CTRL_MSGTYP_MAP(XX) \
-  XX(0x01, SET_ACK)     \
-  XX(0x86, CIRCUIT_SET) \
-  XX(0x02, STATE)       \
-  XX(0x82, STATE_SET)   \
-  XX(0xC2, STATE_REQ )  \
-  XX(0x05, TIME)        \
-  XX(0x85, TIME_SET)    \
-  XX(0xC5, TIME_REQ)    \
-  XX(0x08, HEAT)        \
-  XX(0x88, HEAT_SET)    \
-  XX(0xC8, HEAT_REQ)    \
-  XX(0x1E, SCHED)       \
-  XX(0x9E, SCHED_SET)   \
-  XX(0xDE, SCHED_REQ)   \
-  XX(0x21, LAYOUT)      \
-  XX(0xA1, LAYOUT_SET)  \
-  XX(0xE1, LAYOUT_REQ)
-
-typedef enum {
-#define XX(num, name) DATALINK_A5_CTRL_MSGTYP_##name = num,
-  DATALINK_A5_CTRL_MSGTYP_MAP(XX)
-#undef XX
-} DATALINK_A5_CTRL_MSGTYP_t;
-
-typedef enum MT_PUMP_A5_t {
-    MT_PUMP_REGULATE = 0x01,
-    MT_PUMP_CTRL = 0x04,
-    MT_PUMP_MODE = 0x05,
-    MT_PUMP_STATE = 0x06,
-    MT_PUMP_STATUS = 0x07,
-    // FYI occasionally there is a src=0x10 dst=0x60 typ=0xFF with data=[0x80]; pump doesn't reply to it
-    MT_PUMP_0xFF = 0xFF, // has src=0x10 dst=0x60 data=[0x08]
-} MT_PUMP_A5_t;
-
-typedef enum MT_CHLOR_IC_t {
-    MT_CHLOR_PING_REQ = 0x00,
-    MT_CHLOR_PING = 0x01,
-    MT_CHLOR_NAME = 0x03,
-    MT_CHLOR_LEVEL_SET = 0x11,
-    MT_CHLOR_LEVEL_RESP = 0x12,
-    MT_CHLOR_0x14 = 0x14, // has dst=0x50 data=[0x00]
-} MT_CHLOR_IC_t;
-
 typedef enum CHLORSTATE_t {
     CHLORSTATE_OK,
     CHLORSTATE_HIGH_SALT,

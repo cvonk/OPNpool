@@ -537,37 +537,37 @@ _decodeA5_pump(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 	bool found;
 	bool decoded = false;
 	bool toPump = (Utils::addrGroup(msg->hdr.dst) == ADDRGROUP_pump);
-	MT_PUMP_a5_t const mt = (MT_PUMP_a5_t)msg->hdr.typ;
+	DATALINK_A5_PUMP_MSGTYP_t const mt = (DATALINK_A5_PUMP_MSGTYP_t)msg->hdr.typ;
 	char const * s = Utils::mtPumpName(mt, toPump, &found);
 
 	if (found) {
 		switch (mt) {
 
-			case MT_PUMP_regulate:
+			case DATALINK_A5_PUMP_MSGTYP_regulate:
 				decoded = toPump
 				    ? decodePumpRegulateSet_a5((mPumpRegulateSet_a5_t *) msg->data, msg->hdr.len, sys, json, s)
 					: decodePumpRegulateSetAck_a5((mPumpRegulateSetResp_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_PUMP_control:
+			case DATALINK_A5_PUMP_MSGTYP_control:
 				decoded = decodePump_control_a5((mPumpControl_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_PUMP_mode:
+			case DATALINK_A5_PUMP_MSGTYP_mode:
 				decoded = decodePump_mode_a5((mPumpMode_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_PUMP_state:
+			case DATALINK_A5_PUMP_MSGTYP_state:
 				decoded = decodePump_state_a5((mPumpState_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_PUMP_status:
+			case DATALINK_A5_PUMP_MSGTYP_status:
 				decoded = toPump
 				    ? decodePump_statusReq_a5((mPumpStatusReq_a5_t *) msg->data, msg->hdr.len, sys, json, s)
 					: decodePump_status_a5((mPumpStatus_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_PUMP_0xFF:
+			case DATALINK_A5_PUMP_MSGTYP_0xFF:
 				decoded = true;  // silently ignore
 				break;
 		}
@@ -580,33 +580,33 @@ _decodeIC_chlor(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 {
 	bool found;
 	bool decoded = false;
-	MT_CHLOR_ic_t const mt = (MT_CHLOR_ic_t)msg->hdr.typ;
+	DATALINK_IC_CHLOR_MSGTYP_t const mt = (DATALINK_IC_CHLOR_MSGTYP_t)msg->hdr.typ;
 	char const * s = Utils::mtChlorName(mt, &found);
 
 	if (found) {
 		switch (msg->hdr.typ) {
 
-			case MT_CHLOR_pingReq:
+			case DATALINK_IC_CHLOR_MSGTYP_pingReq:
 				decoded = decodeChlor_pingReq_ic((mChlorPingReq_ic_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_CHLOR_ping:
+			case DATALINK_IC_CHLOR_MSGTYP_ping:
 				decoded = decodeChlor_ping_ic((mChlorPing_ic_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_CHLOR_name:  // name
+			case DATALINK_IC_CHLOR_MSGTYP_name:  // name
 				decoded = decodeChlor_name_ic((mChlorName_ic_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_CHLOR_lvlSet:
+			case DATALINK_IC_CHLOR_MSGTYP_lvlSet:
 				decoded = decodeChlor_chlorSet_ic((mChlorLvlSet_ic_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_CHLOR_lvlSetResp:
+			case DATALINK_IC_CHLOR_MSGTYP_lvlSetResp:
 				decoded = decodeChlor_chlorSetResp_ic((mChlorLvlSetResp_ic_t  *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
-			case MT_CHLOR_0x14:  // ?? (len == 1, data[0] == 0x00)gr
+			case DATALINK_IC_CHLOR_MSGTYP_0x14:  // ?? (len == 1, data[0] == 0x00)gr
 				decoded = true;  // stick our head in the sand
 				break;
 		}

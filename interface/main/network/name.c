@@ -138,54 +138,6 @@ name_time(uint8_t const hours, uint8_t const minutes)
  * enum to string
  */
 
-char const *
-name_mtPump(MT_PUMP_A5_t const mt, bool const request, bool * const found)
-{
-	char const * s = NULL;
-	char const * const ff = "FF";
-	if (request) {
-		switch (mt) {
-			case MT_PUMP_REGULATE: s = "setReguReq";  break;
-			case MT_PUMP_CTRL:     s = "setCtrlReq";  break;
-			case MT_PUMP_MODE:     s = "setModeReq";  break;
-			case MT_PUMP_STATE:    s = "setStateReq"; break;
-			case MT_PUMP_STATUS:   s = "statusReq";   break;
-			case MT_PUMP_0xFF:     s = ff;            break;
-		}
-	} else {
-		switch (mt) {
-			case MT_PUMP_REGULATE: s = "setReguResp";  break;
-			case MT_PUMP_CTRL:     s = "setCtrlResp";  break;
-			case MT_PUMP_MODE:     s = "setModeResp";  break;
-			case MT_PUMP_STATE:    s = "setStateResp"; break;
-			case MT_PUMP_STATUS:   s = "status";       break;
-			case MT_PUMP_0xFF:     s = ff;             break;
-		}
-	}
-	if (found) {
-		*found = (s != NULL);
-	}
-	return s;
-}
-
-char const *
-name_mtChlor(MT_CHLOR_IC_t const mt, bool * const found)
-{
-	char const * s = NULL;
-	switch (mt) {
-		case MT_CHLOR_PING_REQ:    s = "pingReq";    break;
-		case MT_CHLOR_PING:        s = "ping";       break;
-		case MT_CHLOR_NAME:        s = "name";       break;
-		case MT_CHLOR_LEVEL_SET:   s = "lvlSet";     break;
-		case MT_CHLOR_LEVEL_RESP:  s = "lvlSetResp"; break;
-		case MT_CHLOR_0x14:        s = "14";         break;
-	}
-	if (found) {
-		*found = (s != NULL);
-	}
-	return s;
-}
-
 static char const * const _chlor_states[] = {
 	"ok", "highSalt", "lowSalt", "veryLowSalt", "lowFlow"
 };
@@ -287,7 +239,7 @@ name_heat_src_nr(char const * const name)
 
 static const char * const _msgtype_names[] = {
 #define XX(num, name) #name,
-  DATALINK_A5_CTRL_MSGTYP_MAP(XX)
+  NETWORK_MSGTYP_MAP(XX)
 #undef XX
 };
 
@@ -298,7 +250,7 @@ name_network_msgtyp(NETWORK_MSGTYP_t typ)
 }
 
 typedef struct value_name_pair_t {
-    DATALINK_A5_CTRL_MSGTYP_t typ;
+    uint typ;
     char const * const str;
 } value_name_pair_t;
 
@@ -313,6 +265,42 @@ name_datalink_a5_ctrl_msgtype(DATALINK_A5_CTRL_MSGTYP_t typ)
 {
     value_name_pair_t const * pair = _a5_ctrl_msgtyps;
     for(uint ii = 0; ii < ARRAY_SIZE(_a5_ctrl_msgtyps); ii++, pair++) {
+        if (pair->typ == typ) {
+            return pair->str;
+        }
+    }
+    return name_hex8(typ);
+}
+
+value_name_pair_t _a5_pump_msgtyps[] = {
+#define XX(num, name) { .typ = num, .str = #name },
+  DATALINK_A5_PUMP_MSGTYP_MAP(XX)
+#undef XX
+};
+
+const char *
+name_datalink_a5_pump_msgtype(DATALINK_A5_PUMP_MSGTYP_t typ)
+{
+    value_name_pair_t const * pair = _a5_pump_msgtyps;
+    for(uint ii = 0; ii < ARRAY_SIZE(_a5_pump_msgtyps); ii++, pair++) {
+        if (pair->typ == typ) {
+            return pair->str;
+        }
+    }
+    return name_hex8(typ);
+}
+
+value_name_pair_t _ic_chlor_msgtyps[] = {
+#define XX(num, name) { .typ = num, .str = #name },
+  DATALINK_IC_CHLOR_MSGTYP_MAP(XX)
+#undef XX
+};
+
+const char *
+name_datalink_ic_chlor_msgtype(DATALINK_IC_CHLOR_MSGTYP_t typ)
+{
+    value_name_pair_t const * pair = _ic_chlor_msgtyps;
+    for(uint ii = 0; ii < ARRAY_SIZE(_ic_chlor_msgtyps); ii++, pair++) {
         if (pair->typ == typ) {
             return pair->str;
         }
