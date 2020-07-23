@@ -13,7 +13,7 @@
 #include <cJSON.h>
 
 #include "../network/network.h"
-#include "../network/name.h"
+#include "../utils/utils_str.h"
 #include "poolstate.h"
 
 #ifndef ARRAY_SIZE
@@ -35,7 +35,7 @@ cPool_AddPumpCtrlToObject(cJSON * const obj, char const * const key, uint8_t con
     switch (ctrl) {
         case 0x00: str = "local"; break;
         case 0xFF: str = "remote"; break;
-        default: str = name_hex8(ctrl);
+        default: str = hex8_str(ctrl);
     }
     cJSON_AddStringToObject(obj, key, str);
 }
@@ -47,10 +47,9 @@ cPool_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_t con
 }
 
 void
-cPool_AddFirmwareToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version)
+cPool_AddVersionToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version)
 {
-    float const fw = version->major + (float)version->minor / 100;
-    cJSON_AddNumberToObject(obj, key, fw);
+    cJSON_AddStringToObject(obj, key, network_version_str(version->major, version->minor));
 }
 
 void
@@ -96,8 +95,8 @@ cPool_AddSchedToObject(cJSON * const obj, char const * const key, uint16_t const
 {
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
-    cJSON_AddStringToObject(item, "start", name_time(start / 60, start % 60));
-    cJSON_AddStringToObject(item, "stop", name_time(stop / 60, stop % 60));
+    cJSON_AddStringToObject(item, "start", network_time_str(start / 60, start % 60));
+    cJSON_AddStringToObject(item, "stop", network_time_str(stop / 60, stop % 60));
 }
 
 void
@@ -113,14 +112,14 @@ cPool_AddPumpRunningToObject(cJSON * const obj, char const * const key, bool con
 void
 cPool_AddDateToObject(cJSON * const obj, char const * const key, poolstate_date_t const * const date)
 {
-    cJSON_AddStringToObject(obj, key, name_date(date->year, date->month, date->day));
+    cJSON_AddStringToObject(obj, key, network_date_str(date->year, date->month, date->day));
 }
 
 void
 cPool_AddTimeToObject(cJSON * const obj, char const * const key, poolstate_time_t const * const time)
 {
     ESP_LOGI(TAG, "%u:%02u", time->hour, time->minute);
-    cJSON_AddStringToObject(obj, key, name_time(time->hour, time->minute));
+    cJSON_AddStringToObject(obj, key, network_time_str(time->hour, time->minute));
 }
 
 void
@@ -159,7 +158,7 @@ cPool_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t co
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
     cPool_AddTimeToObject(item, "time", &state->tod.time);
-    cPool_AddFirmwareToObject(item, "firmware", &state->version);
+    cPool_AddVersionToObject(item, "firmware", &state->version);
     cPool_AddActiveCircuitsToObject(item, "active", state->circuits.active);
     cPool_AddThermostatToObject(item, "pool", &state->pool);
     cPool_AddThermostatToObject(item, "spa", &state->spa);

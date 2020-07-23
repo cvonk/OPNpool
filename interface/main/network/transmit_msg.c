@@ -10,12 +10,9 @@
 #include <esp_system.h>
 #include <esp_log.h>
 
-//#include "pooltypes.h"
-//#include "poolstate.h"
-//#include "utils.h"
 #include "../datalink/datalink.h"
+#include "../utils/utils_str.h"
 #include "network.h"
-#include "name.h"
 
 // static char const * const TAG = "encode";
 
@@ -24,7 +21,7 @@ void
 EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_least8_t const value)
 {
 	*element = {
-		.typ = DATALINK_A5_CTRL_MSGTYP_circuitSet,
+		.typ = DATALINK_CTRL_TYP_circuitSet,
 		.dataLen = sizeof(mCtrlCircuitSet_a5_t),
 		.data = {
 			.circuitSet = {
@@ -38,7 +35,7 @@ EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_leas
 void
 EncodeA5::heatMsg(element_t * element, uint8_t const poolTempSetpoint, uint8_t const spaTempSetpoint, uint8_t const heatSrc)
 {
-	element->typ = DATALINK_A5_CTRL_MSGTYP_heatSet;
+	element->typ = DATALINK_CTRL_TYP_heatSet;
 	element->dataLen = sizeof(mCtrlHeatSet_a5_t);
 	element->data.heatSet = {
 		.poolTempSetpoint = poolTempSetpoint,
@@ -60,7 +57,7 @@ EncodeA5::setTime(JsonObject * root, network_msg_t * sys, mHdr_a5_t * const hdr,
 		.month = 5,
 		.year = 15,
 	};
-	send_a5(root, sys, DATALINK_A5_CTRL_MSGTYP_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
+	send_a5(root, sys, datalink_ctrl_typ_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
 }
 #endif
 

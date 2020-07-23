@@ -9,14 +9,14 @@
 #define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
 
 /* results of sending requests:
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
-DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
-DATALINK_A5_CTRL_MSGTYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+DATALINK_CTRL_TYP_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
+DATALINK_CTRL_TYP_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
+DATALINK_CTRL_TYP_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+DATALINK_CTRL_TYP_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
+DATALINK_CTRL_TYP_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
+DATALINK_CTRL_TYP_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
+DATALINK_CTRL_TYP_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
+DATALINK_CTRL_TYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 */
 
 typedef enum CHLORSTATE_t {
@@ -282,4 +282,19 @@ typedef struct network_msg_t {
 NETWORK_ADDRGROUP_t network_group_addr(uint16_t const addr);
 uint8_t network_dev_addr(uint8_t group, uint8_t const id);
 
+char const * network_version_str(uint8_t const major, uint8_t const minor);
+char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t const day);
+char const * network_time_str(uint8_t const hours, uint8_t const minutes);
+char const * name_pump_mode(uint16_t const value);
+char const * name_pump_prg(uint16_t const address);
+char const * name_chlor_state(uint8_t const chlorstate);
+char const * name_circuit(uint8_t const circuit);
+char const * name_heat_src(uint8_t const value);
+
+uint name_circuit_nr(char const * const name);
+uint name_heat_src_nr(char const * const name);
+
+const char * name_network_msgtyp(NETWORK_MSGTYP_t typ);
+
 bool network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity);
+

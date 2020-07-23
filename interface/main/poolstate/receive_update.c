@@ -15,8 +15,8 @@
 #include <freertos/semphr.h>
 #include <cJSON.h>
 
+//#include "../utils/utils_str.h"
 #include "../network/network.h"
-#include "../network/name.h"
 #include "poolstate.h"
 #include "to_json.h"
 
