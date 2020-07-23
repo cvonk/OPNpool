@@ -665,7 +665,7 @@ _decodeIC_chlor(datalink_pkt_t const * const datalink, network_msg_t * const net
                 network->u.chlor_level_resp = (mChlorLevelResp_ic_t *) datalink->data;
             }
             break;
-        case DATALINK_IC_CHLOR_MSGTYP_X14:  // ?? (len == 1, data[0] == 0x00)gr
+        case DATALINK_IC_CHLOR_MSGTYP_X14:
             // silently ignore
             break;
         default:

@@ -22,6 +22,64 @@
 
 static char const * const TAG = "poolstate";
 
+void
+cPool_AddSystemToObject(cJSON * const obj, char const * const key, uint8_t const hour, uint8_t const minute, float const fw)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cJSON_AddStringToObject(item, "time", name_time(hour, minute));
+    cJSON_AddNumberToObject(item, "fw", fw);
+}
+
+void
+cPool_AddThermostatToObject(cJSON * const obj, char const * const key, uint8_t const temp, char const * const heat_src_str, uint8_t const heating)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cJSON_AddNumberToObject(item, "temp", temp);
+    if (heat_src_str) {
+        cJSON_AddStringToObject(item, "src", heat_src_str);
+        if (heating) {
+            cJSON_AddTrueToObject(item, "heating");
+        } else {
+            cJSON_AddFalseToObject(item, "heating");
+        }
+    }
+}
+
+void
+cPool_AddPumpRunningToObject(cJSON * const obj, char const * const key, uint8_t const pump_state)
+{
+    bool const running = pump_state == 0x0A;
+    bool const not_running = pump_state == 0x04;
+
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    if (running) {
+        cJSON_AddTrueToObject(item, key);
+    }
+    if (not_running) {
+        cJSON_AddFalseToObject(item, key);
+    }
+}
+
+
+void
+cPool_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, uint16_t const active)
+{
+    uint active_len = 0;
+    char const * active_names[16];
+    uint16_t mask = 0x00001;
+    for (uint ii = 0; mask; ii++) {
+        if (active & mask) {
+            active_names[active_len++] = name_circuit(ii + 1);
+        }
+        mask <<= 1;
+    }
+    cJSON * const item = cJSON_CreateStringArray(active_names, active_len);
+    cJSON_AddItemToObject(obj, key, item);
+}
+
 size_t
 state_to_json(poolstate_t * state, char * buf, size_t buf_len)
 {
@@ -59,6 +117,9 @@ state_to_json(poolstate_t * state, char * buf, size_t buf_len)
     cJSON * const air = cJSON_CreateObject();
     cJSON_AddItemToObject(root, "air", air);
     cJSON_AddNumberToObject(air, "temp", state->air.temp);
+
+    cPool_AddActiveCircuitsToObject(root, "active", state->circuits.active);
+
 
     uint active_len = 0;
     char const * active_names[16];
