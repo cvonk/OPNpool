@@ -21,6 +21,13 @@
 
 static char const * const TAG = "datalink";
 
+typedef datalink_hdr_t mHdr_a5_t;  // conveniently similar
+
+typedef struct mHdr_ic_t {
+    uint8_t dst;  // destination
+    uint8_t typ;  // message type
+} PACK8 mHdr_ic_t;
+
 static uint8_t preamble_a5[] = { 0x00, 0xFF, 0xA5 };
 static uint8_t preamble_ic[] = { 0x10, 0x02 };
 
@@ -102,7 +109,7 @@ _find_preamble(rs485_handle_t const rs485, NETWORK_PROT_t * const proto)
 }
 
 static DATALINK_RESULT_t
-_read_header(rs485_handle_t const rs485, NETWORK_PROT_t const proto, mHdr_a5_t * const hdr)
+_read_header(rs485_handle_t const rs485, NETWORK_PROT_t const proto, datalink_hdr_t * const hdr)
 {
 	switch (proto) {
 		case NETWORK_PROT_A5:
@@ -141,7 +148,7 @@ _read_header(rs485_handle_t const rs485, NETWORK_PROT_t const proto, mHdr_a5_t *
 }
 
 static DATALINK_RESULT_t
-_read_data(rs485_handle_t const rs485, mHdr_a5_t const * const hdr, uint8_t * const data)
+_read_data(rs485_handle_t const rs485, datalink_hdr_t const * const hdr, uint8_t * const data)
 {
     uint len = 0;
     uint buf_size = 80;
@@ -188,7 +195,7 @@ _read_crc(rs485_handle_t const rs485, NETWORK_PROT_t const proto, uint16_t * chk
 }
 
 static uint16_t
-_calc_crc_a5(mHdr_a5_t const * const hdr, uint8_t const * const data)
+_calc_crc_a5(datalink_hdr_t const * const hdr, uint8_t const * const data)
 {
 	// checksum is calculated starting at the last byte of the preamble (0xA5) up to the last
 	// data byte
@@ -205,7 +212,7 @@ _calc_crc_a5(mHdr_a5_t const * const hdr, uint8_t const * const data)
 }
 
 static uint8_t
-_calc_crc_ic(mHdr_a5_t const * const hdr, uint8_t const * const data)
+_calc_crc_ic(datalink_hdr_t const * const hdr, uint8_t const * const data)
 {
 	// checksum is calculated starting at the preamble up to the last data byte
 	uint8_t calc = hdr->dst + hdr->typ;  // pretend we still have the ic header
@@ -241,6 +248,8 @@ uint32_t _millis() {
 /**
  * Receive packets from the Pentair RS-485 bus.
  * Returns true when a complete packet has been received
+ *
+ * It relies on data from the network layer, for the correct length of the data pkt.
  */
 
 bool

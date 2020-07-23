@@ -24,7 +24,7 @@ void
 EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_least8_t const value)
 {
 	*element = {
-		.typ = MT_CTRL_circuitSet,
+		.typ = DATALINK_A5_CTRL_MSGTYP_circuitSet,
 		.dataLen = sizeof(mCtrlCircuitSet_a5_t),
 		.data = {
 			.circuitSet = {
@@ -38,7 +38,7 @@ EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_leas
 void
 EncodeA5::heatMsg(element_t * element, uint8_t const poolTempSetpoint, uint8_t const spaTempSetpoint, uint8_t const heatSrc)
 {
-	element->typ = MT_CTRL_heatSet;
+	element->typ = DATALINK_A5_CTRL_MSGTYP_heatSet;
 	element->dataLen = sizeof(mCtrlHeatSet_a5_t);
 	element->data.heatSet = {
 		.poolTempSetpoint = poolTempSetpoint,
@@ -60,7 +60,7 @@ EncodeA5::setTime(JsonObject * root, network_msg_t * sys, mHdr_a5_t * const hdr,
 		.month = 5,
 		.year = 15,
 	};
-	send_a5(root, sys, MT_CTRL_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
+	send_a5(root, sys, DATALINK_A5_CTRL_MSGTYP_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
 }
 #endif
 

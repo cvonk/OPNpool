@@ -18,9 +18,12 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
+#ifndef ELEM_AT
+# define ELEM_AT(a, i, v) ((uint) (i) < ARRAY_SIZE(a) ? (a)[(i)] : (v))
+#endif
 
 // also used to display date/time, add +50
-#define NAME_BUF_SIZE ((sizeof(mHdr_a5_t) + sizeof(mCtrlState_a5_t) + 1) * 3 + 50)
+#define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(mCtrlState_a5_t) + 1) * 3 + 50)
 
 // reusable global string
 static struct str_t {
@@ -134,34 +137,6 @@ name_time(uint8_t const hours, uint8_t const minutes)
 /**
  * enum to string
  */
-
-char const *
-name_mtCtrl(MT_CTRL_A5_t const mt, bool * const found)
-{
-	char const * s = NULL;
-	switch (mt) {
-		case MT_CTRL_SET_ACK:     s = "setAck";     break;
-		case MT_CTRL_CIRCUIT_SET: s = "circuitSet"; break;
-		case MT_CTRL_STATE:       s = "state";      break;
-		case MT_CTRL_STATE_SET:   s = "stateSet";   break;
-		case MT_CTRL_STATE_REQ:   s = "stateReq";   break;
-		case MT_CTRL_TIME:        s = "time";       break;
-		case MT_CTRL_TIME_SET:    s = "timeSet";    break;
-		case MT_CTRL_TIME_REQ:    s = "timeReq";    break;
-		case MT_CTRL_HEAT:        s = "heat";       break;
-		case MT_CTRL_HEAT_SET:    s = "heatSet";    break;
-		case MT_CTRL_HEAT_REQ:    s = "heatReq";    break;
-		case MT_CTRL_SCHED:       s = "sched";      break;
-	    case MT_CTRL_SCHED_REQ:   s = "schedReq";   break;
-		case MT_CTRL_LAYOUT:      s = "layout";     break;
-		case MT_CTRL_LAYOUT_SET:  s = "layoutSet";  break;
-		case MT_CTRL_LAYOUT_REQ:  s = "layoutReq";  break;
-	}
-	if (found) {
-		*found = (s != NULL);
-	}
-	return s;
-}
 
 char const *
 name_mtPump(MT_PUMP_A5_t const mt, bool const request, bool * const found)
@@ -308,4 +283,39 @@ name_heat_src_nr(char const * const name)
 		}
 	}
 	return 0;
+}
+
+static const char * const _msgtype_names[] = {
+#define XX(num, name) #name,
+  DATALINK_A5_CTRL_MSGTYP_MAP(XX)
+#undef XX
+};
+
+const char *
+name_network_msgtyp(NETWORK_MSGTYP_t typ)
+{
+  return ELEM_AT(_msgtype_names, typ, name_hex8(typ));
+}
+
+typedef struct value_name_pair_t {
+    DATALINK_A5_CTRL_MSGTYP_t typ;
+    char const * const str;
+} value_name_pair_t;
+
+value_name_pair_t _a5_ctrl_msgtyps[] = {
+#define XX(num, name) { .typ = num, .str = #name },
+ DATALINK_A5_CTRL_MSGTYP_MAP(XX)
+#undef XX
+};
+
+const char *
+name_datalink_a5_ctrl_msgtype(DATALINK_A5_CTRL_MSGTYP_t typ)
+{
+    value_name_pair_t const * pair = _a5_ctrl_msgtyps;
+    for(uint ii = 0; ii < ARRAY_SIZE(_a5_ctrl_msgtyps); ii++, pair++) {
+        if (pair->typ == typ) {
+            return pair->str;
+        }
+    }
+    return name_hex8(typ);
 }

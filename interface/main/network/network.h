@@ -9,38 +9,44 @@
 #define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
 
 /* results of sending requests:
-MT_CTRL_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
-MT_CTRL_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
-MT_CTRL_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-MT_CTRL_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
-MT_CTRL_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
-MT_CTRL_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
-MT_CTRL_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
-MT_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
+DATALINK_A5_CTRL_MSGTYP_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
+DATALINK_A5_CTRL_MSGTYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 */
 
-// #define MT_CTRL_SET (0x80)
-// #define MT_CTRL_REQ (0xC0)
+// #define DATALINK_A5_CTRL_MSGTYP_SET (0x80)
+// #define DATALINK_A5_CTRL_MSGTYP_REQ (0xC0)
 
-typedef enum MT_CTRL_A5_t {
-    MT_CTRL_SET_ACK = 0x01,
-    MT_CTRL_CIRCUIT_SET = 0x86,
-    MT_CTRL_STATE= 0x02,
-    MT_CTRL_STATE_SET = 0x82, // (MT_CTRL_STATE| MT_CTRL_SET),
-    MT_CTRL_STATE_REQ = 0xC2, //(MT_CTRL_STATE| MT_CTRL_REQ),
-    MT_CTRL_TIME = 0x05,
-    MT_CTRL_TIME_SET = 0x85, //(MT_CTRL_TIME | MT_CTRL_SET),
-    MT_CTRL_TIME_REQ = 0xC5, //(MT_CTRL_TIME | MT_CTRL_REQ),
-    MT_CTRL_HEAT = 0x08,
-    MT_CTRL_HEAT_SET = 0x88, //(MT_CTRL_HEAT | MT_CTRL_SET),
-    MT_CTRL_HEAT_REQ = 0xC8, //(MT_CTRL_HEAT | MT_CTRL_REQ),
-    MT_CTRL_SCHED = 0x1E,
-    //MT_CTRL_SCHED_SET = 0x9E, //(MT_CTRL_SCHED | MT_CTRL_SET),
-    MT_CTRL_SCHED_REQ = 0xDE, //(MT_CTRL_SCHED | MT_CTRL_REQ),
-    MT_CTRL_LAYOUT = 0x21,
-    MT_CTRL_LAYOUT_SET =  0xA1, //(MT_CTRL_LAYOUT | MT_CTRL_SET),
-    MT_CTRL_LAYOUT_REQ = 0xE1, //(MT_CTRL_LAYOUT | MT_CTRL_REQ),
-} MT_CTRL_A5_t;
+// use macro "magic" to get an enum and matching name_* function (in name.c)
+#define DATALINK_A5_CTRL_MSGTYP_MAP(XX) \
+  XX(0x01, SET_ACK)     \
+  XX(0x86, CIRCUIT_SET) \
+  XX(0x02, STATE)       \
+  XX(0x82, STATE_SET)   \
+  XX(0xC2, STATE_REQ )  \
+  XX(0x05, TIME)        \
+  XX(0x85, TIME_SET)    \
+  XX(0xC5, TIME_REQ)    \
+  XX(0x08, HEAT)        \
+  XX(0x88, HEAT_SET)    \
+  XX(0xC8, HEAT_REQ)    \
+  XX(0x1E, SCHED)       \
+  XX(0x9E, SCHED_SET)   \
+  XX(0xDE, SCHED_REQ)   \
+  XX(0x21, LAYOUT)      \
+  XX(0xA1, LAYOUT_SET)  \
+  XX(0xE1, LAYOUT_REQ)
+
+typedef enum {
+#define XX(num, name) DATALINK_A5_CTRL_MSGTYP_##name = num,
+  DATALINK_A5_CTRL_MSGTYP_MAP(XX)
+#undef XX
+} DATALINK_A5_CTRL_MSGTYP_t;
 
 typedef enum MT_PUMP_A5_t {
     MT_PUMP_REGULATE = 0x01,
@@ -255,41 +261,43 @@ typedef enum {
     NETWORK_ADDRGROUP_UNUSED9 = 0x09,
 } NETWORK_ADDRGROUP_t;
 
-typedef enum {
-    NETWORK_MSGTYP_NONE,
-    NETWORK_MSGTYP_PUMP_REG_SET,
-    NETWORK_MSGTYP_PUMP_REG_SET_RESP,
-    NETWORK_MSGTYP_PUMP_MODE,
-    NETWORK_MSGTYP_PUMP_STATE,
-    NETWORK_MSGTYP_PUMP_STATUS_REQ,
-    NETWORK_MSGTYP_PUMP_STATUS,
-    NETWORK_MSGTYP_CTRL_SET_ACK,
-    NETWORK_MSGTYP_CTRL_CIRCUIT_SET,
-    NETWORK_MSGTYP_CTRL_SCHED_REQ,
-    NETWORK_MSGTYP_CTRL_SCHED,
-    NETWORK_MSGTYP_CTRL_STATE_REQ,
-    NETWORK_MSGTYP_CTRL_STATE,
-    NETWORK_MSGTYP_CTRL_STATE_SET,
-    NETWORK_MSGTYP_CTRL_TIME_REQ,
-    NETWORK_MSGTYP_CTRL_TIME,
-    NETWORK_MSGTYP_CTRL_TIME_SET,
-    NETWORK_MSGTYP_CTRL_HEAT_REQ,
-    NETWORK_MSGTYP_CTRL_HEAT,
-    NETWORK_MSGTYP_CTRL_HEAT_SET,
-    NETWORK_MSGTYP_CTRL_LAYOUT_REQ,
-    NETWORK_MSGTYP_CTRL_LAYOUT,
-    NETWORK_MSGTYP_CTRL_LAYOUT_SET,
-    NETWORK_MSGTYP_CHLOR_PING_REQ,
-    NETWORK_MSGTYP_CHLOR_PING,
-    NETWORK_MSGTYP_CHLOR_NAME,
-    NETWORK_MSGTYP_CHLOR_LEVEL_SET,
-    NETWORK_MSGTYP_CHLOR_LEVEL_RESP,
-} NETWORK_MSGTYP_t;
+// use macro "magic" to get an enum and matching name_* function (in name.c)
+#define NETWORK_MSGTYP_MAP(XX) \
+  XX( 0, NONE)              \
+  XX( 1, PUMP_REG_SET)      \
+  XX( 2, PUMP_REG_SET_RESP) \
+  XX( 3, PUMP_CTRL)         \
+  XX( 4, PUMP_MODE)         \
+  XX( 5, PUMP_STATE)        \
+  XX( 6, PUMP_STATUS_REQ)   \
+  XX( 7, PUMP_STATUS)       \
+  XX( 8, CTRL_SET_ACK)      \
+  XX( 9, CTRL_CIRCUIT_SET)  \
+  XX(10, CTRL_SCHED_REQ)    \
+  XX(11, CTRL_SCHED)        \
+  XX(12, CTRL_STATE_REQ)    \
+  XX(13, CTRL_STATE)        \
+  XX(14, CTRL_STATE_SET)    \
+  XX(15, CTRL_TIME_REQ)     \
+  XX(16, CTRL_TIME)         \
+  XX(17, CTRL_TIME_SET)     \
+  XX(18, CTRL_HEAT_REQ)     \
+  XX(19, CTRL_HEAT)         \
+  XX(20, CTRL_HEAT_SET)     \
+  XX(21, CTRL_LAYOUT_REQ)   \
+  XX(22, CTRL_LAYOUT)       \
+  XX(23, CTRL_LAYOUT_SET)   \
+  XX(24, CHLOR_PING_REQ)    \
+  XX(25, CHLOR_PING)        \
+  XX(26, CHLOR_NAME)        \
+  XX(27, CHLOR_LEVEL_SET)   \
+  XX(28, CHLOR_LEVEL_RESP)
 
-typedef struct network_msg_pump_reg_set {
-    char * prg_name;
-    uint16_t value;
-} network_msg_pump_reg_set;
+typedef enum {
+#define XX(num, name) NETWORK_MSGTYP_##name = num,
+  NETWORK_MSGTYP_MAP(XX)
+#undef XX
+} NETWORK_MSGTYP_t;
 
 typedef struct network_msg_t {
     NETWORK_MSGTYP_t typ;
