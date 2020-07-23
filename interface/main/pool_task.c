@@ -52,7 +52,7 @@ pool_task(void * ipc_void)
     datalink_pkt_t datalink_pkt; // poolstate_t state;
     network_msg_t network_msg;
     bool txOpportunity;
-    poolstate_t poolstate;
+    poolstate_t poolstate = {};
 
     while (1) {
         if (datalink_receive_pkt(rs485_handle, &datalink_pkt)) {

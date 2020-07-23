@@ -21,4 +21,3 @@ void cPool_AddThermostatToObject(cJSON * const obj, char const * const key, pool
 void cPool_AddTempToObject(cJSON * const obj, char const * const key, uint8_t const temp);
 void cPool_AddSchedToObject(cJSON * const obj, char const * const key, uint16_t const start, uint16_t const stop);
 void cPool_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
-
