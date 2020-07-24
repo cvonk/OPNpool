@@ -20,7 +20,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-static char const * const TAG = "to_json";
+static char const * const TAG = "poolstate_json";
 
 void
 cPool_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value)
@@ -137,7 +137,6 @@ cPool_AddDateToObject(cJSON * const obj, char const * const key, poolstate_date_
 void
 cPool_AddTimeToObject(cJSON * const obj, char const * const key, poolstate_time_t const * const time)
 {
-    ESP_LOGI(TAG, "%u:%02u", time->hour, time->minute);
     cJSON_AddStringToObject(obj, key, network_time_str(time->hour, time->minute));
 }
 
@@ -190,8 +189,8 @@ cPool_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_
 {
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
-    cPool_AddTimeToObject(item, "salt", &state->chlor.salt);
-    cPool_AddDateToObject(item, "status", poolstate_chlor_state_str(state->chlor.status));
+    cJSON_AddNumberToObject(item, "salt", state->chlor.salt);
+    cJSON_AddStringToObject(item, "status", poolstate_chlor_state_str(state->chlor.status));
 }
 
 size_t
