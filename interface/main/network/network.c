@@ -18,17 +18,17 @@ uint8_t
 network_ic_len(uint8_t const ic_typ)
 {
     switch (ic_typ) {
-        case DATALINK_IC_CHLOR_MSGTYP_PING_REQ:
+        case DATALINK_CHLOR_TYP_PING_REQ:
             return sizeof(mChlorPingReq_ic_t);
-        case DATALINK_IC_CHLOR_MSGTYP_PING:
+        case DATALINK_CHLOR_TYP_PING:
             return sizeof(mChlorPing_ic_t);
-        case DATALINK_IC_CHLOR_MSGTYP_NAME:
+        case DATALINK_CHLOR_TYP_NAME:
             return sizeof(mChlorName_ic_t);
-        case DATALINK_IC_CHLOR_MSGTYP_LEVEL_SET:
+        case DATALINK_CHLOR_TYP_LEVEL_SET:
             return sizeof(mChlorLevelSet_ic_t);
-        case DATALINK_IC_CHLOR_MSGTYP_LEVEL_RESP:
+        case DATALINK_CHLOR_TYP_LEVEL_RESP:
             return sizeof(mChlorPing_ic_t);
-        case DATALINK_IC_CHLOR_MSGTYP_X14:
+        case DATALINK_CHLOR_TYP_X14:
             return sizeof(mChlor0X14_ic_t);
         default:
             return 0;
