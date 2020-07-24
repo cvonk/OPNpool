@@ -77,7 +77,7 @@ _preamble_is_done(struct proto_info_t * const pi, uint8_t const b, bool * found)
 }
 
 static DATALINK_RESULT_t
-_find_preamble(rs485_handle_t const rs485, NETWORK_PROT_t * const proto)
+_find_preamble(rs485_handle_t const rs485, datalink_prot_t * const proto)
 {
     uint len = 0;
     uint buf_size = 40;
@@ -91,7 +91,7 @@ _find_preamble(rs485_handle_t const rs485, NETWORK_PROT_t * const proto)
 		bool found = false;  // could be the next byte of a preamble
 		for (uint pp = 0; !found && pp < ARRAY_SIZE(_proto_infos); pp++) {
 			if (_preamble_is_done(&_proto_infos[pp], byt, &found)) {
-				*proto = (NETWORK_PROT_t)pp;
+				*proto = (datalink_prot_t)pp;
 				if (CONFIG_POOL_DBG_RAW) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
@@ -109,10 +109,10 @@ _find_preamble(rs485_handle_t const rs485, NETWORK_PROT_t * const proto)
 }
 
 static DATALINK_RESULT_t
-_read_header(rs485_handle_t const rs485, NETWORK_PROT_t const proto, datalink_hdr_t * const hdr)
+_read_header(rs485_handle_t const rs485, datalink_prot_t const proto, datalink_hdr_t * const hdr)
 {
 	switch (proto) {
-		case NETWORK_PROT_A5:
+		case DATALINK_PROT_A5:
 			if (rs485->available() >= (int)sizeof(mHdr_a5_t)) {
 				rs485->read_bytes((uint8_t *)hdr, sizeof(mHdr_a5_t));
 				if (CONFIG_POOL_DBG_RAW) {
@@ -124,7 +124,7 @@ _read_header(rs485_handle_t const rs485, NETWORK_PROT_t const proto, datalink_hd
 				return DATALINK_RESULT_DONE;
 			}
 			break;
-		case NETWORK_PROT_IC:
+		case DATALINK_PROT_IC:
 			if (rs485->available() >= (int)sizeof(mHdr_ic_t)) {
 				mHdr_ic_t hdr_ic;
 				rs485->read_bytes((uint8_t *)&hdr_ic, sizeof(hdr_ic));
@@ -168,10 +168,10 @@ _read_data(rs485_handle_t const rs485, datalink_hdr_t const * const hdr, uint8_t
 }
 
 static DATALINK_RESULT_t
-_read_crc(rs485_handle_t const rs485, NETWORK_PROT_t const proto, uint16_t * chk)
+_read_crc(rs485_handle_t const rs485, datalink_prot_t const proto, uint16_t * chk)
 {
 	switch (proto) {
-		case NETWORK_PROT_A5:
+		case DATALINK_PROT_A5:
 			if (rs485->available() >= (int)sizeof(uint16_t)) {
 				*chk = rs485->read() << 8 | rs485->read();
 				if (CONFIG_POOL_DBG_RAW) {
@@ -181,7 +181,7 @@ _read_crc(rs485_handle_t const rs485, NETWORK_PROT_t const proto, uint16_t * chk
 			}
 			break;
 
-		case NETWORK_PROT_IC:
+		case DATALINK_PROT_IC:
 			if (rs485->available() >= (int)sizeof(uint8_t)) {
 				*chk = rs485->read();  // store it as uint16_t, so we can treat it as A5 pkt
 				if (CONFIG_POOL_DBG_RAW) {
@@ -230,10 +230,10 @@ _crc_is_correct(datalink_pkt_t * pkt)
 {
 	uint16_t calc = 0;  // init to please compiler
 	switch (pkt->proto) {
-		case NETWORK_PROT_A5:
+		case DATALINK_PROT_A5:
 			calc = _calc_crc_a5(&pkt->hdr, pkt->data);
 			break;
-		case NETWORK_PROT_IC:
+		case DATALINK_PROT_IC:
 			calc = _calc_crc_ic(&pkt->hdr, pkt->data);
 			break;
 	}

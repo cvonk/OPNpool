@@ -76,7 +76,7 @@ menu "Pool Interface"
 
     config POOL_DBG_RAW
         bool "Debug raw bytes"
-        default y
+        default n
         help
             Print RS485 bytes to serial port
 
