@@ -67,8 +67,8 @@ pool_task(void * ipc_void)
                 poolstate_t state;
                 if (poolstate_rx_update(&network_msg, &state, &json)) {  // and also a minute or so ..
 
-                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
                 }
+                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
                 free(json);
 
             }

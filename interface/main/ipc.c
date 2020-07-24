@@ -18,6 +18,7 @@
 #include <freertos/queue.h>
 
 #include "ipc.h"
+#include "utils/utils_str.h"
 
 static char const * const TAG = "ipc";
 
@@ -32,7 +33,7 @@ static const char * const _ipc_to_mqtt_typs[] = {
 };
 
 const char *
-ipc_to_mqtt_typ_str(network_heat_src_t const typ)
+ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ)
 {
     return ELEM_AT(_ipc_to_mqtt_typs, typ, hex8_str(typ));
 }
