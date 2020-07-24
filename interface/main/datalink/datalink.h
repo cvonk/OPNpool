@@ -8,6 +8,16 @@
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
 #define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
 
+#ifndef ARRAY_SIZE
+# define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
+#endif
+#if !(defined CONFIG_POOL_DBG_DATALINK)
+#  define CONFIG_POOL_DBG_DATALINK (0)
+#endif
+#if !(defined CONFIG_POOL_DBG_DATALINK_ONERROR)
+#  define CONFIG_POOL_DBG_DATALINK_ONERROR (0)
+#endif
+
 typedef enum {
     DATALINK_PROT_A5 = 0,
     DATALINK_PROT_IC,

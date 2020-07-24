@@ -20,7 +20,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-static char const * const TAG = "poolstate_json";
+//static char const * const TAG = "poolstate_json";
 
 void
 cPool_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value)
@@ -204,6 +204,5 @@ poolstate_to_json(poolstate_t const * const state, char * const buf, size_t cons
     assert( cJSON_PrintPreallocated(obj, buf, buf_len, false) );
 	cJSON_Delete(obj);
 
-	ESP_LOGI(TAG, "%s", buf);
 	return strlen(buf);
 }

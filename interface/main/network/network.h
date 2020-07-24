@@ -3,10 +3,19 @@
 
 #include "../datalink/datalink.h"
 
-// struct/emum mapping
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
 #define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
+
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
+#endif
+#if !defined CONFIG_POOL_DBG_NETWORK
+# define CONFIG_POOL_DBG_NETWORK (0)
+#endif
+#if !defined CONFIG_POOL_DBG_NETWORK_ONERROR
+# define CONFIG_POOL_DBG_NETWORK_ONERROR (0)
+#endif
 
 /* results of sending requests:
 DATALINK_CTRL_TYP_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00

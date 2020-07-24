@@ -67,34 +67,28 @@ menu "Pool Interface"
         help
             Maximum size of the data byte array in a RS485 message (>=32)
 
-    config POOL_DBG_RAW
+    config POOL_DBG_DATALINK
         bool "Debug raw bytes"
         default y
         help
             Print RS485 bytes to serial port
 
-    config POOL_DBG_RAW_ONERROR
+    config POOL_DBG_DATALINK_ONERROR
         bool "Debug raw bytes on decode error"
         default y
         help
             Print RS485 bytes on decoding error to serial port
 
-    config POOL_DBG_DECODED_CTRL
-        bool "Debug decoded control msgs"
+    config POOL_DBG_NETWORK
+        bool "Debug decoded msgs"
         default y
         help
-            Print decoded RS485 control messages to serial port
+            Print decoded RS485 messages to serial port
 
-    config POOL_DBG_DECODED_PUMP
-        bool "Debug decoded pump msgs"
+    config POOL_DBG_NETWORK_ONERROR
+        bool "Debug decoded msgs on error"
         default y
         help
-            Print decoded pump messages to serial port
-
-    config POOL_DBG_DECODED_CHLORINATOR
-        bool "Debug chlorinator messages"
-        default y
-        help
-            Print decoded chlorinator messages to serial port
+            Print decoded RS485 messages in error to serial port
 
 endmenu

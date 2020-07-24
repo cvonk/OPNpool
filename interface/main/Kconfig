@@ -74,34 +74,52 @@ menu "Pool Interface"
         help
             Maximum size of the data byte array in a RS485 message (>=32)
 
-    config POOL_DBG_RAW
-        bool "Debug raw bytes"
+    config POOL_DBG_DATALINK
+        bool "Debug datalink packets"
         default n
         help
             Print RS485 bytes to serial port
 
-    config POOL_DBG_RAW_ONERROR
-        bool "Debug raw bytes on decode error"
+    config POOL_DBG_DATALINK_ONERROR
+        bool "Debug datalink packets with errors"
         default y
         help
             Print RS485 bytes on decoding error to serial port
 
-    config POOL_DBG_DECODED_CTRL
-        bool "Debug decoded control msgs"
+    config POOL_DBG_NETWORK
+        bool "Debug network messages"
         default y
         help
-            Print decoded RS485 control messages to serial port
+            Print messages that cannot be decoded to serial port
 
-    config POOL_DBG_DECODED_PUMP
-        bool "Debug decoded pump msgs"
+    config POOL_DBG_NETWORK_ONERROR
+        bool "Debug network messages with errors"
         default y
         help
-            Print decoded pump messages to serial port
+            Print messages that cannot be decoded to serial port
 
-    config POOL_DBG_DECODED_CHLORINATOR
-        bool "Debug chlorinator messages"
+    config POOL_DBG_POOLSTATE_CTRL
+        bool "Debug state changes for control messages"
         default y
         help
-            Print decoded chlorinator messages to serial port
+            Print control messages to serial port
+
+    config POOL_DBG_POOLSTATE_PUMP
+        bool "Debug statechanges for pump messages"
+        default y
+        help
+            Print pump messages to serial port
+
+    config POOL_DBG_POOLSTATE_CHLOR
+        bool "Debug state changes for chlorinator messages"
+        default y
+        help
+            Print chlorinator messages to serial port
+
+    config POOL_DBG_POOLSTATE_ONERROR
+        bool "Debug state changes with errors"
+        default y
+        help
+            Print messages that cannot be decoded to serial port
 
 endmenu
