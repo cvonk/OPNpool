@@ -17,7 +17,7 @@
 
 #include "httpd.h"
 #include "httpd_root.h"
-#include "ipc_msgs.h"
+#include "ipc.h"
 
 //static char const * const TAG = "httpd_root";
 

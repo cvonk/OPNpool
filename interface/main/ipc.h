@@ -18,7 +18,7 @@
 #define WIFI_DEVIPADDR_LEN (16)
 
 typedef struct ipc_t {
-    QueueHandle_t toMqttQ;
+    QueueHandle_t to_mqtt_q;
     struct dev {
         char ipAddr[WIFI_DEVIPADDR_LEN];
         char name[WIFI_DEVNAME_LEN];
@@ -30,15 +30,22 @@ typedef struct ipc_t {
     } dev;
 } ipc_t;
 
-typedef enum toMqttMsgType_t {
-    TO_MQTT_MSGTYPE_RESTART,
-    TO_MQTT_MSGTYPE_WHO,
-    TO_MQTT_MSGTYPE_DBG,
-} toMqttMsgType_t;
+#define IPC_TO_MQTT_TYP_MAP(XX) \
+  XX(0x00, STATE)   \
+  XX(0x01, RESTART) \
+  XX(0x02, WHO)     \
+  XX(0x02, DBG)
+
+typedef enum {
+#define XX(num, name) IPC_TO_MQTT_TYP_##name = num,
+  IPC_TO_MQTT_TYP_MAP(XX)
+#undef XX
+} ipc_to_mqtt_typ_t;
 
 typedef struct toMqttMsg_t {
-    toMqttMsgType_t dataType;
-    char * data;  // must be freed by recipient
+    ipc_to_mqtt_typ_t dataType;
+    char *            data;  // must be freed by recipient
 } toMqttMsg_t;
 
-void sendToMqtt(toMqttMsgType_t const dataType, char const * const data, ipc_t const * const ipc);
+void ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc);
+char const * ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ);

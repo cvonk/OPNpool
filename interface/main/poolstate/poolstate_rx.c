@@ -18,7 +18,7 @@
 //#include "../utils/utils_str.h"
 #include "../network/network.h"
 #include "poolstate.h"
-#include "to_json.h"
+#include "cpool.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
@@ -169,7 +169,7 @@ _ctrl_time(cJSON * const dbg, mCtrlTime_a5_t const * const msg, poolstate_t * co
 }
 
 bool
-poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const state)
+poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, char * * const json)
 {
     poolstate_t old_state;
     poolstate_get(&old_state);
@@ -249,14 +249,13 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
         case NETWORK_MSG_TYP_NONE:
             break;  //  to make the compiler happy
     }
-    char * const buf = cJSON_Print(dbg);
+    *json = cJSON_Print(dbg);
     cJSON_Delete(dbg);
-    ESP_LOGI(TAG, "%s: %s", network_msg_typ_str(msg->typ), buf);
-    free(buf);
+    ESP_LOGI(TAG, "%s: %s", network_msg_typ_str(msg->typ), *json);
 
     bool const state_changed = memcmp(state, &old_state, sizeof(poolstate_t));
     if (state_changed) {
         poolstate_set(state);
     }
-    return state_changed;
+    return state_changed;  // caller must ALWAYS free(*json)
 }

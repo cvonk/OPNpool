@@ -34,7 +34,7 @@
         "cstring": "c",
         "algorithm": "c",
         "esp_system.h": "c",
-        "ipc_msgs.h": "c",
+        "ipc.h": "c",
         "packetizer_task.h": "c",
         "factory_reset_task.h": "c",
         "esp_types.h": "c",

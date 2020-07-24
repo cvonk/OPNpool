@@ -30,7 +30,7 @@
 #include "httpd/httpd.h"
 #include "mqtt/mqtt_task.h"
 #include "utils/board_name.h"
-#include "ipc_msgs.h"
+#include "ipc.h"
 
 static char const * const TAG = "main";
 
@@ -126,8 +126,8 @@ app_main()
     xTaskCreate(&factory_reset_task, "factory_reset_task", 4096, NULL, 5, NULL);
 
     static ipc_t ipc = {};
-    ipc.toMqttQ = xQueueCreate(2, sizeof(toMqttMsg_t));
-    assert(ipc.toMqttQ);
+    ipc.to_mqtt_q = xQueueCreate(2, sizeof(toMqttMsg_t));
+    assert(ipc.to_mqtt_q);
 
     poolstate_init();
 
