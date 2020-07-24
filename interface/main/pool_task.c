@@ -20,7 +20,7 @@
 #include "datalink/datalink.h"
 #include "network/network.h"
 #include "poolstate/poolstate.h"
-#include "ipc.h"
+#include "ipc/ipc.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
@@ -53,9 +53,10 @@ pool_task(void * ipc_void)
     datalink_pkt_t datalink_pkt; // poolstate_t state;
     network_msg_t network_msg;
     bool txOpportunity;
-    poolstate_t poolstate;
-    memset(&poolstate, 0, sizeof(poolstate_t));
-    char * json;
+    poolstate_t state;
+    memset(&state, 0, sizeof(poolstate_t));
+    size_t json_size = 512;
+    char json[json_size];
 
     while (1) {
         if (datalink_rx_pkt(rs485_handle, &datalink_pkt)) {
@@ -64,13 +65,12 @@ pool_task(void * ipc_void)
             if (network_rx_msg(&datalink_pkt, &network_msg, &txOpportunity)) {
                 ESP_LOGI(TAG, "received network msg");
 
-                poolstate_t state;
-                if (poolstate_rx_update(&network_msg, &state, &json)) {  // and also a minute or so ..
+                if (poolstate_rx_update(&network_msg, &state, ipc)) {
 
-                }
+                    poolstate_to_json(&state, json, json_size);
+
                     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
-                free(json);
-
+                }
             }
             if (txOpportunity) {
                 // read incoming mailbox for things to transmit

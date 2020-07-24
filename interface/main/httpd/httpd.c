@@ -1,5 +1,5 @@
 /**
- * @brief HTTP endpoint root
+ * @brief HTTPd: HTTP server; started in response to receiving an IP address; dispatches to httpd_*.c callbacks
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -16,10 +16,7 @@
 #include <freertos/queue.h>
 
 #include "httpd.h"
-#include "httpd_root.h"
-#include "httpd_json.h"
-#include "httpd_api.h"
-#include "ipc.h"
+#include "../ipc/ipc.h"
 
 #define MAX_CONTENT_LEN (2048)
 

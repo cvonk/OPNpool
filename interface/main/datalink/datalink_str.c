@@ -1,5 +1,5 @@
 /**
-* @brief datalink layer: enum to string
+* @brief Data Link Layer: support, enum to string
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -11,7 +11,7 @@
 #include <esp_log.h>
 #include <time.h>
 
-#include "../utils/utils_str.h"
+#include "../utils/utils.h"
 #include "datalink.h"
 
 #ifndef ARRAY_SIZE

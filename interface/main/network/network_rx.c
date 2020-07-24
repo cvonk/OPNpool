@@ -1,5 +1,5 @@
 /**
- * @brief Decode network messages received over the rs-485 bus
+ * @brief Data Link layer: decode packets from the data link layer to messages
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2020, Coert Vonk
@@ -11,32 +11,30 @@
 #include <esp_log.h>
 
 #include "../datalink/datalink.h"
-#include "../utils/utils_str.h"
+#include "../utils/utils.h"
 #include "network.h"
 
 static char const * const TAG = "network_rx";
 
 static void
-_decodeA5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const network)
+_decode_msg_a5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
 
     switch ((datalink_ctrl_typ_t) datalink->hdr.typ) {
-        // response to various set requests
+
         case DATALINK_CTRL_TYP_SET_ACK:
-            if (datalink->hdr.len == sizeof(mCtrlSetAck_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_set_ack_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_SET_ACK;
-                network->u.ctrl_set_ack = (mCtrlSetAck_a5_t *) datalink->data;
+                network->u.ctrl_set_ack = (network_msg_ctrl_set_ack_t *) datalink->data;
             }
             break;
-        // set circuit request (there appears to be no separate "get circuit request")
         case DATALINK_CTRL_TYP_CIRCUIT_SET:
-            if (datalink->hdr.len == sizeof(mCtrlCircuitSet_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_circuit_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_CIRCUIT_SET;
-                network->u.ctrl_circuit_set = (mCtrlCircuitSet_a5_t *) datalink->data;
+                network->u.ctrl_circuit_set = (network_msg_ctrl_circuit_set_t *) datalink->data;
             }
             break;
-            // various get requests
         case DATALINK_CTRL_TYP_TIME_REQ:
             if (datalink->hdr.len == 0) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME_REQ;
@@ -62,63 +60,60 @@ _decodeA5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const netw
                 network->typ = NETWORK_MSG_TYP_CTRL_LAYOUT_REQ;
             }
             break;
-            // schedule: get response / set request
         case DATALINK_CTRL_TYP_SCHED:
-            if (datalink->hdr.len == sizeof(mCtrlSched_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_sched_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_SCHED;
-                network->u.ctrl_sched = (mCtrlSched_a5_t *) datalink->data;
+                network->u.ctrl_sched = (network_msg_ctrl_sched_t *) datalink->data;
             }
             break;
-            // state: get response / set request
         case DATALINK_CTRL_TYP_STATE:
-            if (datalink->hdr.len == sizeof(mCtrlState_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_state_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_STATE;
-                network->u.ctrl_state = (mCtrlState_a5_t *) datalink->data;
+                network->u.ctrl_state = (network_msg_ctrl_state_t *) datalink->data;
             }
             break;
+
         case DATALINK_CTRL_TYP_STATE_SET:
             // unfinished
-            //if (datalink->hdr.len == sizeof(mCtrlState_a5_t)) {
+            //if (datalink->hdr.len == sizeof(network_msg_ctrl_state_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_STATE_SET;
-                //network->u.ctrl_state = (mCtrlState_a5_t *) datalink->data;
+                //network->u.ctrl_state = (network_msg_ctrl_state_t *) datalink->data;
             //}
             break;
-            // time: get response / set request
         case DATALINK_CTRL_TYP_TIME:
-            if (datalink->hdr.len == sizeof(mCtrlTime_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_time_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME;
-                network->u.ctrl_time = (mCtrlTime_a5_t *) datalink->data;
+                network->u.ctrl_time = (network_msg_ctrl_time_t *) datalink->data;
             }
             break;
         case DATALINK_CTRL_TYP_TIME_SET:
-            if (datalink->hdr.len == sizeof(mCtrlTimeSet_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_time_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME_SET;
-                network->u.ctrl_time_set = (mCtrlTimeSet_a5_t *) datalink->data;
+                network->u.ctrl_time_set = (network_msg_ctrl_time_set_t *) datalink->data;
             }
             break;
-            // heat: get response / set request
         case DATALINK_CTRL_TYP_HEAT:
-            if (datalink->hdr.len == sizeof(mCtrlHeat_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_heat_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_HEAT;
-                network->u.ctrl_heat = (mCtrlHeat_a5_t *) datalink->data;
+                network->u.ctrl_heat = (network_msg_ctrl_heat_t *) datalink->data;
             }
             break;
         case DATALINK_CTRL_TYP_HEAT_SET:
-            if (datalink->hdr.len == sizeof(mCtrlHeatSet_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_heat_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_HEAT_SET;
-                network->u.ctrl_heat_set = (mCtrlHeatSet_a5_t *) datalink->data;
+                network->u.ctrl_heat_set = (network_msg_ctrl_heat_set_t *) datalink->data;
             }
             break;
         case DATALINK_CTRL_TYP_LAYOUT:
-            if (datalink->hdr.len == sizeof(mCtrlLayout_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_layout_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_LAYOUT;
-                network->u.ctrl_layout = (mCtrlLayout_a5_t *) datalink->data;
+                network->u.ctrl_layout = (network_msg_ctrl_layout_t *) datalink->data;
             }
             break;
         case DATALINK_CTRL_TYP_LAYOUT_SET:
-            if (datalink->hdr.len == sizeof(mCtrlLayoutSet_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_layout_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_LAYOUT_SET;
-                network->u.ctrl_layout_set = (mCtrlLayoutSet_a5_t *) datalink->data;
+                network->u.ctrl_layout_set = (network_msg_ctrl_layout_set_t *) datalink->data;
             }
             break;
         default:
@@ -128,7 +123,7 @@ _decodeA5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const netw
 };
 
 static void
-_decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const network)
+_decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
 	bool toPump = (network_groupaddr(datalink->hdr.dst) == NETWORK_ADDRGROUP_PUMP);
@@ -136,33 +131,33 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
     switch ((datalink_pump_typ_t)datalink->hdr.typ) {
         case DATALINK_PUMP_TYP_REGULATE:
             if (toPump) {
-                if (datalink->hdr.len == sizeof(mPumpRegulateSet_a5_t)) {
+                if (datalink->hdr.len == sizeof(network_msg_pump_reg_set_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_REG_SET;
-                    network->u.pump_reg_set = (mPumpRegulateSet_a5_t *) datalink->data;
+                    network->u.pump_reg_set = (network_msg_pump_reg_set_t *) datalink->data;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(mPumpRegulateSetResp_a5_t)) {
+                if (datalink->hdr.len == sizeof(network_msg_pump_reg_resp_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_REG_SET_RESP;
-                    network->u.pump_reg_set_resp = (mPumpRegulateSetResp_a5_t *) datalink->data;
+                    network->u.pump_reg_set_resp = (network_msg_pump_reg_resp_t *) datalink->data;
                 }
             }
             break;
         case DATALINK_PUMP_TYP_CTRL:
-            if (datalink->hdr.len == sizeof(mPumpCtrl_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_pump_ctrl_t)) {
                 network->typ = NETWORK_MSG_TYP_PUMP_CTRL;
-                network->u.pump_ctrl = (mPumpCtrl_a5_t *) datalink->data;
+                network->u.pump_ctrl = (network_msg_pump_ctrl_t *) datalink->data;
             }
             break;
         case DATALINK_PUMP_TYP_MODE:
-            if (datalink->hdr.len == sizeof(mPumpMode_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_pump_mode_t)) {
                 network->typ = NETWORK_MSG_TYP_PUMP_MODE;
-                network->u.pump_mode = (mPumpMode_a5_t *) datalink->data;
+                network->u.pump_mode = (network_msg_pump_mode_t *) datalink->data;
             }
             break;
         case DATALINK_PUMP_TYP_STATE:
-            if (datalink->hdr.len == sizeof(mPumpRunning_a5_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_pump_running_t)) {
                 network->typ = NETWORK_MSG_TYP_PUMP_RUNNING;
-                network->u.pump_running = (mPumpRunning_a5_t *) datalink->data;
+                network->u.pump_running = (network_msg_pump_running_t *) datalink->data;
             }
             break;
         case DATALINK_PUMP_TYP_STATUS:
@@ -171,9 +166,9 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
                     network->typ = NETWORK_MSG_TYP_PUMP_STATUS_REQ;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(mPumpStatus_a5_t)) {
+                if (datalink->hdr.len == sizeof(network_msg_pump_status_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_STATUS;
-                    network->u.pump_status = (mPumpStatus_a5_t *) datalink->data;
+                    network->u.pump_status = (network_msg_pump_status_t *) datalink->data;
                 }
             }
             break;
@@ -187,39 +182,39 @@ _decodeA5_pump(datalink_pkt_t const * const datalink, network_msg_t * const netw
 }
 
 static void
-_decodeIC_chlor(datalink_pkt_t const * const datalink, network_msg_t * const network)
+_decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
 
     switch ((datalink_chlor_typ_t) datalink->hdr.typ) {
         case DATALINK_CHLOR_TYP_PING_REQ:
-            if (datalink->hdr.len == sizeof(mChlorPingReq_ic_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_chlor_ping_req_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_PING_REQ;
-                network->u.chlor_ping_req = (mChlorPingReq_ic_t *) datalink->data;
+                network->u.chlor_ping_req = (network_msg_chlor_ping_req_t *) datalink->data;
             }
             break;
         case DATALINK_CHLOR_TYP_PING:
-            if (datalink->hdr.len == sizeof(mChlorPing_ic_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_chlor_ping_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_PING;
-                network->u.chlor_ping = (mChlorPing_ic_t *) datalink->data;
+                network->u.chlor_ping = (network_msg_chlor_ping_t *) datalink->data;
             }
             break;
         case DATALINK_CHLOR_TYP_NAME:
-            if (datalink->hdr.len == sizeof(mChlorName_ic_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_chlor_name_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_NAME;
-                network->u.chlor_name = (mChlorName_ic_t *) datalink->data;
+                network->u.chlor_name = (network_msg_chlor_name_t *) datalink->data;
             }
             break;
         case DATALINK_CHLOR_TYP_LEVEL_SET:
-            if (datalink->hdr.len == sizeof(mChlorLevelSet_ic_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_chlor_level_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_LEVEL_SET;
-                network->u.chlor_level_set = (mChlorLevelSet_ic_t *) datalink->data;
+                network->u.chlor_level_set = (network_msg_chlor_level_set_t *) datalink->data;
             }
             break;
         case DATALINK_CHLOR_TYP_LEVEL_RESP:
-            if (datalink->hdr.len == sizeof(mChlorLevelResp_ic_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_chlor_level_resp_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_LEVEL_RESP;
-                network->u.chlor_level_resp = (mChlorLevelResp_ic_t *) datalink->data;
+                network->u.chlor_level_resp = (network_msg_chlor_level_resp_t *) datalink->data;
             }
             break;
         case DATALINK_CHLOR_TYP_X14:
@@ -237,7 +232,7 @@ network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const netw
 	network_addrgroup_t src = network_groupaddr(datalink->hdr.src);
 	network_addrgroup_t dst = network_groupaddr(datalink->hdr.dst);
 
-	if (dst == NETWORK_ADDRGROUP_UNUSED9) {
+	if (dst == NETWORK_ADDRGROUP_X09) {
 		return false; // stick our head in the sand
 	}
 
@@ -246,14 +241,14 @@ network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const netw
 	switch (datalink->proto) {
 		case DATALINK_PROT_A5:
 			if (src == NETWORK_ADDRGROUP_PUMP || dst == NETWORK_ADDRGROUP_PUMP) {
-                _decodeA5_pump(datalink, network);
+                _decode_msg_a5_pump(datalink, network);
 			} else {
-                _decodeA5_ctrl(datalink, network);
+                _decode_msg_a5_ctrl(datalink, network);
 			}
 			break;
 		case DATALINK_PROT_IC:
 			if (dst == NETWORK_ADDRGROUP_ALL || dst == NETWORK_ADDRGROUP_CHLOR) {
-                _decodeIC_chlor(datalink, network);
+                _decode_msg_ic_chlor(datalink, network);
 			}
 			break;
         default:

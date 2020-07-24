@@ -1,5 +1,5 @@
 /**
-* @brief mqtt_client_task, interface with the MQTT broker
+* @brief MQTT client task: interface with the MQTT broker
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -21,7 +21,7 @@
 #include <esp_core_dump.h>
 #include <esp_flash.h>
 
-#include "ipc.h"
+#include "ipc/ipc.h"
 #include "mqtt_task.h"
 #include "coredump_to_server.h"
 
