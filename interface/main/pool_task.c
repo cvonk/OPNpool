@@ -60,10 +60,10 @@ pool_task(void * ipc_void)
 
     while (1) {
         if (datalink_rx_pkt(rs485_handle, &datalink_pkt)) {
-            ESP_LOGI(TAG, "received datalink pkt");
+            //ESP_LOGI(TAG, "received datalink pkt");
 
             if (network_rx_msg(&datalink_pkt, &network_msg, &txOpportunity)) {
-                ESP_LOGI(TAG, "received network msg");
+                //ESP_LOGI(TAG, "received network msg");
 
                 if (poolstate_rx_update(&network_msg, &state, ipc)) {
                     ESP_LOGI(TAG, "poolstate updated");

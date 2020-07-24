@@ -117,7 +117,7 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const
             }
             break;
         default:
-            if (CONFIG_POOL_DBG_NETWORK_ONERROR == 'y') {
+            if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
                 ESP_LOGW(TAG, "unknown A5 ctrl typ %u", datalink->hdr.typ);
             }
             break;
@@ -178,7 +178,7 @@ _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const
             // silently ignore
             break;
         default:
-            if (CONFIG_POOL_DBG_NETWORK_ONERROR == 'y') {
+            if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
                 ESP_LOGW(TAG, "unknown A5 pump typ %u", datalink->hdr.typ);
             }
             break;
@@ -225,7 +225,7 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * cons
             // silently ignore
             break;
         default:
-            if (CONFIG_POOL_DBG_NETWORK_ONERROR == 'y') {
+            if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
                 ESP_LOGW(TAG, "unknown IC typ %u", datalink->hdr.typ);
             }
             break;
@@ -258,7 +258,7 @@ network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const netw
 			}
 			break;
         default:
-            if (CONFIG_POOL_DBG_NETWORK_ONERROR == 'y') {
+            if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
                 ESP_LOGW(TAG, "unknown proto %u", datalink->proto);
             }
 	}

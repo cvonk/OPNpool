@@ -81,14 +81,14 @@ _find_preamble(rs485_handle_t const rs485, datalink_prot_t * const proto)
 
 	while (rs485->available()) {
 		uint8_t byt = rs485->read();
-		if (CONFIG_POOL_DBG_DATALINK == 'y') {
+		if (CONFIG_POOL_DBG_DATALINK) {
             len += snprintf(dbg + len, buf_size - len, " %02X", byt);
 		}
 		bool found = false;  // could be the next byte of a preamble
 		for (uint pp = 0; !found && pp < ARRAY_SIZE(_proto_infos); pp++) {
 			if (_preamble_is_done(&_proto_infos[pp], byt, &found)) {
 				*proto = (datalink_prot_t)pp;
-				if (CONFIG_POOL_DBG_DATALINK == 'y') {
+				if (CONFIG_POOL_DBG_DATALINK) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
 				return DATALINK_RESULT_DONE;
@@ -111,7 +111,7 @@ _read_header(rs485_handle_t const rs485, datalink_prot_t const proto, datalink_h
 		case DATALINK_PROT_A5:
 			if (rs485->available() >= (int)sizeof(mHdr_a5_t)) {
 				rs485->read_bytes((uint8_t *)hdr, sizeof(mHdr_a5_t));
-				if (CONFIG_POOL_DBG_DATALINK == 'y') {
+				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %02X %02X %02X %02X %02X (header)", hdr->pro, hdr->dst, hdr->src, hdr->typ, hdr->len);
 				}
 				if (hdr->len > CONFIG_POOL_DATALINK_LEN) {
@@ -124,7 +124,7 @@ _read_header(rs485_handle_t const rs485, datalink_prot_t const proto, datalink_h
 			if (rs485->available() >= (int)sizeof(mHdr_ic_t)) {
 				mHdr_ic_t hdr_ic;
 				rs485->read_bytes((uint8_t *)&hdr_ic, sizeof(hdr_ic));
-				if (CONFIG_POOL_DBG_DATALINK == 'y') {
+				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %02X %02X (header)\n", hdr->dst, hdr->typ);
 				}
                 uint8_t len = network_ic_len(hdr_ic.typ);
@@ -152,7 +152,7 @@ _read_data(rs485_handle_t const rs485, datalink_hdr_t const * const hdr, uint8_t
 
 	if (rs485->available() >= (int)sizeof(hdr->len)) {
 		rs485->read_bytes((uint8_t *)data, hdr->len);
-		if (CONFIG_POOL_DBG_DATALINK == 'y') {
+		if (CONFIG_POOL_DBG_DATALINK) {
 			for (uint ii = 0; ii < hdr->len; ii++) {
                 len += snprintf(buf + len, buf_size - len, " %02X", data[ii]);
 			}
@@ -170,7 +170,7 @@ _read_crc(rs485_handle_t const rs485, datalink_prot_t const proto, uint16_t * ch
 		case DATALINK_PROT_A5:
 			if (rs485->available() >= (int)sizeof(uint16_t)) {
 				*chk = rs485->read() << 8 | rs485->read();
-				if (CONFIG_POOL_DBG_DATALINK == 'y') {
+				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %03X (checksum)\n", *chk);
 				}
 				return DATALINK_RESULT_DONE;
@@ -180,7 +180,7 @@ _read_crc(rs485_handle_t const rs485, datalink_prot_t const proto, uint16_t * ch
 		case DATALINK_PROT_IC:
 			if (rs485->available() >= (int)sizeof(uint8_t)) {
 				*chk = rs485->read();  // store it as uint16_t, so we can treat it as A5 pkt
-				if (CONFIG_POOL_DBG_DATALINK == 'y') {
+				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %02X (checksum)\n", *chk);
 				}
 				return DATALINK_RESULT_DONE;

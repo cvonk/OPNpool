@@ -32,7 +32,7 @@ _pump_reg_set(cJSON * const dbg, network_msg_pump_reg_set_t const * const msg)
     uint const address = (msg->addressHi << 8) | msg->addressLo;
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddPumpPrgToObject(dbg, network_pump_prg_str(address), value);
     }
 }
@@ -42,7 +42,7 @@ _pump_reg_set_resp(cJSON * const dbg, network_msg_pump_reg_resp_t const * const 
 {
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddPumpPrgToObject(dbg, "now", value);
     }
 }
@@ -51,7 +51,7 @@ _pump_reg_set_resp(cJSON * const dbg, network_msg_pump_reg_resp_t const * const 
 static void
 _pump_ctrl(cJSON * const dbg, network_msg_pump_ctrl_t const * const msg)
 {
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
        cPool_AddPumpCtrlToObject(dbg, "ctrl", msg->ctrl);
     }
 }
@@ -66,7 +66,7 @@ _pump_running(cJSON * const dbg, network_msg_pump_running_t const * const msg, p
     }
     state->pump.running = running;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddPumpRunningToObject(dbg, "running", state->pump.running);
     }
 }
@@ -76,7 +76,7 @@ _pump_mode(cJSON * const dbg, network_msg_pump_mode_t const * const msg, poolsta
 {
     state->pump.mode = msg->mode;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddPumpModeToObject(dbg, "mode", msg->mode);
     }
 }
@@ -101,7 +101,7 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_t const * const msg, poo
     state->pump.time.hour = msg->hour;
     state->pump.time.minute = msg->minute;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
        cPool_AddPumpStatusToObject(dbg, "status", state);
     }
 }
@@ -109,7 +109,7 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_t const * const msg, poo
 static void
 _ctrl_set_ack(cJSON * const dbg, network_msg_ctrl_set_ack_t const * const msg)
 {
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cJSON_AddNumberToObject(dbg, "ack", msg->typ);
     }
 }
@@ -117,7 +117,7 @@ _ctrl_set_ack(cJSON * const dbg, network_msg_ctrl_set_ack_t const * const msg)
 static void
 _ctrl_circuit_set(cJSON * const dbg, network_msg_ctrl_circuit_set_t const * const msg)
 {
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit), msg->value);
     }
 }
@@ -137,7 +137,7 @@ _ctrl_sched(cJSON * const dbg, network_msg_ctrl_sched_t const * const msg, pools
         state_sched->start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
         state_sched->stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
 
-        if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+        if (CONFIG_POOL_DBG_POOLSTATE) {
                 cPool_AddSchedToObject(item, network_circuit_str(state_sched->circuit), state_sched->start, state_sched->stop);
         }
     }
@@ -161,7 +161,7 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
     state->air.temp = msg->airTemp;
     state->solar.temp = msg->solarTemp;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddStateToObject(dbg, "state", state);
     }
 }
@@ -175,7 +175,7 @@ _ctrl_time(cJSON * const dbg, network_msg_ctrl_time_t const * const msg, poolsta
     state->tod.date.month = msg->month;
     state->tod.date.year = msg->year;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddTodToObject(dbg, "tod", &state->tod);
     }
 }
@@ -190,7 +190,7 @@ _ctrl_heat(cJSON * const dbg, network_msg_ctrl_heat_t const * const msg, poolsta
     state->spa.set_point = msg->spaTempSetpoint;
     state->spa.heat_src = msg->heatSrc >> 2;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddThermostatToObject(dbg, "pool", &state->pool);
         cPool_AddThermostatToObject(dbg, "spa", &state->spa);
     }
@@ -204,7 +204,7 @@ _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg,
     state->spa.set_point = msg->spaTempSetpoint;
     state->spa.heat_src = msg->heatSrc >> 2;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddThermostatSetToObject(dbg, "pool", &state->pool);
         cPool_AddThermostatSetToObject(dbg, "spa", &state->spa);
     }
@@ -215,7 +215,7 @@ _chlor_name(cJSON * const dbg, network_msg_chlor_name_t const * const msg, pools
 {
     strncpy(state->chlor.name, msg->name, sizeof(mChlorNameStr));
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cJSON_AddStringToObject(dbg, "name", state->chlor.name);
     }
 }
@@ -225,7 +225,7 @@ _chlor_set(cJSON * const dbg, network_msg_chlor_level_set_t const * const msg, p
 {
     state->chlor.pct = msg->pct;
 
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cJSON_AddNumberToObject(dbg, "pct", state->chlor.pct);
     }
 }
@@ -246,7 +246,7 @@ _chlor_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const 
     } else {
         state->chlor.status = POOLSTATE_CHLOR_STATUS_OK;
     }
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         cPool_AddChlorRespToObject(dbg, "chlor", state);
     }
 }
@@ -332,7 +332,7 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case NETWORK_MSG_TYP_NONE:  // to please the gcc
             break;  //
     }
-    if (CONFIG_POOL_DBG_POOLSTATE == 'y') {
+    if (CONFIG_POOL_DBG_POOLSTATE) {
         char const * const json = cJSON_Print(dbg);
         ESP_LOGI(TAG, "%s: %s", network_msg_typ_str(msg->typ), json);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_DBG, json, ipc_for_dbg);
