@@ -6,6 +6,13 @@
 #include "../network/network.h"
 #include "../ipc/ipc.h"
 
+#if !defined CONFIG_POOL_DBG_POOLSTATE
+# define CONFIG_POOL_DBG_POOLSTATE (0)
+#endif
+#if !defined CONFIG_POOL_DBG_POOLSTATE_ONERROR
+# define CONFIG_POOL_DBG_POOLSTATE_ONERROR (0)
+#endif
+
 /**
  * macro "magic" to get an enum and matching *_str functions (in *_str.c)
  **/

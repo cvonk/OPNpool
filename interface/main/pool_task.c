@@ -66,6 +66,7 @@ pool_task(void * ipc_void)
                 ESP_LOGI(TAG, "received network msg");
 
                 if (poolstate_rx_update(&network_msg, &state, ipc)) {
+                    ESP_LOGI(TAG, "poolstate updated");
 
                     poolstate_to_json(&state, json, json_size);
 
