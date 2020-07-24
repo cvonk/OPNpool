@@ -339,7 +339,7 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
     }
     cJSON_Delete(dbg);
 
-    bool const state_changed = memcmp(state, &old_state, sizeof(poolstate_t) != 0);
+    bool const state_changed = memcmp(state, &old_state, sizeof(poolstate_t)) != 0;
     if (state_changed) {
         poolstate_set(state);
     }
