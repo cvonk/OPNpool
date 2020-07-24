@@ -88,7 +88,7 @@ menu "Pool Interface"
 
     config POOL_DBG_NETWORK
         bool "Debug network messages"
-        default y
+        default n
         help
             Print messages that cannot be decoded to serial port
 
@@ -98,23 +98,11 @@ menu "Pool Interface"
         help
             Print messages that cannot be decoded to serial port
 
-    config POOL_DBG_POOLSTATE_CTRL
+    config POOL_DBG_POOLSTATE
         bool "Debug state changes for control messages"
         default y
         help
             Print control messages to serial port
-
-    config POOL_DBG_POOLSTATE_PUMP
-        bool "Debug statechanges for pump messages"
-        default y
-        help
-            Print pump messages to serial port
-
-    config POOL_DBG_POOLSTATE_CHLOR
-        bool "Debug state changes for chlorinator messages"
-        default y
-        help
-            Print chlorinator messages to serial port
 
     config POOL_DBG_POOLSTATE_ONERROR
         bool "Debug state changes with errors"

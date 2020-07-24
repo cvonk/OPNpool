@@ -38,7 +38,14 @@ menu "Pool Interface"
 
     config POOL_MQTT_URL
         string "MQTT broker uri"
-        default "mqtt://user:passwd@host:1883"
+        default "mqtt://mqtt:GjRqHdcZM5UnxJ38@mqtt.vonk:1883"
+        help
+            URL of the MQTT broker.  For authentication include the username
+            and password.
+
+    config POOL_MQTT_URL
+        string "MQTT broker uri"
+        default "mqtt://mqtt:GjRqHdcZM5UnxJ38@mqtt.vonk:1883"
         help
             URL of the MQTT broker.  For authentication include the username
             and password.
@@ -68,27 +75,39 @@ menu "Pool Interface"
             Maximum size of the data byte array in a RS485 message (>=32)
 
     config POOL_DBG_DATALINK
-        bool "Debug raw bytes"
-        default y
+        bool "Debug datalink packets"
+        default n
         help
             Print RS485 bytes to serial port
 
     config POOL_DBG_DATALINK_ONERROR
-        bool "Debug raw bytes on decode error"
+        bool "Debug datalink packets with errors"
         default y
         help
             Print RS485 bytes on decoding error to serial port
 
     config POOL_DBG_NETWORK
-        bool "Debug decoded msgs"
-        default y
+        bool "Debug network messages"
+        default n
         help
-            Print decoded RS485 messages to serial port
+            Print messages that cannot be decoded to serial port
 
     config POOL_DBG_NETWORK_ONERROR
-        bool "Debug decoded msgs on error"
+        bool "Debug network messages with errors"
         default y
         help
-            Print decoded RS485 messages in error to serial port
+            Print messages that cannot be decoded to serial port
+
+    config POOL_DBG_POOLSTATE
+        bool "Debug state changes for control messages"
+        default y
+        help
+            Print control messages to serial port
+
+    config POOL_DBG_POOLSTATE_ONERROR
+        bool "Debug state changes with errors"
+        default y
+        help
+            Print messages that cannot be decoded to serial port
 
 endmenu

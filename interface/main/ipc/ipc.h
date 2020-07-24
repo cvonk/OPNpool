@@ -34,7 +34,7 @@ typedef struct ipc_t {
   XX(0x00, STATE)   \
   XX(0x01, RESTART) \
   XX(0x02, WHO)     \
-  XX(0x02, DBG)
+  XX(0x03, DBG)
 
 typedef enum {
 #define XX(num, name) IPC_TO_MQTT_TYP_##name = num,
