@@ -12,7 +12,6 @@
 #include <esp_log.h>
 
 #include "../utils/utils_str.h"
-//#include "../datalink/datalink.h"
 #include "network.h"
 
 char const *
@@ -76,117 +75,119 @@ network_version_str(uint8_t const major, uint8_t const minor)
 }
 
 /**
- * enum to string
- */
+ * network_msg_typ_t
+ **/
 
-static char const * const _chlor_states[] = {
-	"ok", "highSalt", "lowSalt", "veryLowSalt", "lowFlow"
+static const char * const _network_msg_typs[] = {
+#define XX(num, name) #name,
+  NETWORK_MSG_TYP_MAP(XX)
+#undef XX
 };
 
-char const *
-name_chlor_state(uint8_t const chlorstate)
+const char *
+network_msg_typ_str(network_msg_typ_t const typ)
 {
-	if (chlorstate < ARRAY_SIZE(_chlor_states)) {
-		return _chlor_states[chlorstate];
-	}
-	return hex8_str(chlorstate);
+  return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
 }
 
-static char const * const _pump_modes[] = {
-	"filter", "man", "bkwash", "3", "4", "5",
-	"ft1", "7", "8", "ep1", "ep2", "ep3", "ep4"
+/**
+ * network_chlor_state_t
+ **/
+
+static const char * const _network_chlor_states[] = {
+#define XX(num, name) #name,
+  NETWORK_CHLOR_STATE_MAP(XX)
+#undef XX
 };
 
-char const *
-name_pump_mode(uint16_t const value)
+const char *
+network_chlor_state_str(network_chlor_state_t const chlor_state)
 {
-	if (value < ARRAY_SIZE(_pump_modes)) {
-		return _pump_modes[value];
-	}
-	return hex8_str(value);
+  return ELEM_AT(_network_chlor_states, chlor_state, hex8_str(chlor_state));
 }
 
-char const *
-name_pump_prg(uint16_t const address)
-{
-	char const * s;
-	switch (address) {
-		case 0x2BF0: s = "?"; break;
-		case 0x02E4: s = "pgm"; break;    // program GPM
-		case 0x02C4: s = "rpm"; break;    // program RPM
-#if 0
-		case 0x0321: s = "eprg"; break;  // select ext prog, 0x0000=P0, 0x0008=P1, 0x0010=P2,
-										 //                  0x0080=P3, 0x0020=P4
-		case 0x0327: s = "eRpm0"; break; // program ext program RPM0
-		case 0x0328: s = "eRpm1"; break; // program ext program RPM1
-		case 0x0329: s = "eRpm2"; break; // program ext program RPM2
-		case 0x032A: s = "eRpm3"; break; // program ext program RPM3
-#endif
-		default: s = hex16_str(address);
-	}
-	return s;
-}
+/**
+ * network_circuit_t
+ **/
 
-static char const * const _circuits[] = {
-	"spa", "aux1", "aux2", "aux3", "ft1", "pool", "ft1", "ft2", "ft3", "ft4"
+static const char * const _network_circuits[] = {
+#define XX(num, name) #name,
+  NETWORK_CIRCUIT_MAP(XX)
+#undef XX
 };
 
-char const *
-name_circuit(uint8_t const circuit)
+const char *  // 1-based
+network_circuit_str(network_circuit_t const circuit)
 {
-	if (circuit && circuit <= ARRAY_SIZE(_circuits)) {
-		return _circuits[circuit - 1];
-	}
-	if (circuit == 0x85) {
-		return "heatBoost";
-	}
-	return hex8_str(circuit);
+    if (circuit == 0x85) {
+        return "heatBoost";
+    }
+    return ELEM_AT(_network_circuits, circuit, hex8_str(circuit));
 }
 
-uint   // 1-based
-name_circuit_nr(char const * const name)
-{
-	for (uint ii = 0; ii < ARRAY_SIZE(_circuits); ii++) {
-		if (strcmp(name, _circuits[ii]) == 0) {
-			return ii + 1;
-		}
-	}
-	return 0;
-}
+/**
+ * network_pump_mode_t
+ **/
 
-static char const * const _heat_srcs[] = {
-	"none", "heater", "solarPref", "solar"
+static const char * const _network_pump_modes[] = {
+#define XX(num, name) #name,
+  NETWORK_PUMP_MODE_MAP(XX)
+#undef XX
 };
 
-char const *
-name_heat_src(uint8_t const value)
+const char *  // 1-based
+network_pump_mode_str(network_pump_mode_t const pump_mode)
 {
-	if (value < ARRAY_SIZE(_heat_srcs)) {
-		return _heat_srcs[value];
-	}
-	return hex8_str(value);
+    return ELEM_AT(_network_pump_modes, pump_mode, hex8_str(pump_mode));
 }
+
+/**
+ * network_heat_src_t
+ **/
+
+static const char * const _network_heat_srcs[] = {
+#define XX(num, name) #name,
+  NETWORK_HEAT_SRC_MAP(XX)
+#undef XX
+};
+
+const char *  // 1-based
+network_heat_src_str(network_heat_src_t const heat_src)
+{
+    return ELEM_AT(_network_heat_srcs, heat_src, hex8_str(heat_src));
+}
+
 
 uint
-name_heat_src_nr(char const * const name)
+network_heat_src_nr(char const * const heat_src)
 {
-	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(_heat_srcs); ii++) {
-		if (strcmp(name, _heat_srcs[ii]) == 0) {
+	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(_network_heat_srcs); ii++) {
+		if (strcmp(heat_src, _network_heat_srcs[ii]) == 0) {
 			return ii;
 		}
 	}
 	return 0;
 }
 
-static const char * const _msgtype_names[] = {
-#define XX(num, name) #name,
-  NETWORK_MSGTYP_MAP(XX)
-#undef XX
-};
+/**
+ *
+ **/
 
-const char *
-name_network_msgtyp(NETWORK_MSGTYP_t typ)
+char const *
+network_pump_prg_str(uint16_t const address)
 {
-  return ELEM_AT(_msgtype_names, typ, hex8_str(typ));
+	char const * s;
+	switch (address) {
+		case 0x2BF0: s = "?"; break;
+		case 0x02E4: s = "pgm"; break;    // program GPM
+		case 0x02C4: s = "rpm"; break;    // program RPM
+		case 0x0321: s = "eprg"; break;  // select ext prog, 0x0000=P0, 0x0008=P1, 0x0010=P2,
+										 //                  0x0080=P3, 0x0020=P4
+		case 0x0327: s = "eRpm0"; break; // program ext program RPM0
+		case 0x0328: s = "eRpm1"; break; // program ext program RPM1
+		case 0x0329: s = "eRpm2"; break; // program ext program RPM2
+		case 0x032A: s = "eRpm3"; break; // program ext program RPM3
+		default: s = hex16_str(address);
+	}
+	return s;
 }
-

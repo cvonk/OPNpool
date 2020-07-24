@@ -52,7 +52,7 @@ typedef struct {
 typedef struct {
     uint8_t pct;
     uint16_t salt;  // <2800 == low, <2600 == veryLow, > 4500 == high
-    CHLORSTATE_t state;
+    network_chlor_state_t state;
 } poolstate_chlor_t;
 
 typedef struct poolstate_version_t {

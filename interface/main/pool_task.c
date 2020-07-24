@@ -11,6 +11,7 @@
  * All text above must be included in any redistribution
  **/
 
+#include <string.h>
 #include <esp_system.h>
 #include <esp_log.h>
 #include <time.h>
@@ -52,13 +53,14 @@ pool_task(void * ipc_void)
     datalink_pkt_t datalink_pkt; // poolstate_t state;
     network_msg_t network_msg;
     bool txOpportunity;
-    poolstate_t poolstate = {};
+    poolstate_t poolstate;
+    memset(&poolstate, 0, sizeof(poolstate_t));
 
     while (1) {
-        if (datalink_receive_pkt(rs485_handle, &datalink_pkt)) {
+        if (datalink_rx_pkt(rs485_handle, &datalink_pkt)) {
             ESP_LOGI(TAG, "received datalink pkt");
 
-            if (network_receive_msg(&datalink_pkt, &network_msg, &txOpportunity)) {
+            if (network_rx_msg(&datalink_pkt, &network_msg, &txOpportunity)) {
                 ESP_LOGI(TAG, "received network msg");
 
                 poolstate_t state;

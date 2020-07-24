@@ -32,7 +32,7 @@ _pump_reg_set(cJSON * const dbg, mPumpRegulateSet_a5_t const * const msg)
     uint const address = (msg->addressHi << 8) | msg->addressLo;
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    cPool_AddPumpPrgToObject(dbg, name_pump_prg(address), value);
+    cPool_AddPumpPrgToObject(dbg, network_pump_prg_str(address), value);
 }
 
 void
@@ -102,7 +102,7 @@ _ctrl_set_ack(cJSON * const dbg, mCtrlSetAck_a5_t const * const msg)
 void
 _ctrl_circuit_set(cJSON * const dbg, mCtrlCircuitSet_a5_t const * const msg)
 {
-    cJSON_AddNumberToObject(dbg, name_circuit(msg->circuit), msg->value);
+    cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit), msg->value);
 }
 
 void
@@ -120,7 +120,7 @@ _ctrl_sched(cJSON * const dbg, mCtrlSched_a5_t const * const msg, poolstate_t * 
         state_sched->start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
         state_sched->stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
 
-        cPool_AddSchedToObject(item, name_circuit(state_sched->circuit), state_sched->start, state_sched->stop);
+        cPool_AddSchedToObject(item, network_circuit_str(state_sched->circuit), state_sched->start, state_sched->stop);
     }
 }
 
@@ -177,81 +177,81 @@ poolstate_receive_update(network_msg_t const * const msg, poolstate_t * const st
 
     cJSON * const dbg = cJSON_CreateObject();
     switch(msg->typ) {
-        case NETWORK_MSGTYP_PUMP_REG_SET:
+        case NETWORK_MSG_TYP_PUMP_REG_SET:
             _pump_reg_set(dbg, msg->u.pump_reg_set);
             break;
-        case NETWORK_MSGTYP_PUMP_REG_SET_RESP:
+        case NETWORK_MSG_TYP_PUMP_REG_SET_RESP:
             _pump_reg_set_resp(dbg, msg->u.pump_reg_set_resp);
             break;
-        case NETWORK_MSGTYP_PUMP_CTRL:
+        case NETWORK_MSG_TYP_PUMP_CTRL:
             _pump_ctrl(dbg, msg->u.pump_ctrl);
             break;
-        case NETWORK_MSGTYP_PUMP_MODE:
+        case NETWORK_MSG_TYP_PUMP_MODE:
             _pump_mode(dbg, msg->u.pump_mode, state);
             break;
-        case NETWORK_MSGTYP_PUMP_RUNNING:
+        case NETWORK_MSG_TYP_PUMP_RUNNING:
             _pump_running(dbg, msg->u.pump_running, state);
             break;
-        case NETWORK_MSGTYP_PUMP_STATUS_REQ:
+        case NETWORK_MSG_TYP_PUMP_STATUS_REQ:
              break;
-        case NETWORK_MSGTYP_PUMP_STATUS:
+        case NETWORK_MSG_TYP_PUMP_STATUS:
             _pump_status(dbg, msg->u.pump_status, state);
             break;
 
         // response to various set requests
-        case NETWORK_MSGTYP_CTRL_SET_ACK:
+        case NETWORK_MSG_TYP_CTRL_SET_ACK:
             _ctrl_set_ack(dbg, msg->u.ctrl_set_ack);
             break;
 
         // set circuit request (there appears to be no separate "get circuit request")
-        case NETWORK_MSGTYP_CTRL_CIRCUIT_SET:
+        case NETWORK_MSG_TYP_CTRL_CIRCUIT_SET:
             _ctrl_circuit_set(dbg, msg->u.ctrl_circuit_set);
             break;
 
         // various get requests
-        case NETWORK_MSGTYP_CTRL_SCHED_REQ:
-        case NETWORK_MSGTYP_CTRL_STATE_REQ:
-        case NETWORK_MSGTYP_CTRL_TIME_REQ:
-        case NETWORK_MSGTYP_CTRL_HEAT_REQ:
-        case NETWORK_MSGTYP_CTRL_LAYOUT_REQ:
+        case NETWORK_MSG_TYP_CTRL_SCHED_REQ:
+        case NETWORK_MSG_TYP_CTRL_STATE_REQ:
+        case NETWORK_MSG_TYP_CTRL_TIME_REQ:
+        case NETWORK_MSG_TYP_CTRL_HEAT_REQ:
+        case NETWORK_MSG_TYP_CTRL_LAYOUT_REQ:
             break;
 
         // schedule: get response / set request
-        case NETWORK_MSGTYP_CTRL_SCHED:
+        case NETWORK_MSG_TYP_CTRL_SCHED:
             _ctrl_sched(dbg, msg->u.ctrl_sched, state);
             break;
 
             // state: get response / set request
-        case NETWORK_MSGTYP_CTRL_STATE:
+        case NETWORK_MSG_TYP_CTRL_STATE:
             _ctrl_state(dbg, msg->u.ctrl_state, state);
             break;
 
-        case NETWORK_MSGTYP_CTRL_STATE_SET:
+        case NETWORK_MSG_TYP_CTRL_STATE_SET:
             // 2BD
             break;
 
-        case NETWORK_MSGTYP_CTRL_TIME:
-        case NETWORK_MSGTYP_CTRL_TIME_SET:
+        case NETWORK_MSG_TYP_CTRL_TIME:
+        case NETWORK_MSG_TYP_CTRL_TIME_SET:
             _ctrl_time(dbg, msg->u.ctrl_time, state);
             break;
 
 
-        case NETWORK_MSGTYP_CTRL_HEAT:
-        case NETWORK_MSGTYP_CTRL_HEAT_SET:
-        case NETWORK_MSGTYP_CTRL_LAYOUT:
-        case NETWORK_MSGTYP_CTRL_LAYOUT_SET:
-        case NETWORK_MSGTYP_CHLOR_PING_REQ:
-        case NETWORK_MSGTYP_CHLOR_PING:
-        case NETWORK_MSGTYP_CHLOR_NAME:
-        case NETWORK_MSGTYP_CHLOR_LEVEL_SET:
-        case NETWORK_MSGTYP_CHLOR_LEVEL_RESP:
+        case NETWORK_MSG_TYP_CTRL_HEAT:
+        case NETWORK_MSG_TYP_CTRL_HEAT_SET:
+        case NETWORK_MSG_TYP_CTRL_LAYOUT:
+        case NETWORK_MSG_TYP_CTRL_LAYOUT_SET:
+        case NETWORK_MSG_TYP_CHLOR_PING_REQ:
+        case NETWORK_MSG_TYP_CHLOR_PING:
+        case NETWORK_MSG_TYP_CHLOR_NAME:
+        case NETWORK_MSG_TYP_CHLOR_LEVEL_SET:
+        case NETWORK_MSG_TYP_CHLOR_LEVEL_RESP:
             break;
-        case NETWORK_MSGTYP_NONE:
+        case NETWORK_MSG_TYP_NONE:
             break;  //  to make the compiler happy
     }
     char * const buf = cJSON_Print(dbg);
     cJSON_Delete(dbg);
-    ESP_LOGI(TAG, "%s: %s", name_network_msgtyp(msg->typ), buf);
+    ESP_LOGI(TAG, "%s: %s", network_msg_typ_str(msg->typ), buf);
     free(buf);
 
     bool const state_changed = memcmp(state, &old_state, sizeof(poolstate_t));

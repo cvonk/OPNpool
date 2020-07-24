@@ -25,7 +25,7 @@ str_value_name_pair_t _a5_ctrl_msgtyps[] = {
 };
 
 const char *
-datalink_ctrl_type_name(datalink_ctrl_typ_t typ)
+datalink_ctrl_type_str(datalink_ctrl_typ_t typ)
 {
     str_value_name_pair_t const * pair = _a5_ctrl_msgtyps;
     for(uint ii = 0; ii < ARRAY_SIZE(_a5_ctrl_msgtyps); ii++, pair++) {
@@ -43,7 +43,7 @@ str_value_name_pair_t _a5_pump_msgtyps[] = {
 };
 
 const char *
-datalink_pump_typ_name(datalink_pump_typ_t typ)
+datalink_pump_typ_str(datalink_pump_typ_t typ)
 {
     str_value_name_pair_t const * pair = _a5_pump_msgtyps;
     for(uint ii = 0; ii < ARRAY_SIZE(_a5_pump_msgtyps); ii++, pair++) {
@@ -61,7 +61,7 @@ str_value_name_pair_t _ic_chlor_msgtyps[] = {
 };
 
 const char *
-datalink_chlor_typ_name(datalink_chlor_typ_t typ)
+datalink_chlor_typ_str(datalink_chlor_typ_t typ)
 {
     str_value_name_pair_t const * pair = _ic_chlor_msgtyps;
     for(uint ii = 0; ii < ARRAY_SIZE(_ic_chlor_msgtyps); ii++, pair++) {

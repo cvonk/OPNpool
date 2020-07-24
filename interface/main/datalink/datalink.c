@@ -253,7 +253,7 @@ uint32_t _millis() {
  */
 
 bool
-datalink_receive_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
+datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
     typedef enum STATE_t {
         STATE_FIND_PREAMBLE,
