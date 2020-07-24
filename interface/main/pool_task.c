@@ -69,7 +69,6 @@ pool_task(void * ipc_void)
                     ESP_LOGI(TAG, "poolstate updated");
 
                     poolstate_to_json(&state, json, json_size);
-
                     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
                 }
             }
