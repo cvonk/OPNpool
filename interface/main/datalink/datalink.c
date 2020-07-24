@@ -1,5 +1,5 @@
 /**
-* @brief datalink layer: bytes from the RS485 transceiver to/from data packets
+ * @brief Data Link layer: bytes from the RS485 transceiver to/from data packets
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk

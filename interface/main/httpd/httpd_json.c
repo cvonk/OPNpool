@@ -1,5 +1,5 @@
 /**
- * @brief HTTP endpoint "/json"
+ * @brief HTTPd: HTTP server callback for endpoint "/json"
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -16,10 +16,9 @@
 #include <freertos/queue.h>
 
 #include "httpd.h"
-#include "httpd_json.h"
-#include "ipc.h"
+#include "../utils/utils.h"
+#include "../ipc/ipc.h"
 #include "../poolstate/poolstate.h"
-#include "../poolstate/cpool.h"
 
 static char const * const TAG = "httpd_json";
 
@@ -47,55 +46,6 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf)
     return callback;
 }
 
-// https://github.com/freebsd/freebsd/blob/master/sys/libkern/strlcpy.c
-static size_t
-_strlcpy(char * __restrict dst, const char * __restrict src, size_t dsize)
-{
-	const char *osrc = src;
-	size_t nleft = dsize;
-
-	if (nleft != 0) {  // Copy as many bytes as will fit
-		while (--nleft != 0) {
-			if ((*dst++ = *src++) == '\0')
-				break;
-		}
-	}
-	if (nleft == 0) { // not enough room in dst, add NUL and traverse rest of src
-		if (dsize != 0)
-			*dst = '\0';
-		while (*src++)
-			;
-	}
-	return(src - osrc - 1);	 // count does not include NUL
-}
-
-// https://github.com/freebsd/freebsd/blob/master/sys/libkern/strlcat.c
-static size_t
-_strlcat(char *dst, const char *src, size_t siz)
-{
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
-	size_t dlen;
-
-	while (n-- != 0 && *d != '\0')  // Find the end of dst and adjust bytes left but don't go past end
-		d++;
-	dlen = d - dst;
-	n = siz - dlen;
-
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
-			*d++ = *s;
-			n--;
-		}
-		s++;
-	}
-	*d = '\0';
-	return(dlen + (s - src));  // count does not include NUL
-}
-
 esp_err_t
 httpd_json(httpd_req_t * const req)
 {
@@ -120,15 +70,15 @@ httpd_json(httpd_req_t * const req)
 
     char resp[450];
     resp[0] = '\0';
-    if (callback) _strlcpy(resp, callback, sizeof(resp));
-    if (callback) _strlcat(resp, "(", sizeof(resp));
+    if (callback) strlcpy(resp, callback, sizeof(resp));
+    if (callback) strlcat(resp, "(", sizeof(resp));
 
     poolstate_t state;
     poolstate_get(&state);
     uint const len = strlen(resp);
-    state_to_json(&state, resp + len, sizeof(resp) - len);
+    poolstate_to_json(&state, resp + len, sizeof(resp) - len);
 
-    if (callback) _strlcat(resp, ")", sizeof(resp));
+    if (callback) strlcat(resp, ")", sizeof(resp));
     free(callback);
 
     httpd_resp_set_type(req, "application/json");

@@ -23,18 +23,19 @@ DATALINK_CTRL_TYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00
  * macro "magic" to get an enum and matching *_str functions (in *_str.c)
  **/
 
-#define NETWORK_CHLOR_STATE_MAP(XX) \
-  XX(0, OK)           \
-  XX(1, HIGH_SALT)    \
-  XX(2, LOW_SALT)     \
-  XX(3, VERYLOW_SALT) \
-  XX(4, LOW_FLOW)
+#define NETWORK_ADDRGROUP_MAP(XX) \
+  XX(0x00, ALL)  \
+  XX(0x01, CTRL) \
+  XX(0x02, REMOTE) \
+  XX(0x05, CHLOR) \
+  XX(0x06, PUMP) \
+  XX(0x09, X09)
 
 typedef enum {
-#define XX(num, name) NETWORK_CHLOR_STATE_##name = num,
-  NETWORK_CHLOR_STATE_MAP(XX)
+#define XX(num, name) NETWORK_ADDRGROUP_##name = num,
+  NETWORK_ADDRGROUP_MAP(XX)
 #undef XX
-} network_chlor_state_t;
+} network_addrgroup_t;
 
 #define NETWORK_CIRCUIT_MAP(XX) \
   XX(1, SPA)  \
@@ -128,11 +129,11 @@ typedef enum {
  * A5 messages, used to communicate with components except IntelliChlor
  */
 
-typedef struct mCtrlSetAck_a5_t {
+typedef struct network_msg_ctrl_set_ack_t {
     uint8_t typ;
-} PACK8 mCtrlSetAck_a5_t;
+} PACK8 network_msg_ctrl_set_ack_t;
 
-typedef struct mCtrlState_a5_t {
+typedef struct network_msg_ctrl_state_t {
     uint8_t hour;               // 0
     uint8_t minute;             // 1
     uint8_t activeLo;           // 2
@@ -153,9 +154,9 @@ typedef struct mCtrlState_a5_t {
     uint8_t UNKNOWN_21;         // 21
     uint8_t heatSrc;            // 22
     uint8_t UNKNOWN_23to28[6];  // 23..28
-} PACK8 mCtrlState_a5_t;
+} PACK8 network_msg_ctrl_state_t;
 
-typedef struct mCtrlTime_a5_t {
+typedef struct network_msg_ctrl_time_t {
     uint8_t hour;            // 0
     uint8_t minute;          // 1
     uint8_t UNKNOWN_2;        // 2 (DST adjust?)
@@ -164,11 +165,11 @@ typedef struct mCtrlTime_a5_t {
     uint8_t year;            // 5
     uint8_t clkSpeed;        // 6
     uint8_t daylightSavings; // 7
-} PACK8 mCtrlTime_a5_t;
+} PACK8 network_msg_ctrl_time_t;
 
-typedef mCtrlTime_a5_t mCtrlTimeSet_a5_t;
+typedef network_msg_ctrl_time_t network_msg_ctrl_time_set_t;
 
-typedef struct mCtrlHeat_a5_t {
+typedef struct network_msg_ctrl_heat_t {
     uint8_t poolTemp;          // 0
     uint8_t spaTemp;           // 1
     uint8_t airTemp;           // 2
@@ -182,19 +183,19 @@ typedef struct mCtrlHeat_a5_t {
     uint8_t UNKNOWN_10;        // 10
     uint8_t UNKNOWN_11;        // 11
     uint8_t UNKNOWN_12;        // 12
-} PACK8 mCtrlHeat_a5_t;
+} PACK8 network_msg_ctrl_heat_t;
 
-typedef struct mCtrlHeatSet_a5_t {
+typedef struct network_msg_ctrl_heat_set_t {
     uint8_t poolTempSetpoint;  // 0
     uint8_t spaTempSetpoint;   // 1
     uint8_t heatSrc;           // 2
     uint8_t UNKNOWN_3;         // 3
-} PACK8 mCtrlHeatSet_a5_t;
+} PACK8 network_msg_ctrl_heat_set_t;
 
-typedef struct mCtrlCircuitSet_a5_t {
+typedef struct network_msg_ctrl_circuit_set_t {
     uint8_t circuit;
     uint8_t value;
-} PACK8 mCtrlCircuitSet_a5_t;
+} PACK8 network_msg_ctrl_circuit_set_t;
 
 typedef struct mCtrlSchedSub_a5_t {
     uint8_t circuit;            // 0
@@ -205,42 +206,42 @@ typedef struct mCtrlSchedSub_a5_t {
     uint8_t prgStopLo;          // 5 [min]
 } PACK8 mCtrlSchedSub_a5_t;
 
-typedef struct mCtrlSched_a5_t {
+typedef struct network_msg_ctrl_sched_t {
     uint8_t UNKNOWN_0to3[4];      // 0,1,2,3
     mCtrlSchedSub_a5_t scheds[2];  // 4,5,6,7,8,9, 10,11,12,13,14,15
-} PACK8 mCtrlSched_a5_t;
+} PACK8 network_msg_ctrl_sched_t;
 
-typedef struct mCtrlLayout_a5_t {
+typedef struct network_msg_ctrl_layout_t {
     uint8_t circuit[4];  // 0..3 corresponding to the buttons on the remote
-} PACK8 mCtrlLayout_a5_t;
+} PACK8 network_msg_ctrl_layout_t;
 
-typedef mCtrlLayout_a5_t mCtrlLayoutSet_a5_t;
+typedef network_msg_ctrl_layout_t network_msg_ctrl_layout_set_t;
 
-typedef struct mPumpRegulateSet_a5_t {
+typedef struct network_msg_pump_reg_set_t {
     uint8_t addressHi;   // 0
     uint8_t addressLo;   // 1
     uint8_t valueHi;     // 2
     uint8_t valueLo;     // 3
-} PACK8 mPumpRegulateSet_a5_t;
+} PACK8 network_msg_pump_reg_set_t;
 
-typedef struct mPumpRegulateSetResp_a5_t {
+typedef struct network_msg_pump_reg_resp_t {
     uint8_t valueHi;     // 0
     uint8_t valueLo;     // 1
-} PACK8 mPumpRegulateSetResp_a5_t;
+} PACK8 network_msg_pump_reg_resp_t;
 
-typedef struct mPumpCtrl_a5_t {
+typedef struct network_msg_pump_ctrl_t {
     uint8_t ctrl;     // 0
-} PACK8 mPumpCtrl_a5_t;
+} PACK8 network_msg_pump_ctrl_t;
 
-typedef struct mPumpMode_a5_t {
+typedef struct network_msg_pump_mode_t {
     uint8_t mode;        // 0
-} PACK8 mPumpMode_a5_t;
+} PACK8 network_msg_pump_mode_t;
 
-typedef struct mPumpRunning_a5_t {
+typedef struct network_msg_pump_running_t {
     uint8_t running;       // 0
-} PACK8 mPumpRunning_a5_t;
+} PACK8 network_msg_pump_running_t;
 
-typedef struct mPumpStatus_a5_t {
+typedef struct network_msg_pump_status_t {
     uint8_t running;     // 0
     uint8_t mode;        // 1
     uint8_t status;      // 2
@@ -256,72 +257,65 @@ typedef struct mPumpStatus_a5_t {
     uint8_t timer;       // 12 [min]
     uint8_t hour;        // 13
     uint8_t minute;      // 14
-} PACK8 mPumpStatus_a5_t;
+} PACK8 network_msg_pump_status_t;
 
 /*
 * IC messages, use to communicate with IntelliChlor
 */
 
-typedef struct mChlorPingReq_ic_t {
+typedef struct network_msg_chlor_ping_req_t {
     uint8_t UNKNOWN_0;
-} PACK8 mChlorPingReq_ic_t;
+} PACK8 network_msg_chlor_ping_req_t;
 
-typedef struct mChlorPing_ic_t {
+typedef struct network_msg_chlor_ping_t {
     uint8_t UNKNOWN_0;
     uint8_t UNKNOWN_1;
-} PACK8 mChlorPing_ic_t;
+} PACK8 network_msg_chlor_ping_t;
 
-typedef struct mChlorName_ic_t {
+typedef char mChlorNameStr[16];
+
+typedef struct network_msg_chlor_name_t {
     uint8_t UNKNOWN_0;
-    char name[16];
-} PACK8 mChlorName_ic_t;
+    mChlorNameStr name;
+} PACK8 network_msg_chlor_name_t;
 
-typedef struct mChlorLevelSet_ic_t {
+typedef struct network_msg_chlor_level_set_t {
     uint8_t pct;
-} PACK8 mChlorLevelSet_ic_t;
+} PACK8 network_msg_chlor_level_set_t;
 
-typedef struct mChlorLevelResp_ic_t {
+typedef struct network_msg_chlor_level_resp_t {
     uint8_t salt;
     uint8_t err;  // call ; cold water
-} PACK8 mChlorLevelResp_ic_t;
+} PACK8 network_msg_chlor_level_resp_t;
 
 typedef struct mChlor0X14_ic_t {
     uint8_t UNKNOWN_0;
 } PACK8 mChlor0X14_ic_t;
 
-typedef enum {
-    NETWORK_ADDRGROUP_ALL = 0x00,
-    NETWORK_ADDRGROUP_CTRL = 0x01,
-    NETWORK_ADDRGROUP_REMOTE = 0x02,
-    NETWORK_ADDRGROUP_CHLOR = 0x05,
-    NETWORK_ADDRGROUP_PUMP = 0x06,
-    NETWORK_ADDRGROUP_UNUSED9 = 0x09,
-} network_addrgroup_t;
-
 typedef struct network_msg_t {
     network_msg_typ_t typ;
     union {
-        mPumpRegulateSet_a5_t * pump_reg_set;
-        mPumpRegulateSetResp_a5_t * pump_reg_set_resp;
-        mPumpCtrl_a5_t * pump_ctrl;
-        mPumpMode_a5_t * pump_mode;
-        mPumpRunning_a5_t * pump_running;
-        mPumpStatus_a5_t * pump_status;
-        mCtrlSetAck_a5_t * ctrl_set_ack;
-        mCtrlCircuitSet_a5_t * ctrl_circuit_set;
-        mCtrlSched_a5_t * ctrl_sched;
-        mCtrlState_a5_t * ctrl_state;
-        mCtrlTime_a5_t * ctrl_time;
-        mCtrlTimeSet_a5_t * ctrl_time_set;
-        mCtrlHeat_a5_t * ctrl_heat;
-        mCtrlHeatSet_a5_t * ctrl_heat_set;
-        mCtrlLayout_a5_t * ctrl_layout;
-        mCtrlLayoutSet_a5_t * ctrl_layout_set;
-        mChlorPingReq_ic_t * chlor_ping_req;
-        mChlorPing_ic_t * chlor_ping;
-        mChlorName_ic_t * chlor_name;
-        mChlorLevelSet_ic_t * chlor_level_set;
-        mChlorLevelResp_ic_t * chlor_level_resp;
+        network_msg_pump_reg_set_t * pump_reg_set;
+        network_msg_pump_reg_resp_t * pump_reg_set_resp;
+        network_msg_pump_ctrl_t * pump_ctrl;
+        network_msg_pump_mode_t * pump_mode;
+        network_msg_pump_running_t * pump_running;
+        network_msg_pump_status_t * pump_status;
+        network_msg_ctrl_set_ack_t * ctrl_set_ack;
+        network_msg_ctrl_circuit_set_t * ctrl_circuit_set;
+        network_msg_ctrl_sched_t * ctrl_sched;
+        network_msg_ctrl_state_t * ctrl_state;
+        network_msg_ctrl_time_t * ctrl_time;
+        network_msg_ctrl_time_set_t * ctrl_time_set;
+        network_msg_ctrl_heat_t * ctrl_heat;
+        network_msg_ctrl_heat_set_t * ctrl_heat_set;
+        network_msg_ctrl_layout_t * ctrl_layout;
+        network_msg_ctrl_layout_set_t * ctrl_layout_set;
+        network_msg_chlor_ping_req_t * chlor_ping_req;
+        network_msg_chlor_ping_t * chlor_ping;
+        network_msg_chlor_name_t * chlor_name;
+        network_msg_chlor_level_set_t * chlor_level_set;
+        network_msg_chlor_level_resp_t * chlor_level_resp;
     } u;
 } network_msg_t;
 
@@ -335,7 +329,6 @@ char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t c
 char const * network_time_str(uint8_t const hours, uint8_t const minutes);
 char const * network_version_str(uint8_t const major, uint8_t const minor);
 const char * network_msg_typ_str(network_msg_typ_t const typ);
-const char * network_chlor_state_str(network_chlor_state_t const chlor_state);
 const char * network_circuit_str(network_circuit_t const circuit);
 const char * network_pump_mode_str(network_pump_mode_t const pump_mode);
 char const * network_pump_prg_str(uint16_t const address);

@@ -1,9 +1,5 @@
 /**
-* @brief packet_task, packetizes RS485 byte stream from Pentair bus
- *
- * The Pentair controller uses two different protocols to communicate with its peripherals:
- *   - 	A5 has messages such as 0x00 0xFF <ldb> <sub> <dst> <src> <cfi> <len> [<data>] <chH> <ckL>
- *   -  IC has messages such as 0x10 0x02 <data0> <data1> <data2> .. <dataN> <ch> 0x10 0x03
+* @brief Inter Process Communication: mailbox messages exchanged between the tasks
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -17,8 +13,8 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
-#include "ipc.h"
-#include "utils/utils_str.h"
+#include "utils/utils.h"
+#include "ipc/ipc.h"
 
 static char const * const TAG = "ipc";
 
@@ -37,6 +33,10 @@ ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ)
 {
     return ELEM_AT(_ipc_to_mqtt_typs, typ, hex8_str(typ));
 }
+
+/**
+ * ipc_send_to_mqtt
+ **/
 
 void
 ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc)

@@ -1,5 +1,5 @@
 /**
-* @brief conert pool state to JSON
+ * @brief Pool state: support, state to cJSON
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -12,8 +12,8 @@
 #include <esp_log.h>
 #include <cJSON.h>
 
+#include "../utils/utils.h"
 #include "../network/network.h"
-#include "../utils/utils_str.h"
 #include "poolstate.h"
 
 #ifndef ARRAY_SIZE
@@ -54,6 +54,25 @@ cPool_AddVersionToObject(cJSON * const obj, char const * const key, poolstate_ve
 
 void
 cPool_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * const thermostat)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cJSON_AddNumberToObject(item, "temp", thermostat->temp);
+    cJSON_AddNumberToObject(item, "sp", thermostat->set_point);
+    cJSON_AddStringToObject(item, "src", network_heat_src_str(thermostat->heat_src));
+}
+
+void
+cPool_AddThermostatSetToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * const thermostat)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cJSON_AddNumberToObject(item, "sp", thermostat->set_point);
+    cJSON_AddStringToObject(item, "src", network_heat_src_str(thermostat->heat_src));
+}
+
+void
+cPool_AddThermostatStateToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * const thermostat)
 {
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
@@ -160,16 +179,25 @@ cPool_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t co
     cPool_AddTimeToObject(item, "time", &state->tod.time);
     cPool_AddVersionToObject(item, "firmware", &state->version);
     cPool_AddActiveCircuitsToObject(item, "active", state->circuits.active);
-    cPool_AddThermostatToObject(item, "pool", &state->pool);
-    cPool_AddThermostatToObject(item, "spa", &state->spa);
+    cPool_AddThermostatStateToObject(item, "pool", &state->pool);
+    cPool_AddThermostatStateToObject(item, "spa", &state->spa);
     cPool_AddTempToObject(item, "air", state->air.temp);
     cPool_AddTempToObject(item, "solar", state->solar.temp);
 }
 
-size_t
-state_to_json(poolstate_t * state, char * buf, size_t buf_len)
+void
+cPool_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
-	name_reset_idx();
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+    cPool_AddTimeToObject(item, "salt", &state->chlor.salt);
+    cPool_AddDateToObject(item, "status", poolstate_chlor_state_str(state->chlor.status));
+}
+
+size_t
+poolstate_to_json(poolstate_t const * const state, char * const buf, size_t const buf_len)
+{
+    name_reset_idx();
 
     cJSON * const obj = cJSON_CreateObject();
     cPool_AddStateToObject(obj, "state", state);

@@ -11,7 +11,7 @@
 #include <esp_system.h>
 #include <esp_log.h>
 
-#include "utils_str.h"
+#include "utils.h"
 
 name_str_t name_str = {
 	.noMem = "sNOMEM", // increase size of str.str[]

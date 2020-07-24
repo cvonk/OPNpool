@@ -1,5 +1,5 @@
 /**
- * @brief Returns board name based on MAC address
+ * @brief Utils: returns hardcoded board name based on MAC address
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -12,7 +12,7 @@
 #include <esp_log.h>
 #include <esp_wifi.h>
 
-#include "board_name.h"
+#include "utils.h"
 
 #define WIFI_DEVMAC_LEN (6)
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))

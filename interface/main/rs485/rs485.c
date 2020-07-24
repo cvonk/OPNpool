@@ -1,5 +1,5 @@
 /**
- * @brief RS248 interface
+ * @brief RS485 driver: receive/sent bytes to/from the RS485 transceiver
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk

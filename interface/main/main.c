@@ -1,5 +1,5 @@
 /**
- * @brief Pool Interface using ESP32
+ * @brief Main App: Pool Interface using ESP32
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2020, Coert Vonk
@@ -25,12 +25,12 @@
 #include "datalink/datalink.h"
 #include "network/network.h"
 #include "poolstate/poolstate.h"
-#include "pool_task.h"
-
 #include "httpd/httpd.h"
-#include "mqtt/mqtt_task.h"
-#include "utils/board_name.h"
-#include "ipc.h"
+#include "utils/utils.h"
+#include "ipc/ipc.h"
+
+#include "pool_task.h"
+#include "mqtt_task.h"
 
 static char const * const TAG = "main";
 

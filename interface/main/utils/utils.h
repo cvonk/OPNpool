@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma once
+
 #include "../datalink/datalink.h"
 #include "../network/network.h"
 
@@ -11,7 +13,7 @@
 #endif
 
 // also used to display date/time, add +50
-#define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(mCtrlState_a5_t) + 1) * 3 + 50)
+#define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(network_msg_ctrl_state_t) + 1) * 3 + 50)
 
 // reusable global string
 typedef struct str_t {
@@ -26,8 +28,15 @@ typedef struct str_value_name_pair_t {
     char const * const str;
 } str_value_name_pair_t;
 
+/* utils_str.c */
 void name_reset_idx(void);
 char const * hex8_str(uint8_t const value);
 char const * hex16_str(uint16_t const value);
-
 extern name_str_t name_str;
+
+/* board_name.c */
+void board_name(char * const name, size_t name_len);
+
+/* strl.c */
+size_t strlcpy(char * __restrict dst, const char * __restrict src, size_t dsize);
+size_t strlcat(char *dst, const char *src, size_t siz);

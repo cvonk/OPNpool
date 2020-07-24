@@ -1,5 +1,5 @@
 /**
- * @brief Pool state and access functions
+ * @brief Pool state: maintains the state information for the pool
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2020, Coert Vonk

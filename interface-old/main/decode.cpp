@@ -15,7 +15,7 @@
 static char const * const TAG = "pool_decode";
 
 inline bool
-decodeCtrl_setAck_a5(mCtrlSetAck_a5_t * msg, uint_least8_t const len,
+decodeCtrl_setAck_a5(network_msg_ctrl_set_ack_t * msg, uint_least8_t const len,
                      sysState_t * sys, JsonObject * json, char const * const key)
 {
 	(void) sys;
@@ -30,7 +30,7 @@ decodeCtrl_setAck_a5(mCtrlSetAck_a5_t * msg, uint_least8_t const len,
 }
 
 inline bool
-decodeCtrl_circuitSet_a5(mCtrlCircuitSet_a5_t * msg, uint_least8_t const len,
+decodeCtrl_circuitSet_a5(network_msg_ctrl_circuit_set_t * msg, uint_least8_t const len,
                          sysState_t * sys, JsonObject * json, char const * const key)
 {
 	(void) sys;
@@ -61,7 +61,7 @@ decodeCtrl_variousReq_a5(uint8_t * msg, uint_least8_t const len,
 }
 
 inline bool
-decodeCtrl_time_a5(mCtrlTime_a5_t const * const msg, uint_least8_t const len,
+decodeCtrl_time_a5(network_msg_ctrl_time_t const * const msg, uint_least8_t const len,
                    sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -86,7 +86,7 @@ decodeCtrl_time_a5(mCtrlTime_a5_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodeCtrl_state_a5(mCtrlState_a5_t const * const msg, uint_least8_t const len,
+decodeCtrl_state_a5(network_msg_ctrl_state_t const * const msg, uint_least8_t const len,
                     sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -136,7 +136,7 @@ decodeCtrl_state_a5(mCtrlState_a5_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodeCtrl_heat_a5(mCtrlHeat_a5_t const * const msg, uint_least8_t const len,
+decodeCtrl_heat_a5(network_msg_ctrl_heat_t const * const msg, uint_least8_t const len,
                    sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -164,7 +164,7 @@ decodeCtrl_heat_a5(mCtrlHeat_a5_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodeCtrl_heatSet_a5(mCtrlHeatSet_a5_t const * const msg, uint_least8_t const len,
+decodeCtrl_heatSet_a5(network_msg_ctrl_heat_set_t const * const msg, uint_least8_t const len,
                       sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -192,7 +192,7 @@ decodeCtrl_heatSet_a5(mCtrlHeatSet_a5_t const * const msg, uint_least8_t const l
 }
 
 inline bool
-decodeCtrl_sched_a5(mCtrlSched_a5_t const * const msg, uint_least8_t const len,
+decodeCtrl_sched_a5(network_msg_ctrl_sched_t const * const msg, uint_least8_t const len,
                     sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -223,7 +223,7 @@ decodeCtrl_sched_a5(mCtrlSched_a5_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodeCtrl_layout_a5(mCtrlLayout_a5_t const * const msg, uint_least8_t const len,
+decodeCtrl_layout_a5(network_msg_ctrl_layout_t const * const msg, uint_least8_t const len,
                      sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -240,7 +240,7 @@ decodeCtrl_layout_a5(mCtrlLayout_a5_t const * const msg, uint_least8_t const len
 }
 
 inline bool
-decodePumpRegulateSet_a5(mPumpRegulateSet_a5_t const * const msg, uint_least8_t const len,
+decodePumpRegulateSet_a5(network_msg_pump_reg_set_t const * const msg, uint_least8_t const len,
                          sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -256,7 +256,7 @@ decodePumpRegulateSet_a5(mPumpRegulateSet_a5_t const * const msg, uint_least8_t 
 }
 
 inline bool
-decodePumpRegulateSetAck_a5(mPumpRegulateSetResp_a5_t const * const msg, uint_least8_t const len,
+decodePumpRegulateSetAck_a5(network_msg_pump_reg_resp_t const * const msg, uint_least8_t const len,
                             sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -290,7 +290,7 @@ decodePump_control_a5(mPumpControl_a5_t const * const msg, uint_least8_t const l
 }
 
 inline bool
-decodePump_mode_a5(mPumpMode_a5_t const * const msg, uint_least8_t const len,
+decodePump_mode_a5(network_msg_pump_mode_t const * const msg, uint_least8_t const len,
 	               sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -304,7 +304,7 @@ decodePump_mode_a5(mPumpMode_a5_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodePUMP_RUNNING_a5(mPumpRunning_a5_t const * const msg, uint_least8_t const len,
+decodePUMP_RUNNING_a5(network_msg_pump_running_t const * const msg, uint_least8_t const len,
 	                sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg) && (msg->state == 0x04 || msg->state == 0x0A)) {
@@ -332,7 +332,7 @@ decodePump_statusReq_a5(struct mPumpStatusReq_a5_t const * const msg, uint_least
 }
 
 inline bool
-decodePump_status_a5(mPumpStatus_a5_t const * const msg, uint_least8_t const len,
+decodePump_status_a5(network_msg_pump_status_t const * const msg, uint_least8_t const len,
                      sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg) && (msg->state == 0x04 || msg->state == 0x0A)) {
@@ -363,7 +363,7 @@ decodePump_status_a5(mPumpStatus_a5_t const * const msg, uint_least8_t const len
 }
 
 inline bool
-decodeChlor_pingReq_ic(mChlorPingReq_ic_t const * const msg, uint_least8_t const len,
+decodeChlor_pingReq_ic(network_msg_chlor_ping_req_t const * const msg, uint_least8_t const len,
                        sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -378,7 +378,7 @@ decodeChlor_pingReq_ic(mChlorPingReq_ic_t const * const msg, uint_least8_t const
 }
 
 inline bool
-decodeChlor_ping_ic(mChlorPing_ic_t const * const msg, uint_least8_t const len,
+decodeChlor_ping_ic(network_msg_chlor_ping_t const * const msg, uint_least8_t const len,
                     sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -393,7 +393,7 @@ decodeChlor_ping_ic(mChlorPing_ic_t const * const msg, uint_least8_t const len,
 }
 
 inline bool
-decodeChlor_name_ic(mChlorName_ic_t const * const msg, uint_least8_t const len,
+decodeChlor_name_ic(network_msg_chlor_name_t const * const msg, uint_least8_t const len,
                     sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg)) {
@@ -472,12 +472,12 @@ _decodeA5_ctrl(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 
 			// response to various set requests
 			case DATALINK_A5_CTRL_MSGTYP_setAck:
-				decoded = decodeCtrl_setAck_a5((mCtrlSetAck_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_setAck_a5((network_msg_ctrl_set_ack_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 				// set circuit request (there appears to be no separate "get circuit request")
 			case DATALINK_A5_CTRL_MSGTYP_circuitSet:
-				decoded = decodeCtrl_circuitSet_a5((mCtrlCircuitSet_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_circuitSet_a5((network_msg_ctrl_circuit_set_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 				// various get requests
@@ -494,12 +494,12 @@ _decodeA5_ctrl(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 				// schedule: get response / set request
 			case DATALINK_A5_CTRL_MSGTYP_sched:
 				//case DATALINK_A5_CTRL_MSGTYP_schedSet:
-				decoded = decodeCtrl_sched_a5((mCtrlSched_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_sched_a5((network_msg_ctrl_sched_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 				// state: get response / set request
 			case DATALINK_A5_CTRL_MSGTYP_state:
-				decoded = decodeCtrl_state_a5((mCtrlState_a5_t *)msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_state_a5((network_msg_ctrl_state_t *)msg->data, msg->hdr.len, sys, json, s);
 				break;
 			case DATALINK_A5_CTRL_MSGTYP_stateSet:
 				// 2BD
@@ -508,22 +508,22 @@ _decodeA5_ctrl(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 				// time: get response / set request
 			case DATALINK_A5_CTRL_MSGTYP_time:
 			case DATALINK_A5_CTRL_MSGTYP_timeSet:
-				decoded = decodeCtrl_time_a5((mCtrlTime_a5_t *)msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_time_a5((network_msg_ctrl_time_t *)msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 				// heat: get response / set request
 			case DATALINK_A5_CTRL_MSGTYP_heat:
-				decoded = decodeCtrl_heat_a5((mCtrlHeat_a5_t *)msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_heat_a5((network_msg_ctrl_heat_t *)msg->data, msg->hdr.len, sys, json, s);
 				break;
 			case DATALINK_A5_CTRL_MSGTYP_heatSet:
-				decoded = decodeCtrl_heatSet_a5((mCtrlHeatSet_a5_t *)msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeCtrl_heatSet_a5((network_msg_ctrl_heat_set_t *)msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 #if 0
 				// layout: get response / set request
 			case DATALINK_A5_CTRL_MSGTYP_layout:
 			case DATALINK_A5_CTRL_MSGTYP_layoutSet:
-				decoded = decodeCtrl_layout_a5(json, sys, s, hdr->len, (mCtrlLayout_a5_t *)data);
+				decoded = decodeCtrl_layout_a5(json, sys, s, hdr->len, (network_msg_ctrl_layout_t *)data);
 				break;
 #endif
 		}
@@ -545,8 +545,8 @@ _decodeA5_pump(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 
 			case DATALINK_A5_PUMP_MSGTYP_regulate:
 				decoded = toPump
-				    ? decodePumpRegulateSet_a5((mPumpRegulateSet_a5_t *) msg->data, msg->hdr.len, sys, json, s)
-					: decodePumpRegulateSetAck_a5((mPumpRegulateSetResp_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				    ? decodePumpRegulateSet_a5((network_msg_pump_reg_set_t *) msg->data, msg->hdr.len, sys, json, s)
+					: decodePumpRegulateSetAck_a5((network_msg_pump_reg_resp_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_control:
@@ -554,17 +554,17 @@ _decodeA5_pump(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_mode:
-				decoded = decodePump_mode_a5((mPumpMode_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodePump_mode_a5((network_msg_pump_mode_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_state:
-				decoded = decodePUMP_RUNNING_a5((mPumpRunning_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodePUMP_RUNNING_a5((network_msg_pump_running_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_status:
 				decoded = toPump
 				    ? decodePump_statusReq_a5((mPumpStatusReq_a5_t *) msg->data, msg->hdr.len, sys, json, s)
-					: decodePump_status_a5((mPumpStatus_a5_t *) msg->data, msg->hdr.len, sys, json, s);
+					: decodePump_status_a5((network_msg_pump_status_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_0xFF:
@@ -587,15 +587,15 @@ _decodeIC_chlor(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 		switch (msg->hdr.typ) {
 
 			case DATALINK_IC_CHLOR_MSGTYP_pingReq:
-				decoded = decodeChlor_pingReq_ic((mChlorPingReq_ic_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeChlor_pingReq_ic((network_msg_chlor_ping_req_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_IC_CHLOR_MSGTYP_ping:
-				decoded = decodeChlor_ping_ic((mChlorPing_ic_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeChlor_ping_ic((network_msg_chlor_ping_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_IC_CHLOR_MSGTYP_name:  // name
-				decoded = decodeChlor_name_ic((mChlorName_ic_t *) msg->data, msg->hdr.len, sys, json, s);
+				decoded = decodeChlor_name_ic((network_msg_chlor_name_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_IC_CHLOR_MSGTYP_lvlSet:

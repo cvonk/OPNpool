@@ -1,5 +1,5 @@
 /**
- * @brief HTTP endpoint "/api"
+ * @brief HTTPd: HTTP server callback for endpoint "/api"
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -16,8 +16,7 @@
 #include <freertos/queue.h>
 
 #include "httpd.h"
-#include "httpd_api.h"
-#include "ipc.h"
+#include "ipc/ipc.h"
 
 static char const * const TAG = "httpd_api";
 

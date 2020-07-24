@@ -1,5 +1,5 @@
 /**
- * @brief Network layer: enum/various to string
+ * @brief Network layer: support enum/various to string
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2020, Coert Vonk
@@ -11,7 +11,7 @@
 #include <esp_system.h>
 #include <esp_log.h>
 
-#include "../utils/utils_str.h"
+#include "../utils/utils.h"
 #include "network.h"
 
 char const *
@@ -88,22 +88,6 @@ const char *
 network_msg_typ_str(network_msg_typ_t const typ)
 {
   return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
-}
-
-/**
- * network_chlor_state_t
- **/
-
-static const char * const _network_chlor_states[] = {
-#define XX(num, name) #name,
-  NETWORK_CHLOR_STATE_MAP(XX)
-#undef XX
-};
-
-const char *
-network_chlor_state_str(network_chlor_state_t const chlor_state)
-{
-  return ELEM_AT(_network_chlor_states, chlor_state, hex8_str(chlor_state));
 }
 
 /**
