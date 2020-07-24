@@ -93,9 +93,13 @@ typedef struct poolstate_tod_t {
     poolstate_time_t  time;
 }poolstate_tod_t;
 
-typedef struct poolstate_t {
+typedef struct poolstate_system_t {
     poolstate_tod_t        tod;
     poolstate_version_t    version;
+} poolstate_system_t;
+
+typedef struct poolstate_t {
+    poolstate_system_t     system;
     poolstate_thermostat_t pool, spa;
     poolstate_temp_t       air, solar;
     poolstate_circuits_t   circuits;

@@ -171,17 +171,12 @@ cPool_AddTodToObject(cJSON * const obj, char const * const key, poolstate_tod_t 
 }
 
 void
-cPool_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
+cPool_AddSystemToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
-    cPool_AddTimeToObject(item, "time", &state->tod.time);
+    cPool_AddTodToObject(item, "tod", &state->tod.time);
     cPool_AddVersionToObject(item, "firmware", &state->version);
-    cPool_AddActiveCircuitsToObject(item, "active", state->circuits.active);
-    cPool_AddThermostatStateToObject(item, "pool", &state->pool);
-    cPool_AddThermostatStateToObject(item, "spa", &state->spa);
-    cPool_AddTempToObject(item, "air", state->air.temp);
-    cPool_AddTempToObject(item, "solar", state->solar.temp);
 }
 
 void
@@ -193,13 +188,39 @@ cPool_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_
     cJSON_AddStringToObject(item, "status", poolstate_chlor_state_str(state->chlor.status));
 }
 
+void
+cPool_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
+{
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, key, item);
+
+
+    cPool_AddActiveCircuitsToObject(item, "active", state->circuits.active);
+
+    cJSON * const thermostats = cJSON_CreateObject();
+    cJSON_AddItemToObject(item, "thermostats", thermostats);
+    cPool_AddThermostatStateToObject(thermostats, "pool", &state->pool);
+    cPool_AddThermostatStateToObject(thermostats, "spa", &state->spa);
+
+    cJSON * const temps = cJSON_CreateObject();
+    cJSON_AddItemToObject(item, "temps", temps);
+    cPool_AddTempToObject(temps, "air", state->air.temp);
+    cPool_AddTempToObject(temps, "solar", state->solar.temp);
+}
+
+void
+cPool_AddPoolStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
+{
+    cPool_AddSystemToObject(obj, "system", state);
+}
+
 size_t
 poolstate_to_json(poolstate_t const * const state, char * const buf, size_t const buf_len)
 {
     name_reset_idx();
 
     cJSON * const obj = cJSON_CreateObject();
-    cPool_AddStateToObject(obj, "state", state);
+    cPool_AddPoolStateToObject(obj, "state", state);
 
     assert( cJSON_PrintPreallocated(obj, buf, buf_len, false) );
 	cJSON_Delete(obj);
