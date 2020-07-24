@@ -21,8 +21,8 @@
 #include <esp_core_dump.h>
 #include <esp_flash.h>
 
-#include "mqtt_task.h"
 #include "ipc.h"
+#include "mqtt_task.h"
 #include "coredump_to_server.h"
 
 static char const * const TAG = "mqtt_task";
@@ -93,7 +93,7 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
 
                 if (strncmp("restart", event->data, event->data_len) == 0) {
 
-                    sendToMqtt(IPC_TO_MQTT_TYP_RESTART, "{ \"response\": \"restarting\" }", ipc);
+                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_RESTART, "{ \"response\": \"restarting\" }", ipc);
                     vTaskDelay(1000 / portTICK_PERIOD_MS);
                     esp_restart();
 
@@ -116,7 +116,7 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
                         ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT)
                     );
                     assert(payload_len >= 0);
-                    sendToMqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
+                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
                     free(payload);
                 }
             }
