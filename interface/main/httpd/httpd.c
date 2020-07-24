@@ -19,7 +19,7 @@
 #include "httpd_root.h"
 #include "httpd_json.h"
 #include "httpd_api.h"
-#include "ipc_msgs.h"
+#include "ipc.h"
 
 #define MAX_CONTENT_LEN (2048)
 

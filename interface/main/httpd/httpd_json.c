@@ -17,9 +17,9 @@
 
 #include "httpd.h"
 #include "httpd_json.h"
-#include "ipc_msgs.h"
+#include "ipc.h"
 #include "../poolstate/poolstate.h"
-#include "../poolstate/to_json.h"
+#include "../poolstate/cpool.h"
 
 static char const * const TAG = "httpd_json";
 

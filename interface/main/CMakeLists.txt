@@ -1,4 +1,5 @@
 set(COMPONENT_SRCS main.c
+                   ipc.c
                    rs485/rs485.c
                    datalink/datalink.c datalink/datalink_str.c
                    network/network.c network/network_rx.c network/network_tx.c network/network_str.c

@@ -20,7 +20,7 @@
 #include "datalink/datalink.h"
 #include "network/network.h"
 #include "poolstate/poolstate.h"
-#include "ipc_msgs.h"
+#include "ipc.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
@@ -31,7 +31,7 @@ static char const * const TAG = "pool_task";
 void
 pool_task(void * ipc_void)
 {
- 	//ipc_t * const ipc = ipc_void;
+ 	ipc_t * const ipc = ipc_void;
 
     rs485_config_t rs485_config = {
         .rx_pin = CONFIG_POOL_RS485_RXPIN,
@@ -55,6 +55,7 @@ pool_task(void * ipc_void)
     bool txOpportunity;
     poolstate_t poolstate;
     memset(&poolstate, 0, sizeof(poolstate_t));
+    char * json;
 
     while (1) {
         if (datalink_rx_pkt(rs485_handle, &datalink_pkt)) {
@@ -64,11 +65,11 @@ pool_task(void * ipc_void)
                 ESP_LOGI(TAG, "received network msg");
 
                 poolstate_t state;
-                if (poolstate_receive_update(&network_msg, &state)) {
+                if (poolstate_rx_update(&network_msg, &state, &json)) {  // and also a minute or so ..
 
-                    // forward update to subscribers (mqtt/push notifications/..)
-
+                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
                 }
+                free(json);
 
             }
             if (txOpportunity) {
