@@ -100,14 +100,14 @@ menu "Pool Interface"
 
     config POOL_DBG_POOLSTATE
         bool "Debug state changes for control messages"
-        default y
+        default n
         help
-            Print control messages to serial port
+            Print incoming msgs to serial port
 
     config POOL_DBG_POOLSTATE_ONERROR
         bool "Debug state changes with errors"
         default y
         help
-            Print messages that cannot be decoded to serial port
+            Print incoming msgs in error to serial port
 
-endmenu
+ endmenu
