@@ -19,25 +19,110 @@ DATALINK_CTRL_TYP_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00
 DATALINK_CTRL_TYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 */
 
-typedef enum CHLORSTATE_t {
-    CHLORSTATE_OK,
-    CHLORSTATE_HIGH_SALT,
-    CHLORSTATE_LOW_SALT,
-    CHLORSTATE_VERYLOW_SALT,
-    CHLORSTATE_LOW_FLOW,
-} CHLORSTATE_t;
+/**
+ * macro "magic" to get an enum and matching *_str functions (in *_str.c)
+ **/
 
-typedef enum CIRCUITNR_t {
-    CIRCUITNR_SPA = 1,
-    CIRCUITNR_AUX1,
-    CIRCUITNR_AUX2,
-    CIRCUITNR_AUX3,
-    CIRCUITNR_FT1,
-    CIRCUITNR_POOL,
-    CIRCUITNR_FT2,
-    CIRCUITNR_FT3,
-    CIRCUITNR_FT4
-} CIRCUITNR_t;
+#define NETWORK_CHLOR_STATE_MAP(XX) \
+  XX(0, OK)           \
+  XX(1, HIGH_SALT)    \
+  XX(2, LOW_SALT)     \
+  XX(3, VERYLOW_SALT) \
+  XX(4, LOW_FLOW)
+
+typedef enum {
+#define XX(num, name) NETWORK_CHLOR_STATE_##name = num,
+  NETWORK_CHLOR_STATE_MAP(XX)
+#undef XX
+} network_chlor_state_t;
+
+#define NETWORK_CIRCUIT_MAP(XX) \
+  XX(1, SPA)  \
+  XX(2, AUX1) \
+  XX(3, AUX2) \
+  XX(4, AUX3) \
+  XX(5, FT1)  \
+  XX(6, POOL) \
+  XX(7, FT2)  \
+  XX(8, FT3)  \
+  XX(9, FT4)
+
+typedef enum {
+#define XX(num, name) NETWORK_CIRCUIT_##name = num,
+  NETWORK_CIRCUIT_MAP(XX)
+#undef XX
+} network_circuit_t;
+
+#define NETWORK_PUMP_MODE_MAP(XX) \
+  XX(0, FILTER)  \
+  XX(1, MAN)  \
+  XX(2, BKWASH)  \
+  XX(3, X03)  \
+  XX(4, X04)  \
+  XX(5, X05)  \
+  XX(6, FT1)  \
+  XX(7, X07)  \
+  XX(8, X08)  \
+  XX(9, EP1)  \
+  XX(10, EP2)  \
+  XX(11, EP3)  \
+  XX(12, EP4)
+
+typedef enum {
+#define XX(num, name) NETWORK_PUMP_MODE_##name = num,
+  NETWORK_PUMP_MODE_MAP(XX)
+#undef XX
+} network_pump_mode_t;
+
+#define NETWORK_HEAT_SRC_MAP(XX) \
+  XX(0, NONE)       \
+  XX(1, HEATER)     \
+  XX(2, SOLAR_PREF) \
+  XX(3, SOLAR)
+
+typedef enum {
+#define XX(num, name) NETWORK_HEAT_SRC_##name = num,
+  NETWORK_HEAT_SRC_MAP(XX)
+#undef XX
+} network_heat_src_t;
+
+// use macro "magic" to get an enum and matching name_* function (in name.c)
+#define NETWORK_MSG_TYP_MAP(XX) \
+  XX( 0, NONE)              \
+  XX( 1, PUMP_REG_SET)      \
+  XX( 2, PUMP_REG_SET_RESP) \
+  XX( 3, PUMP_CTRL)         \
+  XX( 4, PUMP_MODE)         \
+  XX( 5, PUMP_RUNNING)      \
+  XX( 6, PUMP_STATUS_REQ)   \
+  XX( 7, PUMP_STATUS)       \
+  XX( 8, CTRL_SET_ACK)      \
+  XX( 9, CTRL_CIRCUIT_SET)  \
+  XX(10, CTRL_SCHED_REQ)    \
+  XX(11, CTRL_SCHED)        \
+  XX(12, CTRL_STATE_REQ)    \
+  XX(13, CTRL_STATE)        \
+  XX(14, CTRL_STATE_SET)    \
+  XX(15, CTRL_TIME_REQ)     \
+  XX(16, CTRL_TIME)         \
+  XX(17, CTRL_TIME_SET)     \
+  XX(18, CTRL_HEAT_REQ)     \
+  XX(19, CTRL_HEAT)         \
+  XX(20, CTRL_HEAT_SET)     \
+  XX(21, CTRL_LAYOUT_REQ)   \
+  XX(22, CTRL_LAYOUT)       \
+  XX(23, CTRL_LAYOUT_SET)   \
+  XX(24, CHLOR_PING_REQ)    \
+  XX(25, CHLOR_PING)        \
+  XX(26, CHLOR_NAME)        \
+  XX(27, CHLOR_LEVEL_SET)   \
+  XX(28, CHLOR_LEVEL_RESP)
+
+typedef enum {
+#define XX(num, name) NETWORK_MSG_TYP_##name = num,
+  NETWORK_MSG_TYP_MAP(XX)
+#undef XX
+} network_msg_typ_t;
 
 /*
  * A5 messages, used to communicate with components except IntelliChlor
@@ -211,50 +296,11 @@ typedef enum {
     NETWORK_ADDRGROUP_CHLOR = 0x05,
     NETWORK_ADDRGROUP_PUMP = 0x06,
     NETWORK_ADDRGROUP_UNUSED9 = 0x09,
-} NETWORK_ADDRGROUP_t;
-
-// use macro "magic" to get an enum and matching name_* function (in name.c)
-#define NETWORK_MSGTYP_MAP(XX) \
-  XX( 0, NONE)              \
-  XX( 1, PUMP_REG_SET)      \
-  XX( 2, PUMP_REG_SET_RESP) \
-  XX( 3, PUMP_CTRL)         \
-  XX( 4, PUMP_MODE)         \
-  XX( 5, PUMP_RUNNING)      \
-  XX( 6, PUMP_STATUS_REQ)   \
-  XX( 7, PUMP_STATUS)       \
-  XX( 8, CTRL_SET_ACK)      \
-  XX( 9, CTRL_CIRCUIT_SET)  \
-  XX(10, CTRL_SCHED_REQ)    \
-  XX(11, CTRL_SCHED)        \
-  XX(12, CTRL_STATE_REQ)    \
-  XX(13, CTRL_STATE)        \
-  XX(14, CTRL_STATE_SET)    \
-  XX(15, CTRL_TIME_REQ)     \
-  XX(16, CTRL_TIME)         \
-  XX(17, CTRL_TIME_SET)     \
-  XX(18, CTRL_HEAT_REQ)     \
-  XX(19, CTRL_HEAT)         \
-  XX(20, CTRL_HEAT_SET)     \
-  XX(21, CTRL_LAYOUT_REQ)   \
-  XX(22, CTRL_LAYOUT)       \
-  XX(23, CTRL_LAYOUT_SET)   \
-  XX(24, CHLOR_PING_REQ)    \
-  XX(25, CHLOR_PING)        \
-  XX(26, CHLOR_NAME)        \
-  XX(27, CHLOR_LEVEL_SET)   \
-  XX(28, CHLOR_LEVEL_RESP)
-
-typedef enum {
-#define XX(num, name) NETWORK_MSGTYP_##name = num,
-  NETWORK_MSGTYP_MAP(XX)
-#undef XX
-} NETWORK_MSGTYP_t;
+} network_addrgroup_t;
 
 typedef struct network_msg_t {
-    NETWORK_MSGTYP_t typ;
+    network_msg_typ_t typ;
     union {
-        // poolstate_t poolstate;
         mPumpRegulateSet_a5_t * pump_reg_set;
         mPumpRegulateSetResp_a5_t * pump_reg_set_resp;
         mPumpCtrl_a5_t * pump_ctrl;
@@ -279,22 +325,19 @@ typedef struct network_msg_t {
     } u;
 } network_msg_t;
 
-NETWORK_ADDRGROUP_t network_group_addr(uint16_t const addr);
-uint8_t network_dev_addr(uint8_t group, uint8_t const id);
+/* network.c */
+network_addrgroup_t network_groupaddr(uint16_t const addr);
+uint8_t network_devaddr(uint8_t group, uint8_t const id);
+bool network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity);
 
-char const * network_version_str(uint8_t const major, uint8_t const minor);
+/* network_str.c */
 char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t const day);
 char const * network_time_str(uint8_t const hours, uint8_t const minutes);
-char const * name_pump_mode(uint16_t const value);
-char const * name_pump_prg(uint16_t const address);
-char const * name_chlor_state(uint8_t const chlorstate);
-char const * name_circuit(uint8_t const circuit);
-char const * name_heat_src(uint8_t const value);
-
-uint name_circuit_nr(char const * const name);
-uint name_heat_src_nr(char const * const name);
-
-const char * name_network_msgtyp(NETWORK_MSGTYP_t typ);
-
-bool network_receive_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity);
-
+char const * network_version_str(uint8_t const major, uint8_t const minor);
+const char * network_msg_typ_str(network_msg_typ_t const typ);
+const char * network_chlor_state_str(network_chlor_state_t const chlor_state);
+const char * network_circuit_str(network_circuit_t const circuit);
+const char * network_pump_mode_str(network_pump_mode_t const pump_mode);
+char const * network_pump_prg_str(uint16_t const address);
+const char * network_heat_src_str(network_heat_src_t const heat_src);
+uint network_heat_src_nr(char const * const heat_src);

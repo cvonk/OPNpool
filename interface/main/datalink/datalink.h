@@ -89,8 +89,10 @@ typedef enum {
 #undef XX
 } datalink_chlor_typ_t;
 
-bool datalink_receive_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
+/* datalink.c */
+bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
 
-const char * datalink_pump_typ_name(datalink_pump_typ_t typ);
-const char * datalink_ctrl_type_name(datalink_ctrl_typ_t typ);
-const char * datalink_chlor_typ_name(datalink_chlor_typ_t typ);
+/* datalink_str.c */
+const char * datalink_pump_typ_str(datalink_pump_typ_t typ);
+const char * datalink_ctrl_type_str(datalink_ctrl_typ_t typ);
+const char * datalink_chlor_typ_str(datalink_chlor_typ_t typ);

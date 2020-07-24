@@ -43,7 +43,7 @@ cPool_AddPumpCtrlToObject(cJSON * const obj, char const * const key, uint8_t con
 void
 cPool_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_t const mode)
 {
-    cJSON_AddStringToObject(obj, key, name_pump_mode(mode));
+    cJSON_AddStringToObject(obj, key, network_pump_mode_str(mode));
 }
 
 void
@@ -58,7 +58,7 @@ cPool_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
     cJSON_AddNumberToObject(item, "temp", thermostat->temp);
-    cJSON_AddStringToObject(item, "src", name_heat_src(thermostat->heat_src));
+    cJSON_AddStringToObject(item, "src", network_heat_src_str(thermostat->heat_src));
     if (thermostat->heating) {
         cJSON_AddTrueToObject(item, "heating");
     } else {
@@ -82,7 +82,7 @@ cPool_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, uint1
     uint16_t mask = 0x00001;
     for (uint ii = 0; mask; ii++) {
         if (active & mask) {
-            active_names[active_len++] = name_circuit(ii + 1);
+            active_names[active_len++] = network_circuit_str(ii + 1);
         }
         mask <<= 1;
     }
