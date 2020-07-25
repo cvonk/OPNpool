@@ -87,9 +87,9 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const
             }
             break;
         case DATALINK_CTRL_TYP_TIME_SET:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_time_set_t)) {
+            if (datalink->hdr.len == sizeof(network_msg_ctrl_time_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME_SET;
-                network->u.ctrl_time_set = (network_msg_ctrl_time_set_t *) datalink->data;
+                network->u.ctrl_time_set = (network_msg_ctrl_time_t *) datalink->data;
             }
             break;
         case DATALINK_CTRL_TYP_HEAT:

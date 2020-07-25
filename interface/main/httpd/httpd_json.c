@@ -74,10 +74,11 @@ httpd_json(httpd_req_t * const req)
     if (callback) strlcat(resp, "(", sizeof(resp));
 
     poolstate_t state;
-    poolstate_get(&state);
+    bool const valid = poolstate_get(&state);
     uint const len = strlen(resp);
-    poolstate_to_json(&state, resp + len, sizeof(resp) - len);
-
+    if (valid) {
+        poolstate_to_json(&state, resp + len, sizeof(resp) - len);
+    }
     if (callback) strlcat(resp, ")", sizeof(resp));
     free(callback);
 

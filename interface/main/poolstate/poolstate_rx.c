@@ -268,15 +268,17 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
 	name_reset_idx();
 
     poolstate_t old_state;
-    poolstate_get(&old_state);
+    (void)poolstate_get(&old_state);
     memcpy(state, &old_state, sizeof(poolstate_t));
 
     cJSON * const dbg = cJSON_CreateObject();
     switch(msg->typ) {
 
         case NETWORK_MSG_TYP_CTRL_TIME:
-        case NETWORK_MSG_TYP_CTRL_TIME_SET:
             _ctrl_time(dbg, msg->u.ctrl_time, state);
+            break;
+        case NETWORK_MSG_TYP_CTRL_TIME_SET:
+            _ctrl_time(dbg, msg->u.ctrl_time_set, state);
             break;
         case NETWORK_MSG_TYP_CTRL_HEAT:
             _ctrl_heat(dbg, msg->u.ctrl_heat, state);

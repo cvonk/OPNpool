@@ -177,8 +177,6 @@ typedef struct network_msg_ctrl_time_t {
     uint8_t daylightSavings; // 7
 } PACK8 network_msg_ctrl_time_t;
 
-typedef network_msg_ctrl_time_t network_msg_ctrl_time_set_t;
-
 typedef struct network_msg_ctrl_heat_t {
     uint8_t poolTemp;          // 0
     uint8_t spaTemp;           // 1
@@ -316,7 +314,7 @@ typedef struct network_msg_t {
         network_msg_ctrl_sched_t * ctrl_sched;
         network_msg_ctrl_state_t * ctrl_state;
         network_msg_ctrl_time_t * ctrl_time;
-        network_msg_ctrl_time_set_t * ctrl_time_set;
+        network_msg_ctrl_time_t * ctrl_time_set;
         network_msg_ctrl_heat_t * ctrl_heat;
         network_msg_ctrl_heat_set_t * ctrl_heat_set;
         network_msg_ctrl_layout_t * ctrl_layout;
