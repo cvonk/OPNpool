@@ -101,34 +101,37 @@ typedef enum {
 // use macro "magic" to get an enum and matching name_* function (in name.c)
 #define NETWORK_MSG_TYP_MAP(XX) \
   XX( 0, NONE)              \
-  XX( 1, PUMP_REG_SET)      \
-  XX( 2, PUMP_REG_SET_RESP) \
-  XX( 3, PUMP_CTRL)         \
-  XX( 4, PUMP_MODE)         \
-  XX( 5, PUMP_RUNNING)      \
-  XX( 6, PUMP_STATE_REQ)   \
-  XX( 7, PUMP_STATE)       \
-  XX( 8, CTRL_SET_ACK)      \
-  XX( 9, CTRL_CIRCUIT_SET)  \
-  XX(10, CTRL_SCHED_REQ)    \
-  XX(11, CTRL_SCHED)        \
-  XX(12, CTRL_STATE_REQ)    \
-  XX(13, CTRL_STATE)        \
-  XX(14, CTRL_STATE_SET)    \
-  XX(15, CTRL_TIME_REQ)     \
-  XX(16, CTRL_TIME)         \
-  XX(17, CTRL_TIME_SET)     \
-  XX(18, CTRL_HEAT_REQ)     \
-  XX(19, CTRL_HEAT)         \
-  XX(20, CTRL_HEAT_SET)     \
-  XX(21, CTRL_LAYOUT_REQ)   \
-  XX(22, CTRL_LAYOUT)       \
-  XX(23, CTRL_LAYOUT_SET)   \
-  XX(24, CHLOR_PING_REQ)    \
-  XX(25, CHLOR_PING)        \
-  XX(26, CHLOR_NAME)        \
-  XX(27, CHLOR_LEVEL_SET)   \
-  XX(28, CHLOR_LEVEL_RESP)
+  XX( 1, CTRL_SET_ACK)      \
+  XX( 2, CTRL_CIRCUIT_SET)  \
+  XX( 3, CTRL_SCHED_REQ)    \
+  XX( 4, CTRL_SCHED)        \
+  XX( 5, CTRL_STATE_REQ)    \
+  XX( 6, CTRL_STATE)        \
+  XX( 7, CTRL_STATE_SET)    \
+  XX( 8, CTRL_TIME_REQ)     \
+  XX( 9, CTRL_TIME)         \
+  XX(10, CTRL_TIME_SET)     \
+  XX(11, CTRL_HEAT_REQ)     \
+  XX(12, CTRL_HEAT)         \
+  XX(13, CTRL_HEAT_SET)     \
+  XX(14, CTRL_LAYOUT_REQ)   \
+  XX(15, CTRL_LAYOUT)       \
+  XX(16, CTRL_LAYOUT_SET)   \
+  XX(17, PUMP_REG_SET)      \
+  XX(18, PUMP_REG_RESP)     \
+  XX(19, PUMP_CTRL_SET)     \
+  XX(20, PUMP_CTRL_RESP)    \
+  XX(21, PUMP_MODE_SET)     \
+  XX(22, PUMP_MODE_RESP)    \
+  XX(23, PUMP_RUNNING_SET)  \
+  XX(24, PUMP_RUNNING_RESP) \
+  XX(25, PUMP_STATE_REQ)    \
+  XX(26, PUMP_STATE)   \
+  XX(27, CHLOR_PING_REQ)    \
+  XX(28, CHLOR_PING)        \
+  XX(29, CHLOR_NAME)        \
+  XX(30, CHLOR_LEVEL_SET)   \
+  XX(31, CHLOR_LEVEL_RESP)
 
 typedef enum {
 #define XX(num, name) NETWORK_MSG_TYP_##name = num,
