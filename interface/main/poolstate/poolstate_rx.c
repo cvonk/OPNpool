@@ -171,7 +171,7 @@ _pump_mode(cJSON * const dbg, network_msg_pump_mode_t const * const msg, poolsta
 }
 
 static void
-_pump_running(cJSON * const dbg, network_msg_pump_running_t const * const msg, poolstate_t * const state)
+_pump_run(cJSON * const dbg, network_msg_pump_run_t const * const msg, poolstate_t * const state)
 {
     bool const running = msg->running == 0x0A;
     bool const not_running = msg->running == 0x04;
@@ -296,10 +296,8 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case NETWORK_MSG_TYP_CTRL_TIME_REQ:
             break;
         case NETWORK_MSG_TYP_CTRL_TIME:
-            _ctrl_time(dbg, msg->u.ctrl_time, state);
-            break;
         case NETWORK_MSG_TYP_CTRL_TIME_SET:
-            _ctrl_time(dbg, msg->u.ctrl_time_set, state);
+            _ctrl_time(dbg, msg->u.ctrl_time, state);
             break;
         case NETWORK_MSG_TYP_CTRL_HEAT_REQ:
             break;
@@ -327,9 +325,9 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case NETWORK_MSG_TYP_PUMP_MODE_RESP:
             _pump_mode(dbg, msg->u.pump_mode, state);
             break;
-        case NETWORK_MSG_TYP_PUMP_RUNNING_SET:
-        case NETWORK_MSG_TYP_PUMP_RUNNING_RESP:
-            _pump_running(dbg, msg->u.pump_running, state);
+        case NETWORK_MSG_TYP_PUMP_RUN_SET:
+        case NETWORK_MSG_TYP_PUMP_RUN_RESP:
+            _pump_run(dbg, msg->u.pump_run, state);
             break;
         case NETWORK_MSG_TYP_PUMP_STATE_REQ:
              break;

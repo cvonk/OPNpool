@@ -123,8 +123,8 @@ typedef enum {
   XX(20, PUMP_CTRL_RESP)    \
   XX(21, PUMP_MODE_SET)     \
   XX(22, PUMP_MODE_RESP)    \
-  XX(23, PUMP_RUNNING_SET)  \
-  XX(24, PUMP_RUNNING_RESP) \
+  XX(23, PUMP_RUN_SET)  \
+  XX(24, PUMP_RUN_RESP) \
   XX(25, PUMP_STATE_REQ)    \
   XX(26, PUMP_STATE_RESP)   \
   XX(27, CHLOR_PING_REQ)    \
@@ -249,9 +249,9 @@ typedef struct network_msg_pump_mode_t {
     uint8_t mode;        // 0
 } PACK8 network_msg_pump_mode_t;
 
-typedef struct network_msg_pump_running_t {
+typedef struct network_msg_pump_run_t {
     uint8_t running;       // 0
-} PACK8 network_msg_pump_running_t;
+} PACK8 network_msg_pump_run_t;
 
 typedef struct network_msg_pump_state_t {
     uint8_t running;     // 0
@@ -311,14 +311,13 @@ typedef struct network_msg_t {
         network_msg_pump_reg_resp_t * pump_reg_set_resp;
         network_msg_pump_ctrl_t * pump_ctrl;
         network_msg_pump_mode_t * pump_mode;
-        network_msg_pump_running_t * pump_running;
+        network_msg_pump_run_t * pump_run;
         network_msg_pump_state_t * pump_state;
         network_msg_ctrl_set_ack_t * ctrl_set_ack;
         network_msg_ctrl_circuit_set_t * ctrl_circuit_set;
         network_msg_ctrl_sched_t * ctrl_sched;
         network_msg_ctrl_state_t * ctrl_state;
         network_msg_ctrl_time_t * ctrl_time;
-        network_msg_ctrl_time_t * ctrl_time_set;
         network_msg_ctrl_heat_t * ctrl_heat;
         network_msg_ctrl_heat_set_t * ctrl_heat_set;
         network_msg_ctrl_layout_t * ctrl_layout;
