@@ -26,7 +26,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-static char const * const TAG = "pool_task";
+//static char const * const TAG = "pool_task";
 
 void
 pool_task(void * ipc_void)

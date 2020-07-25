@@ -76,7 +76,7 @@ static void
 _ctrl_circuit_set(cJSON * const dbg, network_msg_ctrl_circuit_set_t const * const msg)
 {
     if (CONFIG_POOL_DBG_POOLSTATE) {
-        cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit), msg->value);
+        cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit - 1), msg->value);
     }
 }
 
@@ -342,9 +342,12 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
             break;  //
     }
     if (CONFIG_POOL_DBG_POOLSTATE) {
-        char const * const json = cJSON_Print(dbg);
-        ESP_LOGI(TAG, "%s: %s", network_msg_typ_str(msg->typ), json);
+        size_t const json_size = 1024;
+        char * const json = malloc(json_size);
+        assert( cJSON_PrintPreallocated(dbg, json, json_size, false) );
+        ESP_LOGI(TAG, "{%s: %s}", network_msg_typ_str(msg->typ), json);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_DBG, json, ipc_for_dbg);
+        free(json);
     }
     cJSON_Delete(dbg);
 
