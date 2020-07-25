@@ -19,14 +19,38 @@
  * poolstate_chlor_status_t
  **/
 
-static const char * const _network_chlor_states[] = {
+static const char * const _poolstate_chlor_states[] = {
 #define XX(num, name) #name,
   POOLSTATE_CHLOR_STATUS_MAP(XX)
 #undef XX
 };
 
 const char *
-poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state)
+poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state_id)
 {
-  return ELEM_AT(_network_chlor_states, chlor_state, hex8_str(chlor_state));
+  return ELEM_AT(_poolstate_chlor_states, chlor_state_id, hex8_str(chlor_state_id));
+}
+
+static const char * const _poolstate_thermostats[] = {
+#define XX(num, name) #name,
+  POOLSTATE_THERMOSTAT_MAP(XX)
+#undef XX
+};
+
+const char *
+poolstate_thermostat_str(poolstate_thermostats_t const thermostat_id)
+{
+  return ELEM_AT(_poolstate_thermostats, thermostat_id, hex8_str(thermostat_id));
+}
+
+static const char * const _poolstate_temps[] = {
+#define XX(num, name) #name,
+  POOLSTATE_TEMP_MAP(XX)
+#undef XX
+};
+
+const char *
+poolstate_temp_str(poolstate_temps_t const temp_id)
+{
+  return ELEM_AT(_poolstate_temps, temp_id, hex8_str(temp_id));
 }

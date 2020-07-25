@@ -47,15 +47,16 @@ typedef enum {
 } network_addrgroup_t;
 
 #define NETWORK_CIRCUIT_MAP(XX) \
-  XX(1, SPA)  \
-  XX(2, AUX1) \
-  XX(3, AUX2) \
-  XX(4, AUX3) \
-  XX(5, FT1)  \
-  XX(6, POOL) \
-  XX(7, FT2)  \
-  XX(8, FT3)  \
-  XX(9, FT4)
+  XX( 1, SPA)  \
+  XX( 2, AUX1) \
+  XX( 3, AUX2) \
+  XX( 4, AUX3) \
+  XX( 5, FT1)  \
+  XX( 6, POOL) \
+  XX( 7, FT2)  \
+  XX( 8, FT3)  \
+  XX( 9, FT4)  \
+  XX(10, COUNT)
 
 typedef enum {
 #define XX(num, name) NETWORK_CIRCUIT_##name = num,
@@ -104,8 +105,8 @@ typedef enum {
   XX( 3, PUMP_CTRL)         \
   XX( 4, PUMP_MODE)         \
   XX( 5, PUMP_RUNNING)      \
-  XX( 6, PUMP_STATUS_REQ)   \
-  XX( 7, PUMP_STATUS)       \
+  XX( 6, PUMP_STATE_REQ)   \
+  XX( 7, PUMP_STATE)       \
   XX( 8, CTRL_SET_ACK)      \
   XX( 9, CTRL_CIRCUIT_SET)  \
   XX(10, CTRL_SCHED_REQ)    \
@@ -151,7 +152,7 @@ typedef struct network_msg_ctrl_state_t {
     uint8_t remote;             // 9
     uint8_t heating;            // 10
     uint8_t UNKNOWN_11;         // 11
-    uint8_t delayLo;            // 12
+    uint8_t delay;              // 12
     uint8_t UNKNOWN_13;         // 13
     uint8_t poolTemp;           // 14
     uint8_t spaTemp;            // 15
@@ -250,7 +251,7 @@ typedef struct network_msg_pump_running_t {
     uint8_t running;       // 0
 } PACK8 network_msg_pump_running_t;
 
-typedef struct network_msg_pump_status_t {
+typedef struct network_msg_pump_state_t {
     uint8_t running;     // 0
     uint8_t mode;        // 1
     uint8_t status;      // 2
@@ -266,7 +267,7 @@ typedef struct network_msg_pump_status_t {
     uint8_t timer;       // 12 [min]
     uint8_t hour;        // 13
     uint8_t minute;      // 14
-} PACK8 network_msg_pump_status_t;
+} PACK8 network_msg_pump_state_t;
 
 /*
 * IC messages, use to communicate with IntelliChlor
@@ -281,11 +282,11 @@ typedef struct network_msg_chlor_ping_t {
     uint8_t UNKNOWN_1;
 } PACK8 network_msg_chlor_ping_t;
 
-typedef char mChlorNameStr[16];
+typedef char network_msg_chlor_name_str_t[16];
 
 typedef struct network_msg_chlor_name_t {
-    uint8_t UNKNOWN_0;
-    mChlorNameStr name;
+    uint8_t                     UNKNOWN_0;
+    network_msg_chlor_name_str_t name;
 } PACK8 network_msg_chlor_name_t;
 
 typedef struct network_msg_chlor_level_set_t {
@@ -309,7 +310,7 @@ typedef struct network_msg_t {
         network_msg_pump_ctrl_t * pump_ctrl;
         network_msg_pump_mode_t * pump_mode;
         network_msg_pump_running_t * pump_running;
-        network_msg_pump_status_t * pump_status;
+        network_msg_pump_state_t * pump_state;
         network_msg_ctrl_set_ack_t * ctrl_set_ack;
         network_msg_ctrl_circuit_set_t * ctrl_circuit_set;
         network_msg_ctrl_sched_t * ctrl_sched;
