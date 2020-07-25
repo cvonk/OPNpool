@@ -68,20 +68,24 @@ httpd_json(httpd_req_t * const req)
 
     // return pool state
 
-    char resp[450];
+    size_t len = 0;
+    size_t const resp_size = 1024;
+    char resp[resp_size];
     resp[0] = '\0';
-    if (callback) strlcpy(resp, callback, sizeof(resp));
-    if (callback) strlcat(resp, "(", sizeof(resp));
-
+    if (callback) {
+        snprintf(resp + len, resp_size - len, "%s(", callback);
+    }
     poolstate_t state;
     bool const valid = poolstate_get(&state);
-    uint const len = strlen(resp);
     if (valid) {
-        poolstate_to_json(&state, resp + len, sizeof(resp) - len);
+        len += poolstate_to_json(&state, resp + len, resp_size - len);
+    } else {
+        ESP_LOGW(TAG, "state not avail");
     }
-    if (callback) strlcat(resp, ")", sizeof(resp));
-    free(callback);
-
+    if (callback) {
+        snprintf(resp + len, resp_size - len, ")");
+        free(callback);
+    }
     httpd_resp_set_type(req, "application/json");
     httpd_resp_send(req, resp, strlen(resp));
     return ESP_OK;
