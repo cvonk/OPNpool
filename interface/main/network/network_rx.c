@@ -190,7 +190,7 @@ _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const
                 }
             } else {
                 if (datalink->hdr.len == sizeof(network_msg_pump_state_t)) {
-                    network->typ = NETWORK_MSG_TYP_PUMP_STATE;
+                    network->typ = NETWORK_MSG_TYP_PUMP_STATE_RESP;
                     network->u.pump_state = (network_msg_pump_state_t *) datalink->data;
                 }
             }
@@ -220,7 +220,7 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * cons
             break;
         case DATALINK_CHLOR_TYP_PING:
             if (datalink->hdr.len == sizeof(network_msg_chlor_ping_t)) {
-                network->typ = NETWORK_MSG_TYP_CHLOR_PING;
+                network->typ = NETWORK_MSG_TYP_CHLOR_PING_RESP;
                 network->u.chlor_ping = (network_msg_chlor_ping_t *) datalink->data;
             }
             break;
