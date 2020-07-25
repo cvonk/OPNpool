@@ -224,7 +224,9 @@ _ctrl_set_ack(cJSON * const dbg, network_msg_ctrl_set_ack_t const * const msg)
 static void
 _chlor_name(cJSON * const dbg, network_msg_chlor_name_t const * const msg, poolstate_t * const state)
 {
-    strncpy(state->chlor.name, msg->name, sizeof(*state->chlor.name));
+    size_t name_size = sizeof(state->chlor.name);
+    strncpy(state->chlor.name, msg->name, name_size);
+    state->chlor.name[name_size - 1] = '\0';
 
     if (CONFIG_POOL_DBG_POOLSTATE) {
         cJSON_AddStringToObject(dbg, "name", state->chlor.name);

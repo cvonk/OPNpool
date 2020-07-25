@@ -186,11 +186,11 @@ _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const
         case DATALINK_PUMP_TYP_STATUS:
             if (toPump) {
                 if (datalink->hdr.len == 0) {
-                    network->typ = NETWORK_MSG_TYP_PUMP_STATE_SET;
+                    network->typ = NETWORK_MSG_TYP_PUMP_STATE_REQ;
                 }
             } else {
                 if (datalink->hdr.len == sizeof(network_msg_pump_state_t)) {
-                    network->typ = NETWORK_MSG_TYP_PUMP_STATE_RESP;
+                    network->typ = NETWORK_MSG_TYP_PUMP_STATE;
                     network->u.pump_state = (network_msg_pump_state_t *) datalink->data;
                 }
             }
