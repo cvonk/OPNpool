@@ -333,11 +333,11 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
             break;
         case NETWORK_MSG_TYP_PUMP_STATE_REQ:
              break;
-        case NETWORK_MSG_TYP_PUMP_STATE:
+        case NETWORK_MSG_TYP_PUMP_STATE_RESP:
             _pump_state(dbg, msg->u.pump_state, state);
             break;
         case NETWORK_MSG_TYP_CHLOR_PING_REQ:
-        case NETWORK_MSG_TYP_CHLOR_PING:
+        case NETWORK_MSG_TYP_CHLOR_PING_RESP:
             break;
         case NETWORK_MSG_TYP_CHLOR_NAME:
             _chlor_name(dbg, msg->u.chlor_name, state);
