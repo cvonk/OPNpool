@@ -54,8 +54,7 @@ pool_task(void * ipc_void)
     network_msg_t network_msg;
     bool txOpportunity;
     poolstate_t state;
-    memset(&state, 0, sizeof(poolstate_t));
-    size_t json_size = 512;
+    size_t json_size = 1024;
     char json[json_size];
 
     while (1) {

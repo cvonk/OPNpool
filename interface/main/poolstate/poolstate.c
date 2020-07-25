@@ -20,6 +20,7 @@
 static struct poolstate_prot_t {
     SemaphoreHandle_t xMutex;
     poolstate_t * state;
+    bool valid;
 } _protected;
 
 void
@@ -28,6 +29,7 @@ poolstate_init(void)
     _protected.xMutex = xSemaphoreCreateMutex();
     _protected.state = malloc(sizeof(poolstate_t));
     assert(_protected.xMutex && _protected.state);
+    memset(_protected.state, 0, sizeof(poolstate_t));
 }
 
 void
@@ -35,19 +37,23 @@ poolstate_set(poolstate_t const * const state)
 {
     xSemaphoreTake( _protected.xMutex, portMAX_DELAY );
     {
+        _protected.valid = true;
         memcpy(_protected.state, state, sizeof(poolstate_t));
     }
     xSemaphoreGive( _protected.xMutex );
 }
 
-void
+bool
 poolstate_get(poolstate_t * const state)
 {
+    bool valid;
     xSemaphoreTake( _protected.xMutex, portMAX_DELAY );
     {
+        valid = _protected.valid;
         memcpy(state, _protected.state, sizeof(poolstate_t));
     }
     xSemaphoreGive( _protected.xMutex );
+    return valid;
 }
 
 #if 0

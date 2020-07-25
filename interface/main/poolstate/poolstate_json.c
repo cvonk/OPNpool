@@ -267,12 +267,14 @@ cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_chlo
 static void
 _poolstate_to_object(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
-    cJSON_AddSystemToObject(obj, "system", &state->system);
-    cJSON_AddTempsToObject(obj, "temps", state->temps);
-    cJSON_AddThermostatsToObject(obj, "thermostats", state->thermostats, true, true, true, true, true);
-    cJSON_AddCircuitsToObject(obj, "circuits", &state->circuits);
-    cJSON_AddPumpToObject(obj, "pump", &state->pump);
-    cJSON_AddChlorToObject(obj, "chlor", &state->chlor);
+    cJSON * const item = cJSON_CreateObject();
+    cJSON_AddItemToObject(obj, "state", item);
+    cJSON_AddSystemToObject(item, "system", &state->system);
+    cJSON_AddTempsToObject(item, "temps", state->temps);
+    cJSON_AddThermostatsToObject(item, "thermostats", state->thermostats, true, true, true, true, true);
+    cJSON_AddCircuitsToObject(item, "circuits", &state->circuits);
+    cJSON_AddPumpToObject(item, "pump", &state->pump);
+    cJSON_AddChlorToObject(item, "chlor", &state->chlor);
 }
 
 size_t

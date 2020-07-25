@@ -157,7 +157,7 @@ typedef struct poolstate_t {
 /* poolstate.c */
 void poolstate_init(void);
 void poolstate_set(poolstate_t const * const state);
-void poolstate_get(poolstate_t * const state);
+bool poolstate_get(poolstate_t * const state);
 
 /* poolstate_rx.c */
 bool poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, ipc_t * const ipc_for_dbg);
