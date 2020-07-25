@@ -46,17 +46,18 @@ typedef enum {
 #undef XX
 } network_addrgroup_t;
 
+// MUST add 1 for network messages (1-based)
 #define NETWORK_CIRCUIT_MAP(XX) \
-  XX( 1, SPA)  \
-  XX( 2, AUX1) \
-  XX( 3, AUX2) \
-  XX( 4, AUX3) \
-  XX( 5, FT1)  \
-  XX( 6, POOL) \
-  XX( 7, FT2)  \
-  XX( 8, FT3)  \
-  XX( 9, FT4)  \
-  XX(10, COUNT)
+  XX(0, SPA)  \
+  XX(1, AUX1) \
+  XX(2, AUX2) \
+  XX(3, AUX3) \
+  XX(4, FT1)  \
+  XX(5, POOL) \
+  XX(6, FT2)  \
+  XX(7, FT3)  \
+  XX(8, FT4)  \
+  XX(9, COUNT)
 
 typedef enum {
 #define XX(num, name) NETWORK_CIRCUIT_##name = num,
@@ -201,7 +202,7 @@ typedef struct network_msg_ctrl_heat_set_t {
 } PACK8 network_msg_ctrl_heat_set_t;
 
 typedef struct network_msg_ctrl_circuit_set_t {
-    uint8_t circuit;
+    uint8_t circuit;  // 1-based
     uint8_t value;
 } PACK8 network_msg_ctrl_circuit_set_t;
 
