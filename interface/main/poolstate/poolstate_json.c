@@ -153,8 +153,8 @@ cJSON_AddCircuitsToObject(cJSON * const obj, char const * const key, poolstate_c
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
 
-    cJSON_AddActiveCircuitsToObject(obj, "active", circuits->active);
-    cJSON_AddNumberToObject(obj, "delay", circuits->delay);
+    cJSON_AddActiveCircuitsToObject(item, "active", circuits->active);
+    cJSON_AddNumberToObject(item, "delay", circuits->delay);
 }
 
 /**
