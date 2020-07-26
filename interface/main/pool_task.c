@@ -83,12 +83,13 @@ pool_task(void * ipc_void)
                     char dbg[dbg_size];
                     (void) tx_buf_print(TAG, txb, dbg, dbg_size);
                     ESP_LOGI(TAG, "tx{ %s}", dbg);
-#if 0
+#if 1
                     datalink_pkt_t feedback_pkt;
                     feedback_pkt.prot = DATALINK_PROT_A5_CTRL;
-                    uint8_t const * data = txb->priv.data;
-                    memcpy(&feedback_pkt.hdr, data, sizeof(datalink_hdr_t));
-                    memcpy(&feedback_pkt.data, txb->priv.data + sizeof(datalink_hdr_t), txb->len - sizeof(datalink_hdr_t));
+                    size_t const hdr_offset = offsetof(datalink_a5_tx_head_t, hdr);
+                    size_t const data_offset = hdr_offset + sizeof(datalink_hdr_t);
+                    memcpy(&feedback_pkt.hdr, txb->priv.data + hdr_offset, sizeof(datalink_hdr_t));
+                    memcpy(&feedback_pkt.data, txb->priv.data + data_offset, txb->len - sizeof(datalink_a5_tx_head_t));
 
                     if (network_rx_msg(&feedback_pkt, &network_msg, &txOpportunity)) {
                         ESP_LOGI(TAG, "FEEDBACK received network msg");
