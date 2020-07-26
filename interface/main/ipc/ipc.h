@@ -21,7 +21,6 @@
 
 typedef struct ipc_t {
     QueueHandle_t to_mqtt_q;
-    QueueHandle_t to_rs485_q;
     struct dev {
         char ipAddr[WIFI_DEVIPADDR_LEN];
         char name[WIFI_DEVNAME_LEN];
@@ -50,19 +49,5 @@ typedef struct toMqttMsg_t {
     char *            data;  // must be freed by recipient
 } toMqttMsg_t;
 
-#define IPC_TO_RS485_TYP_MAP(XX) \
-  XX(0x00, DATA)
-
-typedef enum {
-#define XX(num, name) IPC_TO_RS485_TYP_##name = num,
-  IPC_TO_RS485_TYP_MAP(XX)
-#undef XX
-} ipc_to_rs485_typ_t;
-
-typedef struct toRs485Msg_t {
-    tx_buf_handle_t  txb;  // must be freed by recipient
-} toRs485Msg_t;
-
 void ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc);
-void ipc_send_to_rs485(tx_buf_handle_t txb, ipc_t const * const ipc);
 char const * ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ);

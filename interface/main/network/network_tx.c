@@ -15,23 +15,25 @@
 #include "../tx_buf/tx_buf.h"
 #include "network.h"
 
-// static char const * const TAG = "network_tx";
+static char const * const TAG = "network_tx";
 
 tx_buf_handle_t
 _alloc_txb_a5(size_t const msg_size)
 {
     tx_buf_handle_t const txb = alloc_txb(DATALINK_A5_HEAD_SIZE + msg_size + DATALINK_A5_TAIL_SIZE);
+ESP_LOGW(TAG, "0 begin=%p head=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
     tx_buf_reserve(txb, DATALINK_A5_HEAD_SIZE);
+ESP_LOGW(TAG, "1 begin=%p head=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
     return txb;
 }
 
 void
-network_tx_circuit_set(rs485_handle_t const rs485_handle, uint8_t circuit, uint8_t value)
+network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, uint8_t value)
 {
     size_t msg_size = sizeof(network_msg_ctrl_circuit_set_t);
     tx_buf_handle_t const txb = _alloc_txb_a5(msg_size);
 
-    network_msg_ctrl_circuit_set_t * const msg = tx_buf_put(txb, msg_size);
+    network_msg_ctrl_circuit_set_t * const msg = (network_msg_ctrl_circuit_set_t *) tx_buf_put(txb, msg_size);
     msg->circuit = circuit;
     msg->value = value;
     datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_CTRL_TYP_CIRCUIT_SET);  // will free when done

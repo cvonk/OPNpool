@@ -12,16 +12,23 @@
 #include <esp_log.h>
 #include <driver/uart.h>
 #include <driver/gpio.h>
+#include <freertos/queue.h>
 
 #include "rs485.h"
 
 static char const * const TAG = "rs485";
+
+QueueHandle_t _dbg_handle = NULL;
 
 static size_t     _rxBufSize = 127;
 static TickType_t _rxTimeout = (100 / portTICK_RATE_MS);
 static TickType_t _txTimeout = (100 / portTICK_RATE_MS);
 
 static uart_port_t _uart_port;
+
+typedef struct tx_msg_t {
+    tx_buf_handle_t  txb;  // must be freed by recipient
+} tx_msg_t;
 
 static int
 _available()
@@ -65,20 +72,33 @@ _flush(void)
 }
 
 static void
-_queue(tx_buf_handle_t const txb, QueueHandle_t const to_rs485_q)
+_queue(rs485_handle_t const handle, tx_buf_handle_t const txb)
 {
-    toRs485Msg_t msg = {
+    assert(handle == _dbg_handle);
+
+    ESP_LOGW(TAG, "5 begin=%p head=%p tail=%p, end=%p len=%u q=%p", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len, handle);
+    tx_msg_t msg = {
         .txb = txb, // doesn't copy the data
     };
     assert(msg.txb);
-    if (xQueueSendToBack(to_rs485_q, &msg, 0) != pdPASS) {
-        ESP_LOGE(TAG, "to_rs485_q full");
+    if (xQueueSendToBack(handle->tx_q, &msg, 0) != pdPASS) {
+        ESP_LOGE(TAG, "tx_q full");
         free(msg.txb);
     }
 }
 
+static tx_buf_handle_t
+_dequeue(rs485_handle_t const handle)
+{
+    tx_msg_t msg;
+    if (xQueueReceive(handle->tx_q, &msg, (TickType_t)0) == pdPASS) {
+        return msg.txb;
+    }
+    return NULL;
+}
+
 rs485_handle_t
-rs485_init(rs485_config_t const * const cfg, QueueHandle_t const to_rs485_q)
+rs485_init(rs485_config_t const * const cfg)
 {
     gpio_config_t io_conf = {
         .pin_bit_mask = (1ULL << cfg->rts_pin),
@@ -95,6 +115,9 @@ rs485_init(rs485_config_t const * const cfg, QueueHandle_t const to_rs485_q)
     uart_driver_install(cfg->uart_port, _rxBufSize * 2, 0, 0, NULL, 0);  // no tx buffer
     uart_set_mode(cfg->uart_port, UART_MODE_RS485_HALF_DUPLEX);
 
+    QueueHandle_t const tx_q = xQueueCreate(2, sizeof(tx_msg_t));
+    assert(tx_q);
+
     rs485_handle_t handle = malloc(sizeof(rs485_instance_t));
     assert(handle);
 
@@ -106,6 +129,9 @@ rs485_init(rs485_config_t const * const cfg, QueueHandle_t const to_rs485_q)
     handle->write = _write;
     handle->flush = _flush;
     handle->queue = _queue;
-    handle->to_rs485_q = to_rs485_q;
+    handle->dequeue = _dequeue;
+    handle->tx_q = tx_q;
+
+_dbg_handle = handle;
     return handle;
 }
