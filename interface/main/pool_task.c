@@ -16,7 +16,7 @@
 #include <esp_log.h>
 #include <time.h>
 
-#include "tx_buf/tx_buf.h"
+#include "skb/skb.h"
 #include "rs485/rs485.h"
 #include "datalink/datalink.h"
 #include "network/network.h"
@@ -51,7 +51,8 @@ pool_task(void * ipc_void)
     };
     rs485_handle_t rs485_handle = rs485_init(&rs485_config);
 
-    datalink_pkt_t datalink_pkt; // poolstate_t state;
+    datalink_pkt_t datalink_pkt;
+    datalink_pkt.skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + DATALINK_MAX_DATA_SIZE + DATALINK_MAX_TAIL_SIZE);
     network_msg_t network_msg;
     bool txOpportunity;
     poolstate_t state;
@@ -76,22 +77,23 @@ pool_task(void * ipc_void)
 
                 network_tx_circuit_set_msg(rs485_handle, 1, 1);
 
-                tx_buf_handle_t const txb = rs485_handle->dequeue(rs485_handle);
+                skb_handle_t const txb = rs485_handle->dequeue(rs485_handle);
                 if (txb) {
                     ESP_LOGW(TAG, "TX should happen here");
                     size_t const dbg_size = 128;
                     char dbg[dbg_size];
-                    (void) tx_buf_print(TAG, txb, dbg, dbg_size);
+                    (void) skb_print(TAG, txb, dbg, dbg_size);
                     ESP_LOGI(TAG, "tx{ %s}", dbg);
-#if 1
-                    datalink_pkt_t feedback_pkt;
-                    feedback_pkt.prot = DATALINK_PROT_A5_CTRL;
-                    size_t const hdr_offset = offsetof(datalink_a5_tx_head_t, hdr);
-                    size_t const data_offset = hdr_offset + sizeof(datalink_hdr_t);
-                    memcpy(&feedback_pkt.hdr, txb->priv.data + hdr_offset, sizeof(datalink_hdr_t));
-                    memcpy(&feedback_pkt.data, txb->priv.data + data_offset, txb->len - sizeof(datalink_a5_tx_head_t));
 
-                    if (network_rx_msg(&feedback_pkt, &network_msg, &txOpportunity)) {
+                    datalink_pkt_t pkt;
+                    pkt.prot = DATALINK_PROT_A5_CTRL;
+                    pkt.head = (datalink_head_t *) txb->priv.data;
+                    pkt.tail = (datalink_tail_t *) txb->priv.tail - sizeof(datalink_tail_a5_t);
+                    pkt.data = txb->priv.data + sizeof(datalink_head_a5_t);
+                    pkt.data_len = txb->len - sizeof(datalink_head_a5_t) - sizeof(datalink_tail_a5_t);
+                    pkt.skb = txb;
+
+                    if (network_rx_msg(&pkt, &network_msg, &txOpportunity)) {
                         ESP_LOGI(TAG, "FEEDBACK received network msg");
 
                         if (poolstate_rx_update(&network_msg, &state, ipc)) {
@@ -102,7 +104,6 @@ pool_task(void * ipc_void)
                             ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
                         }
                     }
-#endif
                     free(txb);
                 }
             }

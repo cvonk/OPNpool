@@ -13,7 +13,7 @@
 
 #include "../rs485/rs485.h"
 #include "../network/network_hdr.h"
-#include "tx_buf/tx_buf.h"
+#include "skb/skb.h"
 #include "datalink.h"
 
 // static char const * const TAG = "datalink";
@@ -31,4 +31,14 @@ uint8_t
 datalink_devaddr(uint8_t group, uint8_t const id)
 {
 	return (group << 4) | id;
+}
+
+uint16_t
+datalink_calc_crc(uint8_t const * const start, uint8_t const * const stop)
+{
+    uint16_t crc = 0;
+    for (uint8_t const * byte = start; byte < stop; byte++) {
+        crc += *byte;
+    }
+    return crc;
 }

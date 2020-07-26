@@ -17,181 +17,182 @@
 static char const * const TAG = "network_rx";
 
 static void
-_decode_msg_a5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const network)
+_decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
+    datalink_ctrl_typ_t datalink_typ = (datalink_ctrl_typ_t) pkt->head->a5.hdr.typ;
 
-    switch ((datalink_ctrl_typ_t) datalink->hdr.typ) {
+    switch (datalink_typ) {
 
         case DATALINK_CTRL_TYP_SET_ACK:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_set_ack_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_set_ack_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_SET_ACK;
-                network->u.ctrl_set_ack = (network_msg_ctrl_set_ack_t *) datalink->data;
+                network->u.ctrl_set_ack = (network_msg_ctrl_set_ack_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_CIRCUIT_SET:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_circuit_set_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_circuit_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_CIRCUIT_SET;
-                network->u.ctrl_circuit_set = (network_msg_ctrl_circuit_set_t *) datalink->data;
+                network->u.ctrl_circuit_set = (network_msg_ctrl_circuit_set_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_TIME_REQ:
-            if (datalink->hdr.len == 0) {
+            if (pkt->data_len == 0) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME_REQ;
             }
             break;
         case DATALINK_CTRL_TYP_STATE_REQ:
-            if (datalink->hdr.len == 0) {
+            if (pkt->data_len == 0) {
                 network->typ = NETWORK_MSG_TYP_CTRL_STATE_REQ;
             }
             break;
         case DATALINK_CTRL_TYP_HEAT_REQ:
-            if (datalink->hdr.len == 0) {
+            if (pkt->data_len == 0) {
                 network->typ = NETWORK_MSG_TYP_CTRL_HEAT_REQ;
             }
             break;
         case DATALINK_CTRL_TYP_SCHED_REQ:
-            if (datalink->hdr.len == 0) {
+            if (pkt->data_len == 0) {
                 network->typ = NETWORK_MSG_TYP_CTRL_SCHED_REQ;
             }
             break;
         case DATALINK_CTRL_TYP_LAYOUT_REQ:
-            if (datalink->hdr.len == 0) {
+            if (pkt->data_len == 0) {
                 network->typ = NETWORK_MSG_TYP_CTRL_LAYOUT_REQ;
             }
             break;
         case DATALINK_CTRL_TYP_SCHED:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_sched_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_sched_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_SCHED;
-                network->u.ctrl_sched = (network_msg_ctrl_sched_t *) datalink->data;
+                network->u.ctrl_sched = (network_msg_ctrl_sched_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_STATE:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_state_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_state_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_STATE;
-                network->u.ctrl_state = (network_msg_ctrl_state_t *) datalink->data;
+                network->u.ctrl_state = (network_msg_ctrl_state_t *) pkt->data;
             }
             break;
-
         case DATALINK_CTRL_TYP_STATE_SET:
             // unfinished
-            //if (datalink->hdr.len == sizeof(network_msg_ctrl_state_t)) {
+            //if (pkt->data_len == sizeof(network_msg_ctrl_state_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_STATE_SET;
-                //network->u.ctrl_state = (network_msg_ctrl_state_t *) datalink->data;
+                //network->u.ctrl_state = (network_msg_ctrl_state_t *) pkt->data;
             //}
             break;
         case DATALINK_CTRL_TYP_TIME:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_time_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_time_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME;
-                network->u.ctrl_time = (network_msg_ctrl_time_t *) datalink->data;
+                network->u.ctrl_time = (network_msg_ctrl_time_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_TIME_SET:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_time_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_time_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME_SET;
-                network->u.ctrl_time = (network_msg_ctrl_time_t *) datalink->data;
+                network->u.ctrl_time = (network_msg_ctrl_time_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_HEAT:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_heat_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_heat_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_HEAT;
-                network->u.ctrl_heat = (network_msg_ctrl_heat_t *) datalink->data;
+                network->u.ctrl_heat = (network_msg_ctrl_heat_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_HEAT_SET:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_heat_set_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_heat_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_HEAT_SET;
-                network->u.ctrl_heat_set = (network_msg_ctrl_heat_set_t *) datalink->data;
+                network->u.ctrl_heat_set = (network_msg_ctrl_heat_set_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_LAYOUT:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_layout_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_layout_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_LAYOUT;
-                network->u.ctrl_layout = (network_msg_ctrl_layout_t *) datalink->data;
+                network->u.ctrl_layout = (network_msg_ctrl_layout_t *) pkt->data;
             }
             break;
         case DATALINK_CTRL_TYP_LAYOUT_SET:
-            if (datalink->hdr.len == sizeof(network_msg_ctrl_layout_set_t)) {
+            if (pkt->data_len == sizeof(network_msg_ctrl_layout_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_LAYOUT_SET;
-                network->u.ctrl_layout_set = (network_msg_ctrl_layout_set_t *) datalink->data;
+                network->u.ctrl_layout_set = (network_msg_ctrl_layout_set_t *) pkt->data;
             }
             break;
         default:
             if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
-                ESP_LOGW(TAG, "unknown A5 ctrl typ (0x%02X)", datalink->hdr.typ);
+                ESP_LOGW(TAG, "unknown A5 ctrl typ (0x%02X)", datalink_typ);
             }
             break;
     }
 };
 
 static void
-_decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const network)
+_decode_msg_a5_pump(datalink_pkt_t const * const pkt, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
-	bool toPump = (datalink_groupaddr(datalink->hdr.dst) == DATALINK_ADDRGROUP_PUMP);
+	bool toPump = (datalink_groupaddr(pkt->head->a5.hdr.dst) == DATALINK_ADDRGROUP_PUMP);
+    datalink_pump_typ_t datalink_typ = (datalink_pump_typ_t) pkt->head->a5.hdr.typ;
 
-    switch ((datalink_pump_typ_t)datalink->hdr.typ) {
+    switch (datalink_typ) {
         case DATALINK_PUMP_TYP_REGULATE:
             if (toPump) {
-                if (datalink->hdr.len == sizeof(network_msg_pump_reg_set_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_reg_set_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_REG_SET;
-                    network->u.pump_reg_set = (network_msg_pump_reg_set_t *) datalink->data;
+                    network->u.pump_reg_set = (network_msg_pump_reg_set_t *) pkt->data;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(network_msg_pump_reg_resp_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_reg_resp_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_REG_RESP;
-                    network->u.pump_reg_set_resp = (network_msg_pump_reg_resp_t *) datalink->data;
+                    network->u.pump_reg_set_resp = (network_msg_pump_reg_resp_t *) pkt->data;
                 }
             }
             break;
         case DATALINK_PUMP_TYP_CTRL:
             if (toPump) {
-                if (datalink->hdr.len == sizeof(network_msg_pump_ctrl_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_ctrl_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_CTRL_SET;
-                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) datalink->data;
+                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) pkt->data;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(network_msg_pump_ctrl_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_ctrl_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_CTRL_RESP;
-                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) datalink->data;
+                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) pkt->data;
                 }
             }
             break;
         case DATALINK_PUMP_TYP_MODE:
             if (toPump) {
-                if (datalink->hdr.len == sizeof(network_msg_pump_mode_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_mode_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_MODE_SET;
-                    network->u.pump_mode = (network_msg_pump_mode_t *) datalink->data;
+                    network->u.pump_mode = (network_msg_pump_mode_t *) pkt->data;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(network_msg_pump_mode_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_mode_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_MODE_RESP;
-                    network->u.pump_mode = (network_msg_pump_mode_t *) datalink->data;
+                    network->u.pump_mode = (network_msg_pump_mode_t *) pkt->data;
                 }
             }
             break;
         case DATALINK_PUMP_TYP_STATE:
             if (toPump) {
-                if (datalink->hdr.len == sizeof(network_msg_pump_run_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_run_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_RUN_SET;
-                    network->u.pump_run = (network_msg_pump_run_t *) datalink->data;
+                    network->u.pump_run = (network_msg_pump_run_t *) pkt->data;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(network_msg_pump_run_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_run_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_RUN_RESP;
-                    network->u.pump_run = (network_msg_pump_run_t *) datalink->data;
+                    network->u.pump_run = (network_msg_pump_run_t *) pkt->data;
                 }
             }
             break;
         case DATALINK_PUMP_TYP_STATUS:
             if (toPump) {
-                if (datalink->hdr.len == 0) {
+                if (pkt->data_len == 0) {
                     network->typ = NETWORK_MSG_TYP_PUMP_STATE_REQ;
                 }
             } else {
-                if (datalink->hdr.len == sizeof(network_msg_pump_state_t)) {
+                if (pkt->data_len == sizeof(network_msg_pump_state_t)) {
                     network->typ = NETWORK_MSG_TYP_PUMP_STATE_RESP;
-                    network->u.pump_state = (network_msg_pump_state_t *) datalink->data;
+                    network->u.pump_state = (network_msg_pump_state_t *) pkt->data;
                 }
             }
             break;
@@ -200,46 +201,47 @@ _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const
             break;
         default:
             if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
-                ESP_LOGW(TAG, "unknown A5 pump typ %u", datalink->hdr.typ);
+                ESP_LOGW(TAG, "unknown A5 pump typ %u", datalink_typ);
             }
             break;
     }
 }
 
 static void
-_decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * const network)
+_decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
+    datalink_chlor_typ_t datalink_typ = (datalink_chlor_typ_t) pkt->head->ic.hdr.typ;
 
-    switch ((datalink_chlor_typ_t) datalink->hdr.typ) {
+    switch (datalink_typ) {
         case DATALINK_CHLOR_TYP_PING_REQ:
-            if (datalink->hdr.len == sizeof(network_msg_chlor_ping_req_t)) {
+            if (pkt->data_len == sizeof(network_msg_chlor_ping_req_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_PING_REQ;
-                network->u.chlor_ping_req = (network_msg_chlor_ping_req_t *) datalink->data;
+                network->u.chlor_ping_req = (network_msg_chlor_ping_req_t *) pkt->data;
             }
             break;
         case DATALINK_CHLOR_TYP_PING_RESP:
-            if (datalink->hdr.len == sizeof(network_msg_chlor_ping_t)) {
+            if (pkt->data_len == sizeof(network_msg_chlor_ping_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_PING_RESP;
-                network->u.chlor_ping = (network_msg_chlor_ping_t *) datalink->data;
+                network->u.chlor_ping = (network_msg_chlor_ping_t *) pkt->data;
             }
             break;
         case DATALINK_CHLOR_TYP_NAME:
-            if (datalink->hdr.len == sizeof(network_msg_chlor_name_t)) {
+            if (pkt->data_len == sizeof(network_msg_chlor_name_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_NAME;
-                network->u.chlor_name = (network_msg_chlor_name_t *) datalink->data;
+                network->u.chlor_name = (network_msg_chlor_name_t *) pkt->data;
             }
             break;
         case DATALINK_CHLOR_TYP_LEVEL_SET:
-            if (datalink->hdr.len == sizeof(network_msg_chlor_level_set_t)) {
+            if (pkt->data_len == sizeof(network_msg_chlor_level_set_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_LEVEL_SET;
-                network->u.chlor_level_set = (network_msg_chlor_level_set_t *) datalink->data;
+                network->u.chlor_level_set = (network_msg_chlor_level_set_t *) pkt->data;
             }
             break;
         case DATALINK_CHLOR_TYP_LEVEL_RESP:
-            if (datalink->hdr.len == sizeof(network_msg_chlor_level_resp_t)) {
+            if (pkt->data_len == sizeof(network_msg_chlor_level_resp_t)) {
                 network->typ = NETWORK_MSG_TYP_CHLOR_LEVEL_RESP;
-                network->u.chlor_level_resp = (network_msg_chlor_level_resp_t *) datalink->data;
+                network->u.chlor_level_resp = (network_msg_chlor_level_resp_t *) pkt->data;
             }
             break;
         case DATALINK_CHLOR_TYP_X14:
@@ -247,36 +249,36 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * cons
             break;
         default:
             if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
-                ESP_LOGW(TAG, "unknown IC typ %u", datalink->hdr.typ);
+                ESP_LOGW(TAG, "unknown IC typ %u", datalink_typ);
             }
             break;
     }
 }
 
 bool
-network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity)
+network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity)
 {
 	name_reset_idx();
 
-	switch (datalink->prot) {
+	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
-            _decode_msg_a5_ctrl(datalink, network);
+            _decode_msg_a5_ctrl(pkt, msg);
 			break;
 		case DATALINK_PROT_A5_PUMP:
-            _decode_msg_a5_pump(datalink, network);
+            _decode_msg_a5_pump(pkt, msg);
 			break;
 		case DATALINK_PROT_IC:
-            _decode_msg_ic_chlor(datalink, network);
+            _decode_msg_ic_chlor(pkt, msg);
 			break;
         default:
             if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
-                ESP_LOGW(TAG, "unknown proto %u", datalink->prot);
+                ESP_LOGW(TAG, "unknown proto %u", pkt->prot);
             }
 	}
     *txOpportunity =
-        datalink->prot == DATALINK_PROT_A5_CTRL &&
-        datalink_groupaddr(datalink->hdr.src) == DATALINK_ADDRGROUP_CTRL &&
-        datalink_groupaddr(datalink->hdr.dst) == DATALINK_ADDRGROUP_ALL;
+        pkt->prot == DATALINK_PROT_A5_CTRL &&
+        datalink_groupaddr(pkt->head->a5.hdr.src) == DATALINK_ADDRGROUP_CTRL &&
+        datalink_groupaddr(pkt->head->a5.hdr.dst) == DATALINK_ADDRGROUP_ALL;
 
-    return network->typ != NETWORK_MSG_TYP_NONE;
+    return msg->typ != NETWORK_MSG_TYP_NONE;
 }

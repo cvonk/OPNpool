@@ -1,7 +1,7 @@
 #pragma once
 #include <esp_types.h>
 
-#include "../tx_buf/tx_buf.h"
+#include "../skb/skb.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
