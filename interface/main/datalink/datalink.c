@@ -364,6 +364,16 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, da
         }
         case DATALINK_PROT_A5_CTRL:
         case DATALINK_PROT_A5_PUMP: {
+
+// insert 0xFF + preamble here
+#if 0
+            rs485->write(0xFF);
+            for (uint_least8_t ii = 0; ii < sizeof(preamble_a5); ii++) {
+                rs485->write(preamble_a5[ii]);
+            }
+
+#endif
+
             datalink_a5_hdr_t * const hdr = (datalink_a5_hdr_t *) tx_buf_push(txb, DATALINK_A5_HEAD_SIZE);
 ESP_LOGW(TAG, "3 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
             hdr->ver = 0x01;
