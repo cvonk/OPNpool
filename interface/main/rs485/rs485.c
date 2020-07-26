@@ -67,8 +67,8 @@ _write_bytes(uint8_t * src, size_t len)
     gpio_set_level(GPIO_NUM_27, 1);
 	{
 		rs485->write(0xFF);
-		for (uint_least8_t ii = 0; ii < sizeof(preamble_a5); ii++) {
-			rs485->write(preamble_a5[ii]);
+		for (uint_least8_t ii = 0; ii < sizeof(datalink_preamble_a5); ii++) {
+			rs485->write(datalink_preamble_a5[ii]);
 		}
 		for (uint_least8_t ii = 0; ii < sizeof(mHdr_a5_t); ii++) {
 			rs485->write(((uint8_t *)&hdr)[ii]);
