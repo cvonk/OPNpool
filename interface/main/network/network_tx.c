@@ -15,7 +15,7 @@
 #include "../tx_buf/tx_buf.h"
 #include "network.h"
 
-static char const * const TAG = "network_tx";
+//static char const * const TAG = "network_tx";
 
 tx_buf_handle_t
 _alloc_txb_a5(size_t const msg_size)
