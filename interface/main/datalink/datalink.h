@@ -127,10 +127,10 @@ typedef enum {
 // use macro "magic" to get an enum and matching name_* function (in name.c)
 // FYI tere is a 0x14, // has dst=0x50 data=[0x00]
  #define DATALINK_CHLOR_TYP_MAP(XX) \
-  XX(0x00, PING_REQ) \
-  XX(0x01, PING) \
-  XX(0x03, NAME) \
-  XX(0x11, LEVEL_SET) \
+  XX(0x00, PING_REQ)   \
+  XX(0x01, PING_RESP)  \
+  XX(0x03, NAME)       \
+  XX(0x11, LEVEL_SET)  \
   XX(0x12, LEVEL_RESP) \
   XX(0x14, X14)
 

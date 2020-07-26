@@ -304,7 +304,7 @@ decodePump_mode_a5(network_msg_pump_mode_t const * const msg, uint_least8_t cons
 }
 
 inline bool
-decodePUMP_RUNNING_a5(network_msg_pump_running_t const * const msg, uint_least8_t const len,
+decodePumpRunning_a5(network_msg_pump_run_t const * const msg, uint_least8_t const len,
 	                sysState_t * sys, JsonObject * json, char const * const key)
 {
 	if (len == sizeof(*msg) && (msg->state == 0x04 || msg->state == 0x0A)) {
@@ -550,15 +550,18 @@ _decodeA5_pump(pentairMsg_t * msg, sysState_t * sys, JsonObject * json)
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_control:
+                ESP_LOGI(TAG, "%s pump", toPump ? "to" : "from");
 				decoded = decodePump_control_a5((mPumpControl_a5_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_mode:
+                ESP_LOGI(TAG, "%s pump", toPump ? "to" : "from");
 				decoded = decodePump_mode_a5((network_msg_pump_mode_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_state:
-				decoded = decodePUMP_RUNNING_a5((network_msg_pump_running_t *) msg->data, msg->hdr.len, sys, json, s);
+                ESP_LOGI(TAG, "%s pump", toPump ? "to" : "from");
+				decoded = decodePumpRunning_a5((network_msg_pump_run_t *) msg->data, msg->hdr.len, sys, json, s);
 				break;
 
 			case DATALINK_A5_PUMP_MSGTYP_status:
