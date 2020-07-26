@@ -83,6 +83,25 @@ pool_task(void * ipc_void)
                     char dbg[dbg_size];
                     (void) tx_buf_print(TAG, txb, dbg, dbg_size);
                     ESP_LOGI(TAG, "tx{ %s}", dbg);
+#if 0
+                    datalink_pkt_t feedback_pkt;
+                    feedback_pkt.prot = DATALINK_PROT_A5_CTRL;
+                    uint8_t const * data = txb->priv.data;
+                    memcpy(&feedback_pkt.hdr, data, sizeof(datalink_hdr_t));
+                    memcpy(&feedback_pkt.data, txb->priv.data + sizeof(datalink_hdr_t), txb->len - sizeof(datalink_hdr_t));
+
+                    if (network_rx_msg(&feedback_pkt, &network_msg, &txOpportunity)) {
+                        ESP_LOGI(TAG, "FEEDBACK received network msg");
+
+                        if (poolstate_rx_update(&network_msg, &state, ipc)) {
+                            ESP_LOGI(TAG, "FEEDBACK poolstate updated");
+
+                            poolstate_to_json(&state, json, json_size);
+                            ESP_LOGI(TAG, "FEEDBACK %s", json);
+                            ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
+                        }
+                    }
+#endif
                     free(txb);
                 }
             }

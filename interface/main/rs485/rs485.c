@@ -18,8 +18,6 @@
 
 static char const * const TAG = "rs485";
 
-QueueHandle_t _dbg_handle = NULL;
-
 static size_t     _rxBufSize = 127;
 static TickType_t _rxTimeout = (100 / portTICK_RATE_MS);
 static TickType_t _txTimeout = (100 / portTICK_RATE_MS);
@@ -61,6 +59,45 @@ _write(uint8_t src)
 static int
 _write_bytes(uint8_t * src, size_t len)
 {
+#if 0
+	// messages should be sent directly after an A5 packets (and before any IC packets)
+
+	// enable RS485 transmit DE=1 and RE*=1 (DE=driver enable, RE*=inverted receive enable)
+	//CJV?? digitalWrite(dirPin, RS485_DIR_tx);  // 2BD: there might be a mandatory wait after enabling this pin !!!!!!!
+    gpio_set_level(GPIO_NUM_27, 1);
+	{
+		rs485->write(0xFF);
+		for (uint_least8_t ii = 0; ii < sizeof(preamble_a5); ii++) {
+			rs485->write(preamble_a5[ii]);
+		}
+		for (uint_least8_t ii = 0; ii < sizeof(mHdr_a5_t); ii++) {
+			rs485->write(((uint8_t *)&hdr)[ii]);
+		}
+
+		printf("DBG typ=%02X dataLen=%u data.circuitSet=(%02X %02X)", element->typ, element->dataLen, element->data.circuitSet.circuit, element->data.circuitSet.value);
+		for (uint_least8_t ii = 0; ii < hdr.len; ii++) {
+			printf(" %02X", element->data.raw[ii]);
+			rs485->write(element->data.raw[ii]);
+		}
+		printf("\n");
+		rs485->write(crc >> 8);
+		rs485->write(crc & 0xFF);
+		//rs485->write(0xFF);
+		rs485->flush();  // wait until the hardware buffer starts transmitting the last byte
+
+		// A few words on the DE signal:
+		//  - choose a GPIO that doesn't mind being pulled down during reset
+		//  - in an ideal world, the UART has a tx interrupt, or at least a tx-complete bit, so
+		//    that a transmit-done callback can off the DE.
+		//  - probing the TX and DE signal, I learned that the DE is 1 byte time (10/9600 sec) to
+		//    short.  Correct with a delay() statement.
+
+		//vTaskDelay(1/portTICK_PERIOD_MS);
+	}
+	ets_delay_us(1500);
+    gpio_set_level(GPIO_NUM_27, 0);  // enable RS485 receive
+#endif
+
     return uart_write_bytes(_uart_port, (char *) src, len);
 }
 
@@ -74,9 +111,7 @@ _flush(void)
 static void
 _queue(rs485_handle_t const handle, tx_buf_handle_t const txb)
 {
-    assert(handle == _dbg_handle);
-
-    ESP_LOGW(TAG, "5 begin=%p head=%p tail=%p, end=%p len=%u q=%p", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len, handle);
+    ESP_LOGW(TAG, "5 head=%p data=%p tail=%p, end=%p len=%u q=%p", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len, handle);
     tx_msg_t msg = {
         .txb = txb, // doesn't copy the data
     };
@@ -132,6 +167,5 @@ rs485_init(rs485_config_t const * const cfg)
     handle->dequeue = _dequeue;
     handle->tx_q = tx_q;
 
-_dbg_handle = handle;
     return handle;
 }

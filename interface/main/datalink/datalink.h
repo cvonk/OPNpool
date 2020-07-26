@@ -46,13 +46,17 @@ typedef enum {
 #undef XX
 } datalink_addrgroup_t;
 
-typedef struct datalink_hdr_t {
+typedef struct datalink_a5_hdr_t {
     uint8_t ver;  // protocol version id
     uint8_t dst;  // destination
     uint8_t src;  // source
     uint8_t typ;  // message type
     uint8_t len;  // # of data bytes following
 } PACK8 datalink_a5_hdr_t;
+
+#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_hdr_t))
+#define DATALINK_A5_TAIL_SIZE (sizeof(uint16_t))
+
 
 typedef struct datalink_ic_hdr_t {
     uint8_t dst;  // destination
@@ -70,9 +74,6 @@ typedef struct datalink_pkt_t {
 	uint8_t         data[CONFIG_POOL_DATALINK_LEN];
     uint16_t        chk;
 } datalink_pkt_t;
-
-#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_prot_t) + sizeof(datalink_hdr_t))
-#define DATALINK_A5_TAIL_SIZE (sizeof(uint16_t))
 
 typedef struct datalink_ic_pkt_t {
 
