@@ -165,8 +165,15 @@ typedef enum {
 } datalink_chlor_typ_t;
 
 /* datalink.c */
+extern datalink_a5_preamble_t datalink_preamble_a5;
+extern datalink_ic_preamble_t datalink_preamble_ic;
 datalink_addrgroup_t datalink_groupaddr(uint16_t const addr);
+uint8_t datalink_devaddr(uint8_t group, uint8_t const id);
+
+/* datalink_rx.c */
 bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
+
+/* datalink_tx.c */
 void datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, datalink_prot_t const prot, datalink_ctrl_typ_t const typ);
 
 /* datalink_str.c */

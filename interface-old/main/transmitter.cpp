@@ -16,8 +16,8 @@
 
 static char const * const TAG = "pool_transmitter";
 
-static uint8_t preamble_a5[] = { 0x00, 0xFF, 0xA5 };
-//static uint8_t preamble_ic[] = { 0x10, 0x02 };
+static uint8_t datalink_preamble_a5[] = { 0x00, 0xFF, 0xA5 };
+//static uint8_t datalink_preamble_ic[] = { 0x10, 0x02 };
 
 void
 Transmitter::send_a5(Rs485 * rs485, JsonObject * root, element_t const * const element)
@@ -36,11 +36,11 @@ Transmitter::send_a5(Rs485 * rs485, JsonObject * root, element_t const * const e
 
 	// enable RS485 transmit DE=1 and RE*=1 (DE=driver enable, RE*=inverted receive enable)
 	//CJV?? digitalWrite(dirPin, RS485_DIR_tx);  // 2BD: there might be a mandatory wait after enabling this pin !!!!!!!
-    gpio_set_level(GPIO_NUM_27, 1); 
+    gpio_set_level(GPIO_NUM_27, 1);
 	{
 		rs485->write(0xFF);
-		for (uint_least8_t ii = 0; ii < sizeof(preamble_a5); ii++) {
-			rs485->write(preamble_a5[ii]);
+		for (uint_least8_t ii = 0; ii < sizeof(datalink_preamble_a5); ii++) {
+			rs485->write(datalink_preamble_a5[ii]);
 		}
 		for (uint_least8_t ii = 0; ii < sizeof(mHdr_a5_t); ii++) {
 			rs485->write(((uint8_t *)&hdr)[ii]);
@@ -58,12 +58,12 @@ Transmitter::send_a5(Rs485 * rs485, JsonObject * root, element_t const * const e
 		rs485->flush();  // wait until the hardware buffer starts transmitting the last byte
 
 		// A few words on the DE signal:
-		//  - choose a GPIO that doesn't mind being pulled down during reset 
+		//  - choose a GPIO that doesn't mind being pulled down during reset
 		//  - in an ideal world, the UART has a tx interrupt, or at least a tx-complete bit, so
 		//    that a transmit-done callback can off the DE.
 		//  - probing the TX and DE signal, I learned that the DE is 1 byte time (10/9600 sec) to
 		//    short.  Correct with a delay() statement.
-		
+
 		//vTaskDelay(1/portTICK_PERIOD_MS);
 	}
 	ets_delay_us(1500);
