@@ -1,6 +1,8 @@
 #pragma once
 #include <driver/uart.h>
 
+#include "../ipc/ipc.h"
+
 typedef struct rs485_config_t {
     int rx_pin;
     int tx_pin;
@@ -17,6 +19,7 @@ typedef int (* rs485_read_fnc_t)(void);
 typedef int (* rs485_write_bytes_fnc_t)(uint8_t * src, size_t len);
 typedef int (* rs485_write_fnc_t)(uint8_t src);
 typedef void (* rs485_flush_fnc_t)(void);
+typedef void (* rs485_queue_fnc_t)(tx_buf_handle_t const txb, QueueHandle_t const handle);
 
 typedef struct rs485_instance_t {
     rs485_available_fnc_t available;
@@ -25,11 +28,14 @@ typedef struct rs485_instance_t {
     rs485_write_bytes_fnc_t write_bytes;
     rs485_write_fnc_t write;
     rs485_flush_fnc_t flush;
+    rs485_queue_fnc_t queue;
+    QueueHandle_t to_rs485_q;
 } rs485_instance_t;
-
-rs485_handle_t rs485_init(rs485_config_t const * const config);
 
 typedef enum RS485_DIR_t {
     RS485_DIR_rx = 0,
     RS485_DIR_tx = 1
 } RS485_DIR_t;
+
+/* rs485.c */
+rs485_handle_t rs485_init(rs485_config_t const * const cfg, QueueHandle_t const to_rs485_q);

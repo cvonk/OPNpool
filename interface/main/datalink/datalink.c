@@ -13,32 +13,32 @@
 
 #include "../rs485/rs485.h"
 #include "../network/network_hdr.h"
+#include "tx_buf/tx_buf.h"
+#include "ipc/ipc.h"
 #include "datalink.h"
 
 static char const * const TAG = "datalink";
 
-typedef datalink_hdr_t mHdr_a5_t;  // conveniently similar
-
-typedef struct mHdr_ic_t {
-    uint8_t dst;  // destination
-    uint8_t typ;  // message type
-} PACK8 mHdr_ic_t;
-
 static uint8_t preamble_a5[] = { 0x00, 0xFF, 0xA5 };
 static uint8_t preamble_ic[] = { 0x10, 0x02 };
+
+/* MUST match the order of datalink_prot_t */
 
 static struct proto_info_t {
 	uint8_t const * const preamble;
 	uint const len;
+    datalink_prot_t const prot;
 	uint idx;
 } _proto_infos[] = {
 	{
-        .preamble = preamble_a5,
-        .len = sizeof(preamble_a5),
-    },
-	{
         .preamble = preamble_ic,
         .len = sizeof(preamble_ic),
+        .prot = DATALINK_PROT_IC,
+    },
+	{
+        .preamble = preamble_a5,
+        .len = sizeof(preamble_a5),
+        .prot = DATALINK_PROT_A5_CTRL,  // distinction between A5_CTRL and A5_PUMP is based on src/dst in hdr
     },
 };
 
@@ -87,7 +87,7 @@ _find_preamble(rs485_handle_t const rs485, datalink_prot_t * const proto)
 		bool found = false;  // could be the next byte of a preamble
 		for (uint pp = 0; !found && pp < ARRAY_SIZE(_proto_infos); pp++) {
 			if (_preamble_is_done(&_proto_infos[pp], byt, &found)) {
-				*proto = (datalink_prot_t)pp;
+				*proto = _proto_infos[pp].prot;
 				if (CONFIG_POOL_DBG_DATALINK) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
@@ -105,24 +105,30 @@ _find_preamble(rs485_handle_t const rs485, datalink_prot_t * const proto)
 }
 
 static DATALINK_RESULT_t
-_read_header(rs485_handle_t const rs485, datalink_prot_t const proto, datalink_hdr_t * const hdr)
+_read_header(rs485_handle_t const rs485, datalink_prot_t * const proto, datalink_hdr_t * const hdr)
 {
-	switch (proto) {
-		case DATALINK_PROT_A5:
-			if (rs485->available() >= (int)sizeof(mHdr_a5_t)) {
-				rs485->read_bytes((uint8_t *)hdr, sizeof(mHdr_a5_t));
+	switch (*proto) {
+		case DATALINK_PROT_A5_CTRL:
+		case DATALINK_PROT_A5_PUMP:
+			if (rs485->available() >= (int)sizeof(datalink_a5_hdr_t)) {
+				rs485->read_bytes((uint8_t *)hdr, sizeof(datalink_a5_hdr_t));
 				if (CONFIG_POOL_DBG_DATALINK) {
-					ESP_LOGI(TAG, " %02X %02X %02X %02X %02X (header)", hdr->pro, hdr->dst, hdr->src, hdr->typ, hdr->len);
+					ESP_LOGI(TAG, " %02X %02X %02X %02X %02X (header)", hdr->ver, hdr->dst, hdr->src, hdr->typ, hdr->len);
 				}
 				if (hdr->len > CONFIG_POOL_DATALINK_LEN) {
 					return DATALINK_RESULT_ERROR;  // pkt length exceeds what we have planned for
 				}
+                datalink_addrgroup_t src = datalink_groupaddr(hdr->src);
+                datalink_addrgroup_t dst = datalink_groupaddr(hdr->dst);
+    			if (src == DATALINK_ADDRGROUP_PUMP || dst == DATALINK_ADDRGROUP_PUMP) {
+                    *proto = DATALINK_PROT_A5_PUMP;
+                }
 				return DATALINK_RESULT_DONE;
 			}
 			break;
 		case DATALINK_PROT_IC:
-			if (rs485->available() >= (int)sizeof(mHdr_ic_t)) {
-				mHdr_ic_t hdr_ic;
+			if (rs485->available() >= (int)sizeof(datalink_ic_hdr_t)) {
+				datalink_ic_hdr_t hdr_ic;
 				rs485->read_bytes((uint8_t *)&hdr_ic, sizeof(hdr_ic));
 				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %02X %02X (header)\n", hdr->dst, hdr->typ);
@@ -132,7 +138,7 @@ _read_header(rs485_handle_t const rs485, datalink_prot_t const proto, datalink_h
                     return DATALINK_RESULT_ERROR;
                 }
                 // // so we can treat it as a A5 message when reading data or while decoding
-                hdr->pro = 0x00;
+                hdr->ver = 0x00;
                 hdr->dst = hdr_ic.dst;
                 hdr->src = 0x00;
                 hdr->typ = hdr_ic.typ;
@@ -167,7 +173,8 @@ static DATALINK_RESULT_t
 _read_crc(rs485_handle_t const rs485, datalink_prot_t const proto, uint16_t * chk)
 {
 	switch (proto) {
-		case DATALINK_PROT_A5:
+		case DATALINK_PROT_A5_CTRL:
+		case DATALINK_PROT_A5_PUMP:
 			if (rs485->available() >= (int)sizeof(uint16_t)) {
 				*chk = rs485->read() << 8 | rs485->read();
 				if (CONFIG_POOL_DBG_DATALINK) {
@@ -196,7 +203,7 @@ _calc_crc_a5(datalink_hdr_t const * const hdr, uint8_t const * const data)
 	// checksum is calculated starting at the last byte of the preamble (0xA5) up to the last
 	// data byte
 	uint16_t calc = preamble_a5[sizeof(preamble_a5) - 1];
-	for (uint ii = 0; ii < sizeof(mHdr_a5_t); ii++) {
+	for (uint ii = 0; ii < sizeof(datalink_a5_hdr_t); ii++) {
 		calc += ((uint8_t *)hdr)[ii];
 	}
 	if (data) {
@@ -208,14 +215,14 @@ _calc_crc_a5(datalink_hdr_t const * const hdr, uint8_t const * const data)
 }
 
 static uint8_t
-_calc_crc_ic(datalink_hdr_t const * const hdr, uint8_t const * const data)
+_calc_crc_ic(datalink_ic_hdr_t const * const hdr, uint8_t const * const data, size_t const data_len)
 {
 	// checksum is calculated starting at the preamble up to the last data byte
 	uint8_t calc = hdr->dst + hdr->typ;  // pretend we still have the ic header
 	for (uint ii = 0; ii < sizeof(preamble_ic); ii++) {
 		calc += preamble_ic[ii];
 	}
-	for (uint ii = 0; ii < hdr->len; ii++) {
+	for (uint ii = 0; ii < data_len; ii++) {
 		calc += data[ii];
 	}
 	return calc;
@@ -225,16 +232,31 @@ static bool
 _crc_is_correct(datalink_pkt_t * pkt)
 {
 	uint16_t calc = 0;  // init to please compiler
-	switch (pkt->proto) {
-		case DATALINK_PROT_A5:
+	switch (pkt->prot) {
+		case DATALINK_PROT_A5_CTRL:
+		case DATALINK_PROT_A5_PUMP:
 			calc = _calc_crc_a5(&pkt->hdr, pkt->data);
 			break;
-		case DATALINK_PROT_IC:
-			calc = _calc_crc_ic(&pkt->hdr, pkt->data);
+		case DATALINK_PROT_IC: {
+            datalink_ic_hdr_t hdr = {.dst = pkt->hdr.dst, .typ = pkt->hdr.typ};
+			calc = _calc_crc_ic(&hdr, pkt->data, pkt->hdr.len);
 			break;
+        }
 	}
 
 	return calc == pkt->chk;
+}
+
+datalink_addrgroup_t
+datalink_groupaddr(uint16_t const addr)
+{
+	return (datalink_addrgroup_t)(addr >> 4);
+}
+
+uint8_t
+datalink_devaddr(uint8_t group, uint8_t const id)
+{
+	return (group << 4) | id;
 }
 
 uint32_t _millis() {
@@ -269,16 +291,16 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 	DATALINK_RESULT_t result = DATALINK_RESULT_ERROR;  // init to please compiler
 	switch (state) {
 		case STATE_FIND_PREAMBLE:
-            result = _find_preamble(rs485, &pkt->proto);
+            result = _find_preamble(rs485, &pkt->prot);
             break;
 		case STATE_READ_HDR:
-            result = _read_header(rs485, pkt->proto, &pkt->hdr);
+            result = _read_header(rs485, &pkt->prot, &pkt->hdr);
             break;
 		case STATE_READ_DATA:
             result = _read_data(rs485, &pkt->hdr, pkt->data);
             break;
 		case STATE_READ_CRC:
-            result = _read_crc(rs485, pkt->proto, &pkt->chk);
+            result = _read_crc(rs485, pkt->prot, &pkt->chk);
             break;
 		case STATE_DONE:
             break;
@@ -311,8 +333,54 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 	}
 
 	if (state == STATE_DONE) {
+
 		state = STATE_FIND_PREAMBLE;
+        datalink_addrgroup_t const dst = datalink_groupaddr(pkt->hdr.dst);
+
+        if ((pkt->prot == DATALINK_PROT_A5_PUMP && dst == DATALINK_ADDRGROUP_X09) ||
+            (pkt->prot == DATALINK_PROT_IC && dst != DATALINK_ADDRGROUP_ALL && dst != DATALINK_ADDRGROUP_CHLOR)) {
+
+                return false;  // silently ignore
+        }
         return _crc_is_correct(pkt);
 	}
 	return false;
+}
+
+void
+datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, datalink_prot_t const prot, datalink_ctrl_typ_t const typ)
+{
+    uint8_t * const data = txb->priv.data;
+    size_t const data_len = txb->len;
+
+    switch (prot) {
+        case DATALINK_PROT_IC: {
+            datalink_ic_hdr_t * const hdr = (datalink_ic_hdr_t *) tx_buf_push(txb, DATALINK_IC_HEAD_SIZE);
+            hdr->dst = datalink_devaddr(DATALINK_ADDRGROUP_ALL, 0);
+            hdr->typ = typ;
+            uint8_t * crc = tx_buf_put(txb, DATALINK_IC_TAIL_SIZE);
+            *crc = _calc_crc_ic(hdr, data, data_len);
+            break;
+        }
+        case DATALINK_PROT_A5_CTRL:
+        case DATALINK_PROT_A5_PUMP: {
+            datalink_a5_hdr_t * const hdr = (datalink_a5_hdr_t *) tx_buf_push(txb, DATALINK_A5_HEAD_SIZE);
+            hdr->ver = 0x01;
+            hdr->dst = datalink_devaddr(DATALINK_ADDRGROUP_CTRL, 0);
+            hdr->src = datalink_devaddr(DATALINK_ADDRGROUP_REMOTE, 0);
+            hdr->typ = typ;
+            hdr->len = data_len;
+            uint16_t const crcVal = _calc_crc_a5(hdr, data);
+            uint8_t * crc = tx_buf_put(txb, DATALINK_A5_TAIL_SIZE);
+            crc[0] = crcVal >> 8;
+            crc[1] = crcVal & 0xFF;
+            break;
+        }
+    }
+    size_t const dbg_size = 128;
+    char dbg[dbg_size];
+    (void) tx_buf_print(TAG, txb, dbg, dbg_size);
+    ESP_LOGI(TAG, "%s: { %s}", datalink_prot_str(prot), dbg);
+
+    rs485_handle->queue(txb, rs485_handle);
 }

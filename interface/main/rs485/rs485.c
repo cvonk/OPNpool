@@ -9,10 +9,13 @@
 
 #include <string.h>
 #include <esp_system.h>
+#include <esp_log.h>
 #include <driver/uart.h>
 #include <driver/gpio.h>
 
 #include "rs485.h"
+
+static char const * const TAG = "rs485";
 
 static size_t     _rxBufSize = 127;
 static TickType_t _rxTimeout = (100 / portTICK_RATE_MS);
@@ -61,8 +64,21 @@ _flush(void)
     ESP_ERROR_CHECK(uart_flush_input(_uart_port));
 }
 
+static void
+_queue(tx_buf_handle_t const txb, QueueHandle_t const to_rs485_q)
+{
+    toRs485Msg_t msg = {
+        .txb = txb, // doesn't copy the data
+    };
+    assert(msg.txb);
+    if (xQueueSendToBack(to_rs485_q, &msg, 0) != pdPASS) {
+        ESP_LOGE(TAG, "to_rs485_q full");
+        free(msg.txb);
+    }
+}
+
 rs485_handle_t
-rs485_init(rs485_config_t const * const cfg)
+rs485_init(rs485_config_t const * const cfg, QueueHandle_t const to_rs485_q)
 {
     gpio_config_t io_conf = {
         .pin_bit_mask = (1ULL << cfg->rts_pin),
@@ -89,5 +105,7 @@ rs485_init(rs485_config_t const * const cfg)
     handle->write_bytes = _write_bytes;
     handle->write = _write;
     handle->flush = _flush;
+    handle->queue = _queue;
+    handle->to_rs485_q = to_rs485_q;
     return handle;
 }

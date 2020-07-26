@@ -128,7 +128,7 @@ static void
 _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const network)
 {
     network->typ = NETWORK_MSG_TYP_NONE;
-	bool toPump = (network_groupaddr(datalink->hdr.dst) == NETWORK_ADDRGROUP_PUMP);
+	bool toPump = (datalink_groupaddr(datalink->hdr.dst) == DATALINK_ADDRGROUP_PUMP);
 
     switch ((datalink_pump_typ_t)datalink->hdr.typ) {
         case DATALINK_PUMP_TYP_REGULATE:
@@ -235,37 +235,27 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * cons
 bool
 network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity)
 {
-	network_addrgroup_t src = network_groupaddr(datalink->hdr.src);
-	network_addrgroup_t dst = network_groupaddr(datalink->hdr.dst);
-
-	if (dst == NETWORK_ADDRGROUP_X09) {
-		return false; // stick our head in the sand
-	}
-
 	name_reset_idx();
 
-	switch (datalink->proto) {
-		case DATALINK_PROT_A5:
-			if (src == NETWORK_ADDRGROUP_PUMP || dst == NETWORK_ADDRGROUP_PUMP) {
-                _decode_msg_a5_pump(datalink, network);
-			} else {
-                _decode_msg_a5_ctrl(datalink, network);
-			}
+	switch (datalink->prot) {
+		case DATALINK_PROT_A5_CTRL:
+            _decode_msg_a5_ctrl(datalink, network);
+			break;
+		case DATALINK_PROT_A5_PUMP:
+            _decode_msg_a5_pump(datalink, network);
 			break;
 		case DATALINK_PROT_IC:
-			if (dst == NETWORK_ADDRGROUP_ALL || dst == NETWORK_ADDRGROUP_CHLOR) {
-                _decode_msg_ic_chlor(datalink, network);
-			}
+            _decode_msg_ic_chlor(datalink, network);
 			break;
         default:
             if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
-                ESP_LOGW(TAG, "unknown proto %u", datalink->proto);
+                ESP_LOGW(TAG, "unknown proto %u", datalink->prot);
             }
 	}
     *txOpportunity =
-        datalink->proto == DATALINK_PROT_A5 &&
-        network_groupaddr(datalink->hdr.src) == NETWORK_ADDRGROUP_CTRL &&
-        network_groupaddr(datalink->hdr.dst) == NETWORK_ADDRGROUP_ALL;
+        datalink->prot == DATALINK_PROT_A5_CTRL &&
+        datalink_groupaddr(datalink->hdr.src) == DATALINK_ADDRGROUP_CTRL &&
+        datalink_groupaddr(datalink->hdr.dst) == DATALINK_ADDRGROUP_ALL;
 
     return network->typ != NETWORK_MSG_TYP_NONE;
 }
