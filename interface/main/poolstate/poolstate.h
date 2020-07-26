@@ -1,8 +1,8 @@
 #pragma once
 
+#include <esp_system.h>
 #include <cJSON.h>
 
-#include <esp_system.h>
 #include "../network/network.h"
 #include "../ipc/ipc.h"
 

@@ -34,15 +34,3 @@ network_ic_len(uint8_t const ic_typ)
             return 0;
     };
 }
-
-network_addrgroup_t
-network_groupaddr(uint16_t const addr)
-{
-	return (network_addrgroup_t)(addr >> 4);
-}
-
-uint8_t
-network_devaddr(uint8_t group, uint8_t const id)
-{
-	return (group << 4) | id;
-}

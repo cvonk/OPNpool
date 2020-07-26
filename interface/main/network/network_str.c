@@ -141,7 +141,6 @@ network_heat_src_str(network_heat_src_t const heat_src)
     return ELEM_AT(_network_heat_srcs, heat_src, hex8_str(heat_src));
 }
 
-
 uint
 network_heat_src_nr(char const * const heat_src)
 {

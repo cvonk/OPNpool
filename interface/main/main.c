@@ -127,7 +127,8 @@ app_main()
 
     static ipc_t ipc = {};
     ipc.to_mqtt_q = xQueueCreate(2, sizeof(toMqttMsg_t));
-    assert(ipc.to_mqtt_q);
+    ipc.to_rs485_q = xQueueCreate(2, sizeof(toRs485Msg_t));
+    assert(ipc.to_mqtt_q && ipc.to_rs485_q);
 
     poolstate_init();
 

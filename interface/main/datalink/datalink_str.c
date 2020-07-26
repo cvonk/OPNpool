@@ -18,6 +18,18 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
+static const char * const _datalink_prots[] = {
+#define XX(num, name) #name,
+  DATALINK_PROT_MAP(XX)
+#undef XX
+};
+
+char const *
+datalink_prot_str(datalink_prot_t const prot)
+{
+    return ELEM_AT(_datalink_prots, prot, hex8_str(prot));
+}
+
 str_value_name_pair_t _a5_ctrl_msgtyps[] = {
 #define XX(num, name) { .typ = num, .str = #name },
  DATALINK_CTRL_TYP_MAP(XX)

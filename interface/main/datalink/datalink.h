@@ -3,6 +3,8 @@
 #include <esp_system.h>
 
 #include "../rs485/rs485.h"
+#include "../tx_buf/tx_buf.h"
+#include "../ipc/ipc.h"
 
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
@@ -18,25 +20,64 @@
 #  define CONFIG_POOL_DBG_DATALINK_ONERROR (0)
 #endif
 
+/* order MUST match _proto_infos[] */
+#define DATALINK_PROT_MAP(XX) \
+  XX(0x00, IC)      \
+  XX(0x01, A5_CTRL) \
+  XX(0x02, A5_PUMP)
+
 typedef enum {
-    DATALINK_PROT_A5 = 0,
-    DATALINK_PROT_IC,
+#define XX(num, name) DATALINK_PROT_##name = num,
+  DATALINK_PROT_MAP(XX)
+#undef XX
 } datalink_prot_t;
 
+#define DATALINK_ADDRGROUP_MAP(XX) \
+  XX(0x00, ALL)  \
+  XX(0x01, CTRL) \
+  XX(0x02, REMOTE) \
+  XX(0x05, CHLOR) \
+  XX(0x06, PUMP) \
+  XX(0x09, X09)
+
+typedef enum {
+#define XX(num, name) DATALINK_ADDRGROUP_##name = num,
+  DATALINK_ADDRGROUP_MAP(XX)
+#undef XX
+} datalink_addrgroup_t;
+
 typedef struct datalink_hdr_t {
-    uint8_t pro;  // protocol version id
+    uint8_t ver;  // protocol version id
     uint8_t dst;  // destination
     uint8_t src;  // source
     uint8_t typ;  // message type
     uint8_t len;  // # of data bytes following
-} PACK8 datalink_hdr_t;
+} PACK8 datalink_a5_hdr_t;
+
+typedef struct datalink_ic_hdr_t {
+    uint8_t dst;  // destination
+    uint8_t typ;  // message type
+} PACK8 datalink_ic_hdr_t;
+
+#define DATALINK_IC_HEAD_SIZE (sizeof(datalink_ic_hdr_t))
+#define DATALINK_IC_TAIL_SIZE (sizeof(uint8_t))
+
+typedef datalink_a5_hdr_t datalink_hdr_t;  // conveniently similar
 
 typedef struct datalink_pkt_t {
-	datalink_prot_t proto;
-	datalink_hdr_t hdr;
-	uint8_t        data[CONFIG_POOL_DATALINK_LEN];
-    uint16_t       chk;
+	datalink_prot_t prot;
+	datalink_hdr_t  hdr;
+	uint8_t         data[CONFIG_POOL_DATALINK_LEN];
+    uint16_t        chk;
 } datalink_pkt_t;
+
+#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_prot_t) + sizeof(datalink_hdr_t))
+#define DATALINK_A5_TAIL_SIZE (sizeof(uint16_t))
+
+typedef struct datalink_ic_pkt_t {
+
+} datalink_ic_pkt_t;
+
 
 // #define DATALINK_CTRL_TYP_SET (0x80)
 // #define DATALINK_CTRL_TYP_REQ (0xC0)
@@ -100,9 +141,12 @@ typedef enum {
 } datalink_chlor_typ_t;
 
 /* datalink.c */
+datalink_addrgroup_t datalink_groupaddr(uint16_t const addr);
 bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
+void datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, datalink_prot_t const prot, datalink_ctrl_typ_t const typ);
 
 /* datalink_str.c */
-const char * datalink_pump_typ_str(datalink_pump_typ_t typ);
-const char * datalink_ctrl_type_str(datalink_ctrl_typ_t typ);
-const char * datalink_chlor_typ_str(datalink_chlor_typ_t typ);
+char const * datalink_prot_str(datalink_prot_t const prot);
+char const * datalink_pump_typ_str(datalink_pump_typ_t typ);
+char const * datalink_ctrl_type_str(datalink_ctrl_typ_t typ);
+char const * datalink_chlor_typ_str(datalink_chlor_typ_t typ);

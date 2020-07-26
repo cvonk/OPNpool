@@ -26,7 +26,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-//static char const * const TAG = "pool_task";
+static char const * const TAG = "pool_task";
 
 void
 pool_task(void * ipc_void)
@@ -48,7 +48,7 @@ pool_task(void * ipc_void)
             .use_ref_tick = false,
         }
     };
-    rs485_handle_t rs485_handle = rs485_init(&rs485_config);
+    rs485_handle_t rs485_handle = rs485_init(&rs485_config, ipc->to_rs485_q);
 
     datalink_pkt_t datalink_pkt; // poolstate_t state;
     network_msg_t network_msg;
@@ -72,8 +72,13 @@ pool_task(void * ipc_void)
                 }
             }
             if (txOpportunity) {
-                // read incoming mailbox for things to transmit
-                //   and transmit them
+
+                toRs485Msg_t msg;
+                if (xQueueReceive(ipc->to_rs485_q, &msg, (TickType_t)0) == pdPASS) {
+
+                    ESP_LOGW(TAG, "TX should happen here");
+                    free(msg.txb);
+                }
             }
         }
         vTaskDelay(10 / portTICK_PERIOD_MS);
