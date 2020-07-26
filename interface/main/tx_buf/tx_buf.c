@@ -48,8 +48,10 @@ uint8_t *
 tx_buf_put(tx_buf_handle_t const txb, size_t const user_data_len)
 {
     assert(txb->priv.tail + user_data_len <= txb->priv.end);
+    uint8_t * const ret = txb->priv.tail;
     txb->len += user_data_len;
-    return txb->priv.tail += user_data_len;
+    txb->priv.tail += user_data_len;
+    return ret;
 }
 
 // returns pointer to write header protocol data
