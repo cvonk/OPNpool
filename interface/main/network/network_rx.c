@@ -89,7 +89,7 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const
         case DATALINK_CTRL_TYP_TIME_SET:
             if (datalink->hdr.len == sizeof(network_msg_ctrl_time_t)) {
                 network->typ = NETWORK_MSG_TYP_CTRL_TIME_SET;
-                network->u.ctrl_time_set = (network_msg_ctrl_time_t *) datalink->data;
+                network->u.ctrl_time = (network_msg_ctrl_time_t *) datalink->data;
             }
             break;
         case DATALINK_CTRL_TYP_HEAT:
@@ -139,27 +139,48 @@ _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const
                 }
             } else {
                 if (datalink->hdr.len == sizeof(network_msg_pump_reg_resp_t)) {
-                    network->typ = NETWORK_MSG_TYP_PUMP_REG_SET_RESP;
+                    network->typ = NETWORK_MSG_TYP_PUMP_REG_RESP;
                     network->u.pump_reg_set_resp = (network_msg_pump_reg_resp_t *) datalink->data;
                 }
             }
             break;
         case DATALINK_PUMP_TYP_CTRL:
-            if (datalink->hdr.len == sizeof(network_msg_pump_ctrl_t)) {
-                network->typ = NETWORK_MSG_TYP_PUMP_CTRL;
-                network->u.pump_ctrl = (network_msg_pump_ctrl_t *) datalink->data;
+            if (toPump) {
+                if (datalink->hdr.len == sizeof(network_msg_pump_ctrl_t)) {
+                    network->typ = NETWORK_MSG_TYP_PUMP_CTRL_SET;
+                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) datalink->data;
+                }
+            } else {
+                if (datalink->hdr.len == sizeof(network_msg_pump_ctrl_t)) {
+                    network->typ = NETWORK_MSG_TYP_PUMP_CTRL_RESP;
+                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) datalink->data;
+                }
             }
             break;
         case DATALINK_PUMP_TYP_MODE:
-            if (datalink->hdr.len == sizeof(network_msg_pump_mode_t)) {
-                network->typ = NETWORK_MSG_TYP_PUMP_MODE;
-                network->u.pump_mode = (network_msg_pump_mode_t *) datalink->data;
+            if (toPump) {
+                if (datalink->hdr.len == sizeof(network_msg_pump_mode_t)) {
+                    network->typ = NETWORK_MSG_TYP_PUMP_MODE_SET;
+                    network->u.pump_mode = (network_msg_pump_mode_t *) datalink->data;
+                }
+            } else {
+                if (datalink->hdr.len == sizeof(network_msg_pump_mode_t)) {
+                    network->typ = NETWORK_MSG_TYP_PUMP_MODE_RESP;
+                    network->u.pump_mode = (network_msg_pump_mode_t *) datalink->data;
+                }
             }
             break;
         case DATALINK_PUMP_TYP_STATE:
-            if (datalink->hdr.len == sizeof(network_msg_pump_running_t)) {
-                network->typ = NETWORK_MSG_TYP_PUMP_RUNNING;
-                network->u.pump_running = (network_msg_pump_running_t *) datalink->data;
+            if (toPump) {
+                if (datalink->hdr.len == sizeof(network_msg_pump_run_t)) {
+                    network->typ = NETWORK_MSG_TYP_PUMP_RUN_SET;
+                    network->u.pump_run = (network_msg_pump_run_t *) datalink->data;
+                }
+            } else {
+                if (datalink->hdr.len == sizeof(network_msg_pump_run_t)) {
+                    network->typ = NETWORK_MSG_TYP_PUMP_RUN_RESP;
+                    network->u.pump_run = (network_msg_pump_run_t *) datalink->data;
+                }
             }
             break;
         case DATALINK_PUMP_TYP_STATUS:
@@ -169,7 +190,7 @@ _decode_msg_a5_pump(datalink_pkt_t const * const datalink, network_msg_t * const
                 }
             } else {
                 if (datalink->hdr.len == sizeof(network_msg_pump_state_t)) {
-                    network->typ = NETWORK_MSG_TYP_PUMP_STATE;
+                    network->typ = NETWORK_MSG_TYP_PUMP_STATE_RESP;
                     network->u.pump_state = (network_msg_pump_state_t *) datalink->data;
                 }
             }
@@ -197,9 +218,9 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const datalink, network_msg_t * cons
                 network->u.chlor_ping_req = (network_msg_chlor_ping_req_t *) datalink->data;
             }
             break;
-        case DATALINK_CHLOR_TYP_PING:
+        case DATALINK_CHLOR_TYP_PING_RESP:
             if (datalink->hdr.len == sizeof(network_msg_chlor_ping_t)) {
-                network->typ = NETWORK_MSG_TYP_CHLOR_PING;
+                network->typ = NETWORK_MSG_TYP_CHLOR_PING_RESP;
                 network->u.chlor_ping = (network_msg_chlor_ping_t *) datalink->data;
             }
             break;

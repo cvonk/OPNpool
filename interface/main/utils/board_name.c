@@ -37,6 +37,7 @@ board_name(char * const name, size_t name_len)
 	for (uint ii=0; ii < ARRAY_SIZE(_knownBrds); ii++) {
 		if (memcmp(mac, _knownBrds[ii].mac, WIFI_DEVMAC_LEN) == 0) {
 			strncpy(name, _knownBrds[ii].name, name_len);
+            name[name_len - 1] = '\0';
 			return;
 		}
 	}
