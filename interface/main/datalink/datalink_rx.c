@@ -189,24 +189,26 @@ _read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 }
 
 static bool
-_crc_is_correct(datalink_pkt_t * pkt)
+_crc_is_correct(datalink_pkt_t * pkt, uint16_t * const rx_crc, uint16_t * const calc_crc)
 {
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
 		case DATALINK_PROT_A5_PUMP: {
+            *rx_crc = (uint16_t)pkt->tail->a5.crc[0] << 8 | pkt->tail->a5.crc[1];
             uint8_t * const crc_start = &pkt->head->a5.preamble[sizeof(datalink_a5_preamble_t) - 1];  // starting at the last by of the preamble
             uint8_t * const crc_stop = pkt->data + pkt->data_len;
-            uint16_t const crc = datalink_calc_crc(crc_start, crc_stop);
-			return pkt->tail->a5.crc[0] == (crc >> 8) && pkt->tail->a5.crc[1] == (crc & 0xFF);
+            *calc_crc = datalink_calc_crc(crc_start, crc_stop);
+            break;
         }
 		case DATALINK_PROT_IC: {
+            *rx_crc = pkt->tail->a5.crc[0];
             uint8_t * const crc_start = pkt->head->ic.preamble;  // starting at the last by of the preamble
             uint8_t * const crc_stop = pkt->data + pkt->data_len;
-            uint8_t const crc = datalink_calc_crc(crc_start, crc_stop) & 0xFF;
-			return pkt->tail->a5.crc[0] == crc;
+            *calc_crc = datalink_calc_crc(crc_start, crc_stop);
+            break;
         }
 	}
-    return false;
+    return *calc_crc == *rx_crc;
 }
 
 uint32_t _millis() {
@@ -308,18 +310,8 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 
 	if (_state == STATE_DONE) {
 
-
-#if 0
-                // // so we can treat it as a A5 message when reading data or while decoding
-                hdr->ver = 0x00;
-                hdr->dst = hdr_ic.dst;
-                hdr->src = 0x00;
-                hdr->typ = hdr_ic.typ;
-                hdr->len = len;
-#endif
-
-
 		_change_state(pkt, STATE_FIND_PREAMBLE);
+
         datalink_addrgroup_t const dst_a5 = datalink_groupaddr(pkt->head->a5.hdr.dst);
         datalink_addrgroup_t const dst_ic = datalink_groupaddr(pkt->head->ic.hdr.dst);
 
@@ -328,8 +320,12 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 
                 return false;  // silently ignore
         }
-        return _crc_is_correct(pkt);
+        uint16_t rx_crc, calc_crc;
+        bool const correct = _crc_is_correct(pkt, &rx_crc, &calc_crc);
+        if (CONFIG_POOL_DBG_DATALINK_ONERROR && !correct) {
+            ESP_LOGI(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
+        }
+        return correct;
 	}
 	return false;
 }
-
