@@ -4,6 +4,7 @@ set(COMPONENT_SRCS rs485/rs485.c
                    poolstate/poolstate.c poolstate/poolstate_rx.c poolstate/poolstate_json.c poolstate/poolstate_str.c
                    httpd/httpd.c httpd/httpd_root.c httpd/httpd_json.c httpd/httpd_api.c
                    ipc/ipc.c
+                   tx_buf/tx_buf.c
                    utils/board_name.c utils/utils_str.c utils/strl.c
                    pool_task.c mqtt_task.c
                    main.c

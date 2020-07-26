@@ -17,7 +17,7 @@
 #include "ipc/ipc.h"
 #include "datalink.h"
 
-static char const * const TAG = "datalink";
+static char const * const TAG = "datalink_tx";
 
 static uint8_t preamble_a5[] = { 0x00, 0xFF, 0xA5 };
 static uint8_t preamble_ic[] = { 0x10, 0x02 };
@@ -337,7 +337,7 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 		state = STATE_FIND_PREAMBLE;
         datalink_addrgroup_t const dst = datalink_groupaddr(pkt->hdr.dst);
 
-        if ((pkt->prot == DATALINK_PROT_A5_PUMP && dst == DATALINK_ADDRGROUP_X09) ||
+        if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst == DATALINK_ADDRGROUP_X09) ||
             (pkt->prot == DATALINK_PROT_IC && dst != DATALINK_ADDRGROUP_ALL && dst != DATALINK_ADDRGROUP_CHLOR)) {
 
                 return false;  // silently ignore
@@ -365,6 +365,7 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, da
         case DATALINK_PROT_A5_CTRL:
         case DATALINK_PROT_A5_PUMP: {
             datalink_a5_hdr_t * const hdr = (datalink_a5_hdr_t *) tx_buf_push(txb, DATALINK_A5_HEAD_SIZE);
+ESP_LOGW(TAG, "3 begin=%p head=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
             hdr->ver = 0x01;
             hdr->dst = datalink_devaddr(DATALINK_ADDRGROUP_CTRL, 0);
             hdr->src = datalink_devaddr(DATALINK_ADDRGROUP_REMOTE, 0);
@@ -372,6 +373,7 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, da
             hdr->len = data_len;
             uint16_t const crcVal = _calc_crc_a5(hdr, data);
             uint8_t * crc = tx_buf_put(txb, DATALINK_A5_TAIL_SIZE);
+ESP_LOGW(TAG, "4 begin=%p head=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
             crc[0] = crcVal >> 8;
             crc[1] = crcVal & 0xFF;
             break;
@@ -382,5 +384,5 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, da
     (void) tx_buf_print(TAG, txb, dbg, dbg_size);
     ESP_LOGI(TAG, "%s: { %s}", datalink_prot_str(prot), dbg);
 
-    rs485_handle->queue(txb, rs485_handle);
+    rs485_handle->queue(rs485_handle, txb);
 }

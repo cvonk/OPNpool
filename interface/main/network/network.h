@@ -319,7 +319,7 @@ typedef struct network_msg_t {
 /* network.c */
 uint8_t datalink_devaddr(uint8_t group, uint8_t const id);
 bool network_rx_msg(datalink_pkt_t const * const datalink, network_msg_t * const network, bool * const txOpportunity);
-void network_tx_circuit_set(rs485_handle_t const rs485_handle, uint8_t circuit, uint8_t value);
+void network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, uint8_t value);
 
 /* network_str.c */
 char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t const day);

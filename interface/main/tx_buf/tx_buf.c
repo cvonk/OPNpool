@@ -8,9 +8,11 @@
  **/
 
 #include <esp_system.h>
+#include <esp_log.h>
+
 #include "tx_buf.h"
 
-static char const * const TAG = "tx_buf";
+//static char const * const TAG = "tx_buf";
 
 tx_buf_handle_t
 alloc_txb(size_t size)
@@ -73,8 +75,7 @@ tx_buf_print(char const * const tag, tx_buf_handle_t const txb, char * const buf
 {
     size_t len = 0;
     for (size_t ii = 0; ii < txb->len; ii++) {
-        asnprintf(buf + len, buf_size - len, "%02x ", txb->priv.data[ii]);
+        len += snprintf(buf + len, buf_size - len, "%02x ", txb->priv.data[ii]);
     }
     return len;
 }
-

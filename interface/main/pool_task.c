@@ -16,6 +16,7 @@
 #include <esp_log.h>
 #include <time.h>
 
+#include "tx_buf/tx_buf.h"
 #include "rs485/rs485.h"
 #include "datalink/datalink.h"
 #include "network/network.h"
@@ -48,7 +49,7 @@ pool_task(void * ipc_void)
             .use_ref_tick = false,
         }
     };
-    rs485_handle_t rs485_handle = rs485_init(&rs485_config, ipc->to_rs485_q);
+    rs485_handle_t rs485_handle = rs485_init(&rs485_config);
 
     datalink_pkt_t datalink_pkt; // poolstate_t state;
     network_msg_t network_msg;
@@ -73,11 +74,16 @@ pool_task(void * ipc_void)
             }
             if (txOpportunity) {
 
-                toRs485Msg_t msg;
-                if (xQueueReceive(ipc->to_rs485_q, &msg, (TickType_t)0) == pdPASS) {
+                network_tx_circuit_set_msg(rs485_handle, 1, 1);
 
+                tx_buf_handle_t const txb = rs485_handle->dequeue(rs485_handle);
+                if (txb) {
                     ESP_LOGW(TAG, "TX should happen here");
-                    free(msg.txb);
+                    size_t const dbg_size = 128;
+                    char dbg[dbg_size];
+                    (void) tx_buf_print(TAG, txb, dbg, dbg_size);
+                    ESP_LOGI(TAG, "tx{ %s}", dbg);
+                    free(txb);
                 }
             }
         }

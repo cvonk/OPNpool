@@ -118,7 +118,7 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const datalink, network_msg_t * const
             break;
         default:
             if (CONFIG_POOL_DBG_NETWORK_ONERROR) {
-                ESP_LOGW(TAG, "unknown A5 ctrl typ %u", datalink->hdr.typ);
+                ESP_LOGW(TAG, "unknown A5 ctrl typ (0x%02X)", datalink->hdr.typ);
             }
             break;
     }
