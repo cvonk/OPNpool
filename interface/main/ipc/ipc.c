@@ -15,7 +15,7 @@
 
 #include "utils/utils.h"
 #include "ipc/ipc.h"
-#include "tx_buf/tx_buf.h"
+#include "skb/skb.h"
 
 static char const * const TAG = "ipc";
 

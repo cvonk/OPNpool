@@ -2,9 +2,9 @@
 #include <sdkconfig.h>
 #include <esp_system.h>
 
+#include "../skb/skb.h"
 #include "../rs485/rs485.h"
-#include "../tx_buf/tx_buf.h"
-#include "../ipc/ipc.h"
+#include "../network/network_msgs.h"
 
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
@@ -46,6 +46,23 @@ typedef enum {
 #undef XX
 } datalink_addrgroup_t;
 
+/**
+ * datalink_head_t
+ **/
+
+typedef uint8_t datalink_a5_preamble_t[3];
+typedef uint8_t datalink_ic_preamble_t[2];
+
+typedef union datalink_preamble_t {
+    datalink_ic_preamble_t ic;
+    datalink_a5_preamble_t a5;
+} PACK8 datalink_preamble_t;
+
+typedef struct datalink_ic_hdr_t {
+    uint8_t dst;  // destination
+    uint8_t typ;  // message type
+} PACK8 datalink_ic_hdr_t;
+
 typedef struct datalink_a5_hdr_t {
     uint8_t ver;  // protocol version id
     uint8_t dst;  // destination
@@ -54,59 +71,87 @@ typedef struct datalink_a5_hdr_t {
     uint8_t len;  // # of data bytes following
 } PACK8 datalink_a5_hdr_t;
 
-typedef uint8_t datalink_a5_preamble_t[3];
+typedef union datalink_hdr_t {
+    datalink_ic_hdr_t ic;
+    datalink_a5_hdr_t a5;
+} PACK8 datalink_hdr_t;
 
-typedef struct datalink_a5_tx_head_t {
+typedef struct datalink_head_a5_t {
     uint8_t              ff;
     datalink_a5_preamble_t preamble;
     datalink_a5_hdr_t    hdr;
-} PACK8 datalink_a5_tx_head_t;
+} PACK8 datalink_head_a5_t;
 
-typedef struct datalink_a5_tx_tail_t {
-    uint8_t  crc[2];
-} PACK8 datalink_a5_tx_tail_t;
-
-#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_a5_tx_head_t))
-#define DATALINK_A5_TAIL_SIZE (sizeof(datalink_a5_tx_tail_t))
-
-typedef struct datalink_ic_hdr_t {
-    uint8_t dst;  // destination
-    uint8_t typ;  // message type
-} PACK8 datalink_ic_hdr_t;
-
-typedef uint8_t datalink_ic_preamble_t[3];
-
-typedef struct datalink_ic_tx_head_t {
+typedef struct datalink_head_ic_t {
     uint8_t                ff;
     datalink_ic_preamble_t preamble;
     datalink_ic_hdr_t      hdr;
-} PACK8 datalink_ic_tx_head_t;
+} PACK8 datalink_head_ic_t;
 
-typedef struct datalink_ic_tx_tail_t {
-    uint8_t  crc;
-} PACK8 datalink_ic_tx_tail_t;
+typedef union datalink_head_t {
+    datalink_head_ic_t ic;
+    datalink_head_a5_t a5;
+} datalink_head_t;
 
-#define DATALINK_IC_HEAD_SIZE (sizeof(datalink_ic_tx_head))
-#define DATALINK_IC_TAIL_SIZE (sizeof(datalink_ic_tx_tail))
+#define DATALINK_IC_HEAD_SIZE (sizeof(datalink_head_ic_t))
+#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_head_a5_t))
+#define DATALINK_MAX_HEAD_SIZE (sizeof(datalink_head_t))
 
-typedef datalink_a5_hdr_t datalink_hdr_t;  // conveniently similar
+/**
+ * datalink_data_t
+ **/
+
+typedef uint8_t datalink_data_t;
+
+#define DATALINK_MAX_DATA_SIZE (sizeof(network_msg_data_t))
+
+/**
+ * datalink_tail_t
+ **/
+
+typedef struct datalink_tail_a5_t {
+    uint8_t  crc[2];
+} PACK8 datalink_tail_a5_t;
+
+typedef struct datalink_tail_ic_t {
+    uint8_t  crc[1];
+} PACK8 datalink_tail_ic_t;
+
+typedef union datalink_tail_t {
+    datalink_tail_ic_t ic;
+    datalink_tail_a5_t a5;
+} datalink_tail_t;
+
+#define DATALINK_IC_TAIL_SIZE (sizeof(datalink_tail_ic_t))
+#define DATALINK_A5_TAIL_SIZE (sizeof(datalink_tail_a5_t))
+#define DATALINK_MAX_TAIL_SIZE (sizeof(datalink_tail_t))
+
+/**
+ * datalink_pkt_t
+ **/
+
+typedef struct datalink_hdt_ic_t {
+    datalink_head_ic_t *  head;
+    datalink_data_t *     data;
+    datalink_tail_ic_t *  tail;
+} datalink_hdt_ic_t;
 
 typedef struct datalink_pkt_t {
-	datalink_prot_t prot;
-	datalink_hdr_t  hdr;
-	uint8_t         data[CONFIG_POOL_DATALINK_LEN];
-    uint16_t        chk;
+	datalink_prot_t    prot;
+    datalink_head_t *  head;
+    datalink_data_t *  data;
+    datalink_tail_t *  tail;
+    size_t             data_len;
+    skb_handle_t       skb;
 } datalink_pkt_t;
 
-typedef struct datalink_ic_pkt_t {
-
-} datalink_ic_pkt_t;
-
+/**
+ * DATALINK_CTRL_TYP_t
+ **/
 
 // #define DATALINK_CTRL_TYP_SET (0x80)
 // #define DATALINK_CTRL_TYP_REQ (0xC0)
 
-// use macro "magic" to get an enum and matching name_* function (in name.c)
 #define DATALINK_CTRL_TYP_MAP(XX) \
   XX(0x01, SET_ACK)     \
   XX(0x86, CIRCUIT_SET) \
@@ -132,7 +177,10 @@ typedef enum {
 #undef XX
 } datalink_ctrl_typ_t;
 
-// use macro "magic" to get an enum and matching name_* function (in name.c)
+/**
+ * DATALINK_PUMP_TYP_t
+ **/
+
 // FYI occasionally there is a src=0x10 dst=0x60 typ=0xFF with data=[0x80]; pump doesn't reply to it
 #define DATALINK_PUMP_TYP_MAP(XX) \
   XX(0x01, REGULATE) \
@@ -148,7 +196,10 @@ typedef enum {
 #undef XX
 } datalink_pump_typ_t;
 
-// use macro "magic" to get an enum and matching name_* function (in name.c)
+/**
+ * DATALINK_CHLOR_TYP_t
+ **/
+
 // FYI tere is a 0x14, // has dst=0x50 data=[0x00]
  #define DATALINK_CHLOR_TYP_MAP(XX) \
   XX(0x00, PING_REQ)   \
@@ -164,17 +215,19 @@ typedef enum {
 #undef XX
 } datalink_chlor_typ_t;
 
+
 /* datalink.c */
 extern datalink_a5_preamble_t datalink_preamble_a5;
 extern datalink_ic_preamble_t datalink_preamble_ic;
 datalink_addrgroup_t datalink_groupaddr(uint16_t const addr);
 uint8_t datalink_devaddr(uint8_t group, uint8_t const id);
+uint16_t datalink_calc_crc(uint8_t const * const start, uint8_t const * const stop);
 
 /* datalink_rx.c */
 bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
 
 /* datalink_tx.c */
-void datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, datalink_prot_t const prot, datalink_ctrl_typ_t const typ);
+void datalink_tx_pkt(rs485_handle_t const rs485_handle, skb_handle_t const txb, datalink_prot_t const prot, datalink_ctrl_typ_t const typ);
 
 /* datalink_str.c */
 char const * datalink_prot_str(datalink_prot_t const prot);

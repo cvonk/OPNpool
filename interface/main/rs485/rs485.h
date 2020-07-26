@@ -19,8 +19,8 @@ typedef int (* rs485_read_fnc_t)(void);
 typedef int (* rs485_write_bytes_fnc_t)(uint8_t * src, size_t len);
 typedef int (* rs485_write_fnc_t)(uint8_t src);
 typedef void (* rs485_flush_fnc_t)(void);
-typedef void (* rs485_queue_fnc_t)(rs485_handle_t const handle, tx_buf_handle_t const txb);
-typedef tx_buf_handle_t (* rs485_dequeue_fnc_t)(rs485_handle_t const handle);
+typedef void (* rs485_queue_fnc_t)(rs485_handle_t const handle, skb_handle_t const txb);
+typedef skb_handle_t (* rs485_dequeue_fnc_t)(rs485_handle_t const handle);
 
 typedef struct rs485_instance_t {
     rs485_available_fnc_t available;

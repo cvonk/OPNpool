@@ -25,7 +25,7 @@ static TickType_t _txTimeout = (100 / portTICK_RATE_MS);
 static uart_port_t _uart_port;
 
 typedef struct tx_msg_t {
-    tx_buf_handle_t  txb;  // must be freed by recipient
+    skb_handle_t  txb;  // must be freed by recipient
 } tx_msg_t;
 
 static int
@@ -109,7 +109,7 @@ _flush(void)
 }
 
 static void
-_queue(rs485_handle_t const handle, tx_buf_handle_t const txb)
+_queue(rs485_handle_t const handle, skb_handle_t const txb)
 {
     ESP_LOGW(TAG, "5 head=%p data=%p tail=%p, end=%p len=%u q=%p", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len, handle);
     tx_msg_t msg = {
@@ -122,7 +122,7 @@ _queue(rs485_handle_t const handle, tx_buf_handle_t const txb)
     }
 }
 
-static tx_buf_handle_t
+static skb_handle_t
 _dequeue(rs485_handle_t const handle)
 {
     tx_msg_t msg;
