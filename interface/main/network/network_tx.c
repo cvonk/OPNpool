@@ -21,9 +21,7 @@ tx_buf_handle_t
 _alloc_txb_a5(size_t const msg_size)
 {
     tx_buf_handle_t const txb = alloc_txb(DATALINK_A5_HEAD_SIZE + msg_size + DATALINK_A5_TAIL_SIZE);
-ESP_LOGW(TAG, "0 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
     tx_buf_reserve(txb, DATALINK_A5_HEAD_SIZE);
-ESP_LOGW(TAG, "1 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
     return txb;
 }
 
@@ -34,7 +32,6 @@ network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, u
     tx_buf_handle_t const txb = _alloc_txb_a5(msg_size);
 
     network_msg_ctrl_circuit_set_t * const msg = (network_msg_ctrl_circuit_set_t *) tx_buf_put(txb, msg_size);
-ESP_LOGW(TAG, "2 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
     msg->circuit = circuit + 1;
     msg->value = value;
     datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_CTRL_TYP_CIRCUIT_SET);  // will free when done

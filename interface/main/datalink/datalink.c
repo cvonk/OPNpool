@@ -375,7 +375,6 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, tx_buf_handle_t const txb, da
 #endif
 
             datalink_a5_hdr_t * const hdr = (datalink_a5_hdr_t *) tx_buf_push(txb, DATALINK_A5_HEAD_SIZE);
-ESP_LOGW(TAG, "3 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
             hdr->ver = 0x01;
             hdr->dst = datalink_devaddr(DATALINK_ADDRGROUP_CTRL, 0);
             hdr->src = datalink_devaddr(DATALINK_ADDRGROUP_REMOTE, 0);
@@ -383,7 +382,6 @@ ESP_LOGW(TAG, "3 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->p
             hdr->len = data_len;
             uint16_t const crcVal = _calc_crc_a5(hdr, data);
             uint8_t * crc = tx_buf_put(txb, DATALINK_A5_TAIL_SIZE);
-ESP_LOGW(TAG, "4 head=%p data=%p tail=%p, end=%p len=%u", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len);
             crc[0] = crcVal >> 8;
             crc[1] = crcVal & 0xFF;
             break;
