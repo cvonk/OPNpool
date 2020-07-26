@@ -54,17 +54,40 @@ typedef struct datalink_a5_hdr_t {
     uint8_t len;  // # of data bytes following
 } PACK8 datalink_a5_hdr_t;
 
-#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_hdr_t))
-#define DATALINK_A5_TAIL_SIZE (sizeof(uint16_t))
+typedef uint8_t datalink_a5_preamble_t[3];
 
+typedef struct datalink_a5_tx_head_t {
+    uint8_t              ff;
+    datalink_a5_preamble_t preamble;
+    datalink_a5_hdr_t    hdr;
+} PACK8 datalink_a5_tx_head_t;
+
+typedef struct datalink_a5_tx_tail_t {
+    uint8_t  crc[2];
+} PACK8 datalink_a5_tx_tail_t;
+
+#define DATALINK_A5_HEAD_SIZE (sizeof(datalink_a5_tx_head_t))
+#define DATALINK_A5_TAIL_SIZE (sizeof(datalink_a5_tx_tail_t))
 
 typedef struct datalink_ic_hdr_t {
     uint8_t dst;  // destination
     uint8_t typ;  // message type
 } PACK8 datalink_ic_hdr_t;
 
-#define DATALINK_IC_HEAD_SIZE (sizeof(datalink_ic_hdr_t))
-#define DATALINK_IC_TAIL_SIZE (sizeof(uint8_t))
+typedef uint8_t datalink_ic_preamble_t[3];
+
+typedef struct datalink_ic_tx_head_t {
+    uint8_t                ff;
+    datalink_ic_preamble_t preamble;
+    datalink_ic_hdr_t      hdr;
+} PACK8 datalink_ic_tx_head_t;
+
+typedef struct datalink_ic_tx_tail_t {
+    uint8_t  crc;
+} PACK8 datalink_ic_tx_tail_t;
+
+#define DATALINK_IC_HEAD_SIZE (sizeof(datalink_ic_tx_head))
+#define DATALINK_IC_TAIL_SIZE (sizeof(datalink_ic_tx_tail))
 
 typedef datalink_a5_hdr_t datalink_hdr_t;  // conveniently similar
 
