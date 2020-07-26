@@ -75,8 +75,9 @@ pool_task(void * ipc_void)
             }
             if (txOpportunity) {
 
+#if 0
                 network_tx_circuit_set_msg(rs485_handle, 1, 1);
-
+#endif
                 skb_handle_t const txb = rs485_handle->dequeue(rs485_handle);
                 if (txb) {
                     ESP_LOGW(TAG, "TX should happen here");
