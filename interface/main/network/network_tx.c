@@ -20,8 +20,8 @@
 skb_handle_t
 _skb_alloc_a5(size_t const msg_size)
 {
-    skb_handle_t const txb = skb_alloc(DATALINK_A5_HEAD_SIZE + msg_size + DATALINK_A5_TAIL_SIZE);
-    skb_reserve(txb, DATALINK_A5_HEAD_SIZE);
+    skb_handle_t const txb = skb_alloc(sizeof(datalink_head_a5_t) + msg_size + sizeof(datalink_tail_a5_t));
+    skb_reserve(txb, sizeof(datalink_head_a5_t));
     return txb;
 }
 
@@ -34,7 +34,7 @@ network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, u
     network_msg_ctrl_circuit_set_t * const msg = (network_msg_ctrl_circuit_set_t *) skb_put(txb, msg_size);
     msg->circuit = circuit + 1;
     msg->value = value;
-    datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_CTRL_TYP_CIRCUIT_SET);  // will free when done
+    datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_CIRCUIT_SET);  // will free when done
 }
 
 
@@ -44,7 +44,7 @@ void
 EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_least8_t const value)
 {
 	*element = {
-		.typ = DATALINK_CTRL_TYP_circuitSet,
+		.typ = DATALINK_TYP_CTRL_circuitSet,
 		.dataLen = sizeof(network_msg_ctrl_circuit_set_t),
 		.data = {
 			.circuitSet = {
@@ -58,7 +58,7 @@ EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_leas
 void
 EncodeA5::heatMsg(element_t * element, uint8_t const poolTempSetpoint, uint8_t const spaTempSetpoint, uint8_t const heatSrc)
 {
-	element->typ = DATALINK_CTRL_TYP_heatSet;
+	element->typ = DATALINK_TYP_CTRL_heatSet;
 	element->dataLen = sizeof(network_msg_ctrl_heat_set_t);
 	element->data.heatSet = {
 		.poolTempSetpoint = poolTempSetpoint,
@@ -70,7 +70,7 @@ EncodeA5::heatMsg(element_t * element, uint8_t const poolTempSetpoint, uint8_t c
 
 #if 0
 void
-EncodeA5::setTime(JsonObject * root, network_msg_t * sys, datalink_a5_hdr_t * const hdr, struct network_msg_ctrl_time_t * const msg)
+EncodeA5::setTime(JsonObject * root, network_msg_t * sys, datalink_hdr_a5_t * const hdr, struct network_msg_ctrl_time_t * const msg)
 {
 	*msg = {
 		.hour = 14,
@@ -80,7 +80,7 @@ EncodeA5::setTime(JsonObject * root, network_msg_t * sys, datalink_a5_hdr_t * co
 		.month = 5,
 		.year = 15,
 	};
-	send_a5(root, sys, datalink_ctrl_typ_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
+	send_a5(root, sys, datalink_typ_ctrl_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
 }
 #endif
 

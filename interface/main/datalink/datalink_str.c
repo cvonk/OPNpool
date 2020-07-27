@@ -30,17 +30,17 @@ datalink_prot_str(datalink_prot_t const prot)
     return ELEM_AT(_datalink_prots, prot, hex8_str(prot));
 }
 
-str_value_name_pair_t _a5_ctrl_msgtyps[] = {
+str_value_name_pair_t _typ_ctrls[] = {
 #define XX(num, name) { .typ = num, .str = #name },
- DATALINK_CTRL_TYP_MAP(XX)
+ DATALINK_TYP_CTRL_MAP(XX)
 #undef XX
 };
 
 const char *
-datalink_ctrl_type_str(datalink_ctrl_typ_t typ)
+datalink_typ_ctrl_str(datalink_typ_ctrl_t typ)
 {
-    str_value_name_pair_t const * pair = _a5_ctrl_msgtyps;
-    for(uint ii = 0; ii < ARRAY_SIZE(_a5_ctrl_msgtyps); ii++, pair++) {
+    str_value_name_pair_t const * pair = _typ_ctrls;
+    for(uint ii = 0; ii < ARRAY_SIZE(_typ_ctrls); ii++, pair++) {
         if (pair->typ == typ) {
             return pair->str;
         }
@@ -48,17 +48,17 @@ datalink_ctrl_type_str(datalink_ctrl_typ_t typ)
     return hex8_str(typ);
 }
 
-str_value_name_pair_t _a5_pump_msgtyps[] = {
+str_value_name_pair_t _typ_pumps[] = {
 #define XX(num, name) { .typ = num, .str = #name },
-  DATALINK_PUMP_TYP_MAP(XX)
+  DATALINK_TYP_PUMP_MAP(XX)
 #undef XX
 };
 
 const char *
-datalink_pump_typ_str(datalink_pump_typ_t typ)
+datalink_typ_pump_str(datalink_typ_pump_t typ)
 {
-    str_value_name_pair_t const * pair = _a5_pump_msgtyps;
-    for(uint ii = 0; ii < ARRAY_SIZE(_a5_pump_msgtyps); ii++, pair++) {
+    str_value_name_pair_t const * pair = _typ_pumps;
+    for(uint ii = 0; ii < ARRAY_SIZE(_typ_pumps); ii++, pair++) {
         if (pair->typ == typ) {
             return pair->str;
         }
@@ -66,17 +66,17 @@ datalink_pump_typ_str(datalink_pump_typ_t typ)
     return hex8_str(typ);
 }
 
-str_value_name_pair_t _ic_chlor_msgtyps[] = {
+str_value_name_pair_t _typ_chlors[] = {
 #define XX(num, name) { .typ = num, .str = #name },
-  DATALINK_CHLOR_TYP_MAP(XX)
+  DATALINK_TYP_CHLOR_MAP(XX)
 #undef XX
 };
 
 const char *
-datalink_chlor_typ_str(datalink_chlor_typ_t typ)
+datalink_typ_chlor_str(datalink_typ_chlor_t typ)
 {
-    str_value_name_pair_t const * pair = _ic_chlor_msgtyps;
-    for(uint ii = 0; ii < ARRAY_SIZE(_ic_chlor_msgtyps); ii++, pair++) {
+    str_value_name_pair_t const * pair = _typ_chlors;
+    for(uint ii = 0; ii < ARRAY_SIZE(_typ_chlors); ii++, pair++) {
         if (pair->typ == typ) {
             return pair->str;
         }

@@ -18,14 +18,14 @@
 #endif
 
 /* results of sending requests:
-DATALINK_CTRL_TYP_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
-DATALINK_CTRL_TYP_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
-DATALINK_CTRL_TYP_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-DATALINK_CTRL_TYP_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
-DATALINK_CTRL_TYP_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
-DATALINK_CTRL_TYP_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
-DATALINK_CTRL_TYP_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
-DATALINK_CTRL_TYP_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+DATALINK_TYP_CTRL_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
+DATALINK_TYP_CTRL_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
+DATALINK_TYP_CTRL_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+DATALINK_TYP_CTRL_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
+DATALINK_TYP_CTRL_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
+DATALINK_TYP_CTRL_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
+DATALINK_TYP_CTRL_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
+DATALINK_TYP_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 */
 
 /**

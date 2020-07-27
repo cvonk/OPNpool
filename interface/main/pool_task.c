@@ -74,12 +74,16 @@ pool_task(void * ipc_void)
             }
             if (txOpportunity) {
 
+// 2BD the old interface sent a bunch of queries to the ctrl on startup.   Maybe to request schedule et al.
+
 #if 0
                 network_tx_circuit_set_msg(rs485_handle, 1, 1);
 #endif
                 skb_handle_t const txb = rs485_handle->dequeue(rs485_handle);
                 if (txb) {
                     ESP_LOGW(TAG, "TX should happen here");
+
+// 2BD do the transmit
                     size_t const dbg_size = 128;
                     char dbg[dbg_size];
                     (void) skb_print(TAG, txb, dbg, dbg_size);
