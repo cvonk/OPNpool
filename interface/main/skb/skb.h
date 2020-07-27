@@ -21,6 +21,7 @@ typedef skb_t * skb_handle_t;
 skb_handle_t skb_alloc(size_t size);
 void skb_reserve(skb_handle_t const skb, size_t const header_len);
 uint8_t * skb_put(skb_handle_t const skb, size_t const user_data_len);
+uint8_t * skb_call(skb_handle_t const skb, size_t const user_data_adj);
 uint8_t * skb_push(skb_handle_t const skb, size_t const header_len);
 uint8_t * skb_pull(skb_handle_t const skb, size_t const header_len);
 void skb_reset(skb_handle_t skb);

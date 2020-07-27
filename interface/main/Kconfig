@@ -68,15 +68,9 @@ menu "Pool Interface"
         help
             Maximum size of the StaticJsonBuffer (>=1200)
 
-    config POOL_DATALINK_LEN
-        int "RS485 msg data size"
-        default 37
-        help
-            Maximum size of the data byte array in a RS485 message (>=32)
-
     config POOL_DBG_DATALINK
         bool "Debug datalink packets"
-        default n
+        default y
         help
             Print RS485 bytes to serial port
 

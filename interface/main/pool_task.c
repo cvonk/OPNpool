@@ -52,7 +52,6 @@ pool_task(void * ipc_void)
     rs485_handle_t rs485_handle = rs485_init(&rs485_config);
 
     datalink_pkt_t datalink_pkt;
-    datalink_pkt.skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + DATALINK_MAX_DATA_SIZE + DATALINK_MAX_TAIL_SIZE);
     network_msg_t network_msg;
     bool txOpportunity;
     poolstate_t state;
