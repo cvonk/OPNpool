@@ -61,7 +61,7 @@ skb_call(skb_handle_t const skb, size_t const user_data_adj)
 {
     assert(skb->priv.tail - user_data_adj >= skb->priv.head);
     skb->len -= user_data_adj;
-    skb->priv.tail += user_data_adj;
+    skb->priv.tail -= user_data_adj;
     return skb->priv.data;
 }
 

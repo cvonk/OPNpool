@@ -182,7 +182,7 @@ _read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 			if (rs485->available() >= (int)sizeof(uint8_t)) {
 				crc[0] = rs485->read();  // store it as uint16_t, so we can treat it as A5 pkt
 				if (CONFIG_POOL_DBG_DATALINK) {
-					ESP_LOGI(TAG, " %02X (checksum)\n", crc[0]);
+					ESP_LOGI(TAG, " %02X (checksum)", crc[0]);
 				}
 				return DATALINK_RESULT_DONE;
 			}
@@ -193,7 +193,7 @@ _read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 }
 
 static bool
-_crc_is_correct(datalink_pkt_t * pkt, uint16_t * const rx_crc, uint16_t * const calc_crc)
+_crc_correct(datalink_pkt_t const * const pkt, uint16_t * const rx_crc, uint16_t * const calc_crc)
 {
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
@@ -201,7 +201,6 @@ _crc_is_correct(datalink_pkt_t * pkt, uint16_t * const rx_crc, uint16_t * const 
             *rx_crc = (uint16_t)pkt->tail->a5.crc[0] << 8 | pkt->tail->a5.crc[1];
             uint8_t * const crc_start = &pkt->head->a5.preamble[sizeof(datalink_a5_preamble_t) - 1];  // starting at the last byte of the preamble
             uint8_t * const crc_stop = pkt->data + pkt->data_len;
-            //ESP_LOGI(TAG, "head=%p, data=%p, tail=%p => crc over 0x%02x @%p upto 0x%02x @%p", pkt->head, pkt->data, pkt->tail, *crc_start, crc_start, *(crc_stop -1), crc_stop -1);
             *calc_crc = datalink_calc_crc(crc_start, crc_stop);
             break;
         }
@@ -335,7 +334,7 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                 return false;  // silently ignore
         }
         uint16_t rx_crc, calc_crc;
-        bool const crc_correct = _crc_is_correct(pkt, &rx_crc, &calc_crc);
+        bool const crc_correct = _crc_correct(pkt, &rx_crc, &calc_crc);
         if (CONFIG_POOL_DBG_DATALINK_ONERROR && !crc_correct) {
             ESP_LOGW(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
         }
