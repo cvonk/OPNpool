@@ -85,6 +85,10 @@ _find_preamble(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 				if (CONFIG_POOL_DBG_DATALINK) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
+                uint8_t * const preamble = (pkt->prot == DATALINK_PROT_IC) ? pkt->head->ic.preamble : pkt->head->a5.preamble;
+                for (uint ii = 0; ii < _proto_infos[pp].len; ii++) {
+                    preamble[ii] = _proto_infos[pp].preamble[ii];
+                }
 				return DATALINK_RESULT_DONE;
 			}
 		}
@@ -126,7 +130,7 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 			if (rs485->available() >= (int)sizeof(datalink_ic_hdr_t)) {
 				rs485->read_bytes((uint8_t *) hdr, sizeof(datalink_ic_hdr_t));
 				if (CONFIG_POOL_DBG_DATALINK) {
-					ESP_LOGI(TAG, " %02X %02X (header)\n", hdr->dst, hdr->typ);
+					ESP_LOGI(TAG, " %02X %02X (header)", hdr->dst, hdr->typ);
 				}
                 pkt->data_len = network_ic_len(hdr->typ);
 				return DATALINK_RESULT_DONE;
@@ -167,7 +171,7 @@ _read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                 crc[0] = rs485->read();
                 crc[1] = rs485->read();
 				if (CONFIG_POOL_DBG_DATALINK) {
-					ESP_LOGI(TAG, " %03X (checksum)\n", (uint16_t)crc[0] << 8 | crc[1]);
+					ESP_LOGI(TAG, " %03X (checksum)", (uint16_t)crc[0] << 8 | crc[1]);
 				}
 				return DATALINK_RESULT_DONE;
 			}
@@ -195,14 +199,15 @@ _crc_is_correct(datalink_pkt_t * pkt, uint16_t * const rx_crc, uint16_t * const 
 		case DATALINK_PROT_A5_CTRL:
 		case DATALINK_PROT_A5_PUMP: {
             *rx_crc = (uint16_t)pkt->tail->a5.crc[0] << 8 | pkt->tail->a5.crc[1];
-            uint8_t * const crc_start = &pkt->head->a5.preamble[sizeof(datalink_a5_preamble_t) - 1];  // starting at the last by of the preamble
+            uint8_t * const crc_start = &pkt->head->a5.preamble[sizeof(datalink_a5_preamble_t) - 1];  // starting at the last byte of the preamble
             uint8_t * const crc_stop = pkt->data + pkt->data_len;
+            //ESP_LOGI(TAG, "head=%p, data=%p, tail=%p => crc over 0x%02x @%p upto 0x%02x @%p", pkt->head, pkt->data, pkt->tail, *crc_start, crc_start, *(crc_stop -1), crc_stop -1);
             *calc_crc = datalink_calc_crc(crc_start, crc_stop);
             break;
         }
 		case DATALINK_PROT_IC: {
             *rx_crc = pkt->tail->a5.crc[0];
-            uint8_t * const crc_start = pkt->head->ic.preamble;  // starting at the last by of the preamble
+            uint8_t * const crc_start = pkt->head->ic.preamble;  // starting at the first byte of the preamble
             uint8_t * const crc_stop = pkt->data + pkt->data_len;
             *calc_crc = datalink_calc_crc(crc_start, crc_stop);
             break;
@@ -233,11 +238,14 @@ _change_state(datalink_pkt_t * const pkt, STATE_t const state)
     switch (state) {
 		case STATE_FIND_PREAMBLE:
             skb_reset(pkt->skb);
-            break;
-		case STATE_READ_HDR:
             pkt->head = (datalink_head_t *) skb_put(pkt->skb, sizeof(datalink_head_t));
             break;
+		case STATE_READ_HDR:
+            break;
 		case STATE_READ_DATA:
+            if (pkt->prot == DATALINK_PROT_IC) {  // release unused bytes from head
+                skb_call(pkt->skb, sizeof(datalink_head_t) - sizeof(datalink_head_ic_t));
+            }
             pkt->data = (datalink_data_t *) skb_put(pkt->skb, pkt->data_len);
             break;
 		case STATE_READ_CRC:
@@ -258,12 +266,18 @@ _change_state(datalink_pkt_t * const pkt, STATE_t const state)
 bool
 datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
-	time_t start = _millis();
+	static time_t start = 0;  // 0 on first run
 
-	if (_state != STATE_FIND_PREAMBLE && _millis() - start > CONFIG_POOL_RS485_TIMEOUT) {
-		ESP_LOGW(TAG, "timeout");
+	if (start == 0 || (_state != STATE_FIND_PREAMBLE && _millis() - start > CONFIG_POOL_RS485_TIMEOUT)) {
+        if (start == 0) {
+            pkt->skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + DATALINK_MAX_DATA_SIZE + DATALINK_MAX_TAIL_SIZE);
+        } else {
+    		ESP_LOGW(TAG, "timeout");
+        }
+        start = _millis();
 		_change_state(pkt, STATE_FIND_PREAMBLE);
 	}
+
 	DATALINK_RESULT_t result = DATALINK_RESULT_ERROR;  // init to please compiler
 	switch (_state) {
 		case STATE_FIND_PREAMBLE:
@@ -321,11 +335,11 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                 return false;  // silently ignore
         }
         uint16_t rx_crc, calc_crc;
-        bool const correct = _crc_is_correct(pkt, &rx_crc, &calc_crc);
-        if (CONFIG_POOL_DBG_DATALINK_ONERROR && !correct) {
-            ESP_LOGI(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
+        bool const crc_correct = _crc_is_correct(pkt, &rx_crc, &calc_crc);
+        if (CONFIG_POOL_DBG_DATALINK_ONERROR && !crc_correct) {
+            ESP_LOGW(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
         }
-        return correct;
+        return crc_correct;
 	}
 	return false;
 }

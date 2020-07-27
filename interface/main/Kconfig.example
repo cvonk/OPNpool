@@ -76,7 +76,7 @@ menu "Pool Interface"
 
     config POOL_DBG_DATALINK
         bool "Debug datalink packets"
-        default n
+        default y
         help
             Print RS485 bytes to serial port
 

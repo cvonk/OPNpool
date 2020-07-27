@@ -55,6 +55,16 @@ skb_put(skb_handle_t const skb, size_t const user_data_len)
     return ret;
 }
 
+// reclaims user_data, and returns pointer to user data
+uint8_t *
+skb_call(skb_handle_t const skb, size_t const user_data_adj)
+{
+    assert(skb->priv.tail - user_data_adj >= skb->priv.head);
+    skb->len -= user_data_adj;
+    skb->priv.tail += user_data_adj;
+    return skb->priv.data;
+}
+
 // returns pointer to write header protocol data
 uint8_t *
 skb_push(skb_handle_t const skb, size_t const header_len)
