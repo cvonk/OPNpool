@@ -12,7 +12,6 @@
 #include <time.h>
 
 #include "../rs485/rs485.h"
-#include "../network/network_hdr.h"
 #include "skb/skb.h"
 #include "datalink.h"
 

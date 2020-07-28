@@ -79,7 +79,7 @@ pool_task(void * ipc_void)
                         .value = 1,
                 };
                 network_msg_t tx_msg = {
-                    .typ = NETWORK_TYP_CTRL_CIRCUIT_SET,
+                    .typ = MSG_TYP_CTRL_CIRCUIT_SET,
                     .u.ctrl_circuit_set = &circuit_set,
                 };
                 datalink_pkt_t tx_pkt;
