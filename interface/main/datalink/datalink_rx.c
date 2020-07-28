@@ -214,7 +214,7 @@ _crc_correct(datalink_pkt_t const * const pkt, uint16_t * const rx_crc, uint16_t
             *rx_crc = pkt->tail->a5.crc[0];
             uint8_t * const crc_start = pkt->head->ic.preamble;  // starting at the first byte of the preamble
             uint8_t * const crc_stop = pkt->data + pkt->data_len;
-            *calc_crc = datalink_calc_crc(crc_start, crc_stop);
+            *calc_crc = datalink_calc_crc(crc_start, crc_stop) & 0xFF;
             break;
         }
 	}
