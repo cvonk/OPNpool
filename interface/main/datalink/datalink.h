@@ -4,7 +4,7 @@
 
 #include "../skb/skb.h"
 #include "../rs485/rs485.h"
-#include "../network/network_msgs.h"
+#include "../network/network_msg.h"
 
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))

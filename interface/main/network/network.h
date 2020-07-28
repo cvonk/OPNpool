@@ -2,7 +2,7 @@
 #include <esp_system.h>
 
 #include "../datalink/datalink.h"
-#include "../network/network_msgs.h"
+#include "../network/network_msg.h"
 
 /* network.c */
 uint8_t network_ic_len(uint8_t const ic_typ);
