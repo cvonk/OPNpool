@@ -75,7 +75,7 @@ pool_task(void * ipc_void)
             if (txOpportunity) {
 
                 network_msg_ctrl_circuit_set_t circuit_set = {
-                        .circuit = 1,
+                        .circuit = 1 +1,
                         .value = 1,
                 };
                 network_msg_t tx_msg = {

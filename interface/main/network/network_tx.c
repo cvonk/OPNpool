@@ -50,7 +50,7 @@ network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
     for (uint ii = 0; ii < ARRAY_SIZE(_msg_typ_map); ii++, map++) {
         if (msg->typ == map->network.typ) {
             pkt->prot = map->datalink.prot;
-            pkt->prot_typ = map->datalink.prot_typ;
+            pkt->priv.prot_typ = map->datalink.prot_typ;
             pkt->data_len = map->network.data_len;
             pkt->skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + map->network.data_len + DATALINK_MAX_TAIL_SIZE);
             skb_reserve(pkt->skb, DATALINK_MAX_HEAD_SIZE);
