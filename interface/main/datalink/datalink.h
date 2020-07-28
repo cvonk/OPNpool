@@ -4,7 +4,6 @@
 
 #include "../skb/skb.h"
 #include "../rs485/rs485.h"
-#include "../network/network_msg.h"
 
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))
@@ -147,6 +146,3 @@ void datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const p
 
 /* datalink_str.c */
 char const * datalink_prot_str(datalink_prot_t const prot);
-char const * datalink_typ_pump_str(network_typ_pump_t typ);
-char const * datalink_typ_ctrl_str(network_typ_ctrl_t typ);
-char const * datalink_typ_chlor_str(network_typ_chlor_t typ);

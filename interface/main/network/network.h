@@ -1,8 +1,7 @@
 #pragma once
 #include <esp_system.h>
 
-#include "../datalink/datalink.h"
-#include "../network/network_msg.h"
+#include "network_msg.h"
 
 /* network.c */
 uint8_t network_ic_len(uint8_t const ic_typ);
@@ -23,3 +22,6 @@ const char * network_pump_mode_str(network_pump_mode_t const pump_mode);
 char const * network_pump_prg_str(uint16_t const address);
 const char * network_heat_src_str(network_heat_src_t const heat_src);
 uint network_heat_src_nr(char const * const heat_src);
+char const * network_typ_pump_str(network_typ_pump_t typ);
+char const * network_typ_ctrl_str(network_typ_ctrl_t typ);
+char const * network_typ_chlor_str(network_typ_chlor_t typ);

@@ -14,6 +14,7 @@
 #include "../datalink/datalink.h"
 #include "../utils/utils.h"
 #include "../skb/skb.h"
+#include "../poolstate/msg.h"
 #include "network.h"
 
 static char const * const TAG = "network_tx";

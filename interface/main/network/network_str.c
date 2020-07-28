@@ -12,6 +12,7 @@
 #include <esp_log.h>
 
 #include "../utils/utils.h"
+#include "../poolstate/msg.h"
 #include "network.h"
 
 char const *
@@ -173,4 +174,59 @@ network_pump_prg_str(uint16_t const address)
 		default: s = hex16_str(address);
 	}
 	return s;
+}
+
+
+str_value_name_pair_t _typ_ctrls[] = {
+#define XX(num, name) { .typ = num, .str = #name },
+ NETWORK_TYP_CTRL_MAP(XX)
+#undef XX
+};
+
+const char *
+network_typ_ctrl_str(network_typ_ctrl_t typ)
+{
+    str_value_name_pair_t const * pair = _typ_ctrls;
+    for(uint ii = 0; ii < ARRAY_SIZE(_typ_ctrls); ii++, pair++) {
+        if (pair->typ == typ) {
+            return pair->str;
+        }
+    }
+    return hex8_str(typ);
+}
+
+str_value_name_pair_t _typ_pumps[] = {
+#define XX(num, name) { .typ = num, .str = #name },
+  NETWORK_TYP_PUMP_MAP(XX)
+#undef XX
+};
+
+const char *
+network_typ_pump_str(network_typ_pump_t typ)
+{
+    str_value_name_pair_t const * pair = _typ_pumps;
+    for(uint ii = 0; ii < ARRAY_SIZE(_typ_pumps); ii++, pair++) {
+        if (pair->typ == typ) {
+            return pair->str;
+        }
+    }
+    return hex8_str(typ);
+}
+
+str_value_name_pair_t _typ_chlors[] = {
+#define XX(num, name) { .typ = num, .str = #name },
+  NETWORK_TYP_CHLOR_MAP(XX)
+#undef XX
+};
+
+const char *
+network_typ_chlor_str(network_typ_chlor_t typ)
+{
+    str_value_name_pair_t const * pair = _typ_chlors;
+    for(uint ii = 0; ii < ARRAY_SIZE(_typ_chlors); ii++, pair++) {
+        if (pair->typ == typ) {
+            return pair->str;
+        }
+    }
+    return hex8_str(typ);
 }
