@@ -135,8 +135,10 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
     			if ( (datalink_groupaddr(hdr->src) == DATALINK_ADDRGROUP_PUMP) || (datalink_groupaddr(hdr->dst) == DATALINK_ADDRGROUP_PUMP) ) {
                     pkt->prot = DATALINK_PROT_A5_PUMP;
                 }
+                pkt->prot_typ = hdr->typ;
+                pkt->src = hdr->src;
+                pkt->dst = hdr->dst;
                 pkt->data_len = hdr->len;
-                pkt->priv.prot_typ = hdr->typ;
 				return DATALINK_RESULT_DONE;
 			}
 			break;
@@ -148,8 +150,10 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %02X %02X (header)", hdr->dst, hdr->typ);
 				}
+                pkt->prot_typ = hdr->typ;
+                pkt->src = 0;
+                pkt->dst = hdr->dst;
                 pkt->data_len = network_ic_len(hdr->typ);
-                pkt->priv.prot_typ = hdr->typ;
 				return DATALINK_RESULT_DONE;
 			}
         }

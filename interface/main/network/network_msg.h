@@ -403,7 +403,7 @@ typedef union network_msg_data_t {
   XX(31, CHLOR_LEVEL_RESP, network_msg_chlor_level_resp_t, DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_LEVEL_RESP)
 
 typedef enum {
-#define XX(num, name, typ, proto, proto_typ) MSG_TYP_##name = num,
+#define XX(num, name, typ, proto, prot_typ) MSG_TYP_##name = num,
   NETWORK_MSG_TYP_MAP(XX)
 #undef XX
 } network_msg_typ_t;
@@ -431,5 +431,6 @@ typedef struct network_msg_t {
         network_msg_chlor_name_t * chlor_name;
         network_msg_chlor_level_set_t * chlor_level_set;
         network_msg_chlor_level_resp_t * chlor_level_resp;
+        uint8_t * bytes;
     } u;
 } network_msg_t;

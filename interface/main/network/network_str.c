@@ -219,7 +219,7 @@ network_typ_chlor_str(network_typ_chlor_t typ)
  **/
 
 static const char * const _network_msg_typs[] = {
-#define XX(num, name, typ, proto, proto_typ) #name,
+#define XX(num, name, typ, proto, prot_typ) #name,
   NETWORK_MSG_TYP_MAP(XX)
 #undef XX
 };
