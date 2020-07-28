@@ -21,13 +21,13 @@ network_ic_len(uint8_t const ic_typ)
         case DATALINK_CHLOR_TYP_PING_REQ:
             return sizeof(network_msg_chlor_ping_req_t);
         case DATALINK_CHLOR_TYP_PING_RESP:
-            return sizeof(network_msg_chlor_ping_t);
+            return sizeof(network_msg_chlor_ping_resp_t);
         case DATALINK_CHLOR_TYP_NAME:
             return sizeof(network_msg_chlor_name_t);
         case DATALINK_CHLOR_TYP_LEVEL_SET:
             return sizeof(network_msg_chlor_level_set_t);
         case DATALINK_CHLOR_TYP_LEVEL_RESP:
-            return sizeof(network_msg_chlor_ping_t);
+            return sizeof(network_msg_chlor_ping_resp_t);
         case DATALINK_CHLOR_TYP_X14:
             return sizeof(mChlor0X14_ic_t);
         default:

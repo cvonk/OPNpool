@@ -75,17 +75,17 @@ network_version_str(uint8_t const major, uint8_t const minor)
 }
 
 /**
- * network_msg_typ_t
+ * network_typ_t
  **/
 
 static const char * const _network_msg_typs[] = {
-#define XX(num, name) #name,
-  NETWORK_MSG_TYP_MAP(XX)
+#define XX(num, name, typ, proto, proto_typ) #name,
+  NETWORK_TYP_MAP(XX)
 #undef XX
 };
 
 const char *
-network_msg_typ_str(network_msg_typ_t const typ)
+network_msg_typ_str(network_typ_t const typ)
 {
   return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
 }

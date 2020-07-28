@@ -121,6 +121,7 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                     pkt->prot = DATALINK_PROT_A5_PUMP;
                 }
                 pkt->data_len = hdr->len;
+                pkt->prot_typ = hdr->typ;
 				return DATALINK_RESULT_DONE;
 			}
 			break;
@@ -133,6 +134,7 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 					ESP_LOGI(TAG, " %02X %02X (header)", hdr->dst, hdr->typ);
 				}
                 pkt->data_len = network_ic_len(hdr->typ);
+                pkt->prot_typ = hdr->typ;
 				return DATALINK_RESULT_DONE;
 			}
         }
@@ -330,9 +332,9 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 
         if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst_a5 == DATALINK_ADDRGROUP_X09) ||
             (pkt->prot == DATALINK_PROT_IC && dst_ic != DATALINK_ADDRGROUP_ALL && dst_ic != DATALINK_ADDRGROUP_CHLOR)) {
-
-                return false;  // silently ignore
+               return false;  // silently ignore
         }
+
         uint16_t rx_crc, calc_crc;
         bool const crc_correct = _crc_correct(pkt, &rx_crc, &calc_crc);
         if (CONFIG_POOL_DBG_DATALINK_ONERROR && !crc_correct) {
