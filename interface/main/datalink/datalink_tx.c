@@ -78,7 +78,7 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt)
             datalink_head_a5_t * const head = (datalink_head_a5_t *) skb_push(skb, sizeof(datalink_head_a5_t));
             _enter_a5_head(head, skb, pkt->prot_typ, pkt->data_len);
 
-            uint8_t * crc_start = &head->preamble[sizeof(datalink_a5_preamble_t) - 1];
+            uint8_t * crc_start = &head->preamble[sizeof(datalink_preamble_a5_t) - 1];
             uint8_t * crc_stop = skb->priv.tail;
             datalink_tail_a5_t * const tail = (datalink_tail_a5_t *) skb_put(skb, sizeof(datalink_tail_a5_t));
             _enter_a5_tail(tail, crc_start, crc_stop);

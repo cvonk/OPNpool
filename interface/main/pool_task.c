@@ -90,6 +90,8 @@ pool_task(void * ipc_void)
                 skb_handle_t const txb = rs485_handle->dequeue(rs485_handle);
                 if (txb) {
                     ESP_LOGW(TAG, "TX should happen here");
+
+// 2BD do the transmit
                     size_t const dbg_size = 128;
                     char dbg[dbg_size];
                     (void) skb_print(TAG, txb, dbg, dbg_size);
