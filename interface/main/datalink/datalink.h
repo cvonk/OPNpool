@@ -119,6 +119,7 @@ typedef union datalink_tail_t {
  * datalink_pkt_t
  **/
 
+// state info retained between successive datalink_rx() calls
 typedef struct datalink_pkt_t {
 	datalink_prot_t    prot;
     uint8_t            prot_typ;
