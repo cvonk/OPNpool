@@ -83,7 +83,7 @@ _find_preamble(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 			if (_preamble_is_done(&_proto_infos[pp], byt, &found)) {
 				pkt->prot = _proto_infos[pp].prot;
 				if (CONFIG_POOL_DBG_DATALINK) {
-                    skbI(TAG, "%s (preamble)", dbg);
+                    ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
                 // add to pkt just in case we want to retransmit it
                 if (pkt->prot != DATALINK_PROT_A5_CTRL || pkt->prot != DATALINK_PROT_A5_PUMP) {
@@ -342,7 +342,7 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
         uint16_t rx_crc, calc_crc;
         bool const crc_correct = _crc_correct(pkt, &rx_crc, &calc_crc);
         if (CONFIG_POOL_DBG_DATALINK_ONERROR && !crc_correct) {
-            skbW(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
+            ESP_LOGW(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
         }
         return crc_correct;
 	}
