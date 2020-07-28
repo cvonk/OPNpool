@@ -17,15 +17,85 @@
 # define CONFIG_POOL_DBG_NETWORK_ONERROR (0)
 #endif
 
+/**
+ * NETWORK_TYP_CTRL_t
+ **/
+
+// #define NETWORK_TYP_CTRL_SET (0x80)
+// #define NETWORK_TYP_CTRL_REQ (0xC0)
+
+#define NETWORK_TYP_CTRL_MAP(XX) \
+  XX(0x01, SET_ACK)     \
+  XX(0x86, CIRCUIT_SET) \
+  XX(0x02, STATE)       \
+  XX(0x82, STATE_SET)   \
+  XX(0xC2, STATE_REQ )  \
+  XX(0x05, TIME)        \
+  XX(0x85, TIME_SET)    \
+  XX(0xC5, TIME_REQ)    \
+  XX(0x08, HEAT)        \
+  XX(0x88, HEAT_SET)    \
+  XX(0xC8, HEAT_REQ)    \
+  XX(0x1E, SCHED)       \
+  XX(0x9E, SCHED_SET)   \
+  XX(0xDE, SCHED_REQ)   \
+  XX(0x21, LAYOUT)      \
+  XX(0xA1, LAYOUT_SET)  \
+  XX(0xE1, LAYOUT_REQ)
+
+typedef enum {
+#define XX(num, name) NETWORK_TYP_CTRL_##name = num,
+  NETWORK_TYP_CTRL_MAP(XX)
+#undef XX
+} network_typ_ctrl_t;
+
+/**
+ * NETWORK_TYP_PUMP_t
+ **/
+
+// FYI occasionally there is a src=0x10 dst=0x60 typ=0xFF with data=[0x80]; pump doesn't reply to it
+#define NETWORK_TYP_PUMP_MAP(XX) \
+  XX(0x01, REG) \
+  XX(0x04, CTRL) \
+  XX(0x05, MODE) \
+  XX(0x06, RUN) \
+  XX(0x07, STATUS) \
+  XX(0xff, 0xFF)
+
+typedef enum {
+#define XX(num, name) NETWORK_TYP_PUMP_##name = num,
+  NETWORK_TYP_PUMP_MAP(XX)
+#undef XX
+} network_typ_pump_t;
+
+/**
+ * NETWORK_TYP_CHLOR_t
+ **/
+
+// FYI there is a 0x14, has dst=0x50 data=[0x00]
+ #define NETWORK_TYP_CHLOR_MAP(XX) \
+  XX(0x00, PING_REQ)   \
+  XX(0x01, PING_RESP)  \
+  XX(0x03, NAME)       \
+  XX(0x11, LEVEL_SET)  \
+  XX(0x12, LEVEL_RESP) \
+  XX(0x14, X14)
+
+typedef enum {
+#define XX(num, name) NETWORK_TYP_CHLOR_##name = num,
+  NETWORK_TYP_CHLOR_MAP(XX)
+#undef XX
+} network_typ_chlor_t;
+
 /* results of sending requests:
-DATALINK_TYP_CTRL_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
-DATALINK_TYP_CTRL_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
-DATALINK_TYP_CTRL_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-DATALINK_TYP_CTRL_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
-DATALINK_TYP_CTRL_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
-DATALINK_TYP_CTRL_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
-DATALINK_TYP_CTRL_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
-DATALINK_TYP_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+NETWORK_TYP_CTRL_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
+NETWORK_TYP_CTRL_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
+NETWORK_TYP_CTRL_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+NETWORK_TYP_CTRL_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
+NETWORK_TYP_CTRL_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
+NETWORK_TYP_CTRL_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
+NETWORK_TYP_CTRL_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
+NETWORK_TYP_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 */
 
 /**
@@ -84,45 +154,45 @@ typedef enum {
 #undef XX
 } network_heat_src_t;
 
-#define NETWORK_TYP_MAP(XX) \
+#define MSG_TYP_MAP(XX) \
   XX( 0, NONE,             network_msg_none_t,             0,                     0)                             \
-  XX( 1, CTRL_SET_ACK,     network_msg_ctrl_set_ack_t,     DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_SET_ACK)     \
-  XX( 2, CTRL_CIRCUIT_SET, network_msg_ctrl_circuit_set_t, DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_CIRCUIT_SET) \
-  XX( 3, CTRL_SCHED_REQ,   network_msg_ctrl_sched_req_t,   DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_SCHED_REQ)   \
-  XX( 4, CTRL_SCHED_RESP,  network_msg_ctrl_sched_resp_t,  DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_SCHED)       \
-  XX( 5, CTRL_STATE_REQ,   network_msg_ctrl_state_req_t,   DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_STATE_REQ)   \
-  XX( 6, CTRL_STATE,       network_msg_ctrl_state_t,       DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_STATE)       \
-  XX( 7, CTRL_STATE_SET,   network_msg_ctrl_state_set_t,   DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_STATE_SET)   \
-  XX( 8, CTRL_TIME_REQ,    network_msg_ctrl_time_req_t,    DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_TIME_REQ)    \
-  XX( 9, CTRL_TIME,        network_msg_ctrl_time_t,        DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_TIME)        \
-  XX(10, CTRL_TIME_SET,    network_msg_ctrl_time_t,        DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_TIME_SET)    \
-  XX(11, CTRL_HEAT_REQ,    network_msg_ctrl_heat_req_t,    DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_HEAT_REQ)    \
-  XX(12, CTRL_HEAT,        network_msg_ctrl_heat_t,        DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_HEAT)        \
-  XX(13, CTRL_HEAT_SET,    network_msg_ctrl_heat_set_t,    DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_HEAT_SET)    \
-  XX(14, CTRL_LAYOUT_REQ,  network_msg_ctrl_layout_req,    DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_LAYOUT_REQ)  \
-  XX(15, CTRL_LAYOUT,      network_msg_ctrl_layout_t,      DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_LAYOUT)      \
-  XX(16, CTRL_LAYOUT_SET,  network_msg_ctrl_layout_set_t,  DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_LAYOUT_SET)  \
-  XX(17, PUMP_REG_SET,     network_msg_pump_reg_set_t,     DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_REG)         \
-  XX(18, PUMP_REG_RESP,    network_msg_pump_reg_resp_t,    DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_REG)         \
-  XX(19, PUMP_CTRL_SET,    network_msg_pump_ctrl_t,        DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_CTRL)        \
-  XX(20, PUMP_CTRL_RESP,   network_msg_pump_ctrl_t,        DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_CTRL)        \
-  XX(21, PUMP_MODE_SET,    network_msg_pump_mode_t,        DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_MODE)        \
-  XX(22, PUMP_MODE_RESP,   network_msg_pump_mode_t,        DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_MODE)        \
-  XX(23, PUMP_RUN_SET,     network_msg_pump_run_t,         DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_RUN)         \
-  XX(24, PUMP_RUN_RESP,    network_msg_pump_run_t,         DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_RUN)         \
-  XX(25, PUMP_STATUS_REQ,  network_msg_pump_status_req_t,  DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_STATUS)      \
-  XX(26, PUMP_STATUS_RESP, network_msg_pump_status_resp_t, DATALINK_PROT_A5_PUMP, DATALINK_TYP_PUMP_STATUS)      \
-  XX(27, CHLOR_PING_REQ,   network_msg_chlor_ping_req_t,   DATALINK_PROT_IC,      DATALINK_TYP_CHLOR_PING_REQ)   \
-  XX(28, CHLOR_PING_RESP,  network_msg_chlor_ping_resp_t,  DATALINK_PROT_IC,      DATALINK_TYP_CHLOR_PING_RESP)  \
-  XX(29, CHLOR_NAME,       network_msg_chlor_name_t,       DATALINK_PROT_IC,      DATALINK_TYP_CHLOR_NAME)       \
-  XX(30, CHLOR_LEVEL_SET,  network_msg_chlor_level_set_t,  DATALINK_PROT_IC,      DATALINK_TYP_CHLOR_LEVEL_SET)  \
-  XX(31, CHLOR_LEVEL_RESP, network_msg_chlor_level_resp_t, DATALINK_PROT_IC,      DATALINK_TYP_CHLOR_LEVEL_RESP)
+  XX( 1, CTRL_SET_ACK,     network_msg_ctrl_set_ack_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SET_ACK)     \
+  XX( 2, CTRL_CIRCUIT_SET, network_msg_ctrl_circuit_set_t, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRCUIT_SET) \
+  XX( 3, CTRL_SCHED_REQ,   network_msg_ctrl_sched_req_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHED_REQ)   \
+  XX( 4, CTRL_SCHED_RESP,  network_msg_ctrl_sched_resp_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHED)       \
+  XX( 5, CTRL_STATE_REQ,   network_msg_ctrl_state_req_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_STATE_REQ)   \
+  XX( 6, CTRL_STATE,       network_msg_ctrl_state_t,       DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_STATE)       \
+  XX( 7, CTRL_STATE_SET,   network_msg_ctrl_state_set_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_STATE_SET)   \
+  XX( 8, CTRL_TIME_REQ,    network_msg_ctrl_time_req_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME_REQ)    \
+  XX( 9, CTRL_TIME,        network_msg_ctrl_time_t,        DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME)        \
+  XX(10, CTRL_TIME_SET,    network_msg_ctrl_time_t,        DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME_SET)    \
+  XX(11, CTRL_HEAT_REQ,    network_msg_ctrl_heat_req_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_REQ)    \
+  XX(12, CTRL_HEAT,        network_msg_ctrl_heat_t,        DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT)        \
+  XX(13, CTRL_HEAT_SET,    network_msg_ctrl_heat_set_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_SET)    \
+  XX(14, CTRL_LAYOUT_REQ,  network_msg_ctrl_layout_req,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT_REQ)  \
+  XX(15, CTRL_LAYOUT,      network_msg_ctrl_layout_t,      DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT)      \
+  XX(16, CTRL_LAYOUT_SET,  network_msg_ctrl_layout_set_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT_SET)  \
+  XX(17, PUMP_REG_SET,     network_msg_pump_reg_set_t,     DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_REG)         \
+  XX(18, PUMP_REG_RESP,    network_msg_pump_reg_resp_t,    DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_REG)         \
+  XX(19, PUMP_CTRL_SET,    network_msg_pump_ctrl_t,        DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_CTRL)        \
+  XX(20, PUMP_CTRL_RESP,   network_msg_pump_ctrl_t,        DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_CTRL)        \
+  XX(21, PUMP_MODE_SET,    network_msg_pump_mode_t,        DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_MODE)        \
+  XX(22, PUMP_MODE_RESP,   network_msg_pump_mode_t,        DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_MODE)        \
+  XX(23, PUMP_RUN_SET,     network_msg_pump_run_t,         DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_RUN)         \
+  XX(24, PUMP_RUN_RESP,    network_msg_pump_run_t,         DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_RUN)         \
+  XX(25, PUMP_STATUS_REQ,  network_msg_pump_status_req_t,  DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_STATUS)      \
+  XX(26, PUMP_STATUS_RESP, network_msg_pump_status_resp_t, DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_STATUS)      \
+  XX(27, CHLOR_PING_REQ,   network_msg_chlor_ping_req_t,   DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_PING_REQ)   \
+  XX(28, CHLOR_PING_RESP,  network_msg_chlor_ping_resp_t,  DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_PING_RESP)  \
+  XX(29, CHLOR_NAME,       network_msg_chlor_name_t,       DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_NAME)       \
+  XX(30, CHLOR_LEVEL_SET,  network_msg_chlor_level_set_t,  DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_LEVEL_SET)  \
+  XX(31, CHLOR_LEVEL_RESP, network_msg_chlor_level_resp_t, DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_LEVEL_RESP)
 
 typedef enum {
-#define XX(num, name, typ, proto, proto_typ) NETWORK_TYP_##name = num,
-  NETWORK_TYP_MAP(XX)
+#define XX(num, name, typ, proto, proto_typ) MSG_TYP_##name = num,
+  MSG_TYP_MAP(XX)
 #undef XX
-} network_typ_t;
+} msg_typ_t;
 
 /*
  * A5 messages, used to communicate with components except IntelliChlor
@@ -338,7 +408,7 @@ typedef union network_msg_data_t {
 } network_msg_data_t;
 
 typedef struct network_msg_t {
-    network_typ_t typ;
+    msg_typ_t typ;
     union {
         network_msg_pump_reg_set_t * pump_reg_set;
         network_msg_pump_reg_resp_t * pump_reg_set_resp;

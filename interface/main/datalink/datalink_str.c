@@ -32,12 +32,12 @@ datalink_prot_str(datalink_prot_t const prot)
 
 str_value_name_pair_t _typ_ctrls[] = {
 #define XX(num, name) { .typ = num, .str = #name },
- DATALINK_TYP_CTRL_MAP(XX)
+ NETWORK_TYP_CTRL_MAP(XX)
 #undef XX
 };
 
 const char *
-datalink_typ_ctrl_str(datalink_typ_ctrl_t typ)
+datalink_typ_ctrl_str(network_typ_ctrl_t typ)
 {
     str_value_name_pair_t const * pair = _typ_ctrls;
     for(uint ii = 0; ii < ARRAY_SIZE(_typ_ctrls); ii++, pair++) {
@@ -50,12 +50,12 @@ datalink_typ_ctrl_str(datalink_typ_ctrl_t typ)
 
 str_value_name_pair_t _typ_pumps[] = {
 #define XX(num, name) { .typ = num, .str = #name },
-  DATALINK_TYP_PUMP_MAP(XX)
+  NETWORK_TYP_PUMP_MAP(XX)
 #undef XX
 };
 
 const char *
-datalink_typ_pump_str(datalink_typ_pump_t typ)
+datalink_typ_pump_str(network_typ_pump_t typ)
 {
     str_value_name_pair_t const * pair = _typ_pumps;
     for(uint ii = 0; ii < ARRAY_SIZE(_typ_pumps); ii++, pair++) {
@@ -68,12 +68,12 @@ datalink_typ_pump_str(datalink_typ_pump_t typ)
 
 str_value_name_pair_t _typ_chlors[] = {
 #define XX(num, name) { .typ = num, .str = #name },
-  DATALINK_TYP_CHLOR_MAP(XX)
+  NETWORK_TYP_CHLOR_MAP(XX)
 #undef XX
 };
 
 const char *
-datalink_typ_chlor_str(datalink_typ_chlor_t typ)
+datalink_typ_chlor_str(network_typ_chlor_t typ)
 {
     str_value_name_pair_t const * pair = _typ_chlors;
     for(uint ii = 0; ii < ARRAY_SIZE(_typ_chlors); ii++, pair++) {

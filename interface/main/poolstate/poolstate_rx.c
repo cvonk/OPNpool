@@ -274,79 +274,79 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
     memcpy(state, &old_state, sizeof(poolstate_t));
 
     cJSON * const dbg = cJSON_CreateObject();
-    switch(msg->typ) {
-        case NETWORK_TYP_CTRL_SET_ACK:  // response to various set requests
+    switch (msg->typ) {
+        case MSG_TYP_CTRL_SET_ACK:  // response to various set requests
             _ctrl_set_ack(dbg, msg->u.ctrl_set_ack);
             break;
-        case NETWORK_TYP_CTRL_CIRCUIT_SET:
+        case MSG_TYP_CTRL_CIRCUIT_SET:
             _ctrl_circuit_set(dbg, msg->u.ctrl_circuit_set);
             break;
-        case NETWORK_TYP_CTRL_SCHED_REQ:
+        case MSG_TYP_CTRL_SCHED_REQ:
             break;
-        case NETWORK_TYP_CTRL_SCHED_RESP:
+        case MSG_TYP_CTRL_SCHED_RESP:
             _ctrl_sched_resp(dbg, msg->u.ctrl_sched_resp, state);
             break;
-        case NETWORK_TYP_CTRL_STATE_REQ:
+        case MSG_TYP_CTRL_STATE_REQ:
             break;
-        case NETWORK_TYP_CTRL_STATE:
+        case MSG_TYP_CTRL_STATE:
             _ctrl_state(dbg, msg->u.ctrl_state, state);
             break;
-        case NETWORK_TYP_CTRL_STATE_SET:
+        case MSG_TYP_CTRL_STATE_SET:
             break;
-        case NETWORK_TYP_CTRL_TIME_REQ:
+        case MSG_TYP_CTRL_TIME_REQ:
             break;
-        case NETWORK_TYP_CTRL_TIME:
-        case NETWORK_TYP_CTRL_TIME_SET:
+        case MSG_TYP_CTRL_TIME:
+        case MSG_TYP_CTRL_TIME_SET:
             _ctrl_time(dbg, msg->u.ctrl_time, state);
             break;
-        case NETWORK_TYP_CTRL_HEAT_REQ:
+        case MSG_TYP_CTRL_HEAT_REQ:
             break;
-        case NETWORK_TYP_CTRL_HEAT:
+        case MSG_TYP_CTRL_HEAT:
             _ctrl_heat(dbg, msg->u.ctrl_heat, state);
             break;
-        case NETWORK_TYP_CTRL_HEAT_SET:
+        case MSG_TYP_CTRL_HEAT_SET:
             _ctrl_heat_set(dbg, msg->u.ctrl_heat_set, state);
             break;
-        case NETWORK_TYP_CTRL_LAYOUT_REQ:
-        case NETWORK_TYP_CTRL_LAYOUT:
-        case NETWORK_TYP_CTRL_LAYOUT_SET:
+        case MSG_TYP_CTRL_LAYOUT_REQ:
+        case MSG_TYP_CTRL_LAYOUT:
+        case MSG_TYP_CTRL_LAYOUT_SET:
             break;
-        case NETWORK_TYP_PUMP_REG_SET:
+        case MSG_TYP_PUMP_REG_SET:
             _pump_reg_set(dbg, msg->u.pump_reg_set);
             break;
-        case NETWORK_TYP_PUMP_REG_RESP:
+        case MSG_TYP_PUMP_REG_RESP:
             _pump_reg_set_resp(dbg, msg->u.pump_reg_set_resp);
             break;
-        case NETWORK_TYP_PUMP_CTRL_SET:
-        case NETWORK_TYP_PUMP_CTRL_RESP:
+        case MSG_TYP_PUMP_CTRL_SET:
+        case MSG_TYP_PUMP_CTRL_RESP:
             _pump_ctrl(dbg, msg->u.pump_ctrl);
             break;
-        case NETWORK_TYP_PUMP_MODE_SET:
-        case NETWORK_TYP_PUMP_MODE_RESP:
+        case MSG_TYP_PUMP_MODE_SET:
+        case MSG_TYP_PUMP_MODE_RESP:
             _pump_mode(dbg, msg->u.pump_mode, state);
             break;
-        case NETWORK_TYP_PUMP_RUN_SET:
-        case NETWORK_TYP_PUMP_RUN_RESP:
+        case MSG_TYP_PUMP_RUN_SET:
+        case MSG_TYP_PUMP_RUN_RESP:
             _pump_run(dbg, msg->u.pump_run, state);
             break;
-        case NETWORK_TYP_PUMP_STATUS_REQ:
+        case MSG_TYP_PUMP_STATUS_REQ:
              break;
-        case NETWORK_TYP_PUMP_STATUS_RESP:
+        case MSG_TYP_PUMP_STATUS_RESP:
             _pump_status(dbg, msg->u.pump_status_resp, state);
             break;
-        case NETWORK_TYP_CHLOR_PING_REQ:
-        case NETWORK_TYP_CHLOR_PING_RESP:
+        case MSG_TYP_CHLOR_PING_REQ:
+        case MSG_TYP_CHLOR_PING_RESP:
             break;
-        case NETWORK_TYP_CHLOR_NAME:
+        case MSG_TYP_CHLOR_NAME:
             _chlor_name(dbg, msg->u.chlor_name, state);
             break;
-        case NETWORK_TYP_CHLOR_LEVEL_SET:
+        case MSG_TYP_CHLOR_LEVEL_SET:
             _chlor_set(dbg, msg->u.chlor_level_set, state);
             break;
-        case NETWORK_TYP_CHLOR_LEVEL_RESP:
+        case MSG_TYP_CHLOR_LEVEL_RESP:
             _chlor_set_resp(dbg, msg->u.chlor_level_resp, state);
             break;
-        case NETWORK_TYP_NONE:  // to please the gcc
+        case MSG_TYP_NONE:  // to please the gcc
             break;  //
     }
     if (CONFIG_POOL_DBG_POOLSTATE) {
