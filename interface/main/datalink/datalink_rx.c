@@ -85,11 +85,22 @@ _find_preamble(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 				if (CONFIG_POOL_DBG_DATALINK) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
-                // add to pkt just in case we want to retransmit it
-                if (pkt->prot != DATALINK_PROT_A5_CTRL || pkt->prot != DATALINK_PROT_A5_PUMP) {
-                    pkt->head->a5.ff = 0xFF;
+                uint8_t * preamble = NULL;
+                switch(pkt->prot) {
+                    case DATALINK_PROT_A5_CTRL:
+                    case DATALINK_PROT_A5_PUMP:
+                        // add to pkt just in case we want to retransmit it
+                        pkt->head->a5.ff = 0xFF;
+                        preamble = pkt->head->a5.preamble;
+                        pkt->head_len = sizeof(datalink_head_a5_t) ;
+                        pkt->tail_len = sizeof(datalink_tail_a5_t) ;
+                        break;
+                    case DATALINK_PROT_IC:
+                        preamble = pkt->head->ic.preamble;
+                        pkt->head_len = sizeof(datalink_head_ic_t) ;
+                        pkt->tail_len = sizeof(datalink_tail_ic_t) ;
+                        break;
                 }
-                uint8_t * const preamble = (pkt->prot == DATALINK_PROT_IC) ? pkt->head->ic.preamble : pkt->head->a5.preamble;
                 for (uint ii = 0; ii < _proto_infos[pp].len; ii++) {
                     preamble[ii] = _proto_infos[pp].preamble[ii];
                 }
@@ -227,9 +238,9 @@ uint32_t _millis() {
 
 typedef enum STATE_t {
     STATE_FIND_PREAMBLE,
-    STATE_READ_HDR,
+    STATE_READ_HEAD,
     STATE_READ_DATA,
-    STATE_READ_CRC,
+    STATE_READ_TAIL,
     STATE_DONE,
 } STATE_t;
 
@@ -245,16 +256,14 @@ _change_state(datalink_pkt_t * const pkt, STATE_t const state)
             skb_reset(pkt->skb);
             pkt->head = (datalink_head_t *) skb_put(pkt->skb, DATALINK_MAX_HEAD_SIZE);
             break;
-		case STATE_READ_HDR:
+		case STATE_READ_HEAD:
+            skb_call(pkt->skb, DATALINK_MAX_HEAD_SIZE - pkt->head_len);  // release unused bytes
             break;
 		case STATE_READ_DATA:
-            if (pkt->prot == DATALINK_PROT_IC) {  // release unused bytes from head
-                skb_call(pkt->skb, DATALINK_MAX_HEAD_SIZE - sizeof(datalink_head_ic_t));
-            }
             pkt->data = (datalink_data_t *) skb_put(pkt->skb, pkt->data_len);
             break;
-		case STATE_READ_CRC:
-            pkt->tail = (datalink_tail_t *) skb_put(pkt->skb, DATALINK_MAX_TAIL_SIZE);
+		case STATE_READ_TAIL:
+            pkt->tail = (datalink_tail_t *) skb_put(pkt->skb, pkt->tail_len);
             break;
 		case STATE_DONE:
             break;
@@ -288,13 +297,13 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 		case STATE_FIND_PREAMBLE:
             result = _find_preamble(rs485, pkt);
             break;
-		case STATE_READ_HDR:
+		case STATE_READ_HEAD:
             result = _read_hdr(rs485, pkt);
             break;
 		case STATE_READ_DATA:
             result = _read_data(rs485, pkt);
             break;
-		case STATE_READ_CRC:
+		case STATE_READ_TAIL:
             result = _read_crc(rs485, pkt);
             break;
 		case STATE_DONE:
@@ -305,15 +314,15 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 			switch (_state) {
 				case STATE_FIND_PREAMBLE:
 					start = _millis();
-					_change_state(pkt, STATE_READ_HDR);
+					_change_state(pkt, STATE_READ_HEAD);
 					break;
-				case STATE_READ_HDR:
+				case STATE_READ_HEAD:
 					_change_state(pkt, STATE_READ_DATA);
 					break;
 				case STATE_READ_DATA:
-					_change_state(pkt, STATE_READ_CRC);
+					_change_state(pkt, STATE_READ_TAIL);
 					break;
-				case STATE_READ_CRC:
+				case STATE_READ_TAIL:
 					_change_state(pkt, STATE_DONE);
 					break;
 				case STATE_DONE:

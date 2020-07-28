@@ -28,7 +28,7 @@ _skb_alloc_a5(size_t const msg_size)
 
 typedef struct network_datalink_map_t {
     struct {
-        network_typ_t      typ;
+        msg_typ_t      typ;
         size_t             data_len;
     } network;
     struct {
@@ -37,17 +37,17 @@ typedef struct network_datalink_map_t {
     } datalink;
 } network_datalink_map_t;
 
-static const network_datalink_map_t _network_datalink_map[] = {
-#define XX(num, name, typ, proto, proto_typ) { { NETWORK_TYP_##name, sizeof(typ)}, {proto, proto_typ} },
-  NETWORK_TYP_MAP(XX)
+static const network_datalink_map_t _msg_typ_map[] = {
+#define XX(num, name, typ, proto, proto_typ) { { MSG_TYP_##name, sizeof(typ)}, {proto, proto_typ} },
+  MSG_TYP_MAP(XX)
 #undef XX
 };
 
 bool
 network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
 {
-    network_datalink_map_t const * map = _network_datalink_map;
-    for (uint ii = 0; ii < ARRAY_SIZE(_network_datalink_map); ii++, map++) {
+    network_datalink_map_t const * map = _msg_typ_map;
+    for (uint ii = 0; ii < ARRAY_SIZE(_msg_typ_map); ii++, map++) {
         if (msg->typ == map->network.typ) {
             pkt->prot = map->datalink.prot;
             pkt->prot_typ = map->datalink.prot_typ;
@@ -73,12 +73,8 @@ network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, u
     network_msg_ctrl_circuit_set_t * const msg = (network_msg_ctrl_circuit_set_t *) skb_put(txb, msg_size);
     msg->circuit = circuit + 1;
     msg->value = value;
-<<<<<<< HEAD
     network_tx_skb(rs485_handle, txb, NETWORK_TYP_CTRL_CIRCUIT_SET);
-    //datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_CIRCUIT_SET);  // will free when done
-=======
-    datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_TYP_CTRL_CIRCUIT_SET);  // will free when done
->>>>>>> f8739a88daec8b4e8b1827e4d2cb739274777353
+    //datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRCUIT_SET);  // will free when done
 }
 
 
@@ -86,7 +82,7 @@ void
 EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_least8_t const value)
 {
 	*element = {
-		.typ = DATALINK_TYP_CTRL_circuitSet,
+		.typ = NETWORK_TYP_CTRL_circuitSet,
 		.dataLen = sizeof(network_msg_ctrl_circuit_set_t),
 		.data = {
 			.circuitSet = {
@@ -100,7 +96,7 @@ EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_leas
 void
 EncodeA5::heatMsg(element_t * element, uint8_t const poolTempSetpoint, uint8_t const spaTempSetpoint, uint8_t const heatSrc)
 {
-	element->typ = DATALINK_TYP_CTRL_heatSet;
+	element->typ = NETWORK_TYP_CTRL_heatSet;
 	element->dataLen = sizeof(network_msg_ctrl_heat_set_t);
 	element->data.heatSet = {
 		.poolTempSetpoint = poolTempSetpoint,
@@ -122,7 +118,7 @@ EncodeA5::setTime(JsonObject * root, network_msg_t * sys, datalink_hdr_a5_t * co
 		.month = 5,
 		.year = 15,
 	};
-	send_a5(root, sys, datalink_typ_ctrl_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
+	send_a5(root, sys, network_typ_ctrl_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
 }
 #endif
 
