@@ -94,7 +94,7 @@ typedef union datalink_head_t {
 
 typedef uint8_t datalink_data_t;
 
-#define DATALINK_MAX_DATA_SIZE (sizeof(network_msg_data_t))
+#define DATALINK_MAX_DATA_SIZE (NETWORK_DATA_MAX_SIZE)
 
 /**
  * datalink_tail_t
