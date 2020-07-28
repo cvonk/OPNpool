@@ -38,7 +38,7 @@ typedef struct network_datalink_map_t {
 } network_datalink_map_t;
 
 static const network_datalink_map_t _msg_typ_map[] = {
-#define XX(num, name, typ, proto, proto_typ) { { MSG_TYP_##name, sizeof(typ)}, {proto, proto_typ} },
+#define XX(num, name, typ, proto, prot_typ) { { MSG_TYP_##name, sizeof(typ)}, {proto, prot_typ} },
   NETWORK_MSG_TYP_MAP(XX)
 #undef XX
 };
@@ -50,16 +50,16 @@ network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
     for (uint ii = 0; ii < ARRAY_SIZE(_msg_typ_map); ii++, map++) {
         if (msg->typ == map->network.typ) {
             pkt->prot = map->datalink.prot;
-            pkt->priv.prot_typ = map->datalink.prot_typ;
+            pkt->prot_typ = map->datalink.prot_typ;
             pkt->data_len = map->network.data_len;
             pkt->skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + map->network.data_len + DATALINK_MAX_TAIL_SIZE);
             skb_reserve(pkt->skb, DATALINK_MAX_HEAD_SIZE);
-            pkt->data = pkt->skb->priv.data;
-            memcpy(pkt->data, &msg->u, pkt->data_len);
+            pkt->data = skb_put(pkt->skb, map->network.data_len);
+            memcpy(pkt->data, msg->u.bytes, map->network.data_len);
             return true;
         }
     }
-    ESP_LOGE(TAG, "unknown network typ (%u)", msg->typ);
+    ESP_LOGE(TAG, "unknown msg typ (%u)", msg->typ);
     return false;
 }
 

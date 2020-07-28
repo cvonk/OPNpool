@@ -111,7 +111,6 @@ _flush(void)
 static void
 _queue(rs485_handle_t const handle, skb_handle_t const txb)
 {
-    ESP_LOGW(TAG, "5 head=%p data=%p tail=%p, end=%p len=%u q=%p", txb->priv.head, txb->priv.data, txb->priv.tail, txb->priv.end, txb->len, handle);
     tx_msg_t msg = {
         .txb = txb, // doesn't copy the data
     };
