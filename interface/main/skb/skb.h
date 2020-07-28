@@ -11,9 +11,9 @@ typedef struct skb_priv_t {
 
 typedef struct skb_t {
     skb_priv_t priv;
-    size_t        len;   // amount of data in buf
-    size_t        size;  // amount of mem alloc'ed
-    uint8_t       buf[];
+    size_t     len;   // amount of data in buf
+    size_t     size;  // amount of mem alloc'ed
+    uint8_t    buf[];
 } skb_t;
 
 typedef skb_t * skb_handle_t;
