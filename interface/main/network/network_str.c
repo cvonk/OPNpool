@@ -12,7 +12,6 @@
 #include <esp_log.h>
 
 #include "../utils/utils.h"
-#include "../poolstate/msg.h"
 #include "network.h"
 
 char const *
@@ -73,22 +72,6 @@ network_version_str(uint8_t const major, uint8_t const minor)
 	s[nrdigits] = '\0';
 	name_str.idx += nrdigits + 1U;
 	return s;
-}
-
-/**
- * msg_typ_t
- **/
-
-static const char * const _network_msg_typs[] = {
-#define XX(num, name, typ, proto, proto_typ) #name,
-  MSG_TYP_MAP(XX)
-#undef XX
-};
-
-const char *
-network_msg_typ_str(msg_typ_t const typ)
-{
-  return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
 }
 
 /**
@@ -230,3 +213,20 @@ network_typ_chlor_str(network_typ_chlor_t typ)
     }
     return hex8_str(typ);
 }
+
+/**
+ * msg_typ_t
+ **/
+
+static const char * const _network_msg_typs[] = {
+#define XX(num, name, typ, proto, proto_typ) #name,
+  NETWORK_MSG_TYP_MAP(XX)
+#undef XX
+};
+
+const char *
+network_msg_typ_str(network_msg_typ_t const typ)
+{
+  return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
+}
+

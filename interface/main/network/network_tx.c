@@ -14,7 +14,6 @@
 #include "../datalink/datalink.h"
 #include "../utils/utils.h"
 #include "../skb/skb.h"
-#include "../poolstate/msg.h"
 #include "network.h"
 
 static char const * const TAG = "network_tx";
@@ -29,7 +28,7 @@ _skb_alloc_a5(size_t const msg_size)
 
 typedef struct network_datalink_map_t {
     struct {
-        msg_typ_t      typ;
+        network_msg_typ_t  typ;
         size_t             data_len;
     } network;
     struct {
@@ -40,7 +39,7 @@ typedef struct network_datalink_map_t {
 
 static const network_datalink_map_t _msg_typ_map[] = {
 #define XX(num, name, typ, proto, proto_typ) { { MSG_TYP_##name, sizeof(typ)}, {proto, proto_typ} },
-  MSG_TYP_MAP(XX)
+  NETWORK_MSG_TYP_MAP(XX)
 #undef XX
 };
 
