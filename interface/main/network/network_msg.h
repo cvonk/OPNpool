@@ -368,6 +368,7 @@ typedef union network_msg_data_t {
     network_msg_chlor_level_set_t chlor_level_set;
     network_msg_chlor_level_resp_t chlor_level_resp;
 } network_msg_data_t;
+#define NETWORK_DATA_MAX_SIZE (sizeof(network_msg_data_t))
 
 typedef struct network_msg_t {
     msg_typ_t typ;
