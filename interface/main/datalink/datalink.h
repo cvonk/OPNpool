@@ -138,11 +138,12 @@ typedef struct datalink_hdt_ic_t {
 
 typedef struct datalink_pkt_t {
 	datalink_prot_t    prot;
+    uint8_t            prot_typ;
+    size_t             data_len;
+    skb_handle_t       skb;
     datalink_head_t *  head;
     datalink_data_t *  data;
     datalink_tail_t *  tail;
-    size_t             data_len;
-    skb_handle_t       skb;
 } datalink_pkt_t;
 
 /**
@@ -183,10 +184,10 @@ typedef enum {
 
 // FYI occasionally there is a src=0x10 dst=0x60 typ=0xFF with data=[0x80]; pump doesn't reply to it
 #define DATALINK_PUMP_TYP_MAP(XX) \
-  XX(0x01, REGULATE) \
+  XX(0x01, REG) \
   XX(0x04, CTRL) \
   XX(0x05, MODE) \
-  XX(0x06, STATE) \
+  XX(0x06, RUN) \
   XX(0x07, STATUS) \
   XX(0xff, 0xFF)
 
@@ -227,7 +228,7 @@ uint16_t datalink_calc_crc(uint8_t const * const start, uint8_t const * const st
 bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
 
 /* datalink_tx.c */
-void datalink_tx_pkt(rs485_handle_t const rs485_handle, skb_handle_t const txb, datalink_prot_t const prot, datalink_ctrl_typ_t const typ);
+void datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt);
 
 /* datalink_str.c */
 char const * datalink_prot_str(datalink_prot_t const prot);

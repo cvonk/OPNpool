@@ -7,6 +7,7 @@
  * All text above must be included in any redistribution
  **/
 
+#include <string.h>
 #include <esp_system.h>
 #include <esp_log.h>
 
@@ -15,7 +16,7 @@
 #include "../skb/skb.h"
 #include "network.h"
 
-//static char const * const TAG = "network_tx";
+static char const * const TAG = "network_tx";
 
 skb_handle_t
 _skb_alloc_a5(size_t const msg_size)
@@ -25,6 +26,44 @@ _skb_alloc_a5(size_t const msg_size)
     return txb;
 }
 
+typedef struct network_datalink_map_t {
+    struct {
+        network_typ_t      typ;
+        size_t             data_len;
+    } network;
+    struct {
+        datalink_prot_t    prot;
+        uint8_t            prot_typ;
+    } datalink;
+} network_datalink_map_t;
+
+static const network_datalink_map_t _network_datalink_map[] = {
+#define XX(num, name, typ, proto, proto_typ) { { NETWORK_TYP_##name, sizeof(typ)}, {proto, proto_typ} },
+  NETWORK_TYP_MAP(XX)
+#undef XX
+};
+
+bool
+network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
+{
+    network_datalink_map_t const * map = _network_datalink_map;
+    for (uint ii = 0; ii < ARRAY_SIZE(_network_datalink_map); ii++, map++) {
+        if (msg->typ == map->network.typ) {
+            pkt->prot = map->datalink.prot;
+            pkt->prot_typ = map->datalink.prot_typ;
+            pkt->data_len = map->network.data_len;
+            pkt->skb = skb_alloc(DATALINK_A5_HEAD_SIZE + map->network.data_len + DATALINK_A5_TAIL_SIZE);
+            skb_reserve(pkt->skb, DATALINK_A5_HEAD_SIZE);
+            pkt->data = pkt->skb->priv.data;
+            memcpy(pkt->data, &msg->u, pkt->data_len);
+            return true;
+        }
+    }
+    ESP_LOGE(TAG, "unknown network typ (%u)", msg->typ);
+    return false;
+}
+
+#if 0
 void
 network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, uint8_t value)
 {
@@ -34,12 +73,11 @@ network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, u
     network_msg_ctrl_circuit_set_t * const msg = (network_msg_ctrl_circuit_set_t *) skb_put(txb, msg_size);
     msg->circuit = circuit + 1;
     msg->value = value;
-    datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_CTRL_TYP_CIRCUIT_SET);  // will free when done
+    network_tx_skb(rs485_handle, txb, NETWORK_TYP_CTRL_CIRCUIT_SET);
+    //datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, DATALINK_CTRL_TYP_CIRCUIT_SET);  // will free when done
 }
 
 
-
-#if 0
 void
 EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_least8_t const value)
 {
