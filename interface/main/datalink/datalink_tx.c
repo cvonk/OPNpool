@@ -63,10 +63,10 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt)
 
     switch (pkt->prot) {
         case DATALINK_PROT_IC: {
-            pkt->priv.head = (datalink_head_t *) skb_push(skb, sizeof(datalink_head_ic_t));
-            _enter_ic_head(&pkt->priv.head->ic, skb, pkt->prot_typ);
+            datalink_head_ic_t * const head = (datalink_head_ic_t *) skb_push(skb, sizeof(datalink_head_ic_t));
+            _enter_ic_head(head, skb, pkt->prot_typ);
 
-            uint8_t * crc_start = pkt->priv.head->ic.preamble;
+            uint8_t * crc_start = head->preamble;
             uint8_t * crc_stop = skb->priv.tail;
             datalink_tail_ic_t * const tail = (datalink_tail_ic_t *) skb_put(skb, sizeof(datalink_tail_ic_t));
             _enter_ic_tail(tail, crc_start, crc_stop);
@@ -74,10 +74,10 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt)
         }
         case DATALINK_PROT_A5_CTRL:
         case DATALINK_PROT_A5_PUMP: {
-            pkt->priv.head = (datalink_head_t *) skb_push(skb, sizeof(datalink_head_a5_t));
-            _enter_a5_head(&pkt->priv.head->a5, skb, pkt->prot_typ, pkt->data_len);
+            datalink_head_a5_t * const head = (datalink_head_a5_t *) skb_push(skb, sizeof(datalink_head_a5_t));
+            _enter_a5_head(head, skb, pkt->prot_typ, pkt->data_len);
 
-            uint8_t * crc_start = &pkt->priv.head->a5.preamble[sizeof(datalink_preamble_a5_t) - 1];
+            uint8_t * crc_start = head->preamble + sizeof(datalink_preamble_a5_t) - 1;
             uint8_t * crc_stop = skb->priv.tail;
             datalink_tail_a5_t * const tail = (datalink_tail_a5_t *) skb_put(skb, sizeof(datalink_tail_a5_t));
             _enter_a5_tail(tail, crc_start, crc_stop);
