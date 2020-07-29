@@ -75,10 +75,10 @@ _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg,
 static void
 _ctrl_circuit_set(cJSON * const dbg, network_msg_ctrl_circuit_set_t const * const msg, poolstate_t * const state)
 {
-    state->circuits.active[msg->circuit] = msg->value;
+    state->circuits.active[msg->circuit -1] = msg->value;
 
     if (CONFIG_POOL_DBG_POOLSTATE) {
-        cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit), msg->value);
+        cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit -1), msg->value);
     }
 }
 
@@ -114,7 +114,7 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
     state->thermostats[POOLSTATE_THERMOSTAT_SPA].heat_src = msg->heatSrc >> 2;
     state->thermostats[POOLSTATE_THERMOSTAT_SPA].heating = msg->heating & 0x08;
 
-    bool * state_active = state->circuits.active + 1;
+    bool * state_active = state->circuits.active;
     uint16_t msg_mask = 0x00001;
     uint16_t const msg_active = ((uint16_t)msg->activeHi << 8) | msg->activeLo;
     for (uint ii = 0; ii < NETWORK_CIRCUIT_COUNT; ii++, state_active++) {
