@@ -343,7 +343,7 @@ typedef struct mChlor0X14_ic_t {
     uint8_t UNKNOWN_0;
 } PACK8 mChlor0X14_ic_t;
 
-typedef union network_msg_data_t {
+typedef union network_msg_data_a5_t {
     network_msg_pump_reg_set_t pump_reg_set;
     network_msg_pump_reg_resp_t pump_reg_set_resp;
     network_msg_pump_ctrl_t pump_ctrl;
@@ -360,12 +360,20 @@ typedef union network_msg_data_t {
     network_msg_ctrl_heat_set_t ctrl_heat_set;
     network_msg_ctrl_layout_t ctrl_layout;
     network_msg_ctrl_layout_set_t ctrl_layout_set;
+} PACK8 network_msg_data_a5_t;
+
+typedef union network_msg_data_ic_t {
     network_msg_chlor_ping_req_t chlor_ping_req;
     network_msg_chlor_ping_resp_t chlor_ping;
     network_msg_chlor_name_t chlor_name;
     network_msg_chlor_level_set_t chlor_level_set;
     network_msg_chlor_level_resp_t chlor_level_resp;
-} network_msg_data_t;
+} PACK8 network_msg_data_ic_t;
+
+typedef union network_msg_data_t {
+    network_msg_data_a5_t a5;
+    network_msg_data_ic_t ic;
+} PACK8 network_msg_data_t;
 #define NETWORK_DATA_MAX_SIZE (sizeof(network_msg_data_t))
 
 #define NETWORK_MSG_TYP_MAP(XX) \

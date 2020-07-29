@@ -16,6 +16,7 @@
 #include "../network/network.h"
 #include "skb/skb.h"
 #include "datalink.h"
+#include "datalink_pkt.h"
 
 static char const * const TAG = "datalink_rx";
 
@@ -45,6 +46,7 @@ typedef enum state_t {
     STATE_READ_DATA,
     STATE_READ_TAIL,
     STATE_CHECK_CRC,
+    STATE_DONE,
 } state_t;
 
 typedef struct local_data_t {
@@ -154,6 +156,9 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
                 pkt->src = hdr->src;
                 pkt->dst = hdr->dst;
                 pkt->data_len = hdr->len;
+                if (pkt->data_len > sizeof(network_msg_data_a5_t)) {
+                    return ESP_FAIL;
+                }
 				return ESP_OK;
 			}
 			break;
@@ -179,8 +184,8 @@ static esp_err_t
 _read_data(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_t * const pkt)
 {
     uint len = 0;
-    uint buf_size = 80;
-    char buf[buf_size];
+    uint buf_size = 100;
+    char buf[buf_size]; *buf = '\0';
 
 	if (rs485->read_bytes((uint8_t *) pkt->data, pkt->data_len) == pkt->data_len) {
 		if (CONFIG_POOL_DBG_DATALINK) {
@@ -249,7 +254,7 @@ _check_crc(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
         return ESP_OK;
     }
     if (CONFIG_POOL_DBG_DATALINK_ONERROR) {
-        ESP_LOGW(TAG, "checksum error (rx=0x%03x calc=0x%03x)", crc.rx, crc.calc);
+        ESP_LOGW(TAG, "crc err (rx=0x%03x calc=0x%03x)", crc.rx, crc.calc);
     }
     return ESP_FAIL;
 }
@@ -275,15 +280,16 @@ static state_transition_t state_transitions[] = {
     { STATE_READ_HEAD,     _read_head,     STATE_READ_DATA,     STATE_FIND_PREAMBLE },
     { STATE_READ_DATA,     _read_data,     STATE_READ_TAIL,     STATE_FIND_PREAMBLE },
     { STATE_READ_TAIL,     _read_tail,     STATE_CHECK_CRC,     STATE_FIND_PREAMBLE },
-    { STATE_CHECK_CRC,     _check_crc,     STATE_FIND_PREAMBLE, STATE_FIND_PREAMBLE },
+    { STATE_CHECK_CRC,     _check_crc,     STATE_DONE,          STATE_FIND_PREAMBLE },
 };
 
 bool
 datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
     state_t state = STATE_FIND_PREAMBLE;
-    local_data_t local;
     pkt->skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + DATALINK_MAX_DATA_SIZE + DATALINK_MAX_TAIL_SIZE);
+    local_data_t local;
+    local.head = (datalink_head_t *) skb_put(pkt->skb, DATALINK_MAX_HEAD_SIZE);
 
     while (1) {
         state_transition_t * transition = state_transitions;
@@ -308,6 +314,8 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                         local.tail = (datalink_tail_t *) skb_put(pkt->skb, local.tail_len);
                         break;
                     case STATE_CHECK_CRC:
+                        break;
+                    case STATE_DONE:
                         return local.crc_ok;
                         break;
                 }

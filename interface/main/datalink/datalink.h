@@ -19,18 +19,6 @@
 #  define CONFIG_POOL_DBG_DATALINK_ONERROR (0)
 #endif
 
-/* order MUST match _proto_infos[] */
-#define DATALINK_PROT_MAP(XX) \
-  XX(0x00, IC)      \
-  XX(0x01, A5_CTRL) \
-  XX(0x02, A5_PUMP)
-
-typedef enum {
-#define XX(num, name) DATALINK_PROT_##name = num,
-  DATALINK_PROT_MAP(XX)
-#undef XX
-} datalink_prot_t;
-
 #define DATALINK_ADDRGROUP_MAP(XX) \
   XX(0x00, ALL)  \
   XX(0x01, CTRL) \
@@ -92,8 +80,6 @@ typedef union datalink_head_t {
  * datalink_data_t
  **/
 
-typedef uint8_t datalink_data_t;
-
 #define DATALINK_MAX_DATA_SIZE (NETWORK_DATA_MAX_SIZE)
 
 /**
@@ -114,21 +100,6 @@ typedef union datalink_tail_t {
 } datalink_tail_t;
 #define DATALINK_MAX_TAIL_SIZE (sizeof(datalink_tail_t))
 
-/**
- * datalink_pkt_t
- **/
-
-// state info retained between successive datalink_rx() calls
-typedef struct datalink_pkt_t {
-	datalink_prot_t    prot;
-    uint8_t            prot_typ;  // message type
-    uint8_t            src;  // source
-    uint8_t            dst;  // destination
-    datalink_data_t *  data;
-    size_t             data_len;
-    skb_handle_t       skb;
-} datalink_pkt_t;
-
 /* datalink.c */
 datalink_addrgroup_t datalink_groupaddr(uint16_t const addr);
 uint8_t datalink_devaddr(uint8_t group, uint8_t const id);
@@ -140,7 +111,7 @@ extern datalink_preamble_ic_t datalink_preamble_ic;
 bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
 
 /* datalink_tx.c */
-void datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt);
+void datalink_tx_queue_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt);
 
 /* datalink_str.c */
 char const * datalink_prot_str(datalink_prot_t const prot);

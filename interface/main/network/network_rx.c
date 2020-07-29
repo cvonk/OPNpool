@@ -11,6 +11,7 @@
 #include <esp_log.h>
 
 #include "../datalink/datalink.h"
+#include "../datalink/datalink_pkt.h"
 #include "../utils/utils.h"
 #include "network.h"
 

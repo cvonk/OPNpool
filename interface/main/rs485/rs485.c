@@ -15,6 +15,8 @@
 #include <freertos/queue.h>
 
 #include "rs485.h"
+#include "../datalink/datalink.h"
+#include "../datalink/datalink_pkt.h"
 
 static char const * const TAG = "rs485";
 
@@ -23,10 +25,6 @@ static TickType_t _rxTimeout = (100 / portTICK_RATE_MS);
 static TickType_t _txTimeout = (100 / portTICK_RATE_MS);
 
 static uart_port_t _uart_port;
-
-typedef struct tx_msg_t {
-    skb_handle_t  txb;  // must be freed by recipient
-} tx_msg_t;
 
 static int
 _available()
@@ -40,14 +38,6 @@ static int
 _read_bytes(uint8_t * dst, uint32_t len)
 {
     return uart_read_bytes(_uart_port, dst, len, _rxTimeout);
-}
-
-static int
-_read(void)
-{
-    uint8_t dst;
-    _read_bytes(&dst, 1);
-    return dst;
 }
 
 static int
@@ -109,24 +99,26 @@ _flush(void)
 }
 
 static void
-_queue(rs485_handle_t const handle, skb_handle_t const txb)
+_queue(rs485_handle_t const handle, datalink_pkt_t * const pkt)
 {
-    tx_msg_t msg = {
-        .txb = txb, // doesn't copy the data
+    assert(pkt);
+    rs485_q_msg_t msg = {
+        .pkt = pkt,
     };
-    assert(msg.txb);
     if (xQueueSendToBack(handle->tx_q, &msg, 0) != pdPASS) {
         ESP_LOGE(TAG, "tx_q full");
-        free(msg.txb);
+        free(pkt->skb);
+        free(pkt);
     }
 }
 
-static skb_handle_t
+static datalink_pkt_t *
 _dequeue(rs485_handle_t const handle)
 {
-    tx_msg_t msg;
+    rs485_q_msg_t msg;
     if (xQueueReceive(handle->tx_q, &msg, (TickType_t)0) == pdPASS) {
-        return msg.txb;
+        assert(msg.pkt);
+        return msg.pkt;
     }
     return NULL;
 }
@@ -149,7 +141,7 @@ rs485_init(rs485_config_t const * const cfg)
     uart_driver_install(cfg->uart_port, _rxBufSize * 2, 0, 0, NULL, 0);  // no tx buffer
     uart_set_mode(cfg->uart_port, UART_MODE_RS485_HALF_DUPLEX);
 
-    QueueHandle_t const tx_q = xQueueCreate(2, sizeof(tx_msg_t));
+    QueueHandle_t const tx_q = xQueueCreate(2, sizeof(rs485_q_msg_t));
     assert(tx_q);
 
     rs485_handle_t handle = malloc(sizeof(rs485_instance_t));
@@ -158,7 +150,6 @@ rs485_init(rs485_config_t const * const cfg)
     _uart_port = cfg->uart_port;
     handle->available = _available;
     handle->read_bytes = _read_bytes;
-    handle->read = _read;
     handle->write_bytes = _write_bytes;
     handle->write = _write;
     handle->flush = _flush;
