@@ -123,6 +123,23 @@ _dequeue(rs485_handle_t const handle)
     return NULL;
 }
 
+static void
+_tx_mode(bool const tx_enable)
+{
+	// messages should be sent directly after an A5 packets (and before any IC packets)
+	// 2BD: there might be a mandatory wait after enabling this pin !!!!!!!
+    // A few words on the DE signal:
+    //  - choose a GPIO that doesn't mind being pulled down during reset
+
+    if (tx_enable) {
+        gpio_set_level(CONFIG_POOL_RS485_RTSPIN, 1);  // enable RS485 transmit DE=1 and RE*=1 (DE=driver enable, RE*=inverted receive enable)
+    } else {
+        _flush();  // wait until last byte starts transmitting
+        ets_delay_us(1500);  // wait until last byte is transmitted (10 bits / 9600 baud =~ 1042 ms)
+        gpio_set_level(CONFIG_POOL_RS485_RTSPIN, 0);  // enable RS485 receive
+     }
+}
+
 rs485_handle_t
 rs485_init(rs485_config_t const * const cfg)
 {
@@ -153,6 +170,7 @@ rs485_init(rs485_config_t const * const cfg)
     handle->write_bytes = _write_bytes;
     handle->write = _write;
     handle->flush = _flush;
+    handle->tx_mode = _tx_mode;
     handle->queue = _queue;
     handle->dequeue = _dequeue;
     handle->tx_q = tx_q;

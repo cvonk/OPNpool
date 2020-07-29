@@ -89,14 +89,17 @@ pool_task(void * ipc_void)
                 {
                     datalink_pkt_t * const pkt = rs485_handle->dequeue(rs485_handle);
                     if (pkt) {
-                        ESP_LOGW(TAG, "TX should happen here");
-
-    // 2BD do the transmit
+                        ESP_LOGW(TAG, "TRANSMITTING");
 
                         size_t const dbg_size = 128;
                         char dbg[dbg_size];
                         (void) skb_print(TAG, pkt->skb, dbg, dbg_size);
                         ESP_LOGI(TAG, "tx { %s}", dbg);
+
+                        rs485_handle->tx_mode(true);
+                        rs485_handle->write_bytes(pkt->skb->priv.data, pkt->skb->len);
+                        rs485_handle->flush();   // wait until the hardware buffer starts transmitting the last byte
+                        rs485_handle->tx_mode(false);
 
                         network_msg_t msg;
                         if (network_rx_msg(pkt, &msg, &txOpportunity)) {
