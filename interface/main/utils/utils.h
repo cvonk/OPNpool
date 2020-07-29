@@ -11,6 +11,17 @@
 #ifndef ELEM_AT
 # define ELEM_AT(a, i, v) ((uint) (i) < ARRAY_SIZE(a) ? (a)[(i)] : (v))
 #endif
+#ifndef ELEM_POS
+# define ELEM_POS(a, s) \
+    do { \
+      for (uint_least8_t ii = 0; ii < ARRAY_SIZE(a); ii++) { \
+	    if (strcmp(s, a[ii]) == 0) { \
+	      return ii; \
+	    } \
+      } \
+      return -1; \
+    } while(0)
+#endif
 
 // also used to display date/time, add +50
 #define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(network_msg_ctrl_state_t) + 1) * 3 + 50)

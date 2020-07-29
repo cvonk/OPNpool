@@ -78,33 +78,46 @@ pool_task(void * ipc_void)
 
             assert(queued_msg.dataType == IPC_TO_POOL_TYP_REQ);
             ESP_LOGI(TAG, "received mqtt \"%s\"", queued_msg.data);
+            esp_err_t err = ESP_FAIL;
             char * args[3];
             uint8_t argc = _parse_args(queued_msg.data, args, ARRAY_SIZE(args));
 
-            if (argc >= 3 && strcmp(args[0], "CTRL_CIRCUIT_SET") == 0 && strcmp(args[1], "AUX") == 0) {
+            network_msg_typ_t msg_typ;
+            if (argc >= 1 && (msg_typ = network_msg_typ_nr(args[0])) != -1) {
 
-                uint8_t const circuit = 1;  // args[1] == "AUX1"
-                uint8_t const value = atoi(args[2]) ? 1 : 0;
-                ESP_LOGI(TAG, "%s %u %u", args[0], circuit, value);
+                switch (msg_typ) {
+                    case MSG_TYP_CTRL_CIRCUIT_SET: {
+                        network_circuit_t circuit;
+                        if (argc >= 2 && (circuit = network_circuit_nr(args[1])) != -1) {
+                            uint8_t value;
+                            if (argc >=3 && sscanf(args[2], "%hhu", &value) == 1) {
+                                ESP_LOGI(TAG, "%s %u %u", args[0], circuit, value);
 
-                network_msg_ctrl_circuit_set_t circuit_set = {
-                        .circuit = circuit +1,
-                        .value = value,
-                };
-                network_msg_t msg = {
-                    .typ = MSG_TYP_CTRL_CIRCUIT_SET,
-                    .u.ctrl_circuit_set = &circuit_set,
-                };
-                datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
-                if (network_tx_msg(&msg, pkt)) {
-                    datalink_tx_queue_pkt(rs485, pkt);
+                                network_msg_ctrl_circuit_set_t circuit_set = {
+                                        .circuit = circuit,
+                                        .value = value,
+                                };
+                                network_msg_t msg = {
+                                    .typ = MSG_TYP_CTRL_CIRCUIT_SET,
+                                    .u.ctrl_circuit_set = &circuit_set,
+                                };
+                                datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
+                                if (network_tx_msg(&msg, pkt)) {
+                                    datalink_tx_queue_pkt(rs485, pkt);
+                                    err = ESP_OK;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    default:
                 }
-                char * payload;
-                assert(asprintf(&payload, "{ \"response\": { \"%s\": {\"%s\", %u } }", args[0], args[1], value));
-                ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
-                free(payload);
-                free(queued_msg.data);
             }
+            char * payload;
+            assert( asprintf(&payload, "{\"response\":{\"status\":\"%s\",\"req\":\"%s\" } }", err == ESP_OK ? "OK" : "error", queued_msg.data) );
+            ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
+            free(payload);
+            free(queued_msg.data);
         }
         {
             datalink_pkt_t pkt;

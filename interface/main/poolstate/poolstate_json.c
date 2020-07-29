@@ -142,7 +142,7 @@ cJSON_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, bool 
     cJSON * const item = cJSON_CreateObject();
     cJSON_AddItemToObject(obj, key, item);
 
-    for (uint ii = 0; ii < NETWORK_CIRCUIT_COUNT; ii++, active++) {
+    for (uint ii = 1; ii < NETWORK_CIRCUIT_COUNT; ii++, active++) {  // skip 0
         cJSON_AddBoolToObject(item, network_circuit_str(ii), *active);
     }
 }
