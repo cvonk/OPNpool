@@ -72,7 +72,7 @@ pool_task(void * ipc_void)
             }
 
             if (txOpportunity) {
-                if (1) {
+                if (0) {
                     network_msg_ctrl_circuit_set_t circuit_set = {
                             .circuit = 1 +1,
                             .value = 1,
@@ -98,7 +98,6 @@ pool_task(void * ipc_void)
 
                         rs485_handle->tx_mode(true);
                         rs485_handle->write_bytes(pkt->skb->priv.data, pkt->skb->len);
-                        rs485_handle->flush();   // wait until the hardware buffer starts transmitting the last byte
                         rs485_handle->tx_mode(false);
 
                         network_msg_t msg;
