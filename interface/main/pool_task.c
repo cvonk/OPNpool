@@ -94,7 +94,7 @@ pool_task(void * ipc_void)
                                 ESP_LOGI(TAG, "%s %u %u", args[0], circuit, value);
 
                                 network_msg_ctrl_circuit_set_t circuit_set = {
-                                        .circuit = circuit,
+                                        .circuit = circuit +1,
                                         .value = value,
                                 };
                                 network_msg_t msg = {
@@ -111,10 +111,11 @@ pool_task(void * ipc_void)
                         break;
                     }
                     default:
+                        ;
                 }
             }
             char * payload;
-            assert( asprintf(&payload, "{\"response\":{\"status\":\"%s\",\"req\":\"%s\" } }", err == ESP_OK ? "OK" : "error", queued_msg.data) );
+            assert( asprintf(&payload, "{\"response\":{\"status\":\"%s\",\"req\":\"%s\" } }", err == ESP_OK ? "OK" : "error", args[0]) );
             ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
             free(payload);
             free(queued_msg.data);
@@ -150,7 +151,6 @@ pool_task(void * ipc_void)
                     datalink_pkt_t * const pkt = rs485->dequeue(rs485);
                     if (pkt) {
                         if (CONFIG_POOL_DBG_POOLTASK) {
-                            ESP_LOGW(TAG, "%p len=%u", pkt->skb->priv.data, pkt->skb->len);
                             size_t const dbg_size = 128;
                             char dbg[dbg_size];
                             (void) skb_print(TAG, pkt->skb, dbg, dbg_size);

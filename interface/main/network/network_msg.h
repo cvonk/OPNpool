@@ -104,17 +104,16 @@ NETWORK_TYP_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 
 
 // MUST add 1 for network messages (1-based)
 #define NETWORK_CIRCUIT_MAP(XX) \
-  XX( 0, ERR)  \
-  XX( 1, SPA)  \
-  XX( 2, AUX1) \
-  XX( 3, AUX2) \
-  XX( 4, AUX3) \
-  XX( 5, FT1)  \
-  XX( 6, POOL) \
-  XX( 7, FT2)  \
-  XX( 8, FT3)  \
-  XX( 9, FT4)  \
-  XX(10, COUNT)
+  XX( 0, SPA)  \
+  XX( 1, AUX1) \
+  XX( 2, AUX2) \
+  XX( 3, AUX3) \
+  XX( 4, FT1)  \
+  XX( 5, POOL) \
+  XX( 6, FT2)  \
+  XX( 7, FT3)  \
+  XX( 8, FT4)  \
+  XX( 9, COUNT)
 
 typedef enum {
 #define XX(num, name) NETWORK_CIRCUIT_##name = num,
