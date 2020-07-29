@@ -65,5 +65,5 @@ typedef struct ipc_to_pool_msg_t {
 } ipc_to_pool_msg_t;
 
 void ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc);
-void ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, ipc_t const * const ipc);
+void ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, size_t const data_len, ipc_t const * const ipc);
 char const * ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ);

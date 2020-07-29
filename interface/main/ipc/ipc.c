@@ -58,11 +58,11 @@ ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_
  **/
 
 void
-ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, ipc_t const * const ipc)
+ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, size_t const data_len, ipc_t const * const ipc)
 {
     ipc_to_pool_msg_t msg = {
         .dataType = dataType,
-        .data = strdup(data)
+        .data = strndup(data, data_len)
     };
     assert(msg.data);
     if (xQueueSendToBack(ipc->to_pool_q, &msg, 0) != pdPASS) {
