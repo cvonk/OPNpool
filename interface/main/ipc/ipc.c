@@ -42,13 +42,31 @@ ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ)
 void
 ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc)
 {
-    toMqttMsg_t msg = {
+    ipc_to_mqtt_msg_t msg = {
         .dataType = dataType,
         .data = strdup(data)
     };
     assert(msg.data);
     if (xQueueSendToBack(ipc->to_mqtt_q, &msg, 0) != pdPASS) {
         ESP_LOGE(TAG, "to_mqtt_q full");
+        free(msg.data);
+    }
+}
+
+/**
+ * ipc_send_to_pool
+ **/
+
+void
+ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, ipc_t const * const ipc)
+{
+    ipc_to_pool_msg_t msg = {
+        .dataType = dataType,
+        .data = strdup(data)
+    };
+    assert(msg.data);
+    if (xQueueSendToBack(ipc->to_pool_q, &msg, 0) != pdPASS) {
+        ESP_LOGE(TAG, "to_pool_q full");
         free(msg.data);
     }
 }

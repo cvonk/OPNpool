@@ -92,7 +92,19 @@ menu "Pool Interface"
         help
             Print messages that cannot be decoded to serial port
 
-    config POOL_DBG_POOLSTATE
+    config POOL_DBG_POOLTASK
+        bool "Debug pool task"
+        default y
+        help
+            Print control messages to serial port
+
+    config POOL_DBG_POOLTASK_ONERROR
+        bool "Debug pool task error messages"
+        default y
+        help
+            Print messages that cannot be decoded to serial port
+
+            config POOL_DBG_POOLSTATE
         bool "Debug state changes for control messages"
         default y
         help
