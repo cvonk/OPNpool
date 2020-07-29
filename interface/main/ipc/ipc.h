@@ -21,6 +21,7 @@
 
 typedef struct ipc_t {
     QueueHandle_t to_mqtt_q;
+    QueueHandle_t to_pool_q;
     struct dev {
         char ipAddr[WIFI_DEVIPADDR_LEN];
         char name[WIFI_DEVNAME_LEN];
@@ -44,10 +45,25 @@ typedef enum {
 #undef XX
 } ipc_to_mqtt_typ_t;
 
-typedef struct toMqttMsg_t {
+typedef struct ipc_to_mqtt_msg_t {
     ipc_to_mqtt_typ_t dataType;
     char *            data;  // must be freed by recipient
-} toMqttMsg_t;
+} ipc_to_mqtt_msg_t;
+
+#define IPC_TO_POOL_TYP_MAP(XX) \
+  XX(0x00, REQ)   \
+
+typedef enum {
+#define XX(num, name) IPC_TO_POOL_TYP_##name = num,
+  IPC_TO_POOL_TYP_MAP(XX)
+#undef XX
+} ipc_to_pool_typ_t;
+
+typedef struct ipc_to_pool_msg_t {
+    ipc_to_pool_typ_t  dataType;
+    char  *            data;
+} ipc_to_pool_msg_t;
 
 void ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc);
+void ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, ipc_t const * const ipc);
 char const * ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ);

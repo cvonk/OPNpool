@@ -91,7 +91,7 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
         case MQTT_EVENT_DATA:
             if (event->topic && event->data_len == event->total_data_len) {  // quietly ignore chunked messaegs
 
-                if (strncmp("restart", event->data, event->data_len) == 0) {
+               if (strncmp("restart", event->data, event->data_len) == 0) {
 
                     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_RESTART, "{ \"response\": \"restarting\" }", ipc);
                     vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -118,6 +118,9 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
                     assert(payload_len >= 0);
                     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
                     free(payload);
+
+                } else {
+                    ipc_send_to_pool(IPC_TO_POOL_TYP_REQ, event->data, ipc);
                 }
             }
             break;
@@ -163,7 +166,7 @@ mqtt_task(void * ipc_void)
     _forwardCoredump(ipc, client);
 
 	while (1) {
-        toMqttMsg_t msg;
+        ipc_to_mqtt_msg_t msg;
 		if (xQueueReceive(ipc->to_mqtt_q, &msg, (TickType_t)(1000L / portTICK_PERIOD_MS)) == pdPASS) {
 
             char * topic;
