@@ -65,6 +65,7 @@ pool_task(void * ipc_void)
         }
     };
     rs485_handle_t const rs485 = rs485_init(&rs485_config);
+    rs485->tx_mode(false);
 
     bool txOpportunity;
     poolstate_t state;
@@ -80,7 +81,7 @@ pool_task(void * ipc_void)
             char * args[3];
             uint8_t argc = _parse_args(queued_msg.data, args, ARRAY_SIZE(args));
 
-            if (argc >= 3 && strcmp(args[0], "CTRL_CIRCUIT_SET") == 0 && strcmp(args[1], "AUX")) {
+            if (argc >= 3 && strcmp(args[0], "CTRL_CIRCUIT_SET") == 0 && strcmp(args[1], "AUX") == 0) {
 
                 uint8_t const circuit = 1;  // args[1] == "AUX1"
                 uint8_t const value = atoi(args[2]) ? 1 : 0;
@@ -98,9 +99,6 @@ pool_task(void * ipc_void)
                 if (network_tx_msg(&msg, pkt)) {
                     datalink_tx_queue_pkt(rs485, pkt);
                 }
-                free(pkt->skb);
-                free(pkt);
-
                 char * payload;
                 assert(asprintf(&payload, "{ \"response\": { \"%s\": {\"%u\", %u } }", args[0], circuit, value));
                 ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
@@ -139,6 +137,7 @@ pool_task(void * ipc_void)
                     datalink_pkt_t * const pkt = rs485->dequeue(rs485);
                     if (pkt) {
                         if (CONFIG_POOL_DBG_POOLTASK) {
+                            ESP_LOGW(TAG, "%p len=%u", pkt->skb->priv.data, pkt->skb->len);
                             size_t const dbg_size = 128;
                             char dbg[dbg_size];
                             (void) skb_print(TAG, pkt->skb, dbg, dbg_size);

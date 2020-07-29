@@ -120,7 +120,7 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
                     free(payload);
 
                 } else {
-                    ipc_send_to_pool(IPC_TO_POOL_TYP_REQ, event->data, ipc);
+                    ipc_send_to_pool(IPC_TO_POOL_TYP_REQ, event->data, event->data_len, ipc);
                 }
             }
             break;

@@ -104,7 +104,7 @@ menu "Pool Interface"
         help
             Print messages that cannot be decoded to serial port
 
-            config POOL_DBG_POOLSTATE
+    config POOL_DBG_POOLSTATE
         bool "Debug state changes for control messages"
         default y
         help
