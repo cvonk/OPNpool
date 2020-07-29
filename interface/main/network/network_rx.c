@@ -263,6 +263,11 @@ network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool
 {
 	name_reset_idx();
 
+    datalink_addrgroup_t const dst = datalink_groupaddr(pkt->dst);
+    if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst == DATALINK_ADDRGROUP_X09) ||
+        (pkt->prot == DATALINK_PROT_IC && dst != DATALINK_ADDRGROUP_ALL && dst != DATALINK_ADDRGROUP_CHLOR)) {
+        return false;  // silently ignore
+    }
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
             _decode_msg_a5_ctrl(pkt, msg);

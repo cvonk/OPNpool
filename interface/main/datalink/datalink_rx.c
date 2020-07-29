@@ -18,12 +18,14 @@
 
 static char const * const TAG = "datalink_rx";
 
-static struct proto_info_t {
+typedef struct proto_info_t {
 	uint8_t const * const preamble;
 	uint const len;
     datalink_prot_t const prot;
 	uint idx;
-} _proto_infos[] = {
+} proto_info_t;
+
+static proto_info_t _proto_descr[] = {
 	{
         .preamble = datalink_preamble_ic,
         .len = sizeof(datalink_preamble_ic),
@@ -36,55 +38,64 @@ static struct proto_info_t {
     },
 };
 
-typedef enum DATALINK_RESULT_t {
-    DATALINK_RESULT_DONE,
-    DATALINK_RESULT_INCOMPLETE,
-    DATALINK_RESULT_ERROR,
-} DATALINK_RESULT_t;
+typedef enum state_t {
+    STATE_FIND_PREAMBLE,
+    STATE_READ_HEAD,
+    STATE_READ_DATA,
+    STATE_READ_TAIL,
+    STATE_DONE,
+} state_t;
+
+typedef enum state_result_t {
+    STATE_RESULT_DONE,
+    STATE_RESULT_ERROR,
+} state_result_t;
 
 static void
 _preamble_reset()
 {
-	for (uint ii = 0; ii < ARRAY_SIZE(_proto_infos); ii++) {
-		_proto_infos[ii].idx = 0;
+    proto_info_t * info = _proto_descr;
+	for (uint ii = 0; ii < ARRAY_SIZE(_proto_descr); ii++, info++) {
+		info->idx = 0;
 	}
 }
 
 static bool
-_preamble_is_done(struct proto_info_t * const pi, uint8_t const b, bool * found)
+_preamble_complete(struct proto_info_t * const pi, uint8_t const b, bool * part_of_preamble)
 {
 	if (b == pi->preamble[pi->idx]) {
-		*found = true;
+		*part_of_preamble = true;
 		pi->idx++;
 		if (pi->idx == pi->len) {
-			_preamble_reset();
 			return true;
 		}
 	} else {
-		*found = false;
+		*part_of_preamble = false;
 	}
 	return false;
 }
 
-static DATALINK_RESULT_t
+static state_result_t
 _find_preamble(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
     uint len = 0;
     uint buf_size = 40;
     char dbg[buf_size];
 
-	while (rs485->available()) {
-		uint8_t byt = rs485->read();
+    uint8_t byt;
+
+    while (rs485->read_bytes(&byt, 1) == 1) {
 		if (CONFIG_POOL_DBG_DATALINK) {
             len += snprintf(dbg + len, buf_size - len, " %02X", byt);
 		}
-		bool found = false;  // could be the next byte of a preamble
-		for (uint pp = 0; !found && pp < ARRAY_SIZE(_proto_infos); pp++) {
-			if (_preamble_is_done(&_proto_infos[pp], byt, &found)) {
-				pkt->prot = _proto_infos[pp].prot;
+		bool part_of_preamble = false;
+        proto_info_t * info = _proto_descr;
+		for (uint ii = 0; !part_of_preamble && ii < ARRAY_SIZE(_proto_descr); ii++, info++) {
+			if (_preamble_complete(info, byt, &part_of_preamble)) {
 				if (CONFIG_POOL_DBG_DATALINK) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
+				pkt->prot = info->prot;
                 uint8_t * preamble = NULL;
                 switch(pkt->prot) {
                     case DATALINK_PROT_A5_CTRL:
@@ -101,24 +112,26 @@ _find_preamble(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                         pkt->priv.tail_len = sizeof(datalink_tail_ic_t) ;
                         break;
                 }
-                for (uint ii = 0; ii < _proto_infos[pp].len; ii++) {
-                    preamble[ii] = _proto_infos[pp].preamble[ii];
+                for (uint jj = 0; jj < info->len; jj++) {
+                    preamble[jj] = info->preamble[jj];
                 }
-				return DATALINK_RESULT_DONE;
+    			_preamble_reset();
+				return STATE_RESULT_DONE;
 			}
 		}
-		if (!found) {  // or, could be the beginning of a preamble
+		if (!part_of_preamble) {  // could be the beginning of the next
 			_preamble_reset();
-			for (uint pp = 0; pp < ARRAY_SIZE(_proto_infos); pp++) {
-				(void)_preamble_is_done(&_proto_infos[pp], byt, &found);
+            proto_info_t * info = _proto_descr;
+			for (uint ii = 0; ii < ARRAY_SIZE(_proto_descr); ii++, info++) {
+				(void)_preamble_complete(info, byt, &part_of_preamble);
 			}
 		}
 	}
-	return DATALINK_RESULT_INCOMPLETE;
+	return STATE_RESULT_ERROR;
 }
 
-static DATALINK_RESULT_t
-_read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
+static state_result_t
+_read_head(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
@@ -130,7 +143,7 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 					ESP_LOGI(TAG, " %02X %02X %02X %02X %02X (header)", hdr->ver, hdr->dst, hdr->src, hdr->typ, hdr->len);
 				}
 				if (hdr->len > DATALINK_MAX_DATA_SIZE) {
-					return DATALINK_RESULT_ERROR;  // pkt length exceeds what we have planned for
+					return STATE_RESULT_ERROR;  // pkt length exceeds what we have planned for
 				}
     			if ( (datalink_groupaddr(hdr->src) == DATALINK_ADDRGROUP_PUMP) || (datalink_groupaddr(hdr->dst) == DATALINK_ADDRGROUP_PUMP) ) {
                     pkt->prot = DATALINK_PROT_A5_PUMP;
@@ -139,7 +152,7 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                 pkt->src = hdr->src;
                 pkt->dst = hdr->dst;
                 pkt->data_len = hdr->len;
-				return DATALINK_RESULT_DONE;
+				return STATE_RESULT_DONE;
 			}
 			break;
         }
@@ -154,14 +167,14 @@ _read_hdr(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                 pkt->src = 0;
                 pkt->dst = hdr->dst;
                 pkt->data_len = network_ic_len(hdr->typ);
-				return DATALINK_RESULT_DONE;
+				return STATE_RESULT_DONE;
 			}
         }
 	}
-	return DATALINK_RESULT_INCOMPLETE;
+	return STATE_RESULT_ERROR;
 }
 
-static DATALINK_RESULT_t
+static state_result_t
 _read_data(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
     uint len = 0;
@@ -176,13 +189,13 @@ _read_data(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 			}
             ESP_LOGI(TAG, "%s (data)", buf);
 		}
-		return DATALINK_RESULT_DONE;
+		return STATE_RESULT_DONE;
 	}
-	return DATALINK_RESULT_INCOMPLETE;
+	return STATE_RESULT_ERROR;
 }
 
-static DATALINK_RESULT_t
-_read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
+static state_result_t
+_read_tail(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
@@ -194,7 +207,7 @@ _read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %03X (checksum)", (uint16_t)crc[0] << 8 | crc[1]);
 				}
-				return DATALINK_RESULT_DONE;
+				return STATE_RESULT_DONE;
 			}
 			break;
         }
@@ -205,12 +218,12 @@ _read_crc(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 				if (CONFIG_POOL_DBG_DATALINK) {
 					ESP_LOGI(TAG, " %02X (checksum)", crc[0]);
 				}
-				return DATALINK_RESULT_DONE;
+				return STATE_RESULT_DONE;
 			}
 			break;
         }
 	}
-	return DATALINK_RESULT_INCOMPLETE;
+	return STATE_RESULT_ERROR;
 }
 
 static bool
@@ -236,42 +249,18 @@ _crc_correct(datalink_pkt_t const * const pkt, uint16_t * const rx_crc, uint16_t
     return *calc_crc == *rx_crc;
 }
 
-uint32_t _millis() {
-	return (uint32_t) (clock() * 1000 / CLOCKS_PER_SEC);
-}
-
-typedef enum STATE_t {
-    STATE_FIND_PREAMBLE,
-    STATE_READ_HEAD,
-    STATE_READ_DATA,
-    STATE_READ_TAIL,
-    STATE_DONE,
-} STATE_t;
-
-static STATE_t _state = STATE_FIND_PREAMBLE;
-
-void
-_change_state(datalink_pkt_t * const pkt, STATE_t const state)
+static state_result_t
+_done(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
-    _state = state;
-
-    switch (state) {
-		case STATE_FIND_PREAMBLE:
-            skb_reset(pkt->skb);
-            pkt->priv.head = (datalink_head_t *) skb_put(pkt->skb, DATALINK_MAX_HEAD_SIZE);
-            break;
-		case STATE_READ_HEAD:
-            skb_call(pkt->skb, DATALINK_MAX_HEAD_SIZE - pkt->priv.head_len);  // release unused bytes
-            break;
-		case STATE_READ_DATA:
-            pkt->data = (datalink_data_t *) skb_put(pkt->skb, pkt->data_len);
-            break;
-		case STATE_READ_TAIL:
-            pkt->priv.tail = (datalink_tail_t *) skb_put(pkt->skb, pkt->priv.tail_len);
-            break;
-		case STATE_DONE:
-            break;
+    uint16_t rx_crc, calc_crc;
+    pkt->priv.crc_ok = _crc_correct(pkt, &rx_crc, &calc_crc);
+    if (pkt->priv.crc_ok) {
+        return STATE_RESULT_DONE;
     }
+    if (CONFIG_POOL_DBG_DATALINK_ONERROR) {
+        ESP_LOGW(TAG, "checksum error (rx=0x%03x calc=0x%03x)", rx_crc, calc_crc);
+    }
+    return STATE_RESULT_ERROR;
 }
 
 /**
@@ -281,6 +270,7 @@ _change_state(datalink_pkt_t * const pkt, STATE_t const state)
  * It relies on data from the network layer, for the correct length of the data pkt.
  */
 
+#if 0
 bool
 datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
@@ -296,25 +286,25 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 		_change_state(pkt, STATE_FIND_PREAMBLE);
 	}
 
-	DATALINK_RESULT_t result = DATALINK_RESULT_ERROR;  // init to please compiler
+	state_result_t result = STATE_RESULT_ERROR;  // init to please compiler
 	switch (_state) {
 		case STATE_FIND_PREAMBLE:
             result = _find_preamble(rs485, pkt);
             break;
 		case STATE_READ_HEAD:
-            result = _read_hdr(rs485, pkt);
+            result = _read_head(rs485, pkt);
             break;
 		case STATE_READ_DATA:
             result = _read_data(rs485, pkt);
             break;
 		case STATE_READ_TAIL:
-            result = _read_crc(rs485, pkt);
+            result = _read_tail(rs485, pkt);
             break;
 		case STATE_DONE:
             break;
 	}
 	switch (result) {
-		case DATALINK_RESULT_DONE:
+		case STATE_RESULT_DONE:
 			switch (_state) {
 				case STATE_FIND_PREAMBLE:
 					start = _millis();
@@ -333,9 +323,9 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 					break;
 			}
 			break;
-		case DATALINK_RESULT_INCOMPLETE:
+		case STATE_RESULT_ERROR:
 			break;
-		case DATALINK_RESULT_ERROR:
+		case STATE_RESULT_ERROR:
 			_change_state(pkt, STATE_FIND_PREAMBLE);
 			break;
 	}
@@ -347,8 +337,8 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
         datalink_addrgroup_t const dst_a5 = datalink_groupaddr(pkt->priv.head->a5.hdr.dst);
         datalink_addrgroup_t const dst_ic = datalink_groupaddr(pkt->priv.head->ic.hdr.dst);
 
-        if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst_a5 == DATALINK_ADDRGROUP_X09) ||
-            (pkt->prot == DATALINK_PROT_IC && dst_ic != DATALINK_ADDRGROUP_ALL && dst_ic != DATALINK_ADDRGROUP_CHLOR)) {
+        if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst_a5 == STATE_ADDRGROUP_X09) ||
+            (pkt->prot == DATALINK_PROT_IC && dst_ic != STATE_ADDRGROUP_ALL && dst_ic != STATE_ADDRGROUP_CHLOR)) {
                return false;  // silently ignore
         }
 
@@ -360,4 +350,59 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
         return crc_correct;
 	}
 	return false;
+}
+#endif
+
+typedef state_result_t (* state_fnc_t)(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
+
+
+typedef struct state_transition_t {
+    state_t state;
+    state_fnc_t fnc;
+    state_t new_ok_state;
+    state_t new_err_state;
+} state_transition_t;
+
+static state_transition_t state_transitions[] = {
+    { STATE_FIND_PREAMBLE, _find_preamble, STATE_READ_HEAD,     STATE_FIND_PREAMBLE },
+    { STATE_READ_HEAD,     _read_head,     STATE_READ_DATA,     STATE_FIND_PREAMBLE },
+    { STATE_READ_DATA,     _read_data,     STATE_READ_TAIL,     STATE_FIND_PREAMBLE },
+    { STATE_READ_TAIL,     _read_tail,     STATE_DONE,          STATE_FIND_PREAMBLE },
+    { STATE_DONE,          _done,          STATE_FIND_PREAMBLE, STATE_FIND_PREAMBLE },
+};
+
+bool
+datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
+{
+    state_t state = STATE_FIND_PREAMBLE;
+    pkt->skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + DATALINK_MAX_DATA_SIZE + DATALINK_MAX_TAIL_SIZE);
+
+    while (1) {
+        state_transition_t * transition = state_transitions;
+        for (uint ii = 0; ii < ARRAY_SIZE(state_transitions); ii++, transition++) {
+            if (state == transition->state) {
+                bool const ok = transition->fnc(rs485, pkt) == STATE_RESULT_DONE;
+                state_t const new_state = ok ? transition->new_ok_state : transition->new_err_state;
+                switch (new_state) {
+                    case STATE_FIND_PREAMBLE:
+                        skb_reset(pkt->skb);
+                        pkt->priv.head = (datalink_head_t *) skb_put(pkt->skb, DATALINK_MAX_HEAD_SIZE);
+                        break;
+                    case STATE_READ_HEAD:
+                        skb_call(pkt->skb, DATALINK_MAX_HEAD_SIZE - pkt->priv.head_len);  // release unused bytes
+                        break;
+                    case STATE_READ_DATA:
+                        pkt->data = (datalink_data_t *) skb_put(pkt->skb, pkt->data_len);
+                        break;
+                    case STATE_READ_TAIL:
+                        pkt->priv.tail = (datalink_tail_t *) skb_put(pkt->skb, pkt->priv.tail_len);
+                        break;
+                    case STATE_DONE:
+                        return pkt->priv.crc_ok;
+                        break;
+                }
+                state = new_state;
+            }
+        }
+    }
 }

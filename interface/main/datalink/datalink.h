@@ -132,6 +132,7 @@ typedef struct datalink_pkt_t {
         size_t             tail_len;
         datalink_head_t *  head;
         datalink_tail_t *  tail;
+        bool               crc_ok;
     } priv;
 } datalink_pkt_t;
 
