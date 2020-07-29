@@ -14,6 +14,7 @@
 #include "../rs485/rs485.h"
 #include "skb/skb.h"
 #include "datalink.h"
+#include "datalink_pkt.h"
 
 static char const * const TAG = "datalink_tx";
 
@@ -57,7 +58,7 @@ _enter_a5_tail(datalink_tail_a5_t * const tail, uint8_t const * const start, uin
 }
 
 void
-datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt)
+datalink_tx_queue_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt)
 {
     skb_handle_t const skb = pkt->skb;
 
@@ -90,5 +91,5 @@ datalink_tx_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt)
         (void) skb_print(TAG, skb, dbg, dbg_size);
         ESP_LOGI(TAG, "%s: { %s}", datalink_prot_str(pkt->prot), dbg);
     }
-    rs485_handle->queue(rs485_handle, skb);
+    rs485_handle->queue(rs485_handle, pkt);
 }

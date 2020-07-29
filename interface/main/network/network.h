@@ -2,6 +2,8 @@
 #include <esp_system.h>
 
 #include "../datalink/datalink.h"
+#include "../datalink/datalink_pkt.h"
+
 #include "network_msg.h"
 
 /* network.c */

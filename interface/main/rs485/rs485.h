@@ -2,6 +2,7 @@
 #include <driver/uart.h>
 
 #include "../ipc/ipc.h"
+#include "../datalink/datalink_pkt.h"
 
 typedef struct rs485_config_t {
     int rx_pin;
@@ -15,17 +16,15 @@ typedef struct rs485_instance_t * rs485_handle_t;
 
 typedef int (* rs485_available_fnc_t)(void);
 typedef int (* rs485_read_bytes_fnc_t)(uint8_t * dst, uint32_t len);
-typedef int (* rs485_read_fnc_t)(void);
 typedef int (* rs485_write_bytes_fnc_t)(uint8_t * src, size_t len);
 typedef int (* rs485_write_fnc_t)(uint8_t src);
 typedef void (* rs485_flush_fnc_t)(void);
-typedef void (* rs485_queue_fnc_t)(rs485_handle_t const handle, skb_handle_t const txb);
-typedef skb_handle_t (* rs485_dequeue_fnc_t)(rs485_handle_t const handle);
+typedef void (* rs485_queue_fnc_t)(rs485_handle_t const handle, datalink_pkt_t * const pkt);
+typedef datalink_pkt_t * (* rs485_dequeue_fnc_t)(rs485_handle_t const handle);
 
 typedef struct rs485_instance_t {
     rs485_available_fnc_t available;
     rs485_read_bytes_fnc_t read_bytes;
-    rs485_read_fnc_t read;
     rs485_write_bytes_fnc_t write_bytes;
     rs485_write_fnc_t write;
     rs485_flush_fnc_t flush;
@@ -38,6 +37,11 @@ typedef enum RS485_DIR_t {
     RS485_DIR_rx = 0,
     RS485_DIR_tx = 1
 } RS485_DIR_t;
+
+typedef struct rs485_q_msg_t {
+    datalink_pkt_t * pkt;
+} rs485_q_msg_t;
+
 
 /* rs485.c */
 rs485_handle_t rs485_init(rs485_config_t const * const cfg);

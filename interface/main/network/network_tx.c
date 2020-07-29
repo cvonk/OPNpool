@@ -12,6 +12,7 @@
 #include <esp_log.h>
 
 #include "../datalink/datalink.h"
+#include "../datalink/datalink_pkt.h"
 #include "../utils/utils.h"
 #include "../skb/skb.h"
 #include "network.h"
@@ -74,7 +75,7 @@ network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, u
     msg->circuit = circuit + 1;
     msg->value = value;
     network_tx_skb(rs485_handle, txb, NETWORK_TYP_CTRL_CIRCUIT_SET);
-    //datalink_tx_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRCUIT_SET);  // will free when done
+    //datalink_tx_queue_pkt(rs485_handle, txb, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRCUIT_SET);  // will free when done
 }
 
 

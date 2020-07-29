@@ -19,6 +19,7 @@
 #include "skb/skb.h"
 #include "rs485/rs485.h"
 #include "datalink/datalink.h"
+#include "datalink/datalink_pkt.h"
 #include "network/network.h"
 #include "poolstate/poolstate.h"
 #include "ipc/ipc.h"
@@ -51,62 +52,65 @@ pool_task(void * ipc_void)
     };
     rs485_handle_t rs485_handle = rs485_init(&rs485_config);
 
-    datalink_pkt_t rx_pkt;
-    network_msg_t rx_msg;
     bool txOpportunity;
     poolstate_t state;
     size_t json_size = 1024;
     char json[json_size];
 
     while (1) {
-        if (datalink_rx_pkt(rs485_handle, &rx_pkt)) {
-            //ESP_LOGI(TAG, "received datalink pkt");
-
-            if (network_rx_msg(&rx_pkt, &rx_msg, &txOpportunity)) {
-                //ESP_LOGI(TAG, "received network msg");
-
-                if (poolstate_rx_update(&rx_msg, &state, ipc)) {
-                    //ESP_LOGI(TAG, "poolstate updated");
-
-                    poolstate_to_json(&state, json, json_size);
-                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
-                }
-            }
-            if (txOpportunity) {
-
-                network_msg_ctrl_circuit_set_t circuit_set = {
-                        .circuit = 1 +1,
-                        .value = 1,
-                };
-                network_msg_t tx_msg = {
-                    .typ = MSG_TYP_CTRL_CIRCUIT_SET,
-                    .u.ctrl_circuit_set = &circuit_set,
-                };
-                datalink_pkt_t tx_pkt;
-                if (network_tx_msg(&tx_msg, &tx_pkt)) {
-                    datalink_tx_pkt(rs485_handle, &tx_pkt);
-                }
-
-                skb_handle_t const txb = rs485_handle->dequeue(rs485_handle);
-                if (txb) {
-                    ESP_LOGW(TAG, "TX should happen here");
-
-// 2BD do the transmit
-                    size_t const dbg_size = 128;
-                    char dbg[dbg_size];
-                    (void) skb_print(TAG, txb, dbg, dbg_size);
-                    ESP_LOGI(TAG, "tx{ %s}", dbg);
-
-                    if (network_rx_msg(&tx_pkt, &rx_msg, &txOpportunity)) {
-                        ESP_LOGI(TAG, "FEEDBACK received network msg");
-                        if (poolstate_rx_update(&rx_msg, &state, ipc)) {
-                            ESP_LOGI(TAG, "FEEDBACK poolstate updated");
-                            poolstate_to_json(&state, json, json_size);
-                            ESP_LOGI(TAG, "FEEDBACK %s", json);
-                            ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
-                        }
+        {
+            datalink_pkt_t pkt;
+            network_msg_t msg;
+            if (datalink_rx_pkt(rs485_handle, &pkt)) {
+                if (network_rx_msg(&pkt, &msg, &txOpportunity)) {
+                    if (poolstate_rx_update(&msg, &state, ipc)) {
+                        poolstate_to_json(&state, json, json_size);
+                        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
                     }
-                    free(txb);
+                }
+                free(pkt.skb);
+            }
+
+            if (txOpportunity) {
+                if (1) {
+                    network_msg_ctrl_circuit_set_t circuit_set = {
+                            .circuit = 1 +1,
+                            .value = 1,
+                    };
+                    network_msg_t msg = {
+                        .typ = MSG_TYP_CTRL_CIRCUIT_SET,
+                        .u.ctrl_circuit_set = &circuit_set,
+                    };
+                    datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
+                    if (network_tx_msg(&msg, pkt)) {
+                        datalink_tx_queue_pkt(rs485_handle, pkt);
+                    }
+                }
+                {
+                    datalink_pkt_t * const pkt = rs485_handle->dequeue(rs485_handle);
+                    if (pkt) {
+                        ESP_LOGW(TAG, "TX should happen here");
+
+    // 2BD do the transmit
+
+                        size_t const dbg_size = 128;
+                        char dbg[dbg_size];
+                        (void) skb_print(TAG, pkt->skb, dbg, dbg_size);
+                        ESP_LOGI(TAG, "tx { %s}", dbg);
+
+                        network_msg_t msg;
+                        if (network_rx_msg(pkt, &msg, &txOpportunity)) {
+                            ESP_LOGI(TAG, "FEEDBACK received network msg");
+                            if (poolstate_rx_update(&msg, &state, ipc)) {
+                                ESP_LOGI(TAG, "FEEDBACK poolstate updated");
+                                poolstate_to_json(&state, json, json_size);
+                                ESP_LOGI(TAG, "FEEDBACK %s", json);
+                                ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
+                            }
+                        }
+                        free(pkt->skb);
+                        free(pkt);
+                    }
                 }
             }
         }
