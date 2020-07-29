@@ -100,7 +100,7 @@ pool_task(void * ipc_void)
                     datalink_tx_queue_pkt(rs485, pkt);
                 }
                 char * payload;
-                assert(asprintf(&payload, "{ \"response\": { \"%s\": {\"%u\", %u } }", args[0], circuit, value));
+                assert(asprintf(&payload, "{ \"response\": { \"%s\": {\"%s\", %u } }", args[0], args[1], value));
                 ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
                 free(payload);
                 free(queued_msg.data);
