@@ -93,6 +93,13 @@ network_circuit_str(network_circuit_t const circuit)
     return ELEM_AT(_network_circuits, circuit, hex8_str(circuit));
 }
 
+int
+network_circuit_nr(char const * const circuit_str)
+{
+    ELEM_POS(_network_circuits, circuit_str);
+}
+
+
 /**
  * network_pump_mode_t
  **/
@@ -125,15 +132,10 @@ network_heat_src_str(network_heat_src_t const heat_src)
     return ELEM_AT(_network_heat_srcs, heat_src, hex8_str(heat_src));
 }
 
-uint
-network_heat_src_nr(char const * const heat_src)
+int
+network_heat_src_nr(char const * const heat_src_str)
 {
-	for (uint_least8_t ii = 0; ii < ARRAY_SIZE(_network_heat_srcs); ii++) {
-		if (strcmp(heat_src, _network_heat_srcs[ii]) == 0) {
-			return ii;
-		}
-	}
-	return 0;
+    ELEM_POS(_network_heat_srcs, heat_src_str);
 }
 
 /**
@@ -227,6 +229,13 @@ static const char * const _network_msg_typs[] = {
 const char *
 network_msg_typ_str(network_msg_typ_t const typ)
 {
-  return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
+    return ELEM_AT(_network_msg_typs, typ, hex8_str(typ));
 }
+
+int
+network_msg_typ_nr(char const * const msg_typ_str)
+{
+    ELEM_POS(_network_msg_typs, msg_typ_str);
+}
+
 
