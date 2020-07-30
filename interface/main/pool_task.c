@@ -60,12 +60,11 @@ _parse_topic(char * data, char * args[], uint const args_len) {
 }
 
 static datalink_pkt_t *
-_dispatch_circuit_set(char const * const dev_name, char const * const message)
+_dispatch_circuit_set(char const * const dev_name, char const * const value_str)
 {
-    ESP_LOGW(TAG, "%s", __func__);
     network_circuit_t circuit;
     if ((circuit = network_circuit_nr(dev_name)) != -1) {
-        uint8_t const value = strcmp(message, "ON") == 0;
+        uint8_t const value = strcmp(value_str, "ON") == 0;
 
         network_msg_ctrl_circuit_set_t circuit_set = {
                 .circuit = circuit +1,
@@ -79,12 +78,15 @@ _dispatch_circuit_set(char const * const dev_name, char const * const message)
         if (network_tx_msg(&msg, pkt)) {
             ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
             return pkt;
+        } else {
+            free(pkt);
         }
     }
+    ESP_LOGE(TAG, "circuit err (%s)", dev_name);
     return NULL;
 }
 
-typedef datalink_pkt_t * (* dispatch_fnc_t)(char const * const topic, char const * const message);
+typedef datalink_pkt_t * (* dispatch_fnc_t)(char const * const dev_name, char const * const value_str);
 
 typedef struct dispatch_t {
     char const * const  dev_type;
@@ -97,18 +99,18 @@ static dispatch_t _dispatches[] = {
 };
 
 static datalink_pkt_t *
-_dispatch(char * const topic, char const * const message)
+_dispatch(char * const topic, char const * const value_str)
 {
     char * args[5];
     uint8_t argc = _parse_topic(topic, args, ARRAY_SIZE(args));
     if (argc >= 5) {
         char const * const dev_type = args[1];
-        char const * const dev_name = args[2];
+        char const * const dev_name = args[3];
 
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
             if (strcmp(dev_type, dispatch->dev_type) == 0) {
-                return dispatch->fnc(dev_name, message);
+                return dispatch->fnc(dev_name, value_str);
             }
         }
     }
@@ -189,52 +191,13 @@ pool_task(void * ipc_void)
 
             datalink_pkt_t const * const pkt = _dispatch(queued_msg.topic, queued_msg.data);
             if (pkt) {
-                datalink_tx_queue_pkt(rs485, pkt);
+                datalink_tx_queue_pkt(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
             }
-            //free(queued_msg.data);
-#if 0
-            char * args[3];
-            uint8_t argc = _parse_args(queued_msg.data, args, ARRAY_SIZE(args));
-
-            network_msg_typ_t msg_typ;
-            if (argc >= 1 && (msg_typ = network_msg_typ_nr(args[0])) != -1) {
-
-                switch (msg_typ) {
-                    case MSG_TYP_CTRL_CIRCUIT_SET: {
-                        network_circuit_t circuit;
-                        if (argc >= 2 && (circuit = network_circuit_nr(args[1])) != -1) {
-                            uint8_t value;
-                            if (argc >=3 && sscanf(args[2], "%hhu", &value) == 1) {
-                                ESP_LOGI(TAG, "%s %u %u", args[0], circuit, value);
-
-                                network_msg_ctrl_circuit_set_t circuit_set = {
-                                        .circuit = circuit +1,
-                                        .value = value,
-                                };
-                                network_msg_t msg = {
-                                    .typ = MSG_TYP_CTRL_CIRCUIT_SET,
-                                    .u.ctrl_circuit_set = &circuit_set,
-                                };
-                                datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
-                                if (network_tx_msg(&msg, pkt)) {
-                                    datalink_tx_queue_pkt(rs485, pkt);
-                                    err = ESP_OK;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    default:
-                        ;
-                }
-            }
-#endif
             char * payload;
             assert( asprintf(&payload, "{\"response\":{\"status\":\"%s\",\"req\":\"%s\" } }", pkt ? "OK" : "error", queued_msg.data) );
             ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
             free(payload);
             free(queued_msg.data);
-            free((void *) pkt);
         }
         {
             datalink_pkt_t pkt;
@@ -269,6 +232,7 @@ pool_task(void * ipc_void)
                         if (CONFIG_POOL_DBG_POOLTASK) {
                             size_t const dbg_size = 128;
                             char dbg[dbg_size];
+                            assert(pkt->skb);
                             (void) skb_print(TAG, pkt->skb, dbg, dbg_size);
                             ESP_LOGI(TAG, "tx { %s}", dbg);
                         }
