@@ -15,7 +15,7 @@
 # define ELEM_POS(a, s) \
     do { \
       for (uint_least8_t ii = 0; ii < ARRAY_SIZE(a); ii++) { \
-	    if (strcmp(s, a[ii]) == 0) { \
+	    if (stricmp(s, a[ii]) == 0) { \
 	      return ii; \
 	    } \
       } \

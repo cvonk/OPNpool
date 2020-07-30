@@ -126,7 +126,7 @@ app_main()
     xTaskCreate(&factory_reset_task, "factory_reset_task", 4096, NULL, 5, NULL);
 
     static ipc_t ipc = {};
-    ipc.to_mqtt_q = xQueueCreate(2, sizeof(ipc_to_mqtt_msg_t));
+    ipc.to_mqtt_q = xQueueCreate(8, sizeof(ipc_to_mqtt_msg_t));
     ipc.to_pool_q = xQueueCreate(2, sizeof(ipc_to_pool_msg_t));
     assert(ipc.to_mqtt_q && ipc.to_pool_q);
 

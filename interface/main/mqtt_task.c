@@ -32,6 +32,7 @@ typedef enum {
 	MQTT_EVENT_CONNECTED_BIT = BIT0
 } mqttEvent_t;
 
+// 2BD: combine with dispatch
 static struct {
     char * ctrl;
     char * ctrlGroup;
@@ -70,8 +71,52 @@ _forwardCoredump(ipc_t * ipc, esp_mqtt_client_handle_t const client)
     free(priv.topic);
 }
 
+static void
+_dispatch_restart(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
+{
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_RESTART, "{ \"response\": \"restarting\" }", ipc);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    esp_restart();
+}
+
+static void
+_dispatch_who(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
+{
+    esp_partition_t const * const running_part = esp_ota_get_running_partition();
+    esp_app_desc_t running_app_info;
+    ESP_ERROR_CHECK(esp_ota_get_partition_description(running_part, &running_app_info));
+
+    wifi_ap_record_t ap_info;
+    ESP_ERROR_CHECK(esp_wifi_sta_get_ap_info(&ap_info));
+
+    char * payload;
+    int const payload_len = asprintf(&payload,
+        "{ \"name\": \"%s\", \"firmware\": { \"version\": \"%s.%s\", \"date\": \"%s %s\" }, \"wifi\": { \"connect\": %u, \"address\": \"%s\", \"SSID\": \"%s\", \"RSSI\": %d }, \"mqtt\": { \"connect\": %u }, \"mem\": { \"heap\": %u } }",
+        ipc->dev.name,
+        running_app_info.project_name, running_app_info.version,
+        running_app_info.date, running_app_info.time,
+        ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
+        ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT)
+    );
+    assert(payload_len >= 0);
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
+    free(payload);
+}
+
+typedef void (* mqtt_dispatch_fnc_t)(esp_mqtt_event_handle_t event, ipc_t const * const ipc);
+
+typedef struct mqtt_dispatch_t {
+    char * message;
+    mqtt_dispatch_fnc_t fnc;
+} mqtt_dispatch_t;
+
+static mqtt_dispatch_t _mqtt_dispatches[] = {
+    {"who", _dispatch_who},
+    {"restart", _dispatch_restart},
+};
+
 static esp_err_t
-_mqttEventHandler(esp_mqtt_event_handle_t event) {
+_mqtt_event_cb(esp_mqtt_event_handle_t event) {
 
     ipc_t * const ipc = event->user_context;
 
@@ -91,36 +136,19 @@ _mqttEventHandler(esp_mqtt_event_handle_t event) {
         case MQTT_EVENT_DATA:
             if (event->topic && event->data_len == event->total_data_len) {  // quietly ignore chunked messaegs
 
-               if (strncmp("restart", event->data, event->data_len) == 0) {
+                bool handled = false;
+                if (strncmp(_topic.ctrl, event->topic, event->topic_len) == 0 ||
+                    strncmp(_topic.ctrlGroup, event->topic, event->topic_len) == 0) {
 
-                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_RESTART, "{ \"response\": \"restarting\" }", ipc);
-                    vTaskDelay(1000 / portTICK_PERIOD_MS);
-                    esp_restart();
-
-                } else if (strncmp("who", event->data, event->data_len) == 0) {
-
-                    esp_partition_t const * const running_part = esp_ota_get_running_partition();
-                    esp_app_desc_t running_app_info;
-                    ESP_ERROR_CHECK(esp_ota_get_partition_description(running_part, &running_app_info));
-
-                    wifi_ap_record_t ap_info;
-                    ESP_ERROR_CHECK(esp_wifi_sta_get_ap_info(&ap_info));
-
-                    char * payload;
-                    int const payload_len = asprintf(&payload,
-                        "{ \"name\": \"%s\", \"firmware\": { \"version\": \"%s.%s\", \"date\": \"%s %s\" }, \"wifi\": { \"connect\": %u, \"address\": \"%s\", \"SSID\": \"%s\", \"RSSI\": %d }, \"mqtt\": { \"connect\": %u }, \"mem\": { \"heap\": %u } }",
-                        ipc->dev.name,
-                        running_app_info.project_name, running_app_info.version,
-                        running_app_info.date, running_app_info.time,
-                        ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
-                        ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT)
-                    );
-                    assert(payload_len >= 0);
-                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
-                    free(payload);
-
-                } else {
-                    ipc_send_to_pool(IPC_TO_POOL_TYP_REQ, event->data, event->data_len, ipc);
+                    mqtt_dispatch_t const * handler = _mqtt_dispatches;
+                    for (uint ii = 0; ii < ARRAY_SIZE(_mqtt_dispatches); ii++, handler++) {
+                        handler->fnc(event, ipc);
+                        handled = true;
+                        break;
+                    }
+                }
+                if (!handled) {
+                    ipc_send_to_pool(IPC_TO_POOL_TYP_REQ, event->topic, event->topic_len, event->data, event->data_len, ipc);
                 }
             }
             break;
@@ -137,7 +165,7 @@ _connect2broker(ipc_t const * const ipc) {
     xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
     {
         const esp_mqtt_client_config_t mqtt_cfg = {
-            .event_handle = _mqttEventHandler,
+            .event_handle = _mqtt_event_cb,
             .user_context = (void *)ipc,
             .uri = CONFIG_POOL_MQTT_URL,
         };
@@ -154,11 +182,9 @@ mqtt_task(void * ipc_void)
 {
  	ipc_t * ipc = ipc_void;
 
-    _topic.ctrl = malloc(strlen(CONFIG_POOL_MQTT_CTRL_TOPIC) + 1 + strlen(ipc->dev.name) + 1);
-    _topic.ctrlGroup = malloc(strlen(CONFIG_POOL_MQTT_CTRL_TOPIC) + 1);
+    asprintf(&_topic.ctrl, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name);
+    asprintf(&_topic.ctrlGroup, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC);
     assert(_topic.ctrl && _topic.ctrlGroup);
-    sprintf(_topic.ctrl, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name);
-    sprintf(_topic.ctrlGroup, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC);
 
 	_mqttEventGrp = xEventGroupCreate();
     esp_mqtt_client_handle_t const client = _connect2broker(ipc);
@@ -169,16 +195,40 @@ mqtt_task(void * ipc_void)
         ipc_to_mqtt_msg_t msg;
 		if (xQueueReceive(ipc->to_mqtt_q, &msg, (TickType_t)(1000L / portTICK_PERIOD_MS)) == pdPASS) {
 
-            char * topic;
-            char const * const subtopic = ipc_to_mqtt_typ_str(msg.dataType);
-            if (subtopic) {
-                asprintf(&topic, "%s/%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, subtopic, ipc->dev.name);
-            } else {
-                asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name);
+            switch (msg.dataType) {
+                case IPC_TO_MQTT_TYP_STATE:
+                case IPC_TO_MQTT_TYP_RESTART:
+                case IPC_TO_MQTT_TYP_WHO:
+                case IPC_TO_MQTT_TYP_DBG: {
+                    char * topic;
+                    char const * const subtopic = ipc_to_mqtt_typ_str(msg.dataType);
+                    if (subtopic) {
+                        asprintf(&topic, "%s/%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, subtopic, ipc->dev.name);
+                    } else {
+                        asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name);
+                    }
+                    esp_mqtt_client_publish(client, topic, msg.data, strlen(msg.data), 1, 0);
+                    free(topic);
+                    free(msg.data);
+                    break;
+                }
+                case IPC_TO_MQTT_TYP_SUBSCRIBE: {
+                    // 2BD should remember, for when the connection to the broker gets reestablised ..
+                    ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
+                    esp_mqtt_client_subscribe(client, msg.data, 1);
+                    free(msg.data);
+                    break;
+                }
+                case IPC_TO_MQTT_TYP_ANNOUNCE: {
+                    char const * const topic = msg.data;
+                    char * message = strchr(msg.data, '\t');
+                    *message++ = '\0';
+                    ESP_LOGI(TAG, "Publish \"%s\": \"%s\"", topic, message);
+                    esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
+                    free(msg.data);
+                    break;
+                }
             }
-            esp_mqtt_client_publish(client, topic, msg.data, strlen(msg.data), 1, 0);
-            free(topic);
-            free(msg.data);
 		}
 	}
 }
