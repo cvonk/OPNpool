@@ -129,7 +129,6 @@ hass_init(ipc_t const * const ipc)
                          "\"stat_t\":\"~/state\"}",
                          base, base, dispatch->hass_name, dispatch->set_fnc ? "\"cmd_t\":\"~/set\"," : "") >= 0);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
-        ESP_LOGW(TAG, "cfg = %s", cfg);
         free(cfg);
         free(base);
     }
