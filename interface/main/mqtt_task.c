@@ -60,7 +60,7 @@ _forwardCoredump(ipc_t * ipc, esp_mqtt_client_handle_t const client)
     coredump_priv_t priv = {
         .client = client,
     };
-    asprintf(&priv.topic, "%s/coredump/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name);
+    assert( asprintf(&priv.topic, "%s/coredump/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name) >=0);
     coredump_to_server_config_t coredump_cfg = {
         .start = NULL,
         .end = NULL,
@@ -90,15 +90,13 @@ _dispatch_who(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
     ESP_ERROR_CHECK(esp_wifi_sta_get_ap_info(&ap_info));
 
     char * payload;
-    int const payload_len = asprintf(&payload,
-        "{ \"name\": \"%s\", \"firmware\": { \"version\": \"%s.%s\", \"date\": \"%s %s\" }, \"wifi\": { \"connect\": %u, \"address\": \"%s\", \"SSID\": \"%s\", \"RSSI\": %d }, \"mqtt\": { \"connect\": %u }, \"mem\": { \"heap\": %u } }",
-        ipc->dev.name,
-        running_app_info.project_name, running_app_info.version,
-        running_app_info.date, running_app_info.time,
-        ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
-        ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT)
-    );
-    assert(payload_len >= 0);
+    assert( asprintf(&payload,
+                 "{ \"name\": \"%s\", \"firmware\": { \"version\": \"%s.%s\", \"date\": \"%s %s\" }, \"wifi\": { \"connect\": %u, \"address\": \"%s\", \"SSID\": \"%s\", \"RSSI\": %d }, \"mqtt\": { \"connect\": %u }, \"mem\": { \"heap\": %u } }",
+                  ipc->dev.name,
+                  running_app_info.project_name, running_app_info.version,
+                  running_app_info.date, running_app_info.time,
+                  ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
+                  ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT) ) >= 0);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
     free(payload);
 }
@@ -181,9 +179,8 @@ mqtt_task(void * ipc_void)
 {
  	ipc_t * ipc = ipc_void;
 
-    asprintf(&_topic.ctrl, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name);
-    asprintf(&_topic.ctrlGroup, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC);
-    assert(_topic.ctrl && _topic.ctrlGroup);
+    assert( asprintf(&_topic.ctrl, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name) >= 0);
+    assert( asprintf(&_topic.ctrlGroup, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC) >= 0);
 
 	_mqttEventGrp = xEventGroupCreate();
     esp_mqtt_client_handle_t const client = _connect2broker(ipc);
@@ -202,9 +199,9 @@ mqtt_task(void * ipc_void)
                     char * topic;
                     char const * const subtopic = ipc_to_mqtt_typ_str(msg.dataType);
                     if (subtopic) {
-                        asprintf(&topic, "%s/%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, subtopic, ipc->dev.name);
+                        assert( asprintf(&topic, "%s/%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, subtopic, ipc->dev.name) >= 0);
                     } else {
-                        asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name);
+                        assert( asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name) >= 0);
                     }
                     esp_mqtt_client_publish(client, topic, msg.data, strlen(msg.data), 1, 0);
                     free(topic);
@@ -222,7 +219,7 @@ mqtt_task(void * ipc_void)
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    //ESP_LOGI(TAG, "Publish \"%s\": \"%s\"", topic, message);
+                    ESP_LOGI(TAG, "Publish \"%s\": \"%s\"", topic, message);
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
                     free(msg.data);
                     break;
