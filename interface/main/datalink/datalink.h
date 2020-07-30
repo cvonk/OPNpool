@@ -108,10 +108,10 @@ extern datalink_preamble_a5_t datalink_preamble_a5;
 extern datalink_preamble_ic_t datalink_preamble_ic;
 
 /* datalink_rx.c */
-bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
+esp_err_t datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
 
 /* datalink_tx.c */
-void datalink_tx_queue_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t const * const pkt);
+void datalink_tx_pkt_queue(rs485_handle_t const rs485_handle, datalink_pkt_t const * const pkt);
 
 /* datalink_str.c */
 char const * datalink_prot_str(datalink_prot_t const prot);

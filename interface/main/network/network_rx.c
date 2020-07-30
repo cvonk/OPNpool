@@ -259,7 +259,7 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const net
     }
 }
 
-bool
+esp_err_t
 network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity)
 {
 	name_reset_idx();
@@ -267,7 +267,7 @@ network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool
     datalink_addrgroup_t const dst = datalink_groupaddr(pkt->dst);
     if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst == DATALINK_ADDRGROUP_X09) ||
         (pkt->prot == DATALINK_PROT_IC && dst != DATALINK_ADDRGROUP_ALL && dst != DATALINK_ADDRGROUP_CHLOR)) {
-        return false;  // silently ignore
+        return ESP_FAIL;  // silently ignore
     }
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
@@ -289,5 +289,5 @@ network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool
         datalink_groupaddr(pkt->src) == DATALINK_ADDRGROUP_CTRL &&
         datalink_groupaddr(pkt->dst) == DATALINK_ADDRGROUP_ALL;
 
-    return msg->typ != MSG_TYP_NONE;
+    return msg->typ == MSG_TYP_NONE ? ESP_FAIL : ESP_OK;
 }
