@@ -60,7 +60,7 @@ _parse_topic(char * data, char * args[], uint const args_len) {
 }
 
 static datalink_pkt_t *
-_dispatch_circuit_set(char const * const dev_name, char const * const message, bool const set_value)
+_dispatch_circuit_set(char const * const dev_name, char const * const message)
 {
     ESP_LOGW(TAG, "%s", __func__);
     network_circuit_t circuit;
@@ -84,12 +84,12 @@ _dispatch_circuit_set(char const * const dev_name, char const * const message, b
     return NULL;
 }
 
-typedef datalink_pkt_t * (* dispatch_fnc_t)(char const * const topic, char const * const message, bool const set_value);
+typedef datalink_pkt_t * (* dispatch_fnc_t)(char const * const topic, char const * const message);
 
 typedef struct dispatch_t {
-    char const * const dev_type;
-    char const * const dev_name;
-    dispatch_fnc_t fnc;
+    char const * const  dev_type;
+    char const * const  dev_name;
+    dispatch_fnc_t      fnc;
 } dispatch_t;
 
 static dispatch_t _dispatches[] = {
@@ -104,13 +104,11 @@ _dispatch(char * const topic, char const * const message)
     if (argc >= 5) {
         char const * const dev_type = args[1];
         char const * const dev_name = args[2];
-        bool set_value = strcmp(args[4], "set") == 0;
-        ESP_LOGW(TAG, "%s %s %u", dev_type, dev_name, set_value);
 
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
             if (strcmp(dev_type, dispatch->dev_type) == 0) {
-                return dispatch->fnc(dev_name, message, set_value);
+                return dispatch->fnc(dev_name, message);
             }
         }
     }
@@ -135,7 +133,7 @@ _announce_mqtt(ipc_t const * const ipc)
         assert(set_topic && state_topic);
 
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topic, ipc);
-        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, state_topic, ipc);
+        //ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, state_topic, ipc);
         free(set_topic);
         free(state_topic);
 
