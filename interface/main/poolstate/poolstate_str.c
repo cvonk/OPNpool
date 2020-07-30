@@ -54,3 +54,9 @@ poolstate_temp_str(poolstate_temps_t const temp_id)
 {
   return ELEM_AT(_poolstate_temps, temp_id, hex8_str(temp_id));
 }
+
+int
+poolstate_temp_nr(char const * const temp_str)
+{
+    ELEM_POS(_poolstate_temps, temp_str);
+}

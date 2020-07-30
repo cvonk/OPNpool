@@ -12,6 +12,7 @@
  **/
 
 #include <string.h>
+#include <strings.h>
 #include <esp_system.h>
 #include <esp_log.h>
 #include <time.h>
@@ -33,12 +34,14 @@
 
 static char const * const TAG = "hass";
 
-typedef esp_err_t (* dispatch_fnc_t)(char const * const dev_name, char const * const value_str, datalink_pkt_t * const pkt);
+typedef esp_err_t (* dispatch_fnc_t)(uint8_t const idx, char const * const value_str, datalink_pkt_t * const pkt);
 
 typedef struct dispatch_t {
-    char const * const  dev_type;
-    char const * const  dev_name;
-    dispatch_fnc_t      fnc;
+    hass_dev_typ_t     dev_type;
+    char const * const hass_name;
+    char const * const dev_name;
+    uint8_t            dev_idx;
+    dispatch_fnc_t     set_fnc;
 } dispatch_t;
 
 
@@ -57,34 +60,30 @@ _parse_topic(char * data, char * args[], uint const args_len) {
 }
 
 static esp_err_t
-_dispatch_circuit_set(char const * const dev_name, char const * const value_str, datalink_pkt_t * const pkt)
+_dispatch_circuit_set(uint8_t const circuit_min_1, char const * const value_str, datalink_pkt_t * const pkt)
 {
-    network_circuit_t circuit;
-    if ((circuit = network_circuit_nr(dev_name)) != -1) {
-        uint8_t const value = strcmp(value_str, "ON") == 0;
+    uint8_t const value = strcmp(value_str, "ON") == 0;
 
-        network_msg_ctrl_circuit_set_t circuit_set = {
-                .circuit = circuit +1,
-                .value = value,
-        };
-        network_msg_t msg = {
-            .typ = MSG_TYP_CTRL_CIRCUIT_SET,
-            .u.ctrl_circuit_set = &circuit_set,
-        };
-        if (network_tx_msg(&msg, pkt)) {
-            ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
-            return ESP_OK;
-        } else {
-            free(pkt);
-        }
+    network_msg_ctrl_circuit_set_t circuit_set = {
+            .circuit = circuit_min_1 +1,
+            .value = value,
+    };
+    network_msg_t msg = {
+        .typ = MSG_TYP_CTRL_CIRCUIT_SET,
+        .u.ctrl_circuit_set = &circuit_set,
+    };
+    if (network_tx_msg(&msg, pkt)) {
+        ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+        return ESP_OK;
     }
-    ESP_LOGE(TAG, "circuit err (%s)", dev_name);
+    free(pkt);
     return ESP_FAIL;
 }
 
 static dispatch_t _dispatches[] = {
-    { "switch", "aux1", _dispatch_circuit_set},
-    { "switch", "pool", _dispatch_circuit_set},
+    { HASS_DEV_TYP_switch, "aux1 circuit", "aux1", NETWORK_CIRCUIT_AUX1, _dispatch_circuit_set },
+    { HASS_DEV_TYP_switch, "pool circuit", "pool", NETWORK_CIRCUIT_POOL, _dispatch_circuit_set },
+    { HASS_DEV_TYP_sensor, "air temp",     "air",  POOLSTATE_TEMP_AIR,   NULL },
 };
 
 esp_err_t
@@ -99,8 +98,10 @@ hass_rx_mqtt(char * const topic, char const * const value_str, datalink_pkt_t * 
 
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
-            if (strcmp(dev_type, dispatch->dev_type) == 0) {
-                return dispatch->fnc(dev_name, value_str, pkt);
+            if (strcmp(dev_type, hass_dev_typ_str(dispatch->dev_type)) == 0 &&
+                strcmp(dev_name, dispatch->dev_name) && dispatch->set_fnc) {
+
+                return dispatch->set_fnc(dispatch->dev_idx, value_str, pkt);
             }
         }
     }
@@ -113,27 +114,22 @@ hass_init(ipc_t const * const ipc)
     dispatch_t const * dispatch = _dispatches;
     for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
         char * base;
-        asprintf(&base, "homeassistant/%s/%s/%s", dispatch->dev_type, ipc->dev.name, dispatch->dev_name);
-        assert(base);
-
-        char * set_topic, * state_topic;
-        asprintf(&set_topic, "%s/%s", base, "set");
-        asprintf(&state_topic, "%s/%s", base, "state");
-        assert(set_topic && state_topic);
-
-        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topic, ipc);
-        //ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, state_topic, ipc);
-        free(set_topic);
-        free(state_topic);
-
+        assert( asprintf(&base, "homeassistant/%s/%s/%s", hass_dev_typ_str(dispatch->dev_type), ipc->dev.name, dispatch->dev_name) >= 0);
+        if (dispatch->set_fnc) {
+            char * set_topic;
+            assert( asprintf(&set_topic, "%s/%s", base, "set") >= 0);
+            ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topic, ipc);
+            free(set_topic);
+        }
         char * cfg;
-        asprintf(&cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
-                 "\"~\":\"%s\","
-                 "\"name\":\"pool %s\","
-                 "\"cmd_t\":\"~/set\","
-                 "\"stat_t\":\"~/state\"}", base, base, dispatch->dev_name);
-        assert(cfg);
+        assert( asprintf(&cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                         "\"~\":\"%s\","
+                         "\"name\":\"pool %s\","
+                         "%s"
+                         "\"stat_t\":\"~/state\"}",
+                         base, base, dispatch->hass_name, dispatch->set_fnc ? "\"cmd_t\":\"~/set\"," : "") >= 0);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
+        ESP_LOGW(TAG, "cfg = %s", cfg);
         free(cfg);
         free(base);
     }
@@ -144,17 +140,31 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
 {
     dispatch_t const * dispatch = _dispatches;
     for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
-
-        int circuit_nr;
-        if ((circuit_nr = network_circuit_nr(dispatch->dev_name)) >= 0) {
-            uint8_t const active = state->circuits.active[circuit_nr];
-            char * combined;
-            asprintf(&combined, "homeassistant/%s/%s/%s/state"
-                     "\t"
-                     "%s", dispatch->dev_type, ipc->dev.name, dispatch->dev_name, active ? "ON" : "OFF");
-            assert(combined);
-            ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
-            free(combined);
+        switch (dispatch->dev_type) {
+            case HASS_DEV_TYP_switch: {
+                uint8_t const value = state->circuits.active[dispatch->dev_idx];
+                char * combined;
+                assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
+                                 "\t"
+                                 "\"%s\"", hass_dev_typ_str(dispatch->dev_type), ipc->dev.name, dispatch->dev_name, value ? "ON" : "OFF") >= 0);
+                ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+                free(combined);
+                break;
+            }
+            case HASS_DEV_TYP_sensor: {
+                int temp_nr;
+                if ((temp_nr = poolstate_temp_nr(dispatch->dev_name)) >= 0) {
+                    uint8_t const value = state->temps[dispatch->dev_idx].temp;
+                    char * combined;
+                    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
+                                     "\t"
+                                     "%u", hass_dev_typ_str(dispatch->dev_type), ipc->dev.name, dispatch->dev_name, value) >= 0);
+                    assert(combined);
+                    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+                    free(combined);
+                }
+                break;
+            }
         }
     }
 

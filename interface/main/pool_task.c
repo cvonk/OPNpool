@@ -22,14 +22,14 @@
 #include "datalink/datalink_pkt.h"
 #include "network/network.h"
 #include "poolstate/poolstate.h"
-#include "hass/hass.c"
+#include "hass/hass.h"
 #include "ipc/ipc.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-//static char const * const TAG = "pool_task";
+static char const * const TAG = "pool_task";
 
 static bool
 _service_pkts_from_rs485(rs485_handle_t const rs485, ipc_t const * const ipc)
@@ -92,7 +92,7 @@ _forward_queued_pkt_to_rs485(rs485_handle_t const rs485, ipc_t const * const ipc
             }
         }
         free(pkt->skb);
-        free(pkt);
+        free((void *) pkt);
     }
 }
 

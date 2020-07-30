@@ -39,8 +39,8 @@ typedef struct poolstate_version_t {
 } poolstate_version_t;
 
 typedef struct poolstate_system_t {
-    poolstate_tod_t        tod;
-    poolstate_version_t    version;
+    poolstate_tod_t     tod;
+    poolstate_version_t version;
 } poolstate_system_t;
 
 /**
@@ -65,10 +65,10 @@ typedef struct poolstate_sched_t {
 } poolstate_sched_t;
 
 typedef struct poolstate_thermostat_t {
-    uint8_t temp;
-    uint8_t set_point;
-    uint8_t heat_src;
-    bool heating;
+    uint8_t           temp;
+    uint8_t           set_point;
+    uint8_t           heat_src;
+    bool              heating;
     poolstate_sched_t sched;
 } poolstate_thermostat_t;
 
@@ -190,3 +190,4 @@ size_t poolstate_to_json(poolstate_t const * const state, char * const buf, size
 const char * poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state_id);
 const char * poolstate_thermostat_str(poolstate_thermostats_t const thermostat_id);
 const char * poolstate_temp_str(poolstate_temps_t const temp_id);
+int poolstate_temp_nr(char const * const temp_str);
