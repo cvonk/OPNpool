@@ -99,7 +99,7 @@ _flush(void)
 }
 
 static void
-_queue(rs485_handle_t const handle, datalink_pkt_t * const pkt)
+_queue(rs485_handle_t const handle, datalink_pkt_t const * const pkt)
 {
     assert(pkt);
     rs485_q_msg_t msg = {
@@ -108,11 +108,11 @@ _queue(rs485_handle_t const handle, datalink_pkt_t * const pkt)
     if (xQueueSendToBack(handle->tx_q, &msg, 0) != pdPASS) {
         ESP_LOGE(TAG, "tx_q full");
         free(pkt->skb);
-        free(pkt);
+        free((void *) pkt);
     }
 }
 
-static datalink_pkt_t *
+static datalink_pkt_t const *
 _dequeue(rs485_handle_t const handle)
 {
     rs485_q_msg_t msg;
@@ -141,22 +141,33 @@ _tx_mode(bool const tx_enable)
 }
 
 rs485_handle_t
-rs485_init(rs485_config_t const * const cfg)
+rs485_init(void)
 {
+    _uart_port = 2;
+
+    uart_config_t const uart_config = {
+        .baud_rate = 9600,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .rx_flow_ctrl_thresh = 122,
+        .use_ref_tick = false,
+    };
     gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << cfg->rts_pin),
+        .pin_bit_mask = (1ULL << CONFIG_POOL_RS485_RTSPIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
         .intr_type = GPIO_INTR_DISABLE,
     };
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
-    gpio_set_level((gpio_num_t)cfg->rts_pin, 0);
+    gpio_set_level((gpio_num_t)CONFIG_POOL_RS485_RTSPIN, 0);
 
-    uart_param_config(cfg->uart_port, &cfg->uart_config);
-    uart_set_pin(cfg->uart_port, cfg->tx_pin, cfg->rx_pin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    uart_driver_install(cfg->uart_port, _rxBufSize * 2, 0, 0, NULL, 0);  // no tx buffer
-    uart_set_mode(cfg->uart_port, UART_MODE_RS485_HALF_DUPLEX);
+    uart_param_config(_uart_port, &uart_config);
+    uart_set_pin(_uart_port, CONFIG_POOL_RS485_TXPIN, CONFIG_POOL_RS485_RXPIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_driver_install(_uart_port, _rxBufSize * 2, 0, 0, NULL, 0);  // no tx buffer
+    uart_set_mode(_uart_port, UART_MODE_RS485_HALF_DUPLEX);
 
     QueueHandle_t const tx_q = xQueueCreate(2, sizeof(rs485_q_msg_t));
     assert(tx_q);
@@ -164,7 +175,6 @@ rs485_init(rs485_config_t const * const cfg)
     rs485_handle_t handle = malloc(sizeof(rs485_instance_t));
     assert(handle);
 
-    _uart_port = cfg->uart_port;
     handle->available = _available;
     handle->read_bytes = _read_bytes;
     handle->write_bytes = _write_bytes;
@@ -174,6 +184,7 @@ rs485_init(rs485_config_t const * const cfg)
     handle->queue = _queue;
     handle->dequeue = _dequeue;
     handle->tx_q = tx_q;
+    _tx_mode(false);
 
     return handle;
 }
