@@ -102,7 +102,7 @@ _dispatch(char * const topic, char const * const message)
     char * args[5];
     uint8_t argc = _parse_topic(topic, args, ARRAY_SIZE(args));
     if (argc >= 5) {
-        char const * const dev_tiype = args[1];
+        char const * const dev_type = args[1];
         char const * const dev_name = args[2];
         bool set_value = strcmp(args[4], "set") == 0;
         ESP_LOGW(TAG, "%s %s %u", dev_type, dev_name, set_value);
@@ -193,7 +193,7 @@ pool_task(void * ipc_void)
             if (pkt) {
                 datalink_tx_queue_pkt(rs485, pkt);
             }
-            free(queued_msg.data);
+            //free(queued_msg.data);
 #if 0
             char * args[3];
             uint8_t argc = _parse_args(queued_msg.data, args, ARRAY_SIZE(args));
