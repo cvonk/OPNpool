@@ -34,10 +34,12 @@ typedef struct ipc_t {
 } ipc_t;
 
 #define IPC_TO_MQTT_TYP_MAP(XX) \
-  XX(0x00, STATE)   \
-  XX(0x01, RESTART) \
-  XX(0x02, WHO)     \
-  XX(0x03, DBG)
+  XX(0x00, STATE)     \
+  XX(0x01, RESTART)   \
+  XX(0x02, WHO)       \
+  XX(0x03, DBG)       \
+  XX(0x04, SUBSCRIBE) \
+  XX(0x05, ANNOUNCE)
 
 typedef enum {
 #define XX(num, name) IPC_TO_MQTT_TYP_##name = num,
@@ -61,9 +63,10 @@ typedef enum {
 
 typedef struct ipc_to_pool_msg_t {
     ipc_to_pool_typ_t  dataType;
+    char  *            topic;
     char  *            data;
 } ipc_to_pool_msg_t;
 
 void ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc);
-void ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const data, size_t const data_len, ipc_t const * const ipc);
+void ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const topic, size_t const topic_len, char const * const data, size_t const data_len, ipc_t const * const ipc);
 char const * ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ);

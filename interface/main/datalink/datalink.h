@@ -111,7 +111,7 @@ extern datalink_preamble_ic_t datalink_preamble_ic;
 bool datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);
 
 /* datalink_tx.c */
-void datalink_tx_queue_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t * const pkt);
+void datalink_tx_queue_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t const * const pkt);
 
 /* datalink_str.c */
 char const * datalink_prot_str(datalink_prot_t const prot);

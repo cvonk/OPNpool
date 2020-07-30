@@ -30,6 +30,7 @@
 
 static char const * const TAG = "pool_task";
 
+#if 0
 static uint
 _parse_args(char * data, char * args[], uint const args_len) {
 
@@ -42,6 +43,113 @@ _parse_args(char * data, char * args[], uint const args_len) {
         p = strtok_r(NULL, delim, &save);
     }
     return ii;
+}
+#endif
+static uint
+_parse_topic(char * data, char * args[], uint const args_len) {
+
+    uint ii = 0;
+    char const * const delim = "/";
+    char * save;
+    char * p = strtok_r(data, delim, &save);
+    while (p && ii < args_len) {
+        args[ii++] = p;
+        p = strtok_r(NULL, delim, &save);
+    }
+    return ii;
+}
+
+static datalink_pkt_t *
+_dispatch_circuit_set(char const * const dev_name, char const * const message, bool const set_value)
+{
+    ESP_LOGW(TAG, "%s", __func__);
+    network_circuit_t circuit;
+    if ((circuit = network_circuit_nr(dev_name)) != -1) {
+        uint8_t const value = strcmp(message, "ON") == 0;
+
+        network_msg_ctrl_circuit_set_t circuit_set = {
+                .circuit = circuit +1,
+                .value = value,
+        };
+        network_msg_t msg = {
+            .typ = MSG_TYP_CTRL_CIRCUIT_SET,
+            .u.ctrl_circuit_set = &circuit_set,
+        };
+        datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
+        if (network_tx_msg(&msg, pkt)) {
+            ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+            return pkt;
+        }
+    }
+    return NULL;
+}
+
+typedef datalink_pkt_t * (* dispatch_fnc_t)(char const * const topic, char const * const message, bool const set_value);
+
+typedef struct dispatch_t {
+    char const * const dev_type;
+    char const * const dev_name;
+    dispatch_fnc_t fnc;
+} dispatch_t;
+
+static dispatch_t _dispatches[] = {
+    { "switch", "aux1", _dispatch_circuit_set},
+};
+
+static datalink_pkt_t *
+_dispatch(char * const topic, char const * const message)
+{
+    char * args[5];
+    uint8_t argc = _parse_topic(topic, args, ARRAY_SIZE(args));
+    if (argc >= 5) {
+        char const * const dev_tiype = args[1];
+        char const * const dev_name = args[2];
+        bool set_value = strcmp(args[4], "set") == 0;
+        ESP_LOGW(TAG, "%s %s %u", dev_type, dev_name, set_value);
+
+        dispatch_t const * dispatch = _dispatches;
+        for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
+            if (strcmp(dev_type, dispatch->dev_type) == 0) {
+                return dispatch->fnc(dev_name, message, set_value);
+            }
+        }
+    }
+    return NULL;
+}
+
+static void
+_announce_mqtt(ipc_t const * const ipc)
+{
+
+    // homeassistant/switch/esp32-wrover-1/AUX1/config homeassistant/switch/esp32-wrover-1/AUX1/config
+
+    dispatch_t const * dispatch = _dispatches;
+    for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
+        char * base;
+        asprintf(&base, "homeassistant/%s/%s/%s", dispatch->dev_type, ipc->dev.name, dispatch->dev_name);
+        assert(base);
+
+        char * set_topic, * state_topic;
+        asprintf(&set_topic, "%s/%s", base, "set");
+        asprintf(&state_topic, "%s/%s", base, "state");
+        assert(set_topic && state_topic);
+
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topic, ipc);
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, state_topic, ipc);
+        free(set_topic);
+        free(state_topic);
+
+        char * cfg;
+        asprintf(&cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                 "\"~\":\"%s\","
+                 "\"name\":\"pool %s\","
+                 "\"cmd_t\":\"~/set\","
+                 "\"stat_t\":\"~/state\"}", base, base, dispatch->dev_name);
+        assert(cfg);
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_ANNOUNCE, cfg, ipc);
+        free(cfg);
+        free(base);
+    }
 }
 
 void
@@ -67,6 +175,8 @@ pool_task(void * ipc_void)
     rs485_handle_t const rs485 = rs485_init(&rs485_config);
     rs485->tx_mode(false);
 
+    _announce_mqtt(ipc);
+
     bool txOpportunity;
     poolstate_t state;
     size_t json_size = 1024;
@@ -77,8 +187,14 @@ pool_task(void * ipc_void)
 		if (xQueueReceive(ipc->to_pool_q, &queued_msg, (TickType_t)0) == pdPASS) {
 
             assert(queued_msg.dataType == IPC_TO_POOL_TYP_REQ);
-            ESP_LOGI(TAG, "received mqtt \"%s\"", queued_msg.data);
-            esp_err_t err = ESP_FAIL;
+            ESP_LOGI(TAG, "received mqtt \"%s\": \"%s\"", queued_msg.topic, queued_msg.data);
+
+            datalink_pkt_t const * const pkt = _dispatch(queued_msg.topic, queued_msg.data);
+            if (pkt) {
+                datalink_tx_queue_pkt(rs485, pkt);
+            }
+            free(queued_msg.data);
+#if 0
             char * args[3];
             uint8_t argc = _parse_args(queued_msg.data, args, ARRAY_SIZE(args));
 
@@ -114,11 +230,13 @@ pool_task(void * ipc_void)
                         ;
                 }
             }
+#endif
             char * payload;
-            assert( asprintf(&payload, "{\"response\":{\"status\":\"%s\",\"req\":\"%s\" } }", err == ESP_OK ? "OK" : "error", args[0]) );
+            assert( asprintf(&payload, "{\"response\":{\"status\":\"%s\",\"req\":\"%s\" } }", pkt ? "OK" : "error", queued_msg.data) );
             ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, payload, ipc);
             free(payload);
             free(queued_msg.data);
+            free((void *) pkt);
         }
         {
             datalink_pkt_t pkt;
