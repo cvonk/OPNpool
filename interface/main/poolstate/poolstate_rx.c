@@ -267,7 +267,7 @@ _chlor_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const 
 }
 
 esp_err_t
-poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, ipc_t * const ipc_for_dbg)
+poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, ipc_t const * const ipc_for_dbg)
 {
 	name_reset_idx();
 

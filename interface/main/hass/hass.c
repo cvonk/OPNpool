@@ -84,6 +84,7 @@ _dispatch_circuit_set(char const * const dev_name, char const * const value_str,
 
 static dispatch_t _dispatches[] = {
     { "switch", "aux1", _dispatch_circuit_set},
+    { "switch", "pool", _dispatch_circuit_set},
 };
 
 esp_err_t
@@ -132,7 +133,7 @@ hass_init(ipc_t const * const ipc)
                  "\"cmd_t\":\"~/set\","
                  "\"stat_t\":\"~/state\"}", base, base, dispatch->dev_name);
         assert(cfg);
-        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_ANNOUNCE, cfg, ipc);
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
         free(cfg);
         free(base);
     }
@@ -141,9 +142,24 @@ hass_init(ipc_t const * const ipc)
 esp_err_t
 hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
 {
+    dispatch_t const * dispatch = _dispatches;
+    for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
+
+        int circuit_nr;
+        if ((circuit_nr = network_circuit_nr(dispatch->dev_name)) >= 0) {
+            uint8_t const active = state->circuits.active[circuit_nr];
+            char * combined;
+            asprintf(&combined, "homeassistant/%s/%s/%s/state"
+                     "\t"
+                     "%s", dispatch->dev_type, ipc->dev.name, dispatch->dev_name, active ? "ON" : "OFF");
+            assert(combined);
+            ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+            free(combined);
+        }
+    }
+
     size_t json_size = 1024;
     char json[json_size];
-
     poolstate_to_json(state, json, json_size);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
     return ESP_OK;

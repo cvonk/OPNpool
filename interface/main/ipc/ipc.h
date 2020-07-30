@@ -39,7 +39,7 @@ typedef struct ipc_t {
   XX(0x02, WHO)       \
   XX(0x03, DBG)       \
   XX(0x04, SUBSCRIBE) \
-  XX(0x05, ANNOUNCE)
+  XX(0x05, PUBLISH)
 
 typedef enum {
 #define XX(num, name) IPC_TO_MQTT_TYP_##name = num,

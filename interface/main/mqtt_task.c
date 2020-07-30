@@ -218,11 +218,11 @@ mqtt_task(void * ipc_void)
                     free(msg.data);
                     break;
                 }
-                case IPC_TO_MQTT_TYP_ANNOUNCE: {
+                case IPC_TO_MQTT_TYP_PUBLISH: {
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    ESP_LOGI(TAG, "Publish \"%s\": \"%s\"", topic, message);
+                    //ESP_LOGI(TAG, "Publish \"%s\": \"%s\"", topic, message);
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
                     free(msg.data);
                     break;
