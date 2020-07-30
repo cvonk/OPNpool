@@ -53,7 +53,8 @@
         "ostream": "c",
         "tuple": "c",
         "type_traits": "c",
-        "utility": "c"
+        "utility": "c",
+        "utils.h": "c"
     },
     "clang-format.executable": "C:/Program Files/LLVM/bin/clang-format.exe",
     "workbench.tree.indent": 20,

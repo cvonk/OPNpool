@@ -43,7 +43,7 @@ poolstate_set(poolstate_t const * const state)
     xSemaphoreGive( _protected.xMutex );
 }
 
-bool
+esp_err_t
 poolstate_get(poolstate_t * const state)
 {
     bool valid;
@@ -53,7 +53,7 @@ poolstate_get(poolstate_t * const state)
         memcpy(state, _protected.state, sizeof(poolstate_t));
     }
     xSemaphoreGive( _protected.xMutex );
-    return valid;
+    return valid ? ESP_OK : ESP_FAIL;
 }
 
 #if 0

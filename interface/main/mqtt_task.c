@@ -135,7 +135,6 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
             break;
         case MQTT_EVENT_DATA:
             if (event->topic && event->data_len == event->total_data_len) {  // quietly ignore chunked messaegs
-
                 bool handled = false;
                 if (strncmp(_topic.ctrl, event->topic, event->topic_len) == 0 ||
                     strncmp(_topic.ctrlGroup, event->topic, event->topic_len) == 0) {
@@ -148,7 +147,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
                     }
                 }
                 if (!handled) {
-                    ipc_send_to_pool(IPC_TO_POOL_TYP_REQ, event->topic, event->topic_len, event->data, event->data_len, ipc);
+                    ipc_send_to_pool(IPC_TO_POOL_TYP_SET, event->topic, event->topic_len, event->data, event->data_len, ipc);
                 }
             }
             break;

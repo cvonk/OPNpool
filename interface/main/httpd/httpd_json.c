@@ -76,8 +76,7 @@ httpd_json(httpd_req_t * const req)
         snprintf(resp + len, resp_size - len, "%s(", callback);
     }
     poolstate_t state;
-    bool const valid = poolstate_get(&state);
-    if (valid) {
+    if (poolstate_get(&state) == ESP_OK) {
         len += poolstate_to_json(&state, resp + len, resp_size - len);
     } else {
         ESP_LOGW(TAG, "state not avail");

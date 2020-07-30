@@ -10,7 +10,7 @@
 uint8_t network_ic_len(uint8_t const ic_typ);
 
 /* network_rx.c */
-bool network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity);
+esp_err_t network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity);
 
 /* network_tx.c */
 bool network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt);

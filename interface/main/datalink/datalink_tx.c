@@ -58,7 +58,7 @@ _enter_a5_tail(datalink_tail_a5_t * const tail, uint8_t const * const start, uin
 }
 
 void
-datalink_tx_queue_pkt(rs485_handle_t const rs485_handle, datalink_pkt_t const * const pkt)
+datalink_tx_pkt_queue(rs485_handle_t const rs485_handle, datalink_pkt_t const * const pkt)
 {
     skb_handle_t const skb = pkt->skb;
 
