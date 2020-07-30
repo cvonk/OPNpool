@@ -1,7 +1,6 @@
 #pragma once
 
-#pragma once
-
+#include <strings.h>
 #include "../datalink/datalink.h"
 #include "../network/network.h"
 
@@ -15,7 +14,7 @@
 # define ELEM_POS(a, s) \
     do { \
       for (uint_least8_t ii = 0; ii < ARRAY_SIZE(a); ii++) { \
-	    if (stricmp(s, a[ii]) == 0) { \
+	    if (strcasecmp(s, a[ii]) == 0) { \
 	      return ii; \
 	    } \
       } \
