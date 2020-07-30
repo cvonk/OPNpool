@@ -181,7 +181,7 @@ hass_init(ipc_t const * const ipc)
                 assert( asprintf(&cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                                 "\"~\":\"%s\","
                                 "\"name\":\"pool %s\","
-                                "\"temp_unit\": \"F\","
+                                "\"temp_unit\": \"°F\","
                                 "\"stat_t\":\"~/state\"}",
                                 base, base, dispatch->hass_name) >= 0);
                 break;
@@ -202,7 +202,7 @@ hass_init(ipc_t const * const ipc)
                                 "\"min_temp\":15,"
                                 "\"max_temp\":110,"
                                 "\"temp_step\":1,"
-                                "\"temp_unit\": \"F\","
+                                "\"temp_unit\": \"°F\","
                                 "\"modes\":[\"none\",\"heater\",\"solarpref\",\"solar\"]"
                                 "}",
                                 base, base, dispatch->hass_name) >= 0);
