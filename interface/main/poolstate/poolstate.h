@@ -191,3 +191,4 @@ const char * poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_stat
 const char * poolstate_thermostat_str(poolstate_thermostats_t const thermostat_id);
 const char * poolstate_temp_str(poolstate_temps_t const temp_id);
 int poolstate_temp_nr(char const * const temp_str);
+int poolstate_thermostat_nr(char const * const thermostat_str);
