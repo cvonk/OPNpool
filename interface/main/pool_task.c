@@ -24,6 +24,7 @@
 #include "poolstate/poolstate.h"
 #include "hass/hass.h"
 #include "ipc/ipc.h"
+#include "pool_task.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))

@@ -94,7 +94,7 @@ menu "Pool Interface"
 
     config POOL_DBG_POOLTASK
         bool "Debug pool task"
-        default y
+        default n
         help
             Print control messages to serial port
 
@@ -106,7 +106,7 @@ menu "Pool Interface"
 
     config POOL_DBG_POOLSTATE
         bool "Debug state changes for control messages"
-        default y
+        default n
         help
             Print control messages to serial port
 
