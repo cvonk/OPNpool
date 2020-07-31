@@ -121,7 +121,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
 	switch (event->event_id) {
         case MQTT_EVENT_DISCONNECTED:
             xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
-            if (POOL_DBG_MQTTTASK_ONERROR) {
+            if (CONFIG_POOL_DBG_MQTTTASK_ONERROR) {
                 ESP_LOGW(TAG, "Broker disconnected");
             }
         	// reconnect is part of the SDK
@@ -131,7 +131,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
             ipc->dev.count.mqttConnect++;
             esp_mqtt_client_subscribe(event->client, _topic.ctrl, 1);
             esp_mqtt_client_subscribe(event->client, _topic.ctrlGroup, 1);
-            if (POOL_DBG_MQTTTASK_ONERROR) {
+            if (CONFIG_POOL_DBG_MQTTTASK_ONERROR) {
                 ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\", \"%s\"", _topic.ctrl, _topic.ctrlGroup);
             }
             break;
@@ -214,7 +214,7 @@ mqtt_task(void * ipc_void)
                 }
                 case IPC_TO_MQTT_TYP_SUBSCRIBE: {
                     // 2BD should remember, for when the connection to the broker gets reestablised ..
-                    if (POOL_DBG_MQTTTASK) {
+                    if (CONFIG_POOL_DBG_MQTTTASK) {
                         ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
                     }
                     esp_mqtt_client_subscribe(client, msg.data, 1);
@@ -225,7 +225,7 @@ mqtt_task(void * ipc_void)
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    if (POOL_DBG_MQTTTASK) {
+                    if (CONFIG_POOL_DBG_MQTTTASK) {
                         ESP_LOGI(TAG, "\"%s\": \"%s\"", topic, message);
                     }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);

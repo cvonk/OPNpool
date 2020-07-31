@@ -250,7 +250,7 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
         if (dispatch->state_fnc) {
 
             dispatch->state_fnc(state, dispatch->dev_idx, &dispatch->hass, ipc);
-            break;
+
         }
     }  // for
 
