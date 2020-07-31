@@ -121,7 +121,9 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
 	switch (event->event_id) {
         case MQTT_EVENT_DISCONNECTED:
             xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
-            ESP_LOGW(TAG, "Broker disconnected");
+            if (POOL_DBG_MQTTTASK_ONERROR) {
+                ESP_LOGW(TAG, "Broker disconnected");
+            }
         	// reconnect is part of the SDK
             break;
         case MQTT_EVENT_CONNECTED:
@@ -129,7 +131,9 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
             ipc->dev.count.mqttConnect++;
             esp_mqtt_client_subscribe(event->client, _topic.ctrl, 1);
             esp_mqtt_client_subscribe(event->client, _topic.ctrlGroup, 1);
-            ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\", \"%s\"", _topic.ctrl, _topic.ctrlGroup);
+            if (POOL_DBG_MQTTTASK_ONERROR) {
+                ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\", \"%s\"", _topic.ctrl, _topic.ctrlGroup);
+            }
             break;
         case MQTT_EVENT_DATA:
             if (event->topic && event->data_len == event->total_data_len) {  // quietly ignore chunked messaegs
@@ -210,7 +214,9 @@ mqtt_task(void * ipc_void)
                 }
                 case IPC_TO_MQTT_TYP_SUBSCRIBE: {
                     // 2BD should remember, for when the connection to the broker gets reestablised ..
-                    ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
+                    if (POOL_DBG_MQTTTASK) {
+                        ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
+                    }
                     esp_mqtt_client_subscribe(client, msg.data, 1);
                     free(msg.data);
                     break;
@@ -219,7 +225,9 @@ mqtt_task(void * ipc_void)
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    ESP_LOGW(TAG, ">%s<: >%s<", topic, message);
+                    if (POOL_DBG_MQTTTASK) {
+                        ESP_LOGI(TAG, "\"%s\": \"%s\"", topic, message);
+                    }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
                     free(msg.data);
                     break;
