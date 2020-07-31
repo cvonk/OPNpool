@@ -129,7 +129,7 @@ static dispatch_t _dispatches[] = {
     { HASS_DEV_TYP_switch,  "aux1 circuit", "aux1",  NETWORK_CIRCUIT_AUX1,      _dispatch_circuit_set },
     { HASS_DEV_TYP_switch,  "pool circuit", "pool",  NETWORK_CIRCUIT_POOL,      _dispatch_circuit_set },
     { HASS_DEV_TYP_sensor,  "air temp",     "air",   POOLSTATE_TEMP_AIR,        NULL },
-    { HASS_DEV_TYP_climate, "heater",       "heat",  POOLSTATE_THERMOSTAT_POOL, _dispatch_thermostat_set },
+    { HASS_DEV_TYP_climate, "heater",       "pool",  POOLSTATE_THERMOSTAT_POOL, _dispatch_thermostat_set },
 };
 
 esp_err_t
@@ -261,7 +261,7 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
                     char * combined;
                     assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
                                      "\t"
-                                     "%u", hass_dev_typ_str(dispatch->dev_type), ipc->dev.name, dispatch->dev_name, value) >= 0);
+                                     "\"%u\"", hass_dev_typ_str(dispatch->dev_type), ipc->dev.name, dispatch->dev_name, value) >= 0);
                     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
                     free(combined);
                 }
@@ -278,11 +278,13 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
                                      "\t"
                                      "{"
                                      "\"mode\":\"%s\","
-                                     "\"target_temp\":%u,"
-                                     "\"current_temp\":%u}",
+                                     "\"target_temp\":\"%u\","
+                                     "\"current_temp\":\"%u\"}",
                                      hass_dev_typ_str(dispatch->dev_type), ipc->dev.name, dispatch->dev_name, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
                     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
                     free(combined);
+                } else {
+                    ESP_LOGE(TAG, "thermostat not found (%s)", dispatch->dev_name);
                 }
             }
         }  // switch
