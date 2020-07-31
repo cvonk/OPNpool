@@ -14,9 +14,8 @@
 #include <string.h>
 #include <esp_system.h>
 
-#include "../utils/utils.h"
-#include "hass.h"
-
+#include "utils/utils.h"
+#include "hass_task.h"
 
 static const char * const _dev_types[] = {
 #define XX(num, name) #name,

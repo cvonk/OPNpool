@@ -22,8 +22,8 @@
 #include "datalink/datalink_pkt.h"
 #include "network/network.h"
 #include "poolstate/poolstate.h"
-#include "hass/hass.h"
 #include "ipc/ipc.h"
+#include "hass_task.h"
 #include "pool_task.h"
 
 #ifndef ARRAY_SIZE
@@ -102,8 +102,6 @@ pool_task(void * ipc_void)
 {
  	ipc_t * const ipc = ipc_void;
     rs485_handle_t const rs485 = rs485_init();
-
-    hass_init(ipc);
 
     while (1) {
 

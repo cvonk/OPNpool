@@ -116,4 +116,28 @@ menu "Pool Interface"
         help
             Print messages that cannot be decoded to serial port
 
+    config POOL_DBG_MQTTTASK
+        bool "Debug MQTT task"
+        default n
+        help
+            Print debug from MQTT task
+
+    config POOL_DBG_MQTTTASK_ONERROR
+        bool "Debug MQTT task errors"
+        default y
+        help
+            Print errors from MQTT task
+
+    config POOL_DBG_HASSTASK
+        bool "Debug home assistant task"
+        default n
+        help
+            Print debug from homeassistant task
+
+    config POOL_DBG_HASSTASK_ONERROR
+        bool "Debug home assistant errors"
+        default y
+        help
+            Print errors from home assistant task
+
 endmenu

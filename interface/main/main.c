@@ -139,4 +139,5 @@ app_main()
     xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
     xTaskCreate(&mqtt_task, "mqtt_task", 2*4096, &ipc, 5, NULL);
     xTaskCreate(&pool_task, "pool_task", 2*4096, &ipc, 5, NULL);
+    xTaskCreate(&pool_task, "hass_task", 2*4096, &ipc, 5, NULL);
 }
