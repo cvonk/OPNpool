@@ -41,7 +41,7 @@ static esp_mqtt_client_handle_t _connect2broker(ipc_t const * const ipc);  // fo
 
 typedef struct mqtt_subscriber_t {
     char const * topic;
-    struct mqtt_subscriber_t * next;
+    struct mqtt_subscriber_t const * next;
 } mqtt_subscriber_t;
 
 mqtt_subscriber_t * _subscribers = NULL;
