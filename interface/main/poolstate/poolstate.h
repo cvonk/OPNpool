@@ -141,6 +141,21 @@ typedef struct poolstate_chlor_t {
     poolstate_chlor_status_t  status;
 } poolstate_chlor_t;
 
+#define POOLSTATE_ELEM_TYP_MAP(XX) \
+  XX(0x00, ALL) \
+  XX(0x01, SYSTEM) \
+  XX(0x02, TEMPS) \
+  XX(0x03, THERMOSTATS) \
+  XX(0x04, CIRCUITS) \
+  XX(0x05, PUMP) \
+  XX(0x06, CHLOR)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_TYP_##name = num,
+  POOLSTATE_ELEM_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_typ_t;
+
 /**
  * all together now
  **/
@@ -167,24 +182,25 @@ void cJSON_AddTimeToObject(cJSON * const obj, char const * const key, poolstate_
 void cJSON_AddDateToObject(cJSON * const obj, char const * const key, poolstate_date_t const * const date);
 void cJSON_AddTodToObject(cJSON * const obj, char const * const key, poolstate_tod_t const * const tod);
 void cJSON_AddVersionToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version);
-void cJSON_AddSystemToObject(cJSON * const obj, char const * const key, poolstate_system_t const * const system);
+void cJSON_AddSystemToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddSchedToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * const sched);
 void cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * const thermostat, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched);
-void cJSON_AddThermostatsToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * thermostats, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched);
+void cJSON_AddThermostatsToObject_generic(cJSON * const obj, char const * const key, poolstate_thermostat_t const * thermostats, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched);
+void cJSON_AddThermostatsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddTempToObject(cJSON * const obj, char const * const key, poolstate_temp_t const * const temp);
-void cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_temp_t const * temps);
+void cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_t const * state);
 void cJSON_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, bool const * active);
-void cJSON_AddCircuitsToObject(cJSON * const obj, char const * const key, poolstate_circuits_t const * const circuits);
+void cJSON_AddCircuitsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value);
 void cJSON_AddPumpCtrlToObject(cJSON * const obj, char const * const key, uint8_t const ctrl);
 void cJSON_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_t const mode);
 void cJSON_AddPumpRunningToObject(cJSON * const obj, char const * const key, bool const running);
 void cJSON_AddPumpStatusToObject(cJSON * const obj, char const * const key, poolstate_pump_t const * const pump);
-void cJSON_AddPumpToObject(cJSON * const obj, char const * const key, poolstate_pump_t const * const pump);
+void cJSON_AddPumpToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_chlor_t const * const chlor);
-void cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_chlor_t const * const chlor);
-size_t poolstate_to_json(poolstate_t const * const state, char * const buf, size_t const buf_len);
+void cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
+char const * poolstate_to_json(poolstate_elem_typ_t const typ, poolstate_t const * const state);
 
 /* poolstate_str.c */
 const char * poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state_id);
