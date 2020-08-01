@@ -200,7 +200,7 @@ void cJSON_AddPumpStatusToObject(cJSON * const obj, char const * const key, pool
 void cJSON_AddPumpToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_chlor_t const * const chlor);
 void cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
-char const * poolstate_to_json(poolstate_elem_typ_t const typ, poolstate_t const * const state);
+char const * poolstate_to_json(poolstate_t const * const state, poolstate_elem_typ_t const typ);
 
 /* poolstate_str.c */
 const char * poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state_id);

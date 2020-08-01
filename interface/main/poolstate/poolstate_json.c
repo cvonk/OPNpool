@@ -288,17 +288,16 @@ cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_t co
  **/
 
 char const *
-poolstate_to_json(poolstate_elem_typ_t const typ, poolstate_t const * const state)
+poolstate_to_json(poolstate_t const * const state, poolstate_elem_typ_t const typ)
 {
     name_reset_idx();
     cJSON * const obj = cJSON_CreateObject();
-
     poolstate_json_dispatch_t const * dispatch = _dispatches;
-    for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++) {
+    for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
         bool const all_types = typ == POOLSTATE_ELEM_TYP_ALL;
         if (typ == dispatch->typ || all_types) {
 
-            dispatch->fnc(obj, dispatch->name, state);
+            dispatch->fnc(obj, all_types ? dispatch->name : NULL, state);
         }
     }
     char const * const json = cJSON_PrintUnformatted(obj);

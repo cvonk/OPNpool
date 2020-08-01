@@ -76,7 +76,7 @@ _sensor_init(char const * const base, dispatch_hass_t const * const hass, char *
 static esp_err_t
 _sensor_state(poolstate_t const * const state, uint8_t const idx, dispatch_hass_t const * const hass, ipc_t const * const ipc)
 {
-    char const * const json = poolstate_to_json((poolstate_elem_typ_t) idx, state);
+    char const * const json = poolstate_to_json(state, (poolstate_elem_typ_t) idx);
     char * combined;
     assert( asprintf(&combined, "homeassistant/%s/%s/%s/state" "\t"
                      "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id,
@@ -272,9 +272,9 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
             dispatch->fnc.state(state, dispatch->fnc.param, &dispatch->hass, ipc);
 
         }
-    }  // for
+    }
 
-    char const * const json = poolstate_to_json(POOLSTATE_ELEM_TYP_ALL, state);
+    char const * const json = poolstate_to_json(state, POOLSTATE_ELEM_TYP_ALL);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
     free((void *)json);
     return ESP_OK;
@@ -327,7 +327,7 @@ hass_task(void * ipc_void)
                 dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);
 
                 if (first_time) {
-                    for (uint jj = 0; set_topics[jj] && jj < ARRAY_SIZE(set_topics); jj++) {
+                    for (uint jj = 0; jj < ARRAY_SIZE(set_topics) && set_topics[jj]; jj++) {
                         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topics[jj], ipc);
                         free(set_topics[jj]);
                     }
