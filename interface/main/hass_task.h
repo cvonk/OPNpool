@@ -29,3 +29,4 @@ esp_err_t hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc
 
 /* hass_str.c */
 char const * hass_dev_typ_str(hass_dev_typ_t const dev_typ);
+size_t poolstate_pump_to_json(poolstate_t const * const state, char * const buf, size_t const buf_len);

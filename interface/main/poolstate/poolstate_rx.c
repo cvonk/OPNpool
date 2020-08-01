@@ -55,7 +55,7 @@ _ctrl_heat(cJSON * const dbg, network_msg_ctrl_heat_t const * const msg, poolsta
     state->thermostats[POOLSTATE_THERMOSTAT_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBG_POOLSTATE) {
-        cJSON_AddThermostatsToObject(dbg, "thermostats", state->thermostats, true, true, true, false, false);
+        cJSON_AddThermostatsToObject_generic(dbg, "thermostats", state->thermostats, true, true, true, false, false);
     }
 }
 
@@ -68,7 +68,7 @@ _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg,
     state->thermostats[POOLSTATE_THERMOSTAT_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBG_POOLSTATE) {
-        cJSON_AddThermostatsToObject(dbg, "thermostats", state->thermostats, false, true, true, false, false);
+        cJSON_AddThermostatsToObject_generic(dbg, "thermostats", state->thermostats, false, true, true, false, false);
     }
 }
 
@@ -94,7 +94,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
         state_thermostat->sched.stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
     }
     if (CONFIG_POOL_DBG_POOLSTATE) {
-        cJSON_AddThermostatsToObject(dbg, "thermostats", state->thermostats, false, false, false, false, true);
+        cJSON_AddThermostatsToObject_generic(dbg, "thermostats", state->thermostats, false, false, false, false, true);
     }
 }
 
@@ -207,7 +207,7 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_resp_t const * const msg
     state->pump.time.minute = msg->minute;
 
     if (CONFIG_POOL_DBG_POOLSTATE) {
-       cJSON_AddPumpToObject(dbg, "status", &state->pump);
+       cJSON_AddPumpToObject(dbg, "status", state);
     }
 }
 
