@@ -141,7 +141,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
             ipc->dev.count.mqttConnect++;
             for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber; subscriber = subscriber->next) {
                 esp_mqtt_client_subscribe(event->client, subscriber->topic, 1);
-                if (CONFIG_POOL_DBG_MQTTTASK_ONERROR) {
+                if (CONFIG_POOL_DBG_MQTTTASK) {
                     ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\"", subscriber->topic);
                 }
             }
@@ -236,8 +236,8 @@ mqtt_task(void * ipc_void)
                     if (CONFIG_POOL_DBG_MQTTTASK) {
                         ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
                     }
-                    _add_subscriber(msg.data);  // used when reconnecting to broker
                     esp_mqtt_client_subscribe(client, msg.data, 1);
+                    _add_subscriber(msg.data);  // used when reconnecting to broker
                     // don't free(msg.data), stays in _subscribers linked list
                     break;
                 }

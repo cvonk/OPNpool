@@ -118,7 +118,7 @@ menu "Pool Interface"
 
     config POOL_DBG_MQTTTASK
         bool "Debug MQTT task"
-        default n
+        default y
         help
             Print debug from MQTT task
 

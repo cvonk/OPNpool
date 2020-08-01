@@ -71,7 +71,7 @@ httpd_json(httpd_req_t * const req)
     httpd_resp_set_type(req, "application/json");
     poolstate_t state;
     if (poolstate_get(&state) == ESP_OK) {
-        char const * json = poolstate_to_json(POOLSTATE_ELEM_TYP_ALL, &state);
+        char const * json = poolstate_to_json(&state, POOLSTATE_ELEM_TYP_ALL);
         assert(json);
         char * resp;
         assert( asprintf( &resp, "%s%s%s%s",
