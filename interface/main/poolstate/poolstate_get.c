@@ -21,7 +21,7 @@ static char const * const TAG = "poolstate_get";
 static void
 _alloc_str(char * * const value, char const * const str)
 {
-    assert( asprintf(value, "\"%s\"", str) >= 0);
+    assert( asprintf(value, "%s", str) >= 0);
 }
 
 static void
@@ -84,6 +84,12 @@ _thermostat(poolstate_t const * const state, uint8_t const typ, uint8_t const id
             break;
         case POOLSTATE_ELEM_THERMOSTAT_TYP_HEATING:
             _alloc_bool(value, thermostat->heating);
+            break;
+        case POOLSTATE_ELEM_THERMOSTAT_TYP_START:
+            _alloc_str(value, network_time_str(thermostat->sched.start / 60, thermostat->sched.start % 60));
+            break;
+        case POOLSTATE_ELEM_THERMOSTAT_TYP_STOP:
+            _alloc_str(value, network_time_str(thermostat->sched.stop / 60, thermostat->sched.stop % 60));
             break;
         default:
             ESP_LOGW(TAG, "%s unknown sub_typ(%u)", __func__, typ);
@@ -183,7 +189,7 @@ esp_err_t
 poolstate_get_value(poolstate_t const * const state, poolstate_get_params_t const * const params, poolstate_get_value_t * const value)
 {
     dispatch_t const * dispatch = _dispatches;
-    ESP_LOGI(TAG, "typ = %u, sub_typ = %u, idx = %u", params->elem_typ, params->elem_sub_typ, params->idx);
+    //ESP_LOGI(TAG, "typ = %u, sub_typ = %u, idx = %u", params->elem_typ, params->elem_sub_typ, params->idx);
     for (uint8_t ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
         if (params->elem_typ == dispatch->typ) {
 

@@ -86,7 +86,9 @@ typedef struct poolstate_thermostat_t {
   XX(0, TEMP) \
   XX(1, SET_POINT) \
   XX(2, HEAT_SRC) \
-  XX(3, HEATING)
+  XX(3, HEATING) \
+  XX(4, START) \
+  XX(5, STOP)
 
 typedef enum {
 #define XX(num, name) POOLSTATE_ELEM_THERMOSTAT_TYP_##name = num,
