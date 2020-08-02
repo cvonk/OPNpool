@@ -40,6 +40,8 @@ typedef struct str_value_name_pair_t {
 
 /* utils_str.c */
 void name_reset_idx(void);
+char const * uint_str(uint16_t const value);
+char const * bool_str(bool const value);
 char const * hex8_str(uint8_t const value);
 char const * hex16_str(uint16_t const value);
 extern name_str_t name_str;

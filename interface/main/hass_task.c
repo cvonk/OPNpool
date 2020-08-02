@@ -32,12 +32,11 @@ static char const * const TAG = "hass";
 typedef struct dispatch_hass_t {
     hass_dev_typ_t     dev_typ;
     char const * const name;
-    char const * const id;
 } dispatch_hass_t;
 
-typedef void (* dispatch_init_fnc_t)(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg);
-typedef esp_err_t (* dispatch_state_fnc_t)(poolstate_t const * const state, uint8_t const idx, dispatch_hass_t const * const hass, ipc_t const * const ipc);
-typedef esp_err_t (* dispatch_set_fnc_t)(char const * const subtopic, uint8_t const idx, char const * const value_str, datalink_pkt_t * const pkt);
+typedef void      (* dispatch_init_fnc_t)(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg);
+typedef esp_err_t (* dispatch_state_fnc_t)(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc);
+typedef esp_err_t (* dispatch_set_fnc_t)(char const * const subtopic, poolstate_get_params_t const * const params, char const * const value_str, datalink_pkt_t * const pkt);
 
 typedef struct dispatch_t {
     dispatch_hass_t          hass;
@@ -45,8 +44,8 @@ typedef struct dispatch_t {
         dispatch_init_fnc_t  init;
         dispatch_state_fnc_t state;
         dispatch_set_fnc_t   set;
-        uint8_t              param;
     } fnc;
+    poolstate_get_params_t   fnc_params;
 } dispatch_t;
 
 static uint
@@ -64,30 +63,6 @@ _parse_topic(char * data, char * args[], uint const args_len) {
 }
 
 static void
-_sensor_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
-{
-    assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
-                    "\"~\":\"%s\","
-                    "\"name\":\"pool %s\","
-                    "\"stat_t\":\"~/state\"}",
-                    base, base, hass->name) >= 0);
-}
-
-static esp_err_t
-_sensor_state(poolstate_t const * const state, uint8_t const idx, dispatch_hass_t const * const hass, ipc_t const * const ipc)
-{
-    char const * const json = poolstate_to_json(state, (poolstate_elem_typ_t) idx);
-    char * combined;
-    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state" "\t"
-                     "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id,
-                     json) >= 0);
-    free((void *)json);
-    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
-    free(combined);
-    return ESP_OK;
-}
-
-static void
 _circuit_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
     assert( asprintf(set_topics++, "%s/%s", base, "set") >= 0);
@@ -100,21 +75,22 @@ _circuit_init(char const * const base, dispatch_hass_t const * const hass, char 
 }
 
 static esp_err_t
-_circuit_state(poolstate_t const * const state, uint8_t const idx, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+_circuit_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
 {
-    uint8_t const value = state->circuits.active[idx];
+    uint8_t const value = state->circuits.active[params->idx];
     char * combined;
     assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
                      "\t"
-                     "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, value ? "ON" : "OFF") >= 0);
+                     "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->name, value ? "ON" : "OFF") >= 0);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
 }
 
 static esp_err_t
-_circuit_set(char const * const subtopic, uint8_t const circuit_min_1, char const * const value_str, datalink_pkt_t * const pkt)
+_circuit_set(char const * const subtopic, poolstate_get_params_t const * const params, char const * const value_str, datalink_pkt_t * const pkt)
 {
+    uint8_t const circuit_min_1 = params->idx;
     uint8_t const value = strcmp(value_str, "ON") == 0;
 
     network_msg_ctrl_circuit_set_t circuit_set = {
@@ -133,20 +109,81 @@ _circuit_set(char const * const subtopic, uint8_t const circuit_min_1, char cons
     return ESP_FAIL;
 }
 
-static esp_err_t
-_temp_state(poolstate_t const * const state, uint8_t const idx, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+#if 0
+static void
+_sensor_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
-    int temp_nr;
-    if ((temp_nr = poolstate_temp_nr(hass->id)) >= 0) {
-        uint8_t const value = state->temps[idx].temp;
+    assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                    "\"~\":\"%s\","
+                    "\"name\":\"pool %s\","
+                    "\"stat_t\":\"~/state\""
+                    "}",
+                    base, base, hass->name) >= 0);
+}
+
+static esp_err_t
+_sensor_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+{
+    poolstate_elem_typ_t const typ = (poolstate_elem_typ_t) params[0];
+    uint8_t const idx = params[1];
+
+    uint8_t value = 0;
+    switch (typ) {
+        case POOLSTATE_ELEM_TYP_SYSTEM:
+            break;
+        case POOLSTATE_ELEM_TYP_TEMP:
+            value = state->temps[idx].temp;
+            break;
+        case POOLSTATE_ELEM_TYP_THERMOSTAT:
+            break;
+        case POOLSTATE_ELEM_TYP_CIRCUITS:
+            break;
+        case POOLSTATE_ELEM_TYP_PUMP:
+            break;
+        case POOLSTATE_ELEM_TYP_CHLOR:
+            break;
+        case POOLSTATE_ELEM_TYP_ALL:
+            break;
+    }
+    char * combined;
+    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
+                        "\t"
+                        "%u", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->name, value) >= 0);
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+    free(combined);
+    return ESP_OK;
+}
+#endif
+
+static void
+_json_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
+{
+    assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                    "\"~\":\"%s\","
+                    "\"name\":\"pool %s\","
+                    "\"stat_t\":\"~/state\","
+                    "\"val_tpl\":\"{{ value_json }}\""
+                    "}",
+                    base, base, hass->name) >= 0);
+}
+
+static esp_err_t
+_json_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+{
+    poolstate_get_value_t value;
+    if (poolstate_get_value(state, params, &value) == ESP_OK) {
         char * combined;
         assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
-                            "\t"
-                            "%u", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, value) >= 0);
+                        "\t"
+                        "%s",
+                        hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->name,
+                        value) >= 0);
+        free(value);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
         free(combined);
+        return ESP_OK;
     }
-    return ESP_OK;
+    return ESP_FAIL;
 }
 
 static void
@@ -178,45 +215,44 @@ _thermostat_init(char const * const base, dispatch_hass_t const * const hass, ch
 }
 
 static esp_err_t
-_thermostat_state(poolstate_t const * const state, uint8_t const idx, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+_thermostat_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
 {
-    int thermostat_nr;
-    if ((thermostat_nr = poolstate_thermostat_nr(hass->id)) >= 0) {
-        uint8_t const heat_src = state->thermostats[idx].heat_src;
-        uint8_t const target_temp = state->thermostats[idx].set_point;
-        uint8_t const current_temp = state->thermostats[idx].temp;
-        char * combined;
-        assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
-                            "\t"
-                            "{"
-                            "\"mode\":\"%s\","
-                            "\"target_temp\":%u,"
-                            "\"current_temp\":%u}",
-                            hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
-        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
-        free(combined);
-        assert( asprintf(&combined, "homeassistant/%s/%s/%s/available"
-                            "\t"
-                            "online",
-                            hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id) >= 0 );
-        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
-        free(combined);
-    } else {
-        ESP_LOGE(TAG, "thermostat not found (%s)", hass->id);
-    }
+    uint8_t const idx = params->idx;
+    poolstate_thermostat_t const * const thermostat = &state->thermostats[idx];
+    uint8_t const heat_src = thermostat->heat_src;
+    uint8_t const target_temp = thermostat->set_point;
+    uint8_t const current_temp = thermostat->temp;
+    char * combined;
+    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
+                        "\t"
+                        "{"
+                        "\"mode\":\"%s\","
+                        "\"target_temp\":%u,"
+                        "\"current_temp\":%u}",
+                        hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->name, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+    free(combined);
+    assert( asprintf(&combined, "homeassistant/%s/%s/%s/available"
+                        "\t"
+                        "online",
+                        hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->name) >= 0 );
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+    free(combined);
     return ESP_OK;
 }
 
 static esp_err_t
-_thermostat_set(char const * const subtopic, uint8_t const thermostat_nr, char const * const value_str, datalink_pkt_t * const pkt)
+_thermostat_set(char const * const subtopic, poolstate_get_params_t const * const params, char const * const value_str, datalink_pkt_t * const pkt)
 {
     poolstate_t state;
     poolstate_get(&state);
+
     uint8_t pool_set_point = state.thermostats[POOLSTATE_THERMOSTAT_POOL].set_point;
-    uint8_t spa_set_point = state.thermostats[POOLSTATE_THERMOSTAT_SPA].set_point;
     uint8_t pool_heat_src = state.thermostats[POOLSTATE_THERMOSTAT_POOL].heat_src;
+    uint8_t spa_set_point = state.thermostats[POOLSTATE_THERMOSTAT_SPA].set_point;
     uint8_t spa_heat_src = state.thermostats[POOLSTATE_THERMOSTAT_SPA].heat_src;
 
+    poolstate_thermostats_t const thermostat_nr = POOLSTATE_THERMOSTAT_POOL;  // 2BD: should be based on the topic
     if (strcmp(subtopic, "set_mode") == 0) {
         int value;
         if ((value = network_heat_src_nr(value_str)) >= 0) {
@@ -252,14 +288,17 @@ _thermostat_set(char const * const subtopic, uint8_t const thermostat_nr, char c
 }
 
 static dispatch_t _dispatches[] = {
-    { { HASS_DEV_TYP_switch,  "aux1 circuit", "aux1_circuit" }, { _circuit_init,    _circuit_state,    _circuit_set,    NETWORK_CIRCUIT_AUX1 } },
-    { { HASS_DEV_TYP_switch,  "pool circuit", "pool_circuit" }, { _circuit_init,    _circuit_state,    _circuit_set,    NETWORK_CIRCUIT_POOL } },
-    { { HASS_DEV_TYP_sensor,  "air temp",     "air" },          { _sensor_init,     _temp_state,       NULL,            POOLSTATE_TEMP_AIR } },
-    { { HASS_DEV_TYP_sensor,  "system",       "system" },       { _sensor_init,     _sensor_state,     NULL,            POOLSTATE_ELEM_TYP_SYSTEM } },
-    { { HASS_DEV_TYP_sensor,  "thermostats",  "thermostats" },  { _sensor_init,     _sensor_state,     NULL,            POOLSTATE_ELEM_TYP_THERMOSTATS } },
-    { { HASS_DEV_TYP_sensor,  "pump",         "pump" },         { _sensor_init,     _sensor_state,     NULL,            POOLSTATE_ELEM_TYP_PUMP } },
-    { { HASS_DEV_TYP_sensor,  "chlor",        "chlor" },        { _sensor_init,     _sensor_state,     NULL,            POOLSTATE_ELEM_TYP_CHLOR } },
-    { { HASS_DEV_TYP_climate, "heater",       "pool" },         { _thermostat_init, _thermostat_state, _thermostat_set, POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_switch,  "aux1_circuit" },   { _circuit_init,    _circuit_state,    _circuit_set},    { 0,                             0,                                  NETWORK_CIRCUIT_AUX1 } },
+    { { HASS_DEV_TYP_switch,  "pool_circuit" },   { _circuit_init,    _circuit_state,    _circuit_set},    { 0,                             0,                                  NETWORK_CIRCUIT_POOL } },
+    { { HASS_DEV_TYP_climate, "heater" },         { _thermostat_init, _thermostat_state, _thermostat_set}, { 0,                             0,                                  POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_sensor,  "air_temp" },       { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_TEMP,       POOLSTATE_ELEM_TEMP_TYP_TEMP,       POOLSTATE_TEMP_AIR  } },
+    { { HASS_DEV_TYP_sensor,  "system_time" },    { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_SYSTEM,     POOLSTATE_ELEM_SYSTEM_TYP_TIME,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pool_temp" },      { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_TEMP, POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_sensor,  "pump_pwr" },       { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_PUMP,       POOLSTATE_ELEM_PUMP_TYP_PWR,        0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_rpm" },       { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_PUMP,       POOLSTATE_ELEM_PUMP_TYP_RPM,        0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_pct" },      { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_CHLOR,      POOLSTATE_ELEM_CHLOR_TYP_PCT,       0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_salt" },     { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_CHLOR,      POOLSTATE_ELEM_CHLOR_TYP_SALT,      0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_status" },   { _json_init,       _json_state,       NULL},            { POOLSTATE_ELEM_TYP_CHLOR,      POOLSTATE_ELEM_CHLOR_TYP_STATUS,    0 } },
 };
 
 esp_err_t
@@ -269,8 +308,7 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
     for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
         if (dispatch->fnc.state) {
 
-            dispatch->fnc.state(state, dispatch->fnc.param, &dispatch->hass, ipc);
-
+            dispatch->fnc.state(state, &dispatch->fnc_params, &dispatch->hass, ipc);
         }
     }
 
@@ -281,7 +319,7 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
 }
 
 esp_err_t
-hass_rx_mqtt(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
+hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
 {
     char * args[5];
     uint8_t argc = _parse_topic(topic, args, ARRAY_SIZE(args));
@@ -294,9 +332,9 @@ hass_rx_mqtt(char * const topic, char const * const value_str, datalink_pkt_t * 
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
             if (strcmp(dev_typ, hass_dev_typ_str(dispatch->hass.dev_typ)) == 0 &&
-                strcmp(hass_id, dispatch->hass.id) && dispatch->fnc.set) {
+                strcmp(hass_id, dispatch->hass.name) && dispatch->fnc.set) {
 
-                return dispatch->fnc.set(subtopic, dispatch->fnc.param, value_str, pkt);
+                return dispatch->fnc.set(subtopic, &dispatch->fnc_params, value_str, pkt);
             }
         }
     }
@@ -321,7 +359,7 @@ hass_task(void * ipc_void)
                     set_topics[jj] = NULL;
                 }
                 char * base;
-                assert( asprintf(&base, "homeassistant/%s/%s/%s", hass_dev_typ_str(dispatch->hass.dev_typ), ipc->dev.name, dispatch->hass.id) >= 0 );
+                assert( asprintf(&base, "homeassistant/%s/%s/%s", hass_dev_typ_str(dispatch->hass.dev_typ), ipc->dev.name, dispatch->hass.name) >= 0 );
 
                 char * cfg;
                 dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);

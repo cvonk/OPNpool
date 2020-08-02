@@ -60,7 +60,7 @@ _service_requests_from_mqtt(rs485_handle_t rs485, ipc_t const * const ipc)
     if (xQueueReceive(ipc->to_pool_q, &queued_msg, (TickType_t)0) == pdPASS) {
         assert(queued_msg.dataType == IPC_TO_POOL_TYP_SET);
         datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
-        if (hass_rx_mqtt(queued_msg.topic, queued_msg.data, pkt) == ESP_OK) {
+        if (hass_rx_set(queued_msg.topic, queued_msg.data, pkt) == ESP_OK) {
             datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
         }
         free(queued_msg.data);
