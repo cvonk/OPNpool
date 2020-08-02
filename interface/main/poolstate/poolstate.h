@@ -43,6 +43,16 @@ typedef struct poolstate_system_t {
     poolstate_version_t version;
 } poolstate_system_t;
 
+#define POOLSTATE_ELEM_SYSTEM_TYP_MAP(XX) \
+  XX(0, TIME) \
+  XX(1, VERSION)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_SYSTEM_TYP_##name = num,
+  POOLSTATE_ELEM_SYSTEM_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_system_typ_t;
+
 /**
  * poolstate_thermostats_t
  **/
@@ -72,6 +82,18 @@ typedef struct poolstate_thermostat_t {
     poolstate_sched_t sched;
 } poolstate_thermostat_t;
 
+#define POOLSTATE_ELEM_THERMOSTAT_TYP_MAP(XX) \
+  XX(0, TEMP) \
+  XX(1, SET_POINT) \
+  XX(2, HEAT_SRC) \
+  XX(3, HEATING)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_THERMOSTAT_TYP_##name = num,
+  POOLSTATE_ELEM_THERMOSTAT_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_thermostat_typ_t;
+
 /**
  * poolstate_temp_t
  **/
@@ -91,6 +113,15 @@ typedef struct poolstate_temp_t {
     uint8_t temp;
 } poolstate_temp_t;
 
+#define POOLSTATE_ELEM_TEMP_TYP_MAP(XX) \
+  XX(0, TEMP) \
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_TEMP_TYP_##name = num,
+  POOLSTATE_ELEM_TEMP_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_temp_typ_t;
+
 /**
  * poolstate_circuits_t
  **/
@@ -99,6 +130,16 @@ typedef struct poolstate_circuits_t {
     bool     active[NETWORK_CIRCUIT_COUNT];
     uint8_t  delay;
 } poolstate_circuits_t;
+
+#define POOLSTATE_ELEM_CIRCUITS_TYP_MAP(XX) \
+  XX(0, ACTIVE) \
+  XX(1, DELAY)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_CIRCUITS_TYP_##name = num,
+  POOLSTATE_ELEM_CIRCUITS_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_circuits_typ_t;
 
 /**
  * poolstate_pump_t
@@ -116,6 +157,24 @@ typedef struct {
     uint8_t  err;
     uint8_t  timer;
 } poolstate_pump_t;
+
+#define POOLSTATE_ELEM_PUMP_TYP_MAP(XX) \
+  XX(0, TIME) \
+  XX(1, MODE) \
+  XX(2, RUNNING) \
+  XX(3, STATUS) \
+  XX(4, PWR) \
+  XX(5, GPM) \
+  XX(6, RPM) \
+  XX(7, PCT) \
+  XX(8, ERR) \
+  XX(9, TIMER)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_PUMP_TYP_##name = num,
+  POOLSTATE_ELEM_PUMP_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_pump_typ_t;
 
 /**
  * poolstate_chlor_t
@@ -141,20 +200,17 @@ typedef struct poolstate_chlor_t {
     poolstate_chlor_status_t  status;
 } poolstate_chlor_t;
 
-#define POOLSTATE_ELEM_TYP_MAP(XX) \
-  XX(0x00, ALL) \
-  XX(0x01, SYSTEM) \
-  XX(0x02, TEMPS) \
-  XX(0x03, THERMOSTATS) \
-  XX(0x04, CIRCUITS) \
-  XX(0x05, PUMP) \
-  XX(0x06, CHLOR)
+#define POOLSTATE_ELEM_CHLOR_TYP_MAP(XX) \
+  XX(0, NAME) \
+  XX(1, PCT) \
+  XX(2, SALT) \
+  XX(3, STATUS)
 
 typedef enum {
-#define XX(num, name) POOLSTATE_ELEM_TYP_##name = num,
-  POOLSTATE_ELEM_TYP_MAP(XX)
+#define XX(num, name) POOLSTATE_ELEM_CHLOR_TYP_##name = num,
+  POOLSTATE_ELEM_CHLOR_TYP_MAP(XX)
 #undef XX
-} poolstate_elem_typ_t;
+} poolstate_elem_chlor_typ_t;
 
 /**
  * all together now
@@ -168,6 +224,21 @@ typedef struct poolstate_t {
     poolstate_pump_t        pump;
     poolstate_chlor_t       chlor;
 } poolstate_t;
+
+#define POOLSTATE_ELEM_TYP_MAP(XX) \
+  XX(0x00, SYSTEM) \
+  XX(0x01, TEMP) \
+  XX(0x02, THERMOSTAT) \
+  XX(0x03, CIRCUITS) \
+  XX(0x04, PUMP) \
+  XX(0x05, CHLOR) \
+  XX(0x06, ALL)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_TYP_##name = num,
+  POOLSTATE_ELEM_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_typ_t;
 
 /* poolstate.c */
 void poolstate_init(void);
@@ -202,8 +273,17 @@ void cJSON_AddChlorRespToObject(cJSON * const obj, char const * const key, pools
 void cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 char const * poolstate_to_json(poolstate_t const * const state, poolstate_elem_typ_t const typ);
 
+/* poolstate_get.c */
+typedef char * poolstate_get_value_t;
+typedef struct poolstate_get_params_t {
+    poolstate_elem_typ_t elem_typ;
+    uint8_t              elem_sub_typ;
+    uint8_t const        idx;
+} poolstate_get_params_t;
+esp_err_t poolstate_get_value(poolstate_t const * const state, poolstate_get_params_t const * const params, poolstate_get_value_t * value);
+
 /* poolstate_str.c */
-const char * poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state_id);
+const char * poolstate_chlor_status_str(poolstate_chlor_status_t const chlor_state_id);
 const char * poolstate_thermostat_str(poolstate_thermostats_t const thermostat_id);
 const char * poolstate_temp_str(poolstate_temps_t const temp_id);
 int poolstate_temp_nr(char const * const temp_str);

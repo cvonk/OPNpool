@@ -24,6 +24,41 @@ name_reset_idx(void) {
 }
 
 char const *
+uint_str(uint16_t const value)
+{
+	size_t const nrdigits = 5;
+	if (name_str.idx + nrdigits + 1U >= ARRAY_SIZE(name_str.str)) {
+		return name_str.noMem;  // increase size of str.str[]
+	}
+	char * s = name_str.str + name_str.idx;
+
+    size_t len = 0;
+    uint8_t mask = 10000;
+    for (uint ii = 0; ii < nrdigits; ii++) {
+        uint8_t const digit = value / mask;
+        if (digit || ii == nrdigits - 1) {  // no leading 0s
+          s[len++] = name_str.digits[digit];
+        }
+        mask /= 10;
+    }
+	s[len++] = '\0';
+	name_str.idx += len;
+	return s;
+}
+
+char const *
+bool_str(bool const value)
+{
+    char const * const value_str = value ? "true" : "false";
+    uint len = strlen(value_str);
+	char * s = name_str.str + name_str.idx;
+    strcpy(s, value_str);
+	s[len++] = '\0';
+	name_str.idx += len;
+	return s;
+}
+
+char const *
 hex8_str(uint8_t const value)
 {
 	uint_least8_t const nrdigits = sizeof(value) << 1;

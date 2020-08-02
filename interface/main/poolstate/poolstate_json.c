@@ -28,13 +28,13 @@ typedef struct poolstate_json_dispatch_t {
     poolstate_json_fnc_t const  fnc;
 } poolstate_json_dispatch_t;
 
-poolstate_json_dispatch_t _dispatches[] = {
-    { POOLSTATE_ELEM_TYP_SYSTEM,      "system",      cJSON_AddSystemToObject      },
-    { POOLSTATE_ELEM_TYP_TEMPS,       "temps",       cJSON_AddTempsToObject       },
-    { POOLSTATE_ELEM_TYP_THERMOSTATS, "thermostats", cJSON_AddThermostatsToObject },
-    { POOLSTATE_ELEM_TYP_CIRCUITS,    "circuits",    cJSON_AddCircuitsToObject    },
-    { POOLSTATE_ELEM_TYP_PUMP,        "pump",        cJSON_AddPumpToObject        },
-    { POOLSTATE_ELEM_TYP_CHLOR,       "chlor",       cJSON_AddChlorToObject       },
+static poolstate_json_dispatch_t _dispatches[] = {
+    { POOLSTATE_ELEM_TYP_SYSTEM,     "system",      cJSON_AddSystemToObject      },
+    { POOLSTATE_ELEM_TYP_TEMP,       "temps",       cJSON_AddTempsToObject       },
+    { POOLSTATE_ELEM_TYP_THERMOSTAT, "thermostats", cJSON_AddThermostatsToObject },
+    { POOLSTATE_ELEM_TYP_CIRCUITS,   "circuits",    cJSON_AddCircuitsToObject    },
+    { POOLSTATE_ELEM_TYP_PUMP,       "pump",        cJSON_AddPumpToObject        },
+    { POOLSTATE_ELEM_TYP_CHLOR,      "chlor",       cJSON_AddChlorToObject       },
 };
 
 static cJSON *
@@ -269,7 +269,7 @@ cJSON_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_
 {
     cJSON * const item = _create_item(obj, key);
     cJSON_AddNumberToObject(item, "salt", chlor->salt);
-    cJSON_AddStringToObject(item, "status", poolstate_chlor_state_str(chlor->status));
+    cJSON_AddStringToObject(item, "status", poolstate_chlor_status_str(chlor->status));
 }
 
 void
@@ -280,7 +280,7 @@ cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_t co
     cJSON_AddStringToObject(item, "name", chlor->name);
     cJSON_AddNumberToObject(item, "pct", chlor->pct);
     cJSON_AddNumberToObject(item, "salt", chlor->salt);
-    cJSON_AddStringToObject(item, "status", poolstate_chlor_state_str(chlor->status));
+    cJSON_AddStringToObject(item, "status", poolstate_chlor_status_str(chlor->status));
 }
 
 /**

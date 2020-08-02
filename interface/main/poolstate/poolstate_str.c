@@ -19,16 +19,16 @@
  * poolstate_chlor_status_t
  **/
 
-static const char * const _poolstate_chlor_states[] = {
+static const char * const _poolstate_chlor_statuses[] = {
 #define XX(num, name) #name,
   POOLSTATE_CHLOR_STATUS_MAP(XX)
 #undef XX
 };
 
 const char *
-poolstate_chlor_state_str(poolstate_chlor_status_t const chlor_state_id)
+poolstate_chlor_status_str(poolstate_chlor_status_t const chlor_state_id)
 {
-  return ELEM_AT(_poolstate_chlor_states, chlor_state_id, hex8_str(chlor_state_id));
+  return ELEM_AT(_poolstate_chlor_statuses, chlor_state_id, hex8_str(chlor_state_id));
 }
 
 static const char * const _poolstate_thermostats[] = {
