@@ -30,7 +30,7 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
     for (char * key = strtok_r(buf, "&", &rest); key != NULL; key = strtok_r(NULL, "&", &rest)) {
         char * value = strchr(key, '=');
         if (value) {
-            *value++ = '\0';
+            *value++ = '\0';  // split key/value
             if (strcmp(key, "_") == 0) {
                 ; // ignore
             } else if (strcmp(key, "callback")) {
