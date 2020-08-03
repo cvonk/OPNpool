@@ -23,7 +23,7 @@
 static char const * const TAG = "httpd_json";
 
 static char *
-_jsonProcessQueryVars(httpd_req_t * req, char * const buf)
+_jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const ipc)
 {
     char * callback = NULL;  // uses JSON-P to get around CORS
     char * rest = NULL;
@@ -39,9 +39,7 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf)
             }
             ESP_LOGI(TAG, "query var, %s=%s", key, value);
         }
-#if 0
-        transmitQueue.enqueue(key, value);  // MAKE SURE that the queue copies the values, as they will be freed soon
-#endif
+        ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key, strlen(key), value, strlen(value), ipc);
     }
     return callback;
 }
@@ -49,10 +47,7 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf)
 esp_err_t
 httpd_json(httpd_req_t * const req)
 {
-    if (req->method != HTTP_GET) {
-        httpd_resp_send_err(req, HTTPD_405_METHOD_NOT_ALLOWED, "No such method");
-        return ESP_FAIL;
-    }
+    ipc_t const * const ipc = (ipc_t const * const) req->user_ctx;  // send string passed in user context as response
 
     // process query vars
 
@@ -61,7 +56,7 @@ httpd_json(httpd_req_t * const req)
     if (buf_len > 1) {
         char * buf = (char *) malloc(buf_len);
         if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK) {
-            callback = _jsonProcessQueryVars(req, buf);
+            callback = _jsonProcessQueryVars(req, buf, ipc);
         }
         free(buf);
     }
@@ -74,18 +69,19 @@ httpd_json(httpd_req_t * const req)
         char const * json = poolstate_to_json(&state, POOLSTATE_ELEM_TYP_ALL);
         assert(json);
         char * resp;
-        assert( asprintf( &resp, "%s%s%s%s",
-                          callback,  callback ? "(" : "",
-                          json, callback ? ")" : "") >= 0);
+        if (callback) {
+            assert( asprintf( &resp, "%s(%s)", callback,  json) >= 0 );
+            free(callback);
+        } else {
+            assert( asprintf( &resp, "%s", json) >= 0 );
+        }
+        //ESP_LOGI(TAG, "Responding with \"%s\"", resp);
         free((void *)json);
         httpd_resp_send(req, resp, strlen(resp));
         free(resp);
     } else {
-        char * resp = "{\"error\":\"no state\"}";
+        char const * const resp = "{\"error\":\"no state\"}";
         httpd_resp_send(req, resp, strlen(resp));
-    }
-    if (callback) {
-        free(callback);
     }
     return ESP_OK;
 }

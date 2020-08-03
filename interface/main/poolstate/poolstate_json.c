@@ -134,8 +134,7 @@ cJSON_AddThermostatsToObject_generic(cJSON * const obj, char const * const key, 
 void
 cJSON_AddThermostatsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
-    cJSON * const item = _create_item(obj, key);
-    cJSON_AddThermostatsToObject_generic(item, key, state->thermostats, true, true, true, true, true);
+    cJSON_AddThermostatsToObject_generic(obj, key, state->thermostats, true, true, true, true, true);
 }
 
 /**
