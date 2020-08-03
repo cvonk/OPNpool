@@ -4,13 +4,6 @@
 #include "ipc/ipc.h"
 #include "poolstate/poolstate.h"
 
-#if !(defined CONFIG_POOL_DBG_HASSTASK)
-#  define CONFIG_POOL_DBG_HASSTASK (0)
-#endif
-#if !(defined CONFIG_POOL_DBG_HASSTASK_ONERROR)
-#  define CONFIG_POOL_DBG_HASSTASK_ONERROR (0)
-#endif
-
 #define HASS_DEV_TYP_MAP(XX) \
   XX(0, switch) \
   XX(1, sensor) \

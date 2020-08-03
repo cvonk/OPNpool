@@ -52,7 +52,7 @@ _service_pkts_from_rs485(rs485_handle_t const rs485, ipc_t const * const ipc)
 }
 
 static void
-_service_requests_from_mqtt(rs485_handle_t rs485, ipc_t const * const ipc)
+_service_requests_from_mqtt_and_httpd(rs485_handle_t rs485, ipc_t const * const ipc)
 {
     ipc_to_pool_msg_t queued_msg;
 
@@ -72,12 +72,14 @@ _forward_queued_pkt_to_rs485(rs485_handle_t const rs485, ipc_t const * const ipc
 {
     datalink_pkt_t const * const pkt = rs485->dequeue(rs485);
     if (pkt) {
-        if (CONFIG_POOL_DBG_POOLTASK) {
+        if (CONFIG_POOL_DBGLVL_POOLTASK >1) {
             size_t const dbg_size = 128;
             char dbg[dbg_size];
             assert(pkt->skb);
             (void) skb_print(TAG, pkt->skb, dbg, dbg_size);
-            ESP_LOGI(TAG, "tx { %s}", dbg);
+            if (CONFIG_POOL_DBGLVL_POOLTASK > 1) {
+                ESP_LOGI(TAG, "tx { %s}", dbg);
+            }
         }
         rs485->tx_mode(true);
         rs485->write_bytes(pkt->skb->priv.data, pkt->skb->len);
@@ -105,7 +107,7 @@ pool_task(void * ipc_void)
 
     while (1) {
 
-        _service_requests_from_mqtt(rs485, ipc);
+        _service_requests_from_mqtt_and_httpd(rs485, ipc);
 
         if (_service_pkts_from_rs485(rs485, ipc)) {
 

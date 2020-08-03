@@ -74,25 +74,25 @@ menu "Pool Interface"
         help
             Maximum size of the data byte array in a RS485 message (>=32)
 
-    config POOL_DBG_DATALINK
+    config POOL_DBGLVL_DATALINK >1
         bool "Debug datalink packets"
         default y
         help
             Print RS485 bytes to serial port
 
-    config POOL_DBG_DATALINK_ONERROR
+    config POOL_DBGLVL_DATALINK >0
         bool "Debug datalink packets with errors"
         default y
         help
             Print RS485 bytes on decoding error to serial port
 
-    config POOL_DBG_NETWORK
+    config POOL_DBGLVL_NETWORK >1
         bool "Debug network messages"
         default n
         help
             Print messages that cannot be decoded to serial port
 
-    config POOL_DBG_NETWORK_ONERROR
+    config POOL_DBGLVL_NETWORK >0
         bool "Debug network messages with errors"
         default y
         help

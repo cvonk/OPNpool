@@ -10,12 +10,6 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
-#if !defined CONFIG_POOL_DBG_NETWORK
-# define CONFIG_POOL_DBG_NETWORK (0)
-#endif
-#if !defined CONFIG_POOL_DBG_NETWORK_ONERROR
-# define CONFIG_POOL_DBG_NETWORK_ONERROR (0)
-#endif
 
 /**
  * NETWORK_TYP_CTRL_t

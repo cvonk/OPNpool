@@ -112,7 +112,7 @@ app_main()
 
     static ipc_t ipc = {};
     ipc.to_pool_q = xQueueCreate(10, sizeof(ipc_to_pool_msg_t));
-    ipc.to_mqtt_q = xQueueCreate(30, sizeof(ipc_to_mqtt_msg_t));
+    ipc.to_mqtt_q = xQueueCreate(40, sizeof(ipc_to_mqtt_msg_t));
     assert(ipc.to_mqtt_q && ipc.to_pool_q);
 
     poolstate_init();

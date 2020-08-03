@@ -31,7 +31,9 @@ httpd_register_cb(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * cons
 
         http_uri->user_ctx = (void *) ipc;
         ESP_ERROR_CHECK( httpd_register_uri_handler(httpd_handle, http_uri) );
-        ESP_LOGI(TAG, "Listening at http://" IPSTR "/%s", IP2STR(ip), http_uri->uri);
+        if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
+            ESP_LOGI(TAG, "Listening at http://" IPSTR "/%s", IP2STR(ip), http_uri->uri);
+        }
     }
 }
 
@@ -56,54 +58,3 @@ httpd_urldecode(char const * in)
 	*p = '\0';
 	return out;
 }
-
-#if 0
-#define MAX_CONTENT_LEN (2048)
-
-char const *
-httpd_get_content(httpd_req_t * const req)
-{
-    if (req->content_len >= MAX_CONTENT_LEN) {
-        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Content too long");
-        return NULL;
-    }
-    char * const buf = malloc(req->content_len + 1);  // +1 so even for no content body, we have a buf
-    assert(buf);
-    uint len = 0;
-    while (len < req->content_len) {
-        uint received = httpd_req_recv(req, buf + len, req->content_len);
-        if (received <= 0) {
-            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to post value");
-            return NULL;
-        }
-        len += received;
-    }
-    buf[req->content_len] = '\0';
-    return buf; // buf must be freed by caller
-}
-
-esp_err_t
-httpd_cb(httpd_req_t * const req)
-{
-    //ipc_t const * const ipc = req->user_ctx;
-
-    if (req->method != HTTP_POST && req->method != HTTP_GET) {
-        httpd_resp_send_err(req, HTTPD_405_METHOD_NOT_ALLOWED, "No such method");
-        return ESP_FAIL;
-    }
-    ESP_LOGI(TAG, "Request for \"%s\"", req->uri);
-    http_uri_t const * http_uri = _httpd_uris;
-    for (int ii = 0; ii < ARRAY_SIZE(_httpd_uris); ii++, http_uri++) {
-        int const len = strlen(http_uri->uri);
-        if (http_uri->uri[len-1] == '*' && strncmp(req->uri, http_uri->uri, len-1) == 0 ) {
-            return http_uri->fnc(req);
-        }
-        ESP_LOGI(TAG, "2 \"%s\" == \"%s\"", req->uri, http_uri->uri);
-        if(strcmp(req->uri, http_uri->uri) == 0) {
-            return http_uri->fnc(req);
-        }
-    }
-    httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "No such URI");
-    return ESP_FAIL;
-}
-#endif

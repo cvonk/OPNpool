@@ -12,12 +12,6 @@
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
-#if !(defined CONFIG_POOL_DBG_DATALINK)
-#  define CONFIG_POOL_DBG_DATALINK (0)
-#endif
-#if !(defined CONFIG_POOL_DBG_DATALINK_ONERROR)
-#  define CONFIG_POOL_DBG_DATALINK_ONERROR (0)
-#endif
 
 #define DATALINK_ADDRGROUP_MAP(XX) \
   XX(0x00, ALL)  \

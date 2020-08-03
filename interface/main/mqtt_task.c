@@ -131,7 +131,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
 	switch (event->event_id) {
         case MQTT_EVENT_DISCONNECTED:
             xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
-            if (CONFIG_POOL_DBG_MQTTTASK_ONERROR) {
+            if (CONFIG_POOL_DBGLVL_MQTTTASK > 0) {
                 ESP_LOGW(TAG, "Broker disconnected");
             }
         	// reconnect is part of the SDK
@@ -141,28 +141,27 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
             ipc->dev.count.mqttConnect++;
             for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber; subscriber = subscriber->next) {
                 esp_mqtt_client_subscribe(event->client, subscriber->topic, 1);
-                if (CONFIG_POOL_DBG_MQTTTASK) {
+                if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
                     ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\"", subscriber->topic);
                 }
             }
             break;
         case MQTT_EVENT_DATA:
             if (event->topic && event->data_len == event->total_data_len) {  // quietly ignore chunked messaegs
-                bool handled = false;
+                bool done = false;
 
-                for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber; subscriber = subscriber->next) {
+                for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber && !done; subscriber = subscriber->next) {
                     if (strncmp(subscriber->topic, event->topic, event->topic_len) == 0) {
+
                         mqtt_dispatch_t const * handler = _mqtt_dispatches;
-                        for (uint ii = 0; ii < ARRAY_SIZE(_mqtt_dispatches); ii++, handler++) {
+                        for (uint ii = 0; ii < ARRAY_SIZE(_mqtt_dispatches) && !done; ii++, handler++) {
 
                             handler->fnc(event, ipc);
-
-                            handled = true;
-                            break;
+                            done = true;
                         }
                     }
                 }
-                if (!handled) {
+                if (!done) {  // perhaps `pool_task` knows what to do
                     ipc_send_to_pool(IPC_TO_POOL_TYP_SET, event->topic, event->topic_len, event->data, event->data_len, ipc);
                 }
             }
@@ -214,6 +213,9 @@ mqtt_task(void * ipc_void)
         ipc_to_mqtt_msg_t msg;
 		if (xQueueReceive(ipc->to_mqtt_q, &msg, (TickType_t)(1000L / portTICK_PERIOD_MS)) == pdPASS) {
 
+            if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
+                ESP_LOGI(TAG, "%u %s", msg.dataType, msg.data);
+            }
             switch (msg.dataType) {
                 case IPC_TO_MQTT_TYP_STATE:
                 case IPC_TO_MQTT_TYP_RESTART:
@@ -233,7 +235,7 @@ mqtt_task(void * ipc_void)
                 }
                 case IPC_TO_MQTT_TYP_SUBSCRIBE: {
                     // 2BD should remember, for when the connection to the broker gets reestablised ..
-                    if (CONFIG_POOL_DBG_MQTTTASK) {
+                    if (CONFIG_POOL_DBGLVL_MQTTTASK >1) {
                         ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
                     }
                     esp_mqtt_client_subscribe(client, msg.data, 1);
@@ -245,7 +247,7 @@ mqtt_task(void * ipc_void)
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    if (CONFIG_POOL_DBG_MQTTTASK) {
+                    if (CONFIG_POOL_DBGLVL_MQTTTASK >1) {
                         ESP_LOGI(TAG, "\"%s\": \"%s\"", topic, message);
                     }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
