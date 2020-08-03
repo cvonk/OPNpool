@@ -1,5 +1,5 @@
 /**
- * @brief HTTPd: HTTP server; started in response to receiving an IP address; dispatches to httpd_*.c callbacks
+ * @brief HTTPd: HTTP server; started in response to receiving an IP address; http_uries to httpd_*.c callbacks
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020, Coert Vonk
@@ -10,33 +10,37 @@
 #include <string.h>
 #include <esp_system.h>
 #include <esp_log.h>
+#include <esp_wifi.h>
 #include <esp_http_server.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/queue.h>
 
 #include "httpd.h"
 #include "../ipc/ipc.h"
 
-#define MAX_CONTENT_LEN (2048)
+static char const * const TAG = "httpd";
 
-// static const char * TAG = "httpd";
-
-typedef struct {
-    char * uri;
-    esp_err_t (*handler)(httpd_req_t * req);
-} uri_dispatch_t;
-
-static uri_dispatch_t _uri_dispatch[] = {
-    { (char *)"/",  httpd_root },
-    { (char *)"/json",  httpd_json },
-    { (char *)"/api/*",  httpd_api }
+static httpd_uri_t _httpd_uris[] = {
+    { .uri = "/",      .method = HTTP_GET, .handler = httpd_root },
+    { .uri = "/json",  .method = HTTP_GET, .handler = httpd_json },
 };
+
+void
+httpd_register_cb(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * const ip, ipc_t const * const ipc)
+{
+    httpd_uri_t * http_uri = _httpd_uris;
+    for (int ii = 0; ii < ARRAY_SIZE(_httpd_uris); ii++, http_uri++) {
+
+        http_uri->user_ctx = (void *) ipc;
+        ESP_ERROR_CHECK( httpd_register_uri_handler(httpd_handle, http_uri) );
+        ESP_LOGI(TAG, "Listening at http://" IPSTR "/%s", IP2STR(ip), http_uri->uri);
+    }
+}
+
+#if 0
+#define MAX_CONTENT_LEN (2048)
 
 char const *
 httpd_get_content(httpd_req_t * const req)
 {
-
     if (req->content_len >= MAX_CONTENT_LEN) {
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Content too long");
         return NULL;
@@ -65,19 +69,19 @@ httpd_cb(httpd_req_t * const req)
         httpd_resp_send_err(req, HTTPD_405_METHOD_NOT_ALLOWED, "No such method");
         return ESP_FAIL;
     }
-
-    //char const * const content = _get_content(req); free(content);
-
-    uri_dispatch_t * dispatch = _uri_dispatch;
-    for (int ii = 0; ii < ARRAY_SIZE(_uri_dispatch); ii++, dispatch++) {
-        int const len = strlen(dispatch->uri);
-        if (dispatch->uri[len-1] == '*' && strncmp(req->uri, dispatch->uri, len-1) == 0 ) {
-            return dispatch->handler(req);
+    ESP_LOGI(TAG, "Request for \"%s\"", req->uri);
+    http_uri_t const * http_uri = _httpd_uris;
+    for (int ii = 0; ii < ARRAY_SIZE(_httpd_uris); ii++, http_uri++) {
+        int const len = strlen(http_uri->uri);
+        if (http_uri->uri[len-1] == '*' && strncmp(req->uri, http_uri->uri, len-1) == 0 ) {
+            return http_uri->fnc(req);
         }
-        if(strcmp(req->uri, dispatch->uri) == 0) {
-            return dispatch->handler(req);
+        ESP_LOGI(TAG, "2 \"%s\" == \"%s\"", req->uri, http_uri->uri);
+        if(strcmp(req->uri, http_uri->uri) == 0) {
+            return http_uri->fnc(req);
         }
     }
     httpd_resp_send_err(req, HTTPD_404_NOT_FOUND, "No such URI");
     return ESP_FAIL;
 }
+#endif

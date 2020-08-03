@@ -70,7 +70,7 @@ _forwardCoredump(ipc_t * ipc, esp_mqtt_client_handle_t const client)
     coredump_priv_t priv = {
         .client = client,
     };
-    assert( asprintf(&priv.topic, "%s/coredump/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name) >=0);
+    assert( asprintf(&priv.topic, "%s/coredump/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name) >=0 );
     coredump_to_server_config_t coredump_cfg = {
         .start = NULL,
         .end = NULL,
@@ -101,12 +101,12 @@ _dispatch_who(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
 
     char * payload;
     assert( asprintf(&payload,
-                 "{ \"name\": \"%s\", \"firmware\": { \"version\": \"%s.%s\", \"date\": \"%s %s\" }, \"wifi\": { \"connect\": %u, \"address\": \"%s\", \"SSID\": \"%s\", \"RSSI\": %d }, \"mqtt\": { \"connect\": %u }, \"mem\": { \"heap\": %u } }",
-                  ipc->dev.name,
-                  running_app_info.project_name, running_app_info.version,
-                  running_app_info.date, running_app_info.time,
-                  ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
-                  ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT) ) >= 0);
+            "{ \"name\": \"%s\", \"firmware\": { \"version\": \"%s.%s\", \"date\": \"%s %s\" }, \"wifi\": { \"connect\": %u, \"address\": \"%s\", \"SSID\": \"%s\", \"RSSI\": %d }, \"mqtt\": { \"connect\": %u }, \"mem\": { \"heap\": %u } }",
+            ipc->dev.name,
+            running_app_info.project_name, running_app_info.version,
+            running_app_info.date, running_app_info.time,
+            ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
+            ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT) ) >= 0);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
     free(payload);
 }
@@ -198,10 +198,10 @@ mqtt_task(void * ipc_void)
  	ipc_t * ipc = ipc_void;
     {
         char * topic;
-        assert( asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name) >= 0);
+        assert( asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name) >= 0 );
         _add_subscriber(topic);
         // don't free(topic) stays in subscribers linked list
-        assert( asprintf(&topic, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC) >= 0);
+        assert( asprintf(&topic, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC) >= 0 );
         _add_subscriber(topic);
         // don't free(topic) stays in subscribers linked list
     }

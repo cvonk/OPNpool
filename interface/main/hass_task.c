@@ -67,13 +67,13 @@ _parse_topic(char * data, char * args[], uint const args_len) {
 static void
 _circuit_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
-    assert( asprintf(set_topics++, "%s/%s", base, "set") >= 0);
+    assert( asprintf(set_topics++, "%s/%s", base, "set") >= 0 );
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                     "\"~\":\"%s\","
                     "\"name\":\"Pool %s\","
                     "\"cmd_t\":\"~/set\","
                     "\"stat_t\":\"~/state\"}",
-                    base, base, hass->name) >= 0);
+                    base, base, hass->name) >= 0 );
 }
 
 static esp_err_t
@@ -83,7 +83,7 @@ _circuit_state(poolstate_t const * const state, poolstate_get_params_t const * c
     char * combined;
     assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
                      "\t"
-                     "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, value ? "ON" : "OFF") >= 0);
+                     "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, value ? "ON" : "OFF") >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
@@ -115,12 +115,11 @@ static void
 _json_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
-                    "\"~\":\"%s\","
-                    "\"name\":\"Pool %s\","
-                    "\"stat_t\":\"~/state\","
-                    "\"unit_of_meas\":\"%s\""
-                    "}",
-                    base, base, hass->name, hass->unit ? hass->unit : "") >= 0);
+                     "\"~\":\"%s\","
+                     "\"name\":\"Pool %s\","
+                     "\"stat_t\":\"~/state\","
+                     "\"unit_of_meas\":\"%s\"}",
+                     base, base, hass->name, hass->unit ? hass->unit : "") >= 0 );
 }
 
 static esp_err_t
@@ -133,7 +132,7 @@ _json_state(poolstate_t const * const state, poolstate_get_params_t const * cons
                         "\t"
                         "%s",
                         hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id,
-                        value) >= 0);
+                        value) >= 0 );
         free(value);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
         free(combined);
@@ -145,28 +144,26 @@ _json_state(poolstate_t const * const state, poolstate_get_params_t const * cons
 static void
 _thermostat_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
-    assert( asprintf(set_topics++, "%s/%s", base, "set_mode") >= 0);
-    assert( asprintf(set_topics++, "%s/%s", base, "set_temp") >= 0);
+    assert( asprintf(set_topics++, "%s/%s", base, "set_mode") >= 0 );
+    assert( asprintf(set_topics++, "%s/%s", base, "set_temp") >= 0 );
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
-                    "\"~\":\"%s\","
-                    "\"name\":\"Pool %s\","
-                    "\"mode_cmd_t\":\"~/set_mode\","
-                    "\"temp_cmd_t\":\"~/set_temp\","
-                    "\"mode_stat_tpl\":\"{{ value_json.mode }}\","
-                    "\"mode_stat_t\":\"~/state\","
-                    "\"temp_stat_tpl\":\"{{ value_json.target_temp }}\","
-                    "\"temp_stat_t\":\"~/state\","
-                    "\"curr_temp_t\":\"~/state\","
-                    "\"curr_temp_tpl\":\"{{ value_json.current_temp }}\","
-                    "\"min_temp\":15,"
-                    "\"max_temp\":110,"
-                    "\"temp_step\":1,"
-                    "\"avty_t\":\"~/available\","
-                    "\"pl_avail\":\"online\","
-                    "\"pl_not_avail\":\"offline\","
-                    "\"modes\":[\"off\",\"heat\"]"
-                    "}",
-                    base, base, hass->name) >= 0);
+                     "\"~\":\"%s\","
+                     "\"name\":\"Pool %s\","
+                     "\"mode_cmd_t\":\"~/set_mode\","
+                     "\"temp_cmd_t\":\"~/set_temp\","
+                     "\"mode_stat_tpl\":\"{{ value_json.mode }}\","
+                     "\"mode_stat_t\":\"~/state\","
+                     "\"temp_stat_tpl\":\"{{ value_json.target_temp }}\","
+                     "\"temp_stat_t\":\"~/state\","
+                     "\"curr_temp_t\":\"~/state\","
+                     "\"curr_temp_tpl\":\"{{ value_json.current_temp }}\","
+                     "\"min_temp\":15,"
+                     "\"max_temp\":110,"
+                     "\"temp_step\":1,"
+                     "\"avty_t\":\"~/available\","
+                     "\"pl_avail\":\"online\","
+                     "\"pl_not_avail\":\"offline\","
+                     "\"modes\":[\"off\",\"heat\"]}", base, base, hass->name) >= 0);
 }
 
 static esp_err_t
@@ -178,19 +175,16 @@ _thermostat_state(poolstate_t const * const state, poolstate_get_params_t const 
     uint8_t const target_temp = thermostat->set_point;
     uint8_t const current_temp = thermostat->temp;
     char * combined;
-    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
-                        "\t"
-                        "{"
-                        "\"mode\":\"%s\","
-                        "\"target_temp\":%u,"
-                        "\"current_temp\":%u}",
-                        hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
+    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state\t{"
+                     "\"mode\":\"%s\","
+                     "\"target_temp\":%u,"
+                     "\"current_temp\":%u}", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id,
+                     network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
-    assert( asprintf(&combined, "homeassistant/%s/%s/%s/available"
-                        "\t"
-                        "online",
-                        hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id) >= 0 );
+    assert( asprintf(&combined, "homeassistant/%s/%s/%s/available\t"
+                     "online",
+                     hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
@@ -247,7 +241,7 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_POOL } },
     { { HASS_DEV_TYP_climate, "heater",       "heater",       NULL  }, { _thermostat_init, _thermostat_state, _thermostat_set }, { 0,                             0,                                   POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_TEMP,       POOLSTATE_ELEM_TEMP_TYP_TEMP,        POOLSTATE_TEMP_AIR  } },
-    { { HASS_DEV_TYP_sensor,  "pool_temp",    "water temp",   "°F"  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_TEMP,  POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_TEMP,  POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_start",   "sched start",  NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_stop",    "sched stop",   NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_SYSTEM,     POOLSTATE_ELEM_SYSTEM_TYP_TIME,      0 } },

@@ -13,7 +13,6 @@
 #include <nvs_flash.h>
 #include <sys/param.h>
 #include <esp_ota_ops.h>
-#include <esp_http_server.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/queue.h>
@@ -64,22 +63,7 @@ _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
     httpd_config.uri_match_fn = httpd_uri_match_wildcard;
     ESP_ERROR_CHECK(httpd_start(&priv->httpd_handle, &httpd_config));
 
-    static httpd_uri_t httpdGet = {
-        .uri       = "/*",
-        .method    = HTTP_GET,
-        .handler   = httpd_cb,
-    };
-    static httpd_uri_t httpdPost = {
-        .uri       = "/*",
-        .method    = HTTP_POST,
-        .handler   = httpd_cb,
-    };
-    httpdGet.user_ctx = ipc;
-    httpdPost.user_ctx = ipc;
-
-    ESP_LOGI(TAG, "Listening at http://" IPSTR "/* for GET/POST", IP2STR(ip));
-    ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, &httpdGet));
-    ESP_ERROR_CHECK(httpd_register_uri_handler(priv->httpd_handle, &httpdPost));
+    httpd_register_cb(priv->httpd_handle, ip, ipc);
 
     ipc->dev.count.wifiConnect++;
     return ESP_OK;
