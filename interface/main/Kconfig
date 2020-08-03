@@ -62,82 +62,46 @@ menu "Pool Interface"
         help
             MQTT topic for control messages to the Pool Interface
 
-    config POOL_JSON_BUFSIZE
-        int "JSON buffer size"
-        default 1200
+    config POOL_DBGLVL_DATALINK
+        int "Datalink/RS485 layer debug level"
+        default 1
         help
-            Maximum size of the StaticJsonBuffer (>=1200)
+            0 for no debug, 1 for errors only, 2 for all
 
-    config POOL_DBG_DATALINK
-        bool "Debug datalink packets"
-        default n
+    config POOL_DBGLVL_NETWORK
+        int "Network layer debug level"
+        default 1
         help
-            Print RS485 bytes to serial port
+            0 for no debug, 1 for errors only, 2 for all
 
-    config POOL_DBG_DATALINK_ONERROR
-        bool "Debug datalink packets with errors"
-        default y
+    config POOL_DBGLVL_POOLSTATE
+        int "Poolstate debug level"
+        default 2
         help
-            Print RS485 bytes on decoding error to serial port
+            0 for no debug, 1 for errors only, 2 for all
 
-    config POOL_DBG_NETWORK
-        bool "Debug network messages"
-        default n
+    config POOL_DBGLVL_POOLTASK
+        int "Pool task debug level"
+        default 1
         help
-            Print messages that cannot be decoded to serial port
+            0 for no debug, 1 for errors only, 2 for all
 
-    config POOL_DBG_NETWORK_ONERROR
-        bool "Debug network messages with errors"
-        default y
+    config POOL_DBGLVL_MQTTTASK
+        int "MQTT task debug level"
+        default 1
         help
-            Print messages that cannot be decoded to serial port
+            0 for no debug, 1 for errors only, 2 for all
 
-    config POOL_DBG_POOLTASK
-        bool "Debug pool task"
-        default n
+    config POOL_DBGLVL_HASSTASK
+        int "Home assistant task debug level"
+        default 2
         help
-            Print control messages to serial port
+            0 for no debug, 1 for errors only, 2 for all
 
-    config POOL_DBG_POOLTASK_ONERROR
-        bool "Debug pool task error messages"
-        default y
+    config POOL_DBGLVL_HTTPD
+        int "HTTPd debug level"
+        default 2
         help
-            Print messages that cannot be decoded to serial port
-
-    config POOL_DBG_POOLSTATE
-        bool "Debug state changes for control messages"
-        default n
-        help
-            Print control messages to serial port
-
-    config POOL_DBG_POOLSTATE_ONERROR
-        bool "Debug state changes with errors"
-        default y
-        help
-            Print messages that cannot be decoded to serial port
-
-    config POOL_DBG_MQTTTASK
-        bool "Debug MQTT task"
-        default y
-        help
-            Print debug from MQTT task
-
-    config POOL_DBG_MQTTTASK_ONERROR
-        bool "Debug MQTT task errors"
-        default y
-        help
-            Print errors from MQTT task
-
-    config POOL_DBG_HASSTASK
-        bool "Debug home assistant task"
-        default n
-        help
-            Print debug from homeassistant task
-
-    config POOL_DBG_HASSTASK_ONERROR
-        bool "Debug home assistant errors"
-        default y
-        help
-            Print errors from home assistant task
+            0 for no debug, 1 for errors only, 2 for all
 
 endmenu

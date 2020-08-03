@@ -27,7 +27,7 @@
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
-static char const * const TAG = "hass";
+static char const * const TAG = "hass_task";
 
 typedef struct dispatch_hass_t {
     hass_dev_typ_t     dev_typ;
@@ -58,6 +58,9 @@ _parse_topic(char * data, char * args[], uint const args_len) {
     char * save;
     char * p = strtok_r(data, delim, &save);
     while (p && ii < args_len) {
+        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+            ESP_LOGI(TAG, "%s args[%u] = \"%s\"", __func__, ii, p);
+        }
         args[ii++] = p;
         p = strtok_r(NULL, delim, &save);
     }
@@ -104,7 +107,9 @@ _circuit_set(char const * const subtopic, poolstate_get_params_t const * const p
         .u.ctrl_circuit_set = &circuit_set,
     };
     if (network_tx_msg(&msg, pkt)) {
-        ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+            ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+        }
         return ESP_OK;
     }
     free(pkt);
@@ -229,7 +234,9 @@ _thermostat_set(char const * const subtopic, poolstate_get_params_t const * cons
             .u.ctrl_heat_set = &heat_set,
     };
     if (network_tx_msg(&msg, pkt)) {
-        ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+            ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+        }
         return ESP_OK;
     }
     free(pkt);
@@ -239,11 +246,15 @@ _thermostat_set(char const * const subtopic, poolstate_get_params_t const * cons
 static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "aux1_circuit", "AUX1 circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_AUX1 } },
     { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_POOL } },
-    { { HASS_DEV_TYP_climate, "heater",       "heater",       NULL  }, { _thermostat_init, _thermostat_state, _thermostat_set }, { 0,                             0,                                   POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_SPA } },
+    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  NULL  }, { _thermostat_init, _thermostat_state, _thermostat_set }, { 0,                             0,                                   POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_sensor,  "pool_start",   "pool start",   NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_sensor,  "pool_stop",    "pool stop",    NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
+    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   NULL  }, { _thermostat_init, _thermostat_state, _thermostat_set }, { 0,                             0,                                   POOLSTATE_THERMOSTAT_SPA } },
+    { { HASS_DEV_TYP_sensor,  "spa_start",    "spa start",    NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_SPA } },
+    { { HASS_DEV_TYP_sensor,  "spa_stop",     "spa stop",     NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_SPA } },
     { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_TEMP,       POOLSTATE_ELEM_TEMP_TYP_TEMP,        POOLSTATE_TEMP_AIR  } },
     { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_TEMP,  POOLSTATE_THERMOSTAT_POOL } },
-    { { HASS_DEV_TYP_sensor,  "pool_start",   "sched start",  NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
-    { { HASS_DEV_TYP_sensor,  "pool_stop",    "sched stop",   NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_SYSTEM,     POOLSTATE_ELEM_SYSTEM_TYP_TIME,      0 } },
     { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_PUMP,       POOLSTATE_ELEM_PUMP_TYP_PWR,         0 } },
     { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_PUMP,       POOLSTATE_ELEM_PUMP_TYP_RPM,         0 } },
@@ -263,7 +274,6 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
             dispatch->fnc.state(state, &dispatch->fnc_params, &dispatch->hass, ipc);
         }
     }
-
     char const * const json = poolstate_to_json(state, POOLSTATE_ELEM_TYP_ALL);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
     free((void *)json);
@@ -273,7 +283,9 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
 esp_err_t
 hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
 {
-    ESP_LOGI(TAG, "topic = \"%s\", value = \"%s\"", topic, value_str);
+    if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+        ESP_LOGI(TAG, "topic = \"%s\", value = \"%s\"", topic, value_str);
+    }
     char * args[5];
     uint8_t argc = _parse_topic(topic, args, ARRAY_SIZE(args));
 
@@ -281,8 +293,6 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
         char const * const dev_typ = args[1];
         char const * const hass_id = args[3];
         char const * const subtopic = args[4];
-
-        //ESP_LOGI(TAG, "dev_typ = \"%s\", hass_id = \"%s\", subtopic = \"%s\"", dev_typ. hass_id, subtopic);
 
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {

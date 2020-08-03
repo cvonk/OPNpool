@@ -33,7 +33,7 @@ uint_str(uint16_t const value)
 	char * s = name_str.str + name_str.idx;
 
     size_t len = 0;
-    uint8_t mask = 10000;
+    uint16_t mask = 10000U;
     for (uint ii = 0; ii < nrdigits; ii++) {
         uint8_t const digit = value / mask;
         if (digit || ii == nrdigits - 1) {  // no leading 0s
@@ -92,20 +92,3 @@ hex16_str(uint16_t const value)
 	return s;
 }
 
-#if 0
-char const *
-name_name(char const * const name, uint_least8_t const len)
-{
-	if (name_str.idx + len + 1U >= ARRAY_SIZE(name_str.str)) {
-		return name_str.noMem;  // increase size of str.str[]
-	}
-	char * s = name_str.str + name_str.idx;
-
-	for (uint_least8_t ii = 0; ii < len; ii++) {
-		s[ii] = name[ii];
-	}
-	s[len] = '\0';
-	name_str.idx += len + 1U;
-	return s;
-}
-#endif

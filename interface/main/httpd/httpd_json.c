@@ -31,17 +31,20 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
         char * value = strchr(key, '=');
         if (value) {
             *value++ = '\0';
-            if (strcmp(key, "callback") == 0) {
-                callback = (char *) malloc(strlen(value)+1);
-                if (callback) {
-                    strcpy(callback, value);
-                }
+            if (strcmp(key, "_") == 0) {
+                continue;
             }
-            ESP_LOGI(TAG, "query var, %s=%s", key, value);
+            if (strcmp(key, "callback")) {
+                callback = strdup(value);
+                assert( callback );
+            }
+            if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
+                ESP_LOGI(TAG, "query var, %s=%s", key, value);
+            }
+            char const * const key_dec = httpd_urldecode(key);
+            ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key_dec, strlen(key_dec), value, strlen(value), ipc);
+            free((void *) key_dec);
         }
-        char const * const key_dec = httpd_urldecode(key);
-        ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key_dec, strlen(key_dec), value, strlen(value), ipc);
-        free((void *) key_dec);
     }
     return callback;
 }
@@ -77,7 +80,9 @@ httpd_json(httpd_req_t * const req)
         } else {
             assert( asprintf( &resp, "%s", json) >= 0 );
         }
-        //ESP_LOGI(TAG, "Responding with \"%s\"", resp);
+        if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
+            ESP_LOGI(TAG, "Responding with \"%s\"", resp);
+        }
         free((void *)json);
         httpd_resp_send(req, resp, strlen(resp));
         free(resp);
