@@ -273,6 +273,7 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
 esp_err_t
 hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
 {
+    ESP_LOGI(TAG, "topic = \"%s\", value = \"%s\"", topic, value_str);
     char * args[5];
     uint8_t argc = _parse_topic(topic, args, ARRAY_SIZE(args));
 
@@ -280,6 +281,8 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
         char const * const dev_typ = args[1];
         char const * const hass_id = args[3];
         char const * const subtopic = args[4];
+
+        //ESP_LOGI(TAG, "dev_typ = \"%s\", hass_id = \"%s\", subtopic = \"%s\"", dev_typ. hass_id, subtopic);
 
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
