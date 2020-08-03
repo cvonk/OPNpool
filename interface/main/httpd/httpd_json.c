@@ -39,7 +39,9 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
             }
             ESP_LOGI(TAG, "query var, %s=%s", key, value);
         }
-        ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key, strlen(key), value, strlen(value), ipc);
+        char const * const key_dec = httpd_urldecode(key);
+        ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key_dec, strlen(key_dec), value, strlen(value), ipc);
+        free((void *) key_dec);
     }
     return callback;
 }

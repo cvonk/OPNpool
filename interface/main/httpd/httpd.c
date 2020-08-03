@@ -35,6 +35,28 @@ httpd_register_cb(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * cons
     }
 }
 
+// caller MUST free alloc'ed mem
+// https://github.com/wcharczuk/urlencode/blob/master/urldecode.c
+char *
+httpd_urldecode(char const * in)
+{
+	size_t const in_len = strlen(in);
+	size_t out_len = (in_len + 1) * sizeof(char);
+	char *p = malloc(out_len), *out = p;
+
+	while (*in) {
+		if (*in == '%') {
+			char const buffer[3] = { in[1], in[2], 0 };
+			*p++ = strtol(buffer, NULL, 16);
+			in += 3;
+		} else {
+			*p++ = *in++;
+		}
+	}
+	*p = '\0';
+	return out;
+}
+
 #if 0
 #define MAX_CONTENT_LEN (2048)
 
