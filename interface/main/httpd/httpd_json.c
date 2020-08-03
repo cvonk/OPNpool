@@ -32,18 +32,18 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
         if (value) {
             *value++ = '\0';
             if (strcmp(key, "_") == 0) {
-                continue;
-            }
-            if (strcmp(key, "callback")) {
+                ; // ignore
+            } else if (strcmp(key, "callback")) {
                 callback = strdup(value);
                 assert( callback );
+            } else {
+                if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
+                    ESP_LOGI(TAG, "query var, %s=%s", key, value);
+                }
+                char const * const key_dec = httpd_urldecode(key);
+                ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key_dec, strlen(key_dec), value, strlen(value), ipc);
+                free((void *) key_dec);
             }
-            if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
-                ESP_LOGI(TAG, "query var, %s=%s", key, value);
-            }
-            char const * const key_dec = httpd_urldecode(key);
-            ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key_dec, strlen(key_dec), value, strlen(value), ipc);
-            free((void *) key_dec);
         }
     }
     return callback;
