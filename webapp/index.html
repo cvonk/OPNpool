@@ -1,20 +1,22 @@
-<!DOCTYPE html>
-<html>
-
+﻿<html>
 <head>
     <meta charset="utf-8" />
     <title>Pool webapp</title>
-    <link rel="icon" href="./favicon.png" type='image/x-icon' sizes="32x32" />
-    <link rel="stylesheet" href="./index.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.2/jquery.mobile.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.2/jquery.mobile.min.js"></script>
-    <script src="./lib/raphael-2.1.2.min.js"></script>
-    <script src="./lib/justgage-trunk.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.roundslider/1.0/roundslider.min.css">
-    <script src="https://cdn.jsdelivr.net/jquery.roundslider/1.0/roundslider.min.js"></script>
-</head>
+    <link rel="shortcut icon" href="//coertvonk.com/wp-content/themes/atahualpa/images/favicon/coert.ico" type='image/x-icon' />
 
+    <!-- jQueryMobile requires a specific version of jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <!-- Raphael must be included before justgage -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js"></script>
+    <script type="text/javascript" src="justgage.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js"></script>
+
+</head>
 <body>
     <div data-role="page" data-theme="b" data-content-theme="b">
         <div data-role="header" data-theme="a" data-content-theme="b">
@@ -29,13 +31,11 @@
                     <form>
                         <fieldset data-role="controlgroup" data-type="horizontal">
                             <legend>Active circuits</legend>
-                            <input id="cCircuitPool" value="pool" class="my-circuit" type="checkbox"
-                                name="activePool" />
+                            <input id="cCircuitPool" type="checkbox" class="my-circuit" value="pool" name="activePool" />
                             <label for="cCircuitPool">Pool</label>
-                            <input id="cCircuitSpa" value="spa" class="my-circuit" type="checkbox" name="activeSpa" />
+                            <input id="cCircuitSpa" type="checkbox" class="my-circuit" value="spa" name="activeSpa" />
                             <label for="cCircuitSpa">Spa</label>
-                            <input id="cCircuitAux1" value="aux1" class="my-circuit" type="checkbox"
-                                name="activeAux1" />
+                            <input id="cCircuitAux1" type="checkbox" class="my-circuit" value="aux1" name="activeAux1" />
                             <label for="cCircuitAux1">Aux1</label>
                         </fieldset>
                     </form>
@@ -43,35 +43,30 @@
                 <div data-role="collapsible">
                     <h3>Temperatures</h3>
 
-                    <div class="ui-body ui-grid-a ui-responsive">
-                        <div class="ui-block-a" id="gTempWater" min-width="300px"></div>
-                        <div class="ui-block-b" id="gTempAir"></div>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-a"><div id="gTempWater" style="height:160px"></div></div>
+                        <div class="ui-block-b"><div id="gTempAir" style="height:160px"></div></div>
                     </div>
                 </div>
                 <div data-role="collapsible">
                     <h3>Heating (input)</h3>
 
-                    <div class="ui-body ui-grid-a ui-responsive">
+                    <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a my-slider">
                             <label for="sPoolSp">Pool heating setpoint</label>
-                            <input type="range" class="my-setpoint" id="sPoolSp" name="pool-sp" min="50" max="110"
-                                value="50" />
+                            <input type="range" class="my-setpoint" id="sPoolSp" name="pool_heater" min="50" max="110" value="50"/>
                         </div>
                         <div class="ui-block-b">
                             <label>Pool heat source</label>
                             <form id="cPoolHeatSrc">
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="cPoolHeatSrcNone" class="heatsrc" value="none" type="radio"
-                                        name="pool" />
+                                    <input id="cPoolHeatSrcNone" class="heatsrc" value="off" type="radio" name="pool_heater" />
                                     <label for="cPoolHeatSrcNone">none</label>
-                                    <input id="cPoolHeatSrcHeater" class="heatsrc" value="heater" type="radio"
-                                        name="pool" />
+                                    <input id="cPoolHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="pool_heater" />
                                     <label for="cPoolHeatSrcHeater">heater</label>
-                                    <input id="cPoolHeatSrcSolarPref" class="heatsrc" value="solarPref" type="radio"
-                                        name="pool" />
+                                    <input id="cPoolHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="pool_heater" />
                                     <label for="cPoolHeatSrcSolarPref">solarPref</label>
-                                    <input id="cPoolHeatSrcSolar" class="heatsrc" value="solar" type="radio"
-                                        name="pool" />
+                                    <input id="cPoolHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="pool_heater" />
                                     <label for="cPoolHeatSrcSolar">solar</label>
                                 </fieldset>
                             </form>
@@ -80,23 +75,19 @@
                     <div class="ui-body ui-grid-a ui-responsive">
                         <div class="ui-block-a my-slider">
                             <label for="rSpaSp">Spa heating setpoint</label>
-                            <input type="range" class="my-setpoint" id=" sspasp" name="spa-sp" min="50" max="110"
-                                value="50" />
+                            <input type="range" class="my-setpoint" id=" sSpaSp" name="spa_heater" min="50" max="110" value="50" />
                         </div>
                         <div class="ui-block-b">
                             <label>Spa heat source</label>
                             <form id="cSpaHeatSrc">
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="cSpaHeatSrcNone" class="heatsrc" value="none" type="radio" name="spa" />
+                                    <input id="cSpaHeatSrcNone" class="heatsrc" value="off" type="radio" name="spa_heater" />
                                     <label for="cSpaHeatSrcNone">none</label>
-                                    <input id="cSpaHeatSrcHeater" class="heatsrc" value="heater" type="radio"
-                                        name="spa" />
+                                    <input id="cSpaHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="spa_heater" />
                                     <label for="cSpaHeatSrcHeater">heater</label>
-                                    <input id="cSpaHeatSrcSolarPref" class="heatsrc" value="solarPref" type="radio"
-                                        name="spa" />
+                                    <input id="cSpaHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="spa_heater" />
                                     <label for="cSpaHeatSrcSolarPref">solarPref</label>
-                                    <input id="cSpaHeatSrcSolar" class="heatsrc" value="solar" type="radio"
-                                        name="spa" />
+                                    <input id="cSpaHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="spa_heater" />
                                     <label for="cSpaHeatSrcSolar">solar</label>
                                 </fieldset>
                             </form>
@@ -106,17 +97,17 @@
                 <div data-role="collapsible">
                     <h3>Pump</h3>
 
-                    <div class="ui-body ui-grid-a ui-responsive">
-                        <div class="ui-block-a" id="gPumpRpm"></div>
-                        <div class="ui-block-b" id="gPumpPwr"></div>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-a"><div id="gPumpRpm" style="height:160px"></div></div>
+                        <div class="ui-block-b"><div id="gPumpPwr" style="height:160px"></div></div>
                     </div>
                 </div>
                 <div data-role="collapsible">
                     <h3>Chlorinator</h3>
 
-                    <div class="ui-body ui-grid-a ui-responsive">
-                        <div class="ui-block-a" id="gChlorSalt"></div>
-                        <div class="ui-block-b" id="gChlorPct"></div>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-a"><div id="gChlorSalt" style="height:160px"></div></div>
+                        <div class="ui-block-b"><div id="gChlorPct" style="height:160px"></div></div>
                     </div>
                 </div>
                 <div data-role="collapsible">
@@ -136,7 +127,6 @@
         <!-- <div id='screen'></div> -->
         <!-- <div class="ui-block-a rslider" id="slider-salt" style="width:40vw; height:32vw"></div> -->
     </div>
-    <script src="./index.js"></script>
-</body>
-
+    <script src="index.js"></script>
+ </body>
 </html>
