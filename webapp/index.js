@@ -1,23 +1,29 @@
 ﻿// time range slider: http://jsfiddle.net/ezanker/fu26u/204/
 
-// For an introduction to the Blank template, see the following documentation:
-// http://go.microsoft.com/fwlink/?LinkID=397704
-// To debug code on page load in Ripple or on Android devices/emulators: launch your app, set breakpoints, 
-// and then run "window.location.reload()" in the JavaScript Console.
-(function () {
+// To develop: use vsCode with Live Server plugin
+// To debug code on page load run "window.location.reload()" in the JavaScript Console.
+(function() {
     "use strict";
 
-    var ipName; // = "http://pool.vonk";
+    var ipName; // = "http://esp32-wrover-1.iot.vonk";
     var intervalId = 0;
 
     // request the parent's origin (sending a message to the parent tells it we're loaded),
     // the parent reply contains its origin.
-    window.addEventListener('message', event => {
-        ipName = event.origin;
-        //alert(event.origin);
-    }, false);
-    parent.postMessage('fromIframe', '*');
-    
+    if (1) {
+        window.addEventListener('message', event => {
+            ipName = event.origin;
+            console.log(ipName);
+            //alert(event.origin);
+            scheduledUpdate();
+        }, false);
+        parent.postMessage('fromIframe', '*');
+    } else {
+        ipName = "http://esp32-wrover-1.iot.vonk";
+        console.log(ipName);
+        scheduledUpdate();
+    }
+
     document.addEventListener('deviceready', onDeviceReady.bind(this), false);
 
     function onDeviceReady() {
@@ -78,40 +84,42 @@
     }
 
     function updateCircuits(active) {
-        var value = $.inArray('pool', active) > -1;
-        $("#cCircuitPool").prop("checked", value).checkboxradio("refresh");
+        // var value = active.POOL$.inArray('pool', active) > -1;
+        var value = active.POOL;
+        $("#cCircuitPool").attr("checked", value).checkboxradio("refresh");
 
-        value = $.inArray('spa', active) > -1;
-        $("#cCircuitSpa").prop("checked", value).checkboxradio("refresh");
+        //value = $.inArray('spa', active) > -1;
+        value = active.SPA;
+        $("#cCircuitSpa").attr("checked", value).checkboxradio("refresh");
 
-        value = $.inArray('aux1', active) > -1;
-        $("#cCircuitAux1").prop("checked", value).checkboxradio("refresh");
+        //value = $.inArray('aux1', active) > -1;
+        value = active.AUX;
+        $("#cCircuitAux1").attr("checked", value).checkboxradio("refresh");
     }
 
     function updateChlor(chlor) {
         if (!jQuery.isEmptyObject(chlor)) {
-            gChlorSalt.refresh(chlor.salt);
-
-            var title = "chlorinator";
-            if (chlor.status !== 'ok') {
-                title += "\nerror: " + chlor.status;
+            var title = "Chlorinator";
+            if (chlor.status !== 'OK') {
+                title += chlor.status;
             }
+            gChlorSalt.refresh(chlor.salt);
             gChlorPct.refresh(chlor.pct);
-            gChlorPct.txtTitle.attr("text", title);
+            gChlorPct.txtLabel.attr("text", title);
         }
     }
 
-    function updateTemp(active, pool, spa, air) {
-        //var title = active + " temp.";
-        //if (($.inArray('pool', active) > -1) && pool.heating) {
-        //    title += pool.src;
-        //}
-        //if (($.inArray('spa', active) > -1) && spa.heating) {
-        //    title += spa.src;
-        //}
+    function updateTemp(active, pool, spa, air_temp) {
+        var water_label = "Water temp. ";
+        if (active.POOL && pool.heating) {
+            water_label += " " + pool.src;
+        }
+        if (active.SPA && spa.heating) {
+            water_label += " " + spa.src;
+        }
         gTempWater.refresh(fahrenheit2centigrade(pool.temp));
-        //gTempWater.txtTitle.attr("text", title);
-        gTempAir.refresh(fahrenheit2centigrade(air.temp));
+        gTempWater.txtLabel.attr("text", water_label);
+        gTempAir.refresh(fahrenheit2centigrade(air_temp));
     }
 
     function updateHeating(pool, spa) {
@@ -119,33 +127,33 @@
         $("#sSpaSp").val(spa.sp).slider('refresh');
 
         var selector = "#cPoolHeatSrc" + capitalizeFirstLetter(pool.src);
-        $(selector).prop("checked", true).checkboxradio("refresh");
+        $(selector).attr("checked", true).checkboxradio("refresh");
 
         selector = "#cSpaHeatSrc" + capitalizeFirstLetter(spa.src);
-        $(selector).prop("checked", true).checkboxradio("refresh");
+        $(selector).attr("checked", true).checkboxradio("refresh");
     }
 
     function updatePump(pump) {
-        var title = "pump speed";
-        if (pump.running && pump.mode !== "filter") {
+        var title = "Pump speed";
+        if (pump.running && pump.mode !== "FILTER") {
             title += "\nmode: " + pump.mode;
         }
         gPumpRpm.refresh(pump.rpm);
-        gPumpRpm.txtTitle.attr("text", title);
+        gPumpRpm.txtLabel.attr("text", title);
 
-        title = "pump power";
+        title = "Pump power";
         if (pump.status !== 0) {
             title += "\nstatus: " + pump.status;
         } else if (pump.err !== 0) {
             title += "\nerror: " + pump.err;
         }
         gPumpPwr.refresh(pump.pwr);
-        gPumpPwr.txtTitle.attr("text", title);
+        gPumpPwr.txtLabel.attr("text", title);
     }
 
     function disableInputs(value) {
-        $("input[type='checkbox']").prop("disabled", value); //.checkboxradio("refresh");
-        $("input[type='radio']").prop("disabled", value); // .checkboxradio("refresh");
+        $("input[type='checkbox']").attr("disabled", value); //.checkboxradio("refresh");
+        $("input[type='radio']").attr("disabled", value); // .checkboxradio("refresh");
         $(".my-setpoint").slider(value ? "disable" : "enable"); //.slider("refresh");
     }
 
@@ -175,23 +183,25 @@
 
     function update(jsonData) {
         //updateRoundSlider(jsonData.chlor.salt);
-        updateTime(jsonData.tod);
-        updateCircuits(jsonData.active);
+        updateTime(jsonData.system.tod);
+        updateCircuits(jsonData.circuits.active);
         updateChlor(jsonData.chlor);
-        updateTemp(jsonData.active, jsonData.pool, jsonData.spa, jsonData.air);
-        updateHeating(jsonData.pool, jsonData.spa);
+        updateTemp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
+        updateHeating(jsonData.thermostats.POOL, jsonData.thermostats.SPA);
         updatePump(jsonData.pump);
     }
 
     var firstupdate = 1;
 
     function sendMessage(pair) {
+        var url = ipName + "/json";
         var request = !jQuery.isEmptyObject(pair);
+        //alert(url);
         $.ajax({
-            dataType: "json",
-            url: "http://" + ipName + "/json" + "?callback=?",
+            dataType: "jsonp",
+            url: url + "?callback=?",  
             data: pair,
-            success: function (jsonData) {
+            success: function(jsonData) {
                 console.log(jsonData);
                 if (request) {
                     clearInterval(intervalId);
@@ -199,9 +209,9 @@
                 } else {
                     update(jsonData);
                     showSpinner("");
-                    console.log("disable inputs");
+                    //console.log("disable inputs");
                     disableInputs(false);
-                    console.log("disable inputs");
+                    //console.log("disable inputs");
                     overlayPage(false);
                     firstupdate = 0;
                 }
@@ -209,14 +219,14 @@
                     intervalId = setInterval(scheduledUpdate, 10000);
                 }
             },
-            beforeSend: function () {
+            beforeSend: function() {
                 if (firstupdate || request) {
                     showSpinner(request ? "Requesting\n(please wait 10 sec)" : "Loading data");
                     disableInputs(true);
                     overlayPage(true);
                 }
             },
-            error: function () {
+            error: function() {
                 showSpinner("Retry in 10 seconds\n(" + ipName + ")");
             }
         });
@@ -250,83 +260,75 @@
             });
         */
 
-        var gChlorSaltParams = {
+       gChlorSalt = new JustGage({
             id: "gChlorSalt",
+            label: 'Salt level',
+            symbol: " ppm",
             value: 0,
             min: 0,
             max: 6500,
             relativeGaugeSize: true,
             valueFontColor: "white",
-            showMinMax: true,
-            title: "salt",
-            label: "ppm",
             levelColors: ['#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#48CCCD', '#48CCCD', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800'],
-            levelColorsGradient: false
-        };
-        gChlorSalt = new JustGage(gChlorSaltParams);
+        });
 
         gChlorPct = new JustGage({
             id: "gChlorPct",
+            label: 'Percentage',
+            symbol: "%",
             value: 0,
             min: 0,
             max: 100,
             relativeGaugeSize: true,
             valueFontColor: "white",
-            showMinMax: true,
-            title: "chlorinator",
-            label: "%"
         });
 
         gTempWater = new JustGage({
             id: "gTempWater",
+            label: 'Water temp.',
+            symbol: " °C",
             value: 0,
             min: 0,
             max: 50,
+            height: 200,
             relativeGaugeSize: true,
             valueFontColor: "white",
-            showMinMax: true,
-            title: "Water",
-            label: "°C",
             levelColors: ['#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#C9DB39', '#F5C80D', '#F1933C', '#F1933C', '#F1933C', '#F1933C', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832'],
-            levelColorsGradient: false
         });
 
         gTempAir = new JustGage({
             id: "gTempAir",
+            label: 'Air temp.',
+            symbol: " °C",
             value: 0,
             min: 0,
             max: 50,
+            height: 100,
             relativeGaugeSize: true,
             valueFontColor: "white",
-            showMinMax: true,
-            title: "Air",
-            label: "°C",
             levelColors: ['#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#C9DB39', '#F5C80D', '#F1933C', '#F1933C', '#F1933C', '#F1933C', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832'],
-            levelColorsGradient: false
         });
 
         gPumpRpm = new JustGage({
             id: "gPumpRpm",
+            label: 'Pump speed',
+            symbol: " rpm",
             value: 0,
             min: 0,
             max: 3450,
             relativeGaugeSize: true,
             valueFontColor: "white",
-            showMinMax: true,
-            title: "pump speed",
-            label: "rpm"
         });
 
         gPumpPwr = new JustGage({
             id: "gPumpPwr",
+            label: 'Pump power',
+            symbol: " W",
             value: 0,
             min: 0,
             max: 1300,
             relativeGaugeSize: true,
             valueFontColor: "white",
-            showMinMax: true,
-            title: "pump power",
-            label: "watts"
         });
 
         // make horizontal sliders more fancy (color grade slider track, print value on knob)
@@ -344,28 +346,25 @@
 
         // register change notifications
 
-        $(".my-circuit").on("change", function (event) {
+        $(".my-circuit").on("change", function(event) {
             var pair = {};
-            pair[event.target.value + "-active"] = event.target.checked ? 1 : 0;
+            pair["homeassistant/switch/esp32-wrover-1/" + event.target.value + "_circuit/set"] = event.target.checked ? "ON" : "OFF";
+            console.log(pair);
+            sendMessage(pair);
+        });
+        $(".heatsrc").on("change", function(event) {
+            var pair = {};
+            pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_mode"] = event.target.value;
+            console.log(pair);
+            sendMessage(pair);
+        });
+        $(".my-slider").on("slidestop", function(event) {
+            var pair = {};
+            pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_temp"] = event.target.value;
             console.log(pair);
             sendMessage(pair);
         });
 
-        $(".heatsrc").on("change", function (event) {
-            var pair = {};
-            pair[event.target.name + "-src"] = event.target.value;
-            console.log(pair);
-            sendMessage(pair);
-        });
-
-        $(".my-slider").on("slidestop", function (event) {
-            var pair = {};
-            pair[event.target.name] = event.target.value;
-            console.log(pair);
-            sendMessage(pair);
-        });
-
-        scheduledUpdate();
     }
 
     $(document).ready(initialize);
