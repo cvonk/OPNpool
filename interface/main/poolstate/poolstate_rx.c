@@ -253,6 +253,14 @@ _chlor_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const 
         ESP_LOGI(TAG, "%s salt=%u, status=%u", __func__, msg->salt, msg->err);
         // status 0x80 = OK,
     }
+    if (msg->err & 0x01) {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_LOW_FLOW;
+    } else if (msg->err & 0x80) {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_OK;
+    } else {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_OTHER;
+    }
+#if 0
     bool const lowFlow = (msg->err & 0x01);
     if (state->chlor.salt < 2600) {
         state->chlor.status = POOLSTATE_CHLOR_STATUS_VERYLOW_SALT;
@@ -265,6 +273,7 @@ _chlor_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const 
     } else {
         state->chlor.status = POOLSTATE_CHLOR_STATUS_OK;
     }
+#endif
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddChlorRespToObject(dbg, "chlor", &state->chlor);
     }
