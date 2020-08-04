@@ -176,11 +176,9 @@ typedef enum {
  **/
 
 #define POOLSTATE_CHLOR_STATUS_MAP(XX) \
-  XX(0, OK)           \
-  XX(1, HIGH_SALT)    \
-  XX(2, LOW_SALT)     \
-  XX(3, VERYLOW_SALT) \
-  XX(4, LOW_FLOW)
+  XX(0, OK)       \
+  XX(1, LOW_FLOW) \
+  XX(2, OTHER)
 
 typedef enum {
 #define XX(num, name) POOLSTATE_CHLOR_STATUS_##name = num,
