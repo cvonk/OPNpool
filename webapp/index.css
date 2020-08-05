@@ -11,7 +11,7 @@
 }
 
 .rs-control .rs-handle {
-    background-color: grey
+    background-color: #54bbe0;
 }
 
 .rs-control .rs-bg-color {
@@ -20,18 +20,6 @@
 
 .rs-tooltip {
     font-size: 100%;
-}
-
-.sliderBackColor {
-    height: 100%;
-    width: 33.33%;
-    float: left;
-    /*margin-left: 0px;*/
-    color: white;
-    text-align: center;
-    font-size: 0px;
-    font-weight: normal;
-    text-shadow: 0px 1px 2px #333;
 }
 
 .bg-blue {
@@ -50,30 +38,8 @@
     background-color: #E97F02;
 }
 
-.my-slider .ui-slider-track>div.sliderBackColor:first-child {
-    border-top-left-radius: 0.3125em;
-    border-bottom-left-radius: 0.3125em;
-}
-
-.my-slider .ui-slider-track>div.sliderBackColor:last-of-type {
-    border-top-right-radius: 0.3125em;
-    border-bottom-right-radius: 0.3125em;
-}
-
 .ui-slider .ui-slider-handle {
     background: #54BBE0;
-}
-
-.full-width-slider input {
-    display: none;
-}
-
-.my-slider .ui-slider-track {
-    position: relative;
-}
-
-.full-width-slider .ui-slider-track {
-    margin-left: 15px;
 }
 
 /* https://stackoverflow.com/questions/4329866/centering-elements-in-jquery-mobile */
