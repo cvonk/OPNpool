@@ -15,7 +15,7 @@
 }
 
 .rs-control .rs-bg-color {
-    background-color: #0071C9;
+    background-color: #2b2b2b;
 }
 
 .rs-tooltip {
@@ -76,11 +76,29 @@
     margin-left: 15px;
 }
 
-
 /* https://stackoverflow.com/questions/4329866/centering-elements-in-jquery-mobile */
 .center-wrapper {
     text-align: center;
+    vertical-align: middle;
+    margin: 0
 }
 .center-wrapper * {
     margin: 0 auto;
+    line-height: 35px;
+}
+
+.ui-radio > label.ui-btn {
+    width: 80px;
+    text-align: center;
+ }
+
+.ui-checkbox > label.ui-btn {
+    width: 80px;
+    text-align: center;
+    font-size: 1.3em;
+    padding: 5px;
+}
+
+.ui-collapsible-content {
+    margin: 50px;
 }

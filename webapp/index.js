@@ -5,36 +5,30 @@
 (function() {
     "use strict";
 
-    var ipName; // = "http://esp32-wrover-1.iot.vonk";
-    var intervalId = 0;
+    let ipName;
+    let intervalId = 0;
 
     // request the parent's origin (sending a message to the parent tells it we're loaded),
     // the parent reply contains its origin.
-    if (inIframe()) {
+    if (in_iframe()) {
         window.addEventListener('message', event => {
             ipName = event.origin;
-            console.log(ipName);
+            //console.log(ipName);
             //alert(event.origin);
-            scheduledUpdate();
+            scheduled_update();
         }, false);
         parent.postMessage('fromIframe', '*');
     } else {
         ipName = "http://pool.iot.vonk";
-        console.log(ipName);
-        scheduledUpdate();
+        console.log('not in Iframe, guessing (' + ipName + ')');
+        scheduled_update();
     }
 
-    document.addEventListener('deviceready', onDeviceReady.bind(this), false);
+    document.addEventListener('deviceready', on_device_ready.bind(this), false);
 
-    function onDeviceReady() {
-        // Handle the Cordova pause and resume events
-        document.addEventListener('pause', onPause.bind(), false); // .bind(this)
-        document.addEventListener('resume', onResume.bind(), false); // .bind(this)
+    function on_device_ready() {}
 
-        // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
-    }
-
-    function inIframe() {
+    function in_iframe() {
         try {
             return window.self !== window.top;
         } catch (e) {
@@ -42,36 +36,28 @@
         }
     }
 
-    function onPause() {
-        // TODO: This application has been suspended. Save application state here.
-    }
-
-    function onResume() {
-        // TODO: This application has been reactivated. Restore application state here.
-    }
-
     //---------still of use---------
     // schedule.pool.start: '08:15'
     // schedule.pool.stop: '13:30'
 
-    var gThermostats = [{'name': 'pool'}, {'name': 'spa'}];
-    var gChlorSalt = {};
-    var gChlorPct = {};
-    var gTempWater = {};
-    var gTempAir = {};
-    var gPumpRpm = {};
-    var gPumpPwr = {};
+    let gThermostats = [{'name': 'pool'}, {'name': 'spa'}];
+    let gChlorSalt = {};
+    let gChlorPct = {};
+    let gTempWater = {};
+    let gTempAir = {};
+    let gPumpRpm = {};
+    let gPumpPwr = {};
 
-    function fahrenheit2centigrade(f) {
+    function degrees_f_to_c(f) {
         return Math.round(((f - 32) * 5) / 9);
     }
 
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    function capitalize_1st_letter(string) {
+        return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
     }
 
     // algorithm from https://en.wikipedia.org/wiki/HSL_and_HSV
-    function hsv2rgb(h, s, v) {
+    function hsv_2o_rgb(h, s, v) {
         h %= 360;
         s = Math.max(0, Math.min(s, 1));
         v = Math.max(0, Math.min(v, 1));
@@ -80,7 +66,7 @@
         const i = Math.floor(h / 60);
         const diff = h % 60;
         const rgb_adj = Math.floor((rgb_max - rgb_min) * diff / 60); // RGB adjustment amount by hue
-        var r, g, b;
+        let r, g, b;
         switch (i) {
             case 0:
                 r = rgb_max;
@@ -116,44 +102,39 @@
         return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
 
-    function updateRoundSlider(thermostat, v) {
+    function update_round_slider(thermostat, v) {
         $(thermostat.id).roundSlider("setValue", v); // only needed when called directly
-        const rgb = hsv2rgb(240 * (1 - (v - thermostat.min) / thermostat.max), 1, 1);
-        var el = $(thermostat.id + ' > div > div.rs-inner-container > div > div')[0];
+        const blue = 350;
+        const rgb = hsv_2o_rgb(blue * (1 - (v - thermostat.min) / thermostat.max), 1, 1);
+        /* for non-svg mode */
+        const el = $(thermostat.id + ' > div > div.rs-inner-container > div > div')[0];
         el.style.backgroundColor = rgb;
     }
 
-    function sliderValueOnKnob(obj) {
-        obj.closest(".ui-slider").find(".ui-slider-handle").text(obj.val());
-    }
-
-    function circuitChanged(obj) {
+    function circuitChanged(obj)
+    {
         console.log(obj.val() + ' = ' + obj.target.value);
         return obj;
     }
 
-    function updateTime(tod) {
+    function update_system(tod)
+    {
         $("#date").val(tod.date);
         $("#time").val(tod.time);
     }
 
-    function updateCircuits(active) {
-        // var value = active.POOL$.inArray('pool', active) > -1;
-        var value = active.POOL;
-        $("#cCircuitPool").attr("checked", value).checkboxradio("refresh");
-
-        //value = $.inArray('spa', active) > -1;
-        value = active.SPA;
-        $("#cCircuitSpa").attr("checked", value).checkboxradio("refresh");
-
-        //value = $.inArray('aux1', active) > -1;
-        value = active.AUX;
-        $("#cCircuitAux1").attr("checked", value).checkboxradio("refresh");
+    function update_circuits(active_arr)
+    {
+        Object.keys(active_arr).forEach( function(key, value) {
+            const id = '#cCircuit' + capitalize_1st_letter(key);
+            $(id).attr("checked", this[key]).checkboxradio("refresh");
+        }, active_arr);
     }
 
-    function updateChlor(chlor) {
+    function update_chlor(chlor)
+    {
         if (!jQuery.isEmptyObject(chlor)) {
-            var title = "Chlorinator";
+            let title = "Chlorinator";
             if (chlor.status !== 'OK') {
                 title += chlor.status;
             }
@@ -163,39 +144,41 @@
         }
     }
 
-    function updateTemp(active, pool, spa, air_temp) {
-        var water_label = "Water temp. ";
+    function update_temp(active, pool, spa, air_temp)
+    {
+        let water_label = "Water";
         if (active.POOL && pool.heating) {
             water_label += " " + pool.src;
         }
         if (active.SPA && spa.heating) {
             water_label += " " + spa.src;
         }
-        gTempWater.refresh(fahrenheit2centigrade(pool.temp));
+        gTempWater.refresh(degrees_f_to_c(pool.temp));
         gTempWater.txtLabel.attr("text", water_label);
-        gTempAir.refresh(fahrenheit2centigrade(air_temp));
+        gTempAir.refresh(degrees_f_to_c(air_temp));
     }
 
-    function updateThermostats(set_points) {
+    function update_thermostats(set_points)
+    {
         gThermostats.forEach(function (thermostat) {
-            updateRoundSlider(thermostat, set_points[thermostat.name]);
+            update_round_slider(thermostat, set_points[thermostat.name]);
         });
     }
 
-    function updateHeating(pool, spa) {
+    function update_heat_src(pool, spa) {
         $("#sPoolSp").val(pool.sp).slider('refresh');
         $("#sSpaSp").val(spa.sp).slider('refresh');
 
-        var selector = "#cPoolHeatSrc" + capitalizeFirstLetter(pool.src);
+        let selector = "#cPoolHeatSrc" + capitalize_1st_letter(pool.src);
         $(selector).attr("checked", true).checkboxradio("refresh");
 
-        selector = "#cSpaHeatSrc" + capitalizeFirstLetter(spa.src);
+        selector = "#cSpaHeatSrc" + capitalize_1st_letter(spa.src);
         $(selector).attr("checked", true).checkboxradio("refresh");
 
     }
 
-    function updatePump(pump) {
-        var title = "Pump speed";
+    function update_pump(pump) {
+        let title = "Pump speed";
         if (pump.running && pump.mode !== "FILTER") {
             title += "\nmode: " + pump.mode;
         }
@@ -212,13 +195,15 @@
         gPumpPwr.txtLabel.attr("text", title);
     }
 
-    function disableInputs(value) {
+    function disable_inputs(value)
+    {
         $("input[type='checkbox']").attr("disabled", value); //.checkboxradio("refresh");
         $("input[type='radio']").attr("disabled", value); // .checkboxradio("refresh");
         $(".my-setpoint").slider(value ? "disable" : "enable"); //.slider("refresh");
     }
 
-    function overlayPage(value) {
+    function overlay_page(value)
+    {
         if (value) {
             $('#pageone').css({
                 opacity: 0.7
@@ -231,7 +216,8 @@
         }
     }
 
-    function showSpinner(value) {
+    function show_spinner(value)
+    {
         if (value.length) {
             $.mobile.loading('show', {
                 text: value,
@@ -242,92 +228,97 @@
         }
     }
 
-    function update(jsonData) {
-        updateTime(jsonData.system.tod);
-        updateCircuits(jsonData.circuits.active);
-        updateChlor(jsonData.chlor);
-        updateThermostats({'pool': jsonData.thermostats.POOL.sp, 'spa': jsonData.thermostats.SPA.sp});
-        updateTemp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
-        updateHeating(jsonData.thermostats.POOL, jsonData.thermostats.SPA);
-        updatePump(jsonData.pump);
+    function update(jsonData)
+    {
+        update_circuits(jsonData.circuits.active);
+        update_temp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
+        update_thermostats({'pool': jsonData.thermostats.POOL.sp, 'spa': jsonData.thermostats.SPA.sp});
+        update_heat_src(jsonData.thermostats.POOL, jsonData.thermostats.SPA);
+        update_chlor(jsonData.chlor);
+        update_pump(jsonData.pump);
+        update_system(jsonData.system.tod);
     }
 
-    var firstupdate = 1;
+    var first_update = 1;
 
-    function sendMessage(pair) {
-        var url = ipName + "/json";
-        var request = !jQuery.isEmptyObject(pair);
-        //alert(url);
+    function send_message(pair)
+    {
+        const url = ipName + "/json";
+        const request = !jQuery.isEmptyObject(pair);
         $.ajax({
             dataType: "jsonp",
             url: url + "?callback=?",
             data: pair,
             success: function(jsonData) {
-                console.log(jsonData);
+                //console.log(jsonData);
                 if (request) {
                     clearInterval(intervalId);
                     intervalId = 0;
                 } else {
                     update(jsonData);
-                    showSpinner("");
+                    show_spinner("");
                     //console.log("disable inputs");
-                    disableInputs(false);
+                    disable_inputs(false);
                     //console.log("disable inputs");
-                    overlayPage(false);
-                    firstupdate = 0;
+                    overlay_page(false);
+                    first_update = 0;
                 }
                 if (intervalId === 0) { // schedule after request, or on first invocation
-                    intervalId = setInterval(scheduledUpdate, 10000);
+                    intervalId = setInterval(scheduled_update, 10000);
                 }
             },
             beforeSend: function() {
-                if (firstupdate || request) {
-                    showSpinner(request ? "Requesting\n(please wait 10 sec)" : "Loading data");
-                    disableInputs(true);
-                    overlayPage(true);
+                if (first_update || request) {
+                    show_spinner(request ? "Requesting\n(please wait 10 sec)" : "Loading data");
+                    disable_inputs(true);
+                    overlay_page(true);
                 }
             },
             error: function() {
-                showSpinner("Retry in 10 seconds\n(" + ipName + ")");
+                show_spinner("Retry in 10 seconds\n(" + ipName + ")");
             }
         });
 
     }
 
-    function scheduledUpdate() {
-        sendMessage({});
+    function scheduled_update()
+    {
+        send_message({});
     }
 
-    function initialize() {
+    function initialize()
+    {
         //hideInputElements(true);
 
         gThermostats.forEach(function (thermostat) {
             thermostat.min = 0;
             thermostat.max = 100;
-            thermostat.id = '#gThermostat' + capitalizeFirstLetter(thermostat.name);
+            thermostat.id = '#gThermostat' + capitalize_1st_letter(thermostat.name);
             $(thermostat.id).roundSlider({
                 sliderType: "min-range",
                 circleShape: "half-top",
-                handleShape: "round",
+                handleShape: "dot",
                 value: 0,
                 readOnly: false,
                 min: 32,
                 max: 100,
                 step: 1,
-                radius: 80,
-                animation: false,
+                radius: 120, // determines width & height
+                width: 35,
+                svgMode: false,
+                animation: true,
                 keyboardAction: true,
                 mouseScrollAction: true,
                 tooltipFormat: function(args) {
                     return args.value + " °F";
                 },
                 drag: function(args) {
-                    updateRoundSlider(thermostat, args.value);
+                    update_round_slider(thermostat, args.value);
                 },
                 change: function(args) {
-                    updateRoundSlider(thermostat, args.value);
-                    var pair = { "?homeassistant/climate/esp32-wrover-1/' + thermostat.name + '/set_temp": args.value };
-                    sendMessage(pair);
+                    update_round_slider(thermostat, args.value);
+                    const pair = { "?homeassistant/climate/esp32-wrover-1/' + thermostat.name + '/set_temp": args.value };
+                    send_message(pair);
                 }
             });
 
@@ -358,7 +349,7 @@
 
         gTempWater = new JustGage({
             id: "gTempWater",
-            label: 'Water temp.',
+            label: 'Water',
             symbol: " °C",
             value: 0,
             min: 0,
@@ -371,7 +362,7 @@
 
         gTempAir = new JustGage({
             id: "gTempAir",
-            label: 'Air temp.',
+            label: 'Air',
             symbol: " °C",
             value: 0,
             min: 0,
@@ -404,39 +395,25 @@
             valueFontColor: "white",
         });
 
-        // make horizontal sliders more fancy (color grade slider track, print value on knob)
-        // (https://jqmtricks.wordpress.com/2014/04/21/fun-with-the-slider-widget/)
-        /*
-        var colorback = '<div class="sliderBackColor bg-blue"></div>';
-        colorback += '<div class="sliderBackColor bg-green"></div>';
-        colorback += '<div class="sliderBackColor bg-orange"></div>';
-        $(".my-slider .ui-slider-track").prepend(colorback);
-        sliderValueOnKnob($("#sPoolSp"));
-        sliderValueOnKnob($("#sSpaSp"));
-        $(".my-setpoint").on("change", function () {
-            sliderValueOnKnob($(this));
-        });
-        */
-
         // register change notifications
 
-        $(".my-circuit").on("change", function(event) {
-            var pair = {};
+        $(".circuit").on("change", function(event) {
+            let pair = {};
             pair["homeassistant/switch/esp32-wrover-1/" + event.target.value + "_circuit/set"] = event.target.checked ? "ON" : "OFF";
             console.log(pair);
-            sendMessage(pair);
+            send_message(pair);
         });
         $(".heatsrc").on("change", function(event) {
-            var pair = {};
+            let pair = {};
             pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_mode"] = event.target.value;
             console.log(pair);
-            sendMessage(pair);
+            send_message(pair);
         });
         $(".my-slider").on("slidestop", function(event) {
-            var pair = {};
+            let pair = {};
             pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_temp"] = event.target.value;
             console.log(pair);
-            sendMessage(pair);
+            send_message(pair);
         });
 
     }
