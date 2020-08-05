@@ -25,80 +25,107 @@
 
         <div data-role="header" data-theme="a" data-content-theme="b">
             <h1>Pool</h1>
-
         </div>
         <div data-role="content">
             <div id="colborders" data-role="collapsibleset" data-iconpos="right">
-
                 <div data-role="collapsible">
-                    <h3>Pool thermostat</h3>
-                    <div class="ui-grid-a ui-responsive">
+                    <h3>Circuits</h3>
+                    <div class="ui-grid-b ui-responsive">
                         <div class="ui-block-a center-wrapper">
-                            <div id="gThermostatPool" style="height:300px"></div>
-                        </div>
-                        <div class="ui-block-b">
-                            <label>Heat source</label>
-                            <form id="cPoolHeatSrc">
+                            <form id="cCircuit">
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="cPoolHeatSrcNone" class="heatsrc" value="off" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcNone">off</label>
-                                    <input id="cPoolHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcHeater">heater</label>
-                                    <input id="cPoolHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcSolarPref">solar pref</label>
-                                    <input id="cPoolHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcSolar">solar</label>
+                                    <input id="cCircuitPool" type="checkbox" class="circuit" value="pool" name="activePool" />
+                                    <label for="cCircuitPool">Pool</label>
+                                    <input id="cCircuitSpa" type="checkbox" class="circuit" value="spa" name="activeSpa" />
+                                    <label for="cCircuitSpa">Spa</label>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="ui-block-b center-wrapper">
+                            <form id="cCircuit">
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cCircuitAux1" type="checkbox" class="circuit" value="aux1" name="activeAux1" />
+                                    <label for="cCircuitAux1">Aux1</label>
+                                    <input id="cCircuitAux2" type="checkbox" class="circuit" value="aux2" name="activeAux2" />
+                                    <label for="cCircuitAux2">Aux2</label>
+                                    <input id="cCircuitAux3" type="checkbox" class="circuit" value="aux3" name="activeAux3" />
+                                    <label for="cCircuitAux3">Aux3</label>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="ui-block-c center-wrapper">
+                            <form id="cCircuit">
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cCircuitFt1" type="checkbox" class="circuit" value="ft1" name="activeFt1" />
+                                    <label for="cCircuitFt1">Ft1</label>
+                                    <input id="cCircuitFt2" type="checkbox" class="circuit" value="ft2" name="activeFt2" />
+                                    <label for="cCircuitFt2">Ft2</label>
+                                    <input id="cCircuitFt3" type="checkbox" class="circuit" value="ft3" name="activeFt3" />
+                                    <label for="cCircuitFt3">Ft3</label>
+                                    <input id="cCircuitFt4" type="checkbox" class="circuit" value="ft4" name="activeFt4" />
+                                    <label for="cCircuitFt4">Ft4</label>
                                 </fieldset>
                             </form>
                         </div>
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Spa thermostat</h3>
-                    <div class="ui-grid-a ui-responsive aligned-grid">
-                        <div class="ui-block-a">
-                            <p>
-                                <div id="gThermostatSpa"></div>
-                            </p>
-                        </div>
-                        <div class="ui-block-b">
-                            <p>
-                                <label>Heat source</label>
-                                <form id="cSpaHeatSrc">
-                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                        <input id="cSpaHeatSrcNone" class="heatsrc" value="off" type="radio" name="spa_heater" />
-                                        <label for="cSpaHeatSrcNone">off</label>
-                                        <input id="cSpaHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="spa_heater" />
-                                        <label for="cSpaHeatSrcHeater">heater</label>
-                                        <input id="cSpaHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="spa_heater" />
-                                        <label for="cSpaHeatSrcSolarPref">solar pref</label>
-                                        <input id="cSpaHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="spa_heater" />
-                                        <label for="cSpaHeatSrcSolar">solar</label>
-                                    </fieldset>
-                                </form>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div data-role="collapsible">
-                    <h3>Circuits (input)</h3>
-                    <form>
-                        <fieldset data-role="controlgroup" data-type="horizontal">
-                            <legend>Active circuits</legend>
-                            <input id="cCircuitPool" type="checkbox" class="my-circuit" value="pool" name="activePool" />
-                            <label for="cCircuitPool">Pool</label>
-                            <input id="cCircuitSpa" type="checkbox" class="my-circuit" value="spa" name="activeSpa" />
-                            <label for="cCircuitSpa">Spa</label>
-                            <input id="cCircuitAux1" type="checkbox" class="my-circuit" value="aux1" name="activeAux1" />
-                            <label for="cCircuitAux1">Aux1</label>
-                        </fieldset>
-                    </form>
-                </div>
-                <div data-role="collapsible">
                     <h3>Temperatures</h3>
                     <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a"><div id="gTempWater" style="height:160px"></div></div>
                         <div class="ui-block-b"><div id="gTempAir" style="height:160px"></div></div>
+                    </div>
+                </div>
+                <div data-role="collapsible">
+                    <h3>Pool heating</h3>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-a center-wrapper">
+                            <div id="gThermostatPool" style="height:300px"></div>
+                        </div>
+                        <div class="ui-block-b center-wrapper">
+                            <form id="cPoolHeatSrc">
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cPoolHeatSrcNone" class="heatsrc" value="off" type="radio" name="pool_heater" />
+                                    <label for="cPoolHeatSrcNone">Off</label>
+                                    <input id="cPoolHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="pool_heater" />
+                                    <label for="cPoolHeatSrcHeater">Heater</label>
+                                </fieldset>
+                            </form>
+                            <form>
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cPoolHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="pool_heater" />
+                                <label for="cPoolHeatSrcSolarPref">Solar pref</label>
+                                <input id="cPoolHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="pool_heater" />
+                                <label for="cPoolHeatSrcSolar">Solar</label>
+                            </fieldset>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+                <div data-role="collapsible">
+                    <h3>Spa heating</h3>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-a center-wrapper">
+                            <div id="gThermostatSpa" style="height:300px"></div>
+                        </div>
+                        <div class="ui-block-b center-wrapper">
+                            <form id="cSpaHeatSrc">
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cSpaHeatSrcNone" class="heatsrc" value="off" type="radio" name="pool_heater" />
+                                    <label for="cSpaHeatSrcNone">Off</label>
+                                    <input id="cSpaHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="pool_heater" />
+                                    <label for="cSpaHeatSrcHeater">Heater</label>
+                                </fieldset>
+                            </form>
+                            <form>
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cSpaHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="pool_heater" />
+                                <label for="cSpaHeatSrcSolarPref">Solar pref</label>
+                                <input id="cSpaHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="pool_heater" />
+                                <label for="cSpaHeatSrcSolar">Solar</label>
+                            </fieldset>
+                        </form>
+                        </div>
                     </div>
                 </div>
                 <div data-role="collapsible">
@@ -116,7 +143,7 @@
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Time of day</h3>
+                    <h3>Controller</h3>
                     <div class="ui-body ui-grid-a ui-responsive">
                         <div class="ui-block-a">
                             <input id="date" type="date" disabled />
