@@ -40,13 +40,35 @@
     // schedule.pool.start: '08:15'
     // schedule.pool.stop: '13:30'
 
-    let gThermostats = { 'POOL': {}, 'SPA': {} };
-    let gChlorSalt = {};
-    let gChlorPct = {};
-    let gTempWater = {};
-    let gTempAir = {};
-    let gPumpRpm = {};
-    let gPumpPwr = {};
+    let _ui = {
+        'circuits': {
+            'pool': {},
+            'spa': {},
+            'aux1': {},
+            'aux2': {},
+            'aux3': {},
+            'ft1': {},
+            'ft2': {},
+            'ft3': {},
+            'ft4': {}
+        },
+        'temps': {
+            'water': {},
+            'air': {},
+        },
+        'thermostats': {
+            'pool': {},
+            'spa': {},
+        },
+        'chlor': {
+            'salt': {},
+            'pct': {},
+        },
+        'pump': {
+            'rpm': {},
+            'pwr': {},
+        }
+    };
 
     function degrees_f_to_c(f) {
         return Math.round(((f - 32) * 5) / 9);
@@ -59,7 +81,7 @@
         return str.charAt(0).toUpperCase() + str.toLowerCase().slice(1);
     }
 
-    // algorithm from https://en.wikipedia.org/wiki/HSL_and_HSV
+    // https://en.wikipedia.org/wiki/HSL_and_HSV
     function hsv_2o_rgb(h, s, v) {
         h %= 360;
         s = Math.max(0, Math.min(s, 1));
@@ -71,66 +93,35 @@
         const rgb_adj = Math.floor((rgb_max - rgb_min) * diff / 60); // RGB adjustment amount by hue
         let r, g, b;
         switch (i) {
-            case 0:
-                r = rgb_max;
-                g = rgb_min + rgb_adj;
-                b = rgb_min;
-                break;
-            case 1:
-                r = rgb_max - rgb_adj;
-                g = rgb_max;
-                b = rgb_min;
-                break;
-            case 2:
-                r = rgb_min;
-                g = rgb_max;
-                b = rgb_min + rgb_adj;
-                break;
-            case 3:
-                r = rgb_min;
-                g = rgb_max - rgb_adj;
-                b = rgb_max;
-                break;
-            case 4:
-                r = rgb_min + rgb_adj;
-                g = rgb_min;
-                b = rgb_max;
-                break;
-            default:
-                r = rgb_max;
-                g = rgb_min;
-                b = rgb_max - rgb_adj;
-                break;
+            case 0: r = rgb_max; g = rgb_min + rgb_adj; b = rgb_min; break;
+            case 1: r = rgb_max - rgb_adj; g = rgb_max; b = rgb_min; break;
+            case 2: r = rgb_min; g = rgb_max; b = rgb_min + rgb_adj; break;
+            case 3: r = rgb_min; g = rgb_max - rgb_adj; b = rgb_max; break;
+            case 4: r = rgb_min + rgb_adj; g = rgb_min; b = rgb_max; break;
+            default: r = rgb_max; g = rgb_min; b = rgb_max - rgb_adj;break;
         }
         return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
 
-    function update_round_slider(thermostat, v) {
-        $(thermostat.selector).roundSlider("setValue", v); // only needed when called directly
+    function update_round_slider(thermostat, v)
+    {
+        thermostat.obj.roundSlider("setValue", v); // only needed when called directly
         const blue = 350;
         const rgb = hsv_2o_rgb(blue * (1 - (v - thermostat.min) / thermostat.max), 1, 1);
-        /* for non-svg mode */
-        const el = $(thermostat.selector + ' > div > div.rs-inner-container > div > div')[0];
-        el.style.backgroundColor = rgb;
+        thermostat.track_obj.style.backgroundColor = rgb;
     }
 
-    function circuitChanged(obj)
+    function update_system(system)
     {
-        console.log(obj.val() + ' = ' + obj.target.value);
-        return obj;
-    }
-
-    function update_system(tod)
-    {
-        $("#date").val(tod.date);
-        $("#time").val(tod.time);
+        $("#date").val(system.tod.date);
+        $("#time").val(system.tod.time);
     }
 
     function update_circuits(active_arr)
     {
         Object.keys(active_arr).forEach( function(key, value) {
-            const id = '#cCircuit' + capitalize_1st_letter(key);
-            $(id).attr("checked", this[key]).checkboxradio("refresh");
+            const selector = '#circuit_' + key.toLowerCase();
+            $(selector).attr("checked", this[key]).checkboxradio("refresh");
         }, active_arr);
     }
 
@@ -141,9 +132,9 @@
             if (chlor.status !== 'OK') {
                 title += chlor.status;
             }
-            gChlorSalt.refresh(chlor.salt);
-            gChlorPct.refresh(chlor.pct);
-            gChlorPct.txtLabel.attr("text", title);
+            _ui.chlor.salt.obj.refresh(chlor.salt);
+            _ui.chlor.pct.obj.refresh(chlor.pct);
+            _ui.chlor.pct.obj.txtLabel.attr("text", title);
         }
     }
 
@@ -156,31 +147,30 @@
         if (active.SPA && spa.heating) {
             water_label += " " + spa.src;
         }
-        gTempWater.refresh(degrees_f_to_c(pool.temp));
-        gTempWater.txtLabel.attr("text", water_label);
-        gTempAir.refresh(degrees_f_to_c(air_temp));
+        _ui.temps.water.obj.refresh(degrees_f_to_c(pool.temp));
+        _ui.temps.water.obj.txtLabel.attr("text", water_label);
+        _ui.temps.air.obj.refresh(degrees_f_to_c(air_temp));
     }
 
     function update_thermostats(json_thermostats)
     {
-        Object.keys(gThermostats).forEach( function(key) {
+        Object.keys(_ui.thermostats).forEach( function(key) {
             ['off', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
-                const sel = '#c' + capitalize_1st_letter(key) + 'HeatSrc' + capitalize_1st_letter(src);
-                const val = src == json_thermostats[key].src;
+                const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
+                const val = src == json_thermostats[key.toUpperCase()].src;
                 $(sel).attr("checked", val).checkboxradio("refresh");
             });
-            update_round_slider(this[key], json_thermostats[key].sp);
-        }, gThermostats);
-
+            update_round_slider(this[key], json_thermostats[key.toUpperCase()].sp);
+        }, _ui.thermostats);
     }
 
     function update_pump(pump) {
         let title = "Pump speed";
         if (pump.running && pump.mode !== "FILTER") {
-            title += "\nmode: " + pump.mode;
+            title += "\n" + pump.mode;
         }
-        gPumpRpm.refresh(pump.rpm);
-        gPumpRpm.txtLabel.attr("text", title);
+        _ui.pump.rpm.obj.refresh(pump.rpm);
+        _ui.pump.rpm.obj.txtLabel.attr("text", title);
 
         title = "Pump power";
         if (pump.status !== 0) {
@@ -188,15 +178,15 @@
         } else if (pump.err !== 0) {
             title += "\nerror: " + pump.err;
         }
-        gPumpPwr.refresh(pump.pwr);
-        gPumpPwr.txtLabel.attr("text", title);
+        _ui.pump.pwr.obj.refresh(pump.pwr);
+        _ui.pump.pwr.obj.txtLabel.attr("text", title);
     }
 
     function disable_inputs(value)
     {
-        $("input[type='checkbox']").attr("disabled", value); //.checkboxradio("refresh");
-        $("input[type='radio']").attr("disabled", value); // .checkboxradio("refresh");
-        $(".my-setpoint").slider(value ? "disable" : "enable"); //.slider("refresh");
+        $("input[type='checkbox']").attr("disabled", value);
+        $("input[type='radio']").attr("disabled", value);
+        $(".my-setpoint").slider(value ? "disable" : "enable");
     }
 
     function overlay_page(value)
@@ -232,7 +222,7 @@
         update_thermostats(jsonData.thermostats);
         update_chlor(jsonData.chlor);
         update_pump(jsonData.pump);
-        update_system(jsonData.system.tod);
+        update_system(jsonData.system);
     }
 
     var first_update = 1;
@@ -286,12 +276,30 @@
     {
         //hideInputElements(true);
 
-        //         gThermostats.forEach(function (thermostat) {
-        Object.keys(gThermostats).forEach( function(key) {
+        Object.keys(_ui.circuits).forEach( function(key) {
+            this[key] = $('#thermostat_' + key);
+        }, _ui.circuits);
+
+        Object.keys(_ui.temps).forEach( function(key) {
+            this[key].obj =  new JustGage({
+                id: "temp_" + key,
+                label: capitalize_1st_letter(key),
+                symbol: " °C",
+                value: 0,
+                min: 0,
+                max: 50,
+                height: 200,
+                relativeGaugeSize: true,
+                valueFontColor: "white",
+                levelColors: ['#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#C9DB39', '#F5C80D', '#F1933C', '#F1933C', '#F1933C', '#F1933C', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832'],
+            });
+        }, _ui.temps);
+
+        Object.keys(_ui.thermostats).forEach( function(key) {
             this[key].min = 0;
             this[key].max = 100;
-            this[key].selector = '#gThermostat' + capitalize_1st_letter(key);
-            $(this[key].selector).roundSlider({
+            this[key].obj = $('#thermostat_' + key);
+            this[key].obj.roundSlider({
                 sliderType: "min-range",
                 circleShape: "half-top",
                 handleShape: "round",
@@ -320,10 +328,11 @@
                     send_message(pair);
                 }
             });
-        }, gThermostats);
+            this[key].track_obj = $('#thermostat_' + key + ' > div > div.rs-inner-container > div > div')[0];  /* for non-svg mode */
+        }, _ui.thermostats);
 
-        gChlorSalt = new JustGage({
-            id: "gChlorSalt",
+        _ui.chlor.salt.obj = new JustGage({
+            id: "chlor_salt",
             label: 'Salt level',
             symbol: " ppm",
             value: 0,
@@ -334,8 +343,8 @@
             levelColors: ['#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#48CCCD', '#48CCCD', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800'],
         });
 
-        gChlorPct = new JustGage({
-            id: "gChlorPct",
+        _ui.chlor.pct.obj = new JustGage({
+            id: "chlor_pct",
             label: 'Percentage',
             symbol: "%",
             value: 0,
@@ -345,34 +354,8 @@
             valueFontColor: "white",
         });
 
-        gTempWater = new JustGage({
-            id: "gTempWater",
-            label: 'Water',
-            symbol: " °C",
-            value: 0,
-            min: 0,
-            max: 50,
-            height: 200,
-            relativeGaugeSize: true,
-            valueFontColor: "white",
-            levelColors: ['#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#C9DB39', '#F5C80D', '#F1933C', '#F1933C', '#F1933C', '#F1933C', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832'],
-        });
-
-        gTempAir = new JustGage({
-            id: "gTempAir",
-            label: 'Air',
-            symbol: " °C",
-            value: 0,
-            min: 0,
-            max: 50,
-            height: 100,
-            relativeGaugeSize: true,
-            valueFontColor: "white",
-            levelColors: ['#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#147EB2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#0386B2', '#C9DB39', '#F5C80D', '#F1933C', '#F1933C', '#F1933C', '#F1933C', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832', '#DD3832'],
-        });
-
-        gPumpRpm = new JustGage({
-            id: "gPumpRpm",
+        _ui.pump.rpm.obj = new JustGage({
+            id: "pump_rpm",
             label: 'Pump speed',
             symbol: " rpm",
             value: 0,
@@ -382,8 +365,8 @@
             valueFontColor: "white",
         });
 
-        gPumpPwr = new JustGage({
-            id: "gPumpPwr",
+        _ui.pump.pwr.obj = new JustGage({
+            id: "pump_pwr",
             label: 'Pump power',
             symbol: " W",
             value: 0,
