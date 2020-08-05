@@ -10,7 +10,7 @@
 
     // request the parent's origin (sending a message to the parent tells it we're loaded),
     // the parent reply contains its origin.
-    if (1) {
+    if (inIframe()) {
         window.addEventListener('message', event => {
             ipName = event.origin;
             console.log(ipName);
@@ -19,7 +19,7 @@
         }, false);
         parent.postMessage('fromIframe', '*');
     } else {
-        ipName = "http://esp32-wrover-1.iot.vonk";
+        ipName = "http://pool.iot.vonk";
         console.log(ipName);
         scheduledUpdate();
     }
@@ -34,6 +34,14 @@
         // TODO: Cordova has been loaded. Perform any initialization that requires Cordova here.
     }
 
+    function inIframe() {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    }
+
     function onPause() {
         // TODO: This application has been suspended. Save application state here.
     }
@@ -46,6 +54,7 @@
     // schedule.pool.start: '08:15'
     // schedule.pool.stop: '13:30'
 
+    var gThermostats = [{'name': 'pool'}, {'name': 'spa'}];
     var gChlorSalt = {};
     var gChlorPct = {};
     var gTempWater = {};
@@ -61,17 +70,62 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    /*
-    function updateRoundSlider(v) {
-        $("#slider-salt").roundSlider("setValue", v); // only needed when called directly
-        var el = $('#slider-salt > div > div.rs-inner-container > div > div')[0];
-        el.style.backgroundColor = v < 1000 ? '#2266f7' : v < 3000 ? '#43BC53' : '#CD5342';
+    // algorithm from https://en.wikipedia.org/wiki/HSL_and_HSV
+    function hsv2rgb(h, s, v) {
+        h %= 360;
+        s = Math.max(0, Math.min(s, 1));
+        v = Math.max(0, Math.min(v, 1));
+        const rgb_max = Math.floor(v * 255);
+        const rgb_min = Math.floor(rgb_max * (1 - s));
+        const i = Math.floor(h / 60);
+        const diff = h % 60;
+        const rgb_adj = Math.floor((rgb_max - rgb_min) * diff / 60); // RGB adjustment amount by hue
+        var r, g, b;
+        switch (i) {
+            case 0:
+                r = rgb_max;
+                g = rgb_min + rgb_adj;
+                b = rgb_min;
+                break;
+            case 1:
+                r = rgb_max - rgb_adj;
+                g = rgb_max;
+                b = rgb_min;
+                break;
+            case 2:
+                r = rgb_min;
+                g = rgb_max;
+                b = rgb_min + rgb_adj;
+                break;
+            case 3:
+                r = rgb_min;
+                g = rgb_max - rgb_adj;
+                b = rgb_max;
+                break;
+            case 4:
+                r = rgb_min + rgb_adj;
+                g = rgb_min;
+                b = rgb_max;
+                break;
+            default:
+                r = rgb_max;
+                g = rgb_min;
+                b = rgb_max - rgb_adj;
+                break;
+        }
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    function updateRoundSlider(thermostat, v) {
+        $(thermostat.id).roundSlider("setValue", v); // only needed when called directly
+        const rgb = hsv2rgb(240 * (1 - (v - thermostat.min) / thermostat.max), 1, 1);
+        var el = $(thermostat.id + ' > div > div.rs-inner-container > div > div')[0];
+        el.style.backgroundColor = rgb;
     }
 
     function sliderValueOnKnob(obj) {
         obj.closest(".ui-slider").find(".ui-slider-handle").text(obj.val());
     }
-    */
 
     function circuitChanged(obj) {
         console.log(obj.val() + ' = ' + obj.target.value);
@@ -122,6 +176,12 @@
         gTempAir.refresh(fahrenheit2centigrade(air_temp));
     }
 
+    function updateThermostats(set_points) {
+        gThermostats.forEach(function (thermostat) {
+            updateRoundSlider(thermostat, set_points[thermostat.name]);
+        });
+    }
+
     function updateHeating(pool, spa) {
         $("#sPoolSp").val(pool.sp).slider('refresh');
         $("#sSpaSp").val(spa.sp).slider('refresh');
@@ -131,6 +191,7 @@
 
         selector = "#cSpaHeatSrc" + capitalizeFirstLetter(spa.src);
         $(selector).attr("checked", true).checkboxradio("refresh");
+
     }
 
     function updatePump(pump) {
@@ -182,10 +243,10 @@
     }
 
     function update(jsonData) {
-        //updateRoundSlider(jsonData.chlor.salt);
         updateTime(jsonData.system.tod);
         updateCircuits(jsonData.circuits.active);
         updateChlor(jsonData.chlor);
+        updateThermostats({'pool': jsonData.thermostats.POOL.sp, 'spa': jsonData.thermostats.SPA.sp});
         updateTemp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
         updateHeating(jsonData.thermostats.POOL, jsonData.thermostats.SPA);
         updatePump(jsonData.pump);
@@ -199,7 +260,7 @@
         //alert(url);
         $.ajax({
             dataType: "jsonp",
-            url: url + "?callback=?",  
+            url: url + "?callback=?",
             data: pair,
             success: function(jsonData) {
                 console.log(jsonData);
@@ -240,27 +301,39 @@
     function initialize() {
         //hideInputElements(true);
 
-        /*    $("#slider-salt").roundSlider({
+        gThermostats.forEach(function (thermostat) {
+            thermostat.min = 0;
+            thermostat.max = 100;
+            thermostat.id = '#gThermostat' + capitalizeFirstLetter(thermostat.name);
+            $(thermostat.id).roundSlider({
                 sliderType: "min-range",
                 circleShape: "half-top",
                 handleShape: "round",
                 value: 0,
                 readOnly: false,
-                min: 0,
-                max: 5000,
-                tooltipFormat: function (args) {
-                    return args.value + " ppm";
+                min: 32,
+                max: 100,
+                step: 1,
+                radius: 80,
+                animation: false,
+                keyboardAction: true,
+                mouseScrollAction: true,
+                tooltipFormat: function(args) {
+                    return args.value + " °F";
                 },
-                drag: function (args) {
-                    updateRoundSlider(args.value);
+                drag: function(args) {
+                    updateRoundSlider(thermostat, args.value);
                 },
-                change: function (args) {
-                    updateRoundSlider(args.value);
+                change: function(args) {
+                    updateRoundSlider(thermostat, args.value);
+                    var pair = { "?homeassistant/climate/esp32-wrover-1/' + thermostat.name + '/set_temp": args.value };
+                    sendMessage(pair);
                 }
             });
-        */
 
-       gChlorSalt = new JustGage({
+        });
+
+        gChlorSalt = new JustGage({
             id: "gChlorSalt",
             label: 'Salt level',
             symbol: " ppm",
@@ -333,16 +406,17 @@
 
         // make horizontal sliders more fancy (color grade slider track, print value on knob)
         // (https://jqmtricks.wordpress.com/2014/04/21/fun-with-the-slider-widget/)
+        /*
         var colorback = '<div class="sliderBackColor bg-blue"></div>';
         colorback += '<div class="sliderBackColor bg-green"></div>';
         colorback += '<div class="sliderBackColor bg-orange"></div>';
         $(".my-slider .ui-slider-track").prepend(colorback);
-        /*
         sliderValueOnKnob($("#sPoolSp"));
         sliderValueOnKnob($("#sSpaSp"));
         $(".my-setpoint").on("change", function () {
             sliderValueOnKnob($(this));
-        });*/
+        });
+        */
 
         // register change notifications
 
@@ -366,7 +440,5 @@
         });
 
     }
-
     $(document).ready(initialize);
-
 })();

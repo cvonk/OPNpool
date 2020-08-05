@@ -13,21 +13,75 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js"></script>
     <script type="text/javascript" src="justgage.js"></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css"> -->
+    <link rel="stylesheet" href="roundslider.css">
     <script src="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js"></script>
+
+    <link rel="stylesheet" href="index.css">
 
 </head>
 <body>
     <div data-role="page" data-theme="b" data-content-theme="b">
+
         <div data-role="header" data-theme="a" data-content-theme="b">
             <h1>Pool</h1>
 
         </div>
         <div data-role="content">
             <div id="colborders" data-role="collapsibleset" data-iconpos="right">
+
+                <div data-role="collapsible">
+                    <h3>Pool thermostat</h3>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-a center-wrapper">
+                            <div id="gThermostatPool" style="height:300px"></div>
+                        </div>
+                        <div class="ui-block-b">
+                            <label>Heat source</label>
+                            <form id="cPoolHeatSrc">
+                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                    <input id="cPoolHeatSrcNone" class="heatsrc" value="off" type="radio" name="pool_heater" />
+                                    <label for="cPoolHeatSrcNone">off</label>
+                                    <input id="cPoolHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="pool_heater" />
+                                    <label for="cPoolHeatSrcHeater">heater</label>
+                                    <input id="cPoolHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="pool_heater" />
+                                    <label for="cPoolHeatSrcSolarPref">solar pref</label>
+                                    <input id="cPoolHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="pool_heater" />
+                                    <label for="cPoolHeatSrcSolar">solar</label>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div data-role="collapsible">
+                    <h3>Spa thermostat</h3>
+                    <div class="ui-grid-a ui-responsive aligned-grid">
+                        <div class="ui-block-a">
+                            <p>
+                                <div id="gThermostatSpa"></div>
+                            </p>
+                        </div>
+                        <div class="ui-block-b">
+                            <p>
+                                <label>Heat source</label>
+                                <form id="cSpaHeatSrc">
+                                    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                        <input id="cSpaHeatSrcNone" class="heatsrc" value="off" type="radio" name="spa_heater" />
+                                        <label for="cSpaHeatSrcNone">off</label>
+                                        <input id="cSpaHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="spa_heater" />
+                                        <label for="cSpaHeatSrcHeater">heater</label>
+                                        <input id="cSpaHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="spa_heater" />
+                                        <label for="cSpaHeatSrcSolarPref">solar pref</label>
+                                        <input id="cSpaHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="spa_heater" />
+                                        <label for="cSpaHeatSrcSolar">solar</label>
+                                    </fieldset>
+                                </form>
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div data-role="collapsible">
                     <h3>Circuits (input)</h3>
-
                     <form>
                         <fieldset data-role="controlgroup" data-type="horizontal">
                             <legend>Active circuits</legend>
@@ -42,61 +96,13 @@
                 </div>
                 <div data-role="collapsible">
                     <h3>Temperatures</h3>
-
                     <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a"><div id="gTempWater" style="height:160px"></div></div>
                         <div class="ui-block-b"><div id="gTempAir" style="height:160px"></div></div>
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Heating (input)</h3>
-
-                    <div class="ui-grid-a ui-responsive">
-                        <div class="ui-block-a my-slider">
-                            <label for="sPoolSp">Pool heating setpoint</label>
-                            <input type="range" class="my-setpoint" id="sPoolSp" name="pool_heater" min="50" max="110" value="50"/>
-                        </div>
-                        <div class="ui-block-b">
-                            <label>Pool heat source</label>
-                            <form id="cPoolHeatSrc">
-                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="cPoolHeatSrcNone" class="heatsrc" value="off" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcNone">none</label>
-                                    <input id="cPoolHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcHeater">heater</label>
-                                    <input id="cPoolHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcSolarPref">solarPref</label>
-                                    <input id="cPoolHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="pool_heater" />
-                                    <label for="cPoolHeatSrcSolar">solar</label>
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="ui-body ui-grid-a ui-responsive">
-                        <div class="ui-block-a my-slider">
-                            <label for="rSpaSp">Spa heating setpoint</label>
-                            <input type="range" class="my-setpoint" id=" sSpaSp" name="spa_heater" min="50" max="110" value="50" />
-                        </div>
-                        <div class="ui-block-b">
-                            <label>Spa heat source</label>
-                            <form id="cSpaHeatSrc">
-                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="cSpaHeatSrcNone" class="heatsrc" value="off" type="radio" name="spa_heater" />
-                                    <label for="cSpaHeatSrcNone">none</label>
-                                    <input id="cSpaHeatSrcHeater" class="heatsrc" value="heat" type="radio" name="spa_heater" />
-                                    <label for="cSpaHeatSrcHeater">heater</label>
-                                    <input id="cSpaHeatSrcSolarPref" class="heatsrc" value="solar_pref" type="radio" name="spa_heater" />
-                                    <label for="cSpaHeatSrcSolarPref">solarPref</label>
-                                    <input id="cSpaHeatSrcSolar" class="heatsrc" value="solar" type="radio" name="spa_heater" />
-                                    <label for="cSpaHeatSrcSolar">solar</label>
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div data-role="collapsible">
                     <h3>Pump</h3>
-
                     <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a"><div id="gPumpRpm" style="height:160px"></div></div>
                         <div class="ui-block-b"><div id="gPumpPwr" style="height:160px"></div></div>
@@ -104,7 +110,6 @@
                 </div>
                 <div data-role="collapsible">
                     <h3>Chlorinator</h3>
-
                     <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a"><div id="gChlorSalt" style="height:160px"></div></div>
                         <div class="ui-block-b"><div id="gChlorPct" style="height:160px"></div></div>
@@ -112,7 +117,6 @@
                 </div>
                 <div data-role="collapsible">
                     <h3>Time of day</h3>
-
                     <div class="ui-body ui-grid-a ui-responsive">
                         <div class="ui-block-a">
                             <input id="date" type="date" disabled />

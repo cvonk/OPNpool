@@ -75,3 +75,12 @@
 .full-width-slider .ui-slider-track {
     margin-left: 15px;
 }
+
+
+/* https://stackoverflow.com/questions/4329866/centering-elements-in-jquery-mobile */
+.center-wrapper {
+    text-align: center;
+}
+.center-wrapper * {
+    margin: 0 auto;
+}
