@@ -40,7 +40,7 @@
     // schedule.pool.start: '08:15'
     // schedule.pool.stop: '13:30'
 
-    let gThermostats = [{'name': 'pool'}, {'name': 'spa'}];
+    let gThermostats = { 'POOL': {}, 'SPA': {} };
     let gChlorSalt = {};
     let gChlorPct = {};
     let gTempWater = {};
@@ -52,8 +52,11 @@
         return Math.round(((f - 32) * 5) / 9);
     }
 
-    function capitalize_1st_letter(string) {
-        return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
+    function capitalize_1st_letter(str) {
+        if (typeof str !== 'string') {
+            return str;
+        }
+        return str.charAt(0).toUpperCase() + str.toLowerCase().slice(1);
     }
 
     // algorithm from https://en.wikipedia.org/wiki/HSL_and_HSV
@@ -103,11 +106,11 @@
     }
 
     function update_round_slider(thermostat, v) {
-        $(thermostat.id).roundSlider("setValue", v); // only needed when called directly
+        $(thermostat.selector).roundSlider("setValue", v); // only needed when called directly
         const blue = 350;
         const rgb = hsv_2o_rgb(blue * (1 - (v - thermostat.min) / thermostat.max), 1, 1);
         /* for non-svg mode */
-        const el = $(thermostat.id + ' > div > div.rs-inner-container > div > div')[0];
+        const el = $(thermostat.selector + ' > div > div.rs-inner-container > div > div')[0];
         el.style.backgroundColor = rgb;
     }
 
@@ -158,22 +161,16 @@
         gTempAir.refresh(degrees_f_to_c(air_temp));
     }
 
-    function update_thermostats(set_points)
+    function update_thermostats(json_thermostats)
     {
-        gThermostats.forEach(function (thermostat) {
-            update_round_slider(thermostat, set_points[thermostat.name]);
-        });
-    }
-
-    function update_heat_src(pool, spa) {
-        $("#sPoolSp").val(pool.sp).slider('refresh');
-        $("#sSpaSp").val(spa.sp).slider('refresh');
-
-        let selector = "#cPoolHeatSrc" + capitalize_1st_letter(pool.src);
-        $(selector).attr("checked", true).checkboxradio("refresh");
-
-        selector = "#cSpaHeatSrc" + capitalize_1st_letter(spa.src);
-        $(selector).attr("checked", true).checkboxradio("refresh");
+        Object.keys(gThermostats).forEach( function(key) {
+            ['off', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
+                const sel = '#c' + capitalize_1st_letter(key) + 'HeatSrc' + capitalize_1st_letter(src);
+                const val = src == json_thermostats[key].src;
+                $(sel).attr("checked", val).checkboxradio("refresh");
+            });
+            update_round_slider(this[key], json_thermostats[key].sp);
+        }, gThermostats);
 
     }
 
@@ -232,8 +229,7 @@
     {
         update_circuits(jsonData.circuits.active);
         update_temp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
-        update_thermostats({'pool': jsonData.thermostats.POOL.sp, 'spa': jsonData.thermostats.SPA.sp});
-        update_heat_src(jsonData.thermostats.POOL, jsonData.thermostats.SPA);
+        update_thermostats(jsonData.thermostats);
         update_chlor(jsonData.chlor);
         update_pump(jsonData.pump);
         update_system(jsonData.system.tod);
@@ -290,14 +286,15 @@
     {
         //hideInputElements(true);
 
-        gThermostats.forEach(function (thermostat) {
-            thermostat.min = 0;
-            thermostat.max = 100;
-            thermostat.id = '#gThermostat' + capitalize_1st_letter(thermostat.name);
-            $(thermostat.id).roundSlider({
+        //         gThermostats.forEach(function (thermostat) {
+        Object.keys(gThermostats).forEach( function(key) {
+            this[key].min = 0;
+            this[key].max = 100;
+            this[key].selector = '#gThermostat' + capitalize_1st_letter(key);
+            $(this[key].selector).roundSlider({
                 sliderType: "min-range",
                 circleShape: "half-top",
-                handleShape: "dot",
+                handleShape: "round",
                 value: 0,
                 readOnly: false,
                 min: 32,
@@ -313,16 +310,17 @@
                     return args.value + " °F";
                 },
                 drag: function(args) {
-                    update_round_slider(thermostat, args.value);
+                    update_round_slider(this[key], args.value);
                 },
                 change: function(args) {
-                    update_round_slider(thermostat, args.value);
-                    const pair = { "?homeassistant/climate/esp32-wrover-1/' + thermostat.name + '/set_temp": args.value };
+                    update_round_slider(this[key], args.value);
+                    let pair = {};
+                    const key = '?homeassistant/climate/esp32-wrover-1/' + key.toLowerCase() + '/set_temp';
+                    pair[key] = args.value
                     send_message(pair);
                 }
             });
-
-        });
+        }, gThermostats);
 
         gChlorSalt = new JustGage({
             id: "gChlorSalt",
@@ -403,15 +401,9 @@
             console.log(pair);
             send_message(pair);
         });
-        $(".heatsrc").on("change", function(event) {
+        $(".heat_src").on("change", function(event) {
             let pair = {};
             pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_mode"] = event.target.value;
-            console.log(pair);
-            send_message(pair);
-        });
-        $(".my-slider").on("slidestop", function(event) {
-            let pair = {};
-            pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_temp"] = event.target.value;
             console.log(pair);
             send_message(pair);
         });
