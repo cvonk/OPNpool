@@ -1,5 +1,0 @@
-set(COMPONENT_SRCS "ota_task.c")
-set(COMPONENT_ADD_INCLUDEDIRS ".")
-set(COMPONENT_REQUIRES nvs_flash app_update esp_http_client esp_https_ota)
-#set(COMPONENT_EMBED_TXTFILES server_certs/ca_cert.pem)
-register_component()
