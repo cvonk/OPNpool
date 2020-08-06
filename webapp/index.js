@@ -318,13 +318,13 @@
                     return args.value + " °F";
                 },
                 drag: function(args) {
-                    update_round_slider(this[key], args.value);
+                    update_round_slider(_ui.thermostats[key], args.value);
                 },
                 change: function(args) {
-                    update_round_slider(this[key], args.value);
+                    update_round_slider(_ui.thermostats[key], args.value);
                     let pair = {};
-                    const key = '?homeassistant/climate/esp32-wrover-1/' + key.toLowerCase() + '/set_temp';
-                    pair[key] = args.value
+                    const key1 = '?homeassistant/climate/esp32-wrover-1/' + key.toLowerCase() + '/set_temp';
+                    pair[key1] = args.value
                     send_message(pair);
                 }
             });
