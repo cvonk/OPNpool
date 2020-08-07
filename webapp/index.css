@@ -2,6 +2,10 @@
     border-top-width: 1px !important;
 }
 
+.rs-control {
+    margin-bottom: 18px !important;
+}
+
 .rs-control .rs-range-color {
     background-color: #54bbe0;
 }
@@ -11,27 +15,15 @@
 }
 
 .rs-control .rs-handle {
-    background-color: grey
+    background-color: #54bbe0;
 }
 
 .rs-control .rs-bg-color {
-    background-color: #0071C9;
+    background-color: #2b2b2b;
 }
 
 .rs-tooltip {
     font-size: 100%;
-}
-
-.sliderBackColor {
-    height: 100%;
-    width: 33.33%;
-    float: left;
-    /*margin-left: 0px;*/
-    color: white;
-    text-align: center;
-    font-size: 0px;
-    font-weight: normal;
-    text-shadow: 0px 1px 2px #333;
 }
 
 .bg-blue {
@@ -50,28 +42,34 @@
     background-color: #E97F02;
 }
 
-.my-slider .ui-slider-track>div.sliderBackColor:first-child {
-    border-top-left-radius: 0.3125em;
-    border-bottom-left-radius: 0.3125em;
-}
-
-.my-slider .ui-slider-track>div.sliderBackColor:last-of-type {
-    border-top-right-radius: 0.3125em;
-    border-bottom-right-radius: 0.3125em;
-}
-
 .ui-slider .ui-slider-handle {
     background: #54BBE0;
 }
 
-.full-width-slider input {
-    display: none;
+.center-wrapper {
+    text-align: center;
+    vertical-align: middle;
+    margin: 0
+}
+.center-wrapper * {
+    margin: 0 auto;
+    line-height: 32px;
 }
 
-.my-slider .ui-slider-track {
-    position: relative;
+.ui-radio > label.ui-btn {
+    width: 80px;
+    text-align: center;
+    font-size: 1.2em;
+    padding: 0;
 }
 
-.full-width-slider .ui-slider-track {
-    margin-left: 15px;
+.ui-checkbox > label.ui-btn {
+    width: 80px;
+    text-align: center;
+    font-size: 1.2em;
+    padding: 0;
+}
+
+.ui-collapsible-content {
+    margin: 50px;
 }
