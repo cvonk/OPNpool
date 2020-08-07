@@ -140,11 +140,9 @@
 
     function update_circuits(active_arr)
     {
-        console.log(active_arr);
         Object.keys(active_arr).forEach( function(key, value) {
             const selector = '#circuit_' + key.toLowerCase();
             const val = this[key];
-            console.log(selector, val);
             $(selector).attr('checked', val).checkboxradio('refresh');
         }, active_arr);
     }
