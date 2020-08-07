@@ -284,7 +284,7 @@
                 }
             },
             error: function() {
-                toast("Retry in 10 seconds\n(" + ipName + ")");
+                toast("Retrying");
             }
         });
     }
