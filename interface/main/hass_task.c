@@ -108,7 +108,7 @@ _circuit_set(char const * const subtopic, poolstate_get_params_t const * const p
     };
     if (network_tx_msg(&msg, pkt)) {
         if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
-            ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+            ESP_LOGW(TAG, "%s circuit=%u, value=%u, pkt=%p", __func__, circuit_min_1, value, pkt);
         }
         return ESP_OK;
     }
@@ -244,9 +244,9 @@ _thermostat_set(char const * const subtopic, poolstate_get_params_t const * cons
 }
 
 static dispatch_t _dispatches[] = {
-    { { HASS_DEV_TYP_switch,  "aux1_circuit", "AUX1 circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_AUX1 } },
     { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_POOL } },
-    { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_SPA } },
+    { { HASS_DEV_TYP_switch,  "spa_circuit",  "Spa circuit",  NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_SPA } },
+    { { HASS_DEV_TYP_switch,  "aux1_circuit", "AUX1 circuit", NULL  }, { _circuit_init,    _circuit_state,    _circuit_set    }, { 0,                             0,                                   NETWORK_CIRCUIT_AUX1 } },
     { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  NULL  }, { _thermostat_init, _thermostat_state, _thermostat_set }, { 0,                             0,                                   POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_start",   "pool start",   NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_stop",    "pool stop",    NULL  }, { _json_init,       _json_state,       NULL            }, { POOLSTATE_ELEM_TYP_THERMOSTAT, POOLSTATE_ELEM_THERMOSTAT_TYP_START, POOLSTATE_THERMOSTAT_POOL } },
@@ -324,7 +324,7 @@ hass_task(void * ipc_void)
                     set_topics[jj] = NULL;
                 }
                 char * base;
-                assert( asprintf(&base, "homeassistant/%s/%s/%s", hass_dev_typ_str(dispatch->hass.dev_typ), ipc->dev.name, dispatch->hass.id) >= 0 );
+                assert( asprintf(&base, "homeassistant/%s/pool/%s", hass_dev_typ_str(dispatch->hass.dev_typ), dispatch->hass.id) >= 0 );
 
                 char * cfg;
                 dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);
