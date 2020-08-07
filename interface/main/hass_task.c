@@ -108,7 +108,7 @@ _circuit_set(char const * const subtopic, poolstate_get_params_t const * const p
     };
     if (network_tx_msg(&msg, pkt)) {
         if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
-            ESP_LOGW(TAG, "%s circuit=%u, value=%u, pkt=%p", __func__, circuit_min_1, value, pkt);
+            ESP_LOGW(TAG, "%s: circuit=%u, value=%u, pkt=%p", __func__, circuit_min_1, value, pkt);
         }
         return ESP_OK;
     }
@@ -297,8 +297,9 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
             if (strcmp(dev_typ, hass_dev_typ_str(dispatch->hass.dev_typ)) == 0 &&
-                strcmp(hass_id, dispatch->hass.name) && dispatch->fnc.set) {
+                strcmp(hass_id, dispatch->hass.id) == 0 && dispatch->fnc.set) {
 
+                ESP_LOGW(TAG, "%u", dispatch->fnc_params.idx);
                 return dispatch->fnc.set(subtopic, &dispatch->fnc_params, value_str, pkt);
             }
         }
