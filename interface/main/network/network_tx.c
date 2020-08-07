@@ -60,7 +60,9 @@ network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
             return true;
         }
     }
-    ESP_LOGE(TAG, "unknown msg typ (%u)", msg->typ);
+    if (CONFIG_POOL_DBGLVL_NETWORK > 1) {
+        ESP_LOGE(TAG, "unknown msg typ (%u)", msg->typ);
+    }
     return false;
 }
 
