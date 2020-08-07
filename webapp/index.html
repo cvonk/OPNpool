@@ -30,13 +30,14 @@
             <div id="colborders" data-role="collapsibleset" data-iconpos="right">
                 <div data-role="collapsible">
                     <h3>Circuits</h3>
+                    <label id="circuits_lbl"></label>
                     <div class="ui-grid-b ui-responsive">
                         <div class="ui-block-a center-wrapper">
                             <form id="circuit">
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="circuit_pool" type="checkbox" class="circuit" value="pool" name="active_pool" />
+                                    <input id="circuit_pool" type="checkbox" class="circuit" />
                                     <label for="circuit_pool">Pool</label>
-                                    <input id="circuit_spa" type="checkbox" class="circuit" value="spa" name="active_spa" />
+                                    <input id="circuit_spa" type="checkbox" class="circuit" />
                                     <label for="circuit_spa">Spa</label>
                                 </fieldset>
                             </form>
@@ -44,11 +45,11 @@
                         <div class="ui-block-b center-wrapper">
                             <form id="circuit">
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="circuit_aux1" type="checkbox" class="circuit" value="aux1" name="active_aux1" //>
+                                    <input id="circuit_aux1" type="checkbox" class="circuit" //>
                                     <label for="circuit_aux1">Aux1</label>
-                                    <input id="circuit_aux2" type="checkbox" class="circuit" value="aux2" name="active_aux2" />
+                                    <input id="circuit_aux2" type="checkbox" class="circuit" />
                                     <label for="circuit_aux2">Aux2</label>
-                                    <input id="circuit_aux3" type="checkbox" class="circuit" value="aux3" name="activeAux3" />
+                                    <input id="circuit_aux3" type="checkbox" class="circuit" />
                                     <label for="circuit_aux3">Aux3</label>
                                 </fieldset>
                             </form>
@@ -56,31 +57,54 @@
                         <div class="ui-block-c center-wrapper">
                             <form id="circuit">
                                 <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input id="circuit_ft1" type="checkbox" class="circuit" value="ft1" name="activeFt1" />
+                                    <input id="circuit_ft1" type="checkbox" class="circuit" />
                                     <label for="circuit_ft1">Ft1</label>
-                                    <input id="circuit_ft2" type="checkbox" class="circuit" value="ft2" name="activeFt2" />
+                                    <input id="circuit_ft2" type="checkbox" class="circuit" />
                                     <label for="circuit_ft2">Ft2</label>
-                                    <input id="circuit_ft3" type="checkbox" class="circuit" value="ft3" name="activeFt3" />
+                                    <input id="circuit_ft3" type="checkbox" class="circuit" />
                                     <label for="circuit_ft3">Ft3</label>
-                                    <input id="circuit_ft4" type="checkbox" class="circuit" value="ft4" name="activeFt4" />
+                                    <input id="circuit_ft4" type="checkbox" class="circuit" />
                                     <label for="circuit_ft4">Ft4</label>
                                 </fieldset>
                             </form>
                         </div>
                     </div>
                 </div>
+                <!--
                 <div data-role="collapsible">
-                    <h3>Temperatures</h3>
+                    <h3>Solar temp.</h3>
+                    <label id="temp_solar_lbl"></label>
                     <div class="ui-grid-a ui-responsive">
-                        <div class="ui-block-a"><div id="temp_water" style="height:160px"></div></div>
-                        <div class="ui-block-b"><div id="temp_air" style="height:160px"></div></div>
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="temp_solar"></div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <div data-role="collapsible">
+                    <h3>Water temperature</h3>
+                    <label id="temp_water_lbl"></label>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="temp_water"></div>
+                        </div>
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Pool heating</h3>
+                    <h3>Air temperature</h3>
+                    <label id="temp_air_lbl"></label>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="temp_air"></div>
+                        </div>
+                    </div>
+                </div>
+                <div data-role="collapsible">
+                    <h3>Pool thermostat</h3>
+                    <label id="thermostat_pool_lbl"></label>
                     <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a center-wrapper">
-                            <div id="thermostat_pool" style="height:300px"></div>
+                            <div id="thermostat_pool"></div>
                         </div>
                         <div class="ui-block-b center-wrapper">
                             <form id="pool_heater">
@@ -103,10 +127,11 @@
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Spa heating</h3>
+                    <h3>Spa thermostat</h3>
+                    <label id="thermostat_spa_lbl"></label>
                     <div class="ui-grid-a ui-responsive">
                         <div class="ui-block-a center-wrapper">
-                            <div id="thermostat_spa" style="height:300px"></div>
+                            <div id="thermostat_spa"></div>
                         </div>
                         <div class="ui-block-b center-wrapper">
                             <form id="spa_heater">
@@ -129,21 +154,45 @@
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Pump</h3>
+                    <h3>Pump speed</h3>
+                    <label id="pump_rpm_lbl"></label>
                     <div class="ui-grid-a ui-responsive">
-                        <div class="ui-block-a"><div id="pump_rpm" style="height:160px"></div></div>
-                        <div class="ui-block-b"><div id="pump_pwr" style="height:160px"></div></div>
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="pump_rpm"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--
+                <div data-role="collapsible">
+                    <h3>Pump power</h3>
+                    <label id="pump_pwr_lbl"></label>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="pump_pwr"></div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <div data-role="collapsible">
+                    <h3>Salt level</h3>
+                    <label id="chlor_salt_lbl"></label>
+                    <div class="ui-grid-a ui-responsive">
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="chlor_salt"></div>
+                        </div>
                     </div>
                 </div>
                 <div data-role="collapsible">
                     <h3>Chlorinator</h3>
+                    <label id="chlor_pct_lbl"></label>
                     <div class="ui-grid-a ui-responsive">
-                        <div class="ui-block-a"><div id="chlor_salt" style="height:160px"></div></div>
-                        <div class="ui-block-b"><div id="chlor_pct" style="height:160px"></div></div>
+                        <div class="ui-block-solo center-wrapper">
+                            <div id="chlor_pct"></div>
+                        </div>
                     </div>
                 </div>
                 <div data-role="collapsible">
-                    <h3>Controller</h3>
+                    <h3>System</h3>
                     <div class="ui-body ui-grid-a ui-responsive">
                         <div class="ui-block-a">
                             <input id="date" type="date" disabled />
