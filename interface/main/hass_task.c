@@ -299,7 +299,6 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
             if (strcmp(dev_typ, hass_dev_typ_str(dispatch->hass.dev_typ)) == 0 &&
                 strcmp(hass_id, dispatch->hass.id) == 0 && dispatch->fnc.set) {
 
-                ESP_LOGW(TAG, "%u", dispatch->fnc_params.idx);
                 return dispatch->fnc.set(subtopic, &dispatch->fnc_params, value_str, pkt);
             }
         }
