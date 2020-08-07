@@ -49,7 +49,6 @@ poolstate_thermostat_nr(char const * const thermostat_str)
     ELEM_POS(_poolstate_thermostats, thermostat_str);
 }
 
-
 static const char * const _poolstate_temps[] = {
 #define XX(num, name) #name,
   POOLSTATE_TEMP_MAP(XX)
