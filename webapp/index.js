@@ -167,7 +167,6 @@
             const blue = 240;
             const red = 0;
             const ratio = (v - thermostat.min) / (thermostat.max - thermostat.min);
-            console.log(ratio);
             const hue = blue * (1 - ratio) + red * ratio;
             const rgb = hsv_2o_rgb(hue, 1, 1);
             thermostat.track_obj.style.backgroundColor = rgb;
