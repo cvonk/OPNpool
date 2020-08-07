@@ -6,27 +6,23 @@
     "use strict";
 
     let ipName;
-    let intervalId = 0;
+    let message_pending = false;
+    let first_status_req = true;
+    let delay_cnt = 0;
+    const delay_duration = 5;  // [sec]
 
-    // request the parent's origin (sending a message to the parent tells it we're loaded),
-    // the parent reply contains its origin.
-    if (in_iframe()) {
-        window.addEventListener('message', event => {
-            ipName = event.origin;
-            //console.log(ipName);
-            //alert(event.origin);
-            scheduled_update();
-        }, false);
-        parent.postMessage('fromIframe', '*');
-    } else {
-        ipName = "http://pool.iot.vonk";
-        console.log('not in Iframe, guessing (' + ipName + ')');
-        scheduled_update();
+    function restart_delay()
+    {
+        delay_cnt = delay_duration;
     }
 
-    document.addEventListener('deviceready', on_device_ready.bind(this), false);
-
-    function on_device_ready() {}
+    function every_sec_cb()
+    {
+        if (delay_cnt-- == 0) {
+            send_message({});
+            delay_cnt = delay_duration;
+        }
+    }
 
     function in_iframe() {
         try {
@@ -70,11 +66,35 @@
         }
     };
 
-    function degrees_f_to_c(f) {
+    function toast(msg)
+    {
+        $("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><div>" + msg + "</div></div>")
+            .css({
+                display: 'block',
+                opacity: 0.90,
+                position: 'fixed',
+                padding: '7px',
+                'text-align': "center",
+                width: '270px',
+                left: ($(window).width() - 270)/2,
+                top: $(window).height()*3/4,
+                'background-color': '#54BBE0',
+                '-webkit-border-radius': '24px',
+                'border-radius': '24px'
+            })
+            .appendTo( $.mobile.pageContainer ).delay(6000)
+            .fadeOut( 200, function(){
+                $(this).remove();
+            });
+    }
+
+    function degrees_f_to_c(f)
+    {
         return Math.round(((f - 32) * 5) / 9);
     }
 
-    function capitalize_1st_letter(str) {
+    function capitalize_1st_letter(str)
+    {
         if (typeof str !== 'string') {
             return str;
         }
@@ -82,7 +102,8 @@
     }
 
     // https://en.wikipedia.org/wiki/HSL_and_HSV
-    function hsv_2o_rgb(h, s, v) {
+    function hsv_2o_rgb(h, s, v)
+    {
         h %= 360;
         s = Math.max(0, Math.min(s, 1));
         v = Math.max(0, Math.min(v, 1));
@@ -119,9 +140,12 @@
 
     function update_circuits(active_arr)
     {
+        console.log(active_arr);
         Object.keys(active_arr).forEach( function(key, value) {
             const selector = '#circuit_' + key.toLowerCase();
-            $(selector).attr("checked", this[key]).checkboxradio("refresh");
+            const val = this[key];
+            console.log(selector, val);
+            $(selector).attr('checked', val).checkboxradio('refresh');
         }, active_arr);
     }
 
@@ -217,59 +241,52 @@
 
     function update(jsonData)
     {
-        update_circuits(jsonData.circuits.active);
-        update_temp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
-        update_thermostats(jsonData.thermostats);
-        update_chlor(jsonData.chlor);
-        update_pump(jsonData.pump);
-        update_system(jsonData.system);
+        if (message_pending) {
+            // the message is queued until the sends a status update
+            // ignore that status update
+            console.log("rx ignoring (msg pending)");
+            message_pending = false;
+        } else {
+            console.log("rx", jsonData);
+            update_circuits(jsonData.circuits.active);
+            update_temp(jsonData.circuits.active, jsonData.thermostats.POOL, jsonData.thermostats.SPA, jsonData.temps.AIR);
+            update_thermostats(jsonData.thermostats);
+            update_chlor(jsonData.chlor);
+            update_pump(jsonData.pump);
+            update_system(jsonData.system);
+        }
     }
-
-    var first_update = 1;
 
     function send_message(pair)
     {
+        console.log("tx", pair);
         const url = ipName + "/json";
-        const request = !jQuery.isEmptyObject(pair);
+        const status_req = jQuery.isEmptyObject(pair);
+        const set_req = !status_req;
         $.ajax({
             dataType: "jsonp",
             url: url + "?callback=?",
             data: pair,
             success: function(jsonData) {
-                //console.log(jsonData);
-                if (request) {
-                    clearInterval(intervalId);
-                    intervalId = 0;
-                } else {
+                if (status_req) {
                     update(jsonData);
-                    show_spinner("");
-                    //console.log("disable inputs");
-                    disable_inputs(false);
-                    //console.log("disable inputs");
-                    overlay_page(false);
-                    first_update = 0;
-                }
-                if (intervalId === 0) { // schedule after request, or on first invocation
-                    intervalId = setInterval(scheduled_update, 10000);
+                    first_status_req = false;
+                } else if (set_req) {
+                    message_pending = true;
+                    restart_delay();
                 }
             },
             beforeSend: function() {
-                if (first_update || request) {
-                    show_spinner(request ? "Requesting\n(please wait 10 sec)" : "Loading data");
-                    disable_inputs(true);
-                    overlay_page(true);
+                if (first_status_req) {
+                    toast("Loading data");
+                } else if (set_req) {
+                    toast("Requesting");
                 }
             },
             error: function() {
-                show_spinner("Retry in 10 seconds\n(" + ipName + ")");
+                toast("Retry in 10 seconds\n(" + ipName + ")");
             }
         });
-
-    }
-
-    function scheduled_update()
-    {
-        send_message({});
     }
 
     function initialize()
@@ -323,7 +340,7 @@
                 change: function(args) {
                     update_round_slider(_ui.thermostats[key], args.value);
                     let pair = {};
-                    const key1 = '?homeassistant/climate/esp32-wrover-1/' + key.toLowerCase() + '/set_temp';
+                    const key1 = '?homeassistant/climate/pool/' + key.toLowerCase() + '/set_temp';
                     pair[key1] = args.value
                     send_message(pair);
                 }
@@ -380,17 +397,30 @@
 
         $(".circuit").on("change", function(event) {
             let pair = {};
-            pair["homeassistant/switch/esp32-wrover-1/" + event.target.value + "_circuit/set"] = event.target.checked ? "ON" : "OFF";
-            console.log(pair);
+            pair["homeassistant/switch/pool/" + event.target.value + "_circuit/set"] = event.target.checked ? "ON" : "OFF";
             send_message(pair);
         });
         $(".heat_src").on("change", function(event) {
             let pair = {};
-            pair["?homeassistant/climate/esp32-wrover-1/" + event.target.name + "/set_mode"] = event.target.value;
+            pair["?homeassistant/climate/pool/" + event.target.name + "/set_mode"] = event.target.value;
             console.log(pair);
             send_message(pair);
         });
 
+        // sending a message to the parent tells it we're loaded,
+        // in reply the parent will share its IP name.
+        // Next, have every_sec_cb be called every sec
+        if (in_iframe()) {
+            window.addEventListener('message', event => {
+                ipName = event.origin;
+                setInterval(every_sec_cb, 1000);
+            }, false);
+            parent.postMessage('fromIframe', '*');
+        } else {
+            ipName = "http://esp32-wrover-1.iot.vonk";
+            console.log('not in Iframe, guessing (' + ipName + ')');
+            setInterval(every_sec_cb, 1000);
+        }
     }
     $(document).ready(initialize);
 })();
