@@ -29,12 +29,12 @@ typedef struct poolstate_json_dispatch_t {
 } poolstate_json_dispatch_t;
 
 static poolstate_json_dispatch_t _dispatches[] = {
-    { POOLSTATE_ELEM_TYP_SYSTEM,     "system",      cJSON_AddSystemToObject      },
-    { POOLSTATE_ELEM_TYP_TEMP,       "temps",       cJSON_AddTempsToObject       },
-    { POOLSTATE_ELEM_TYP_THERMOSTAT, "thermostats", cJSON_AddThermostatsToObject },
-    { POOLSTATE_ELEM_TYP_CIRCUITS,   "circuits",    cJSON_AddCircuitsToObject    },
-    { POOLSTATE_ELEM_TYP_PUMP,       "pump",        cJSON_AddPumpToObject        },
-    { POOLSTATE_ELEM_TYP_CHLOR,      "chlor",       cJSON_AddChlorToObject       },
+    { POOLSTATE_ELEM_TYP_SYSTEM,   "system",   cJSON_AddSystemToObject   },
+    { POOLSTATE_ELEM_TYP_TEMP,     "temps",    cJSON_AddTempsToObject    },
+    { POOLSTATE_ELEM_TYP_THERMO,   "thermos",  cJSON_AddThermosToObject  },
+    { POOLSTATE_ELEM_TYP_CIRCUITS, "circuits", cJSON_AddCircuitsToObject },
+    { POOLSTATE_ELEM_TYP_PUMP,     "pump",     cJSON_AddPumpToObject     },
+    { POOLSTATE_ELEM_TYP_CHLOR,    "chlor",    cJSON_AddChlorToObject    },
 };
 
 static cJSON *
@@ -99,7 +99,7 @@ cJSON_AddSchedToObject(cJSON * const obj, char const * const key, poolstate_sche
 }
 
 void
-cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermostat_t const * const thermostat,
+cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermo_t const * const thermostat,
                             bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched)
 {
     cJSON * const item = _create_item(obj, key);
@@ -121,20 +121,20 @@ cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate
 }
 
 void
-cJSON_AddThermostatsToObject_generic(cJSON * const obj, char const * const key, poolstate_thermostat_t const * thermostats,
+cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermostats,
                                      bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched)
 {
     cJSON * const item = _create_item(obj, key);
-    for (uint ii = 0; ii < POOLSTATE_THERMOSTAT_COUNT; ii++, thermostats++) {
-        cJSON_AddThermostatToObject(item, poolstate_thermostat_str(ii), thermostats,
+    for (uint ii = 0; ii < POOLSTATE_THERMO_COUNT; ii++, thermostats++) {
+        cJSON_AddThermostatToObject(item, poolstate_thermo_str(ii), thermostats,
                                     showTemp, showSp, showSrc, showHeating, showSched);
     }
 }
 
 void
-cJSON_AddThermostatsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
+cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
-    cJSON_AddThermostatsToObject_generic(obj, key, state->thermostats, true, true, true, true, true);
+    cJSON_AddThermosToObject_generic(obj, key, state->thermostats, true, true, true, true, true);
 }
 
 /**
@@ -191,7 +191,7 @@ cJSON_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t co
     cJSON * const item = _create_item(obj, key);
     cJSON_AddSystemToObject(item, "system", state);
     cJSON_AddTempsToObject(item, "temps", state);
-    cJSON_AddThermostatsToObject_generic(item, "thermostats", state->thermostats, true, false, true, true, false);
+    cJSON_AddThermosToObject_generic(item, "thermostats", state->thermostats, true, false, true, true, false);
     cJSON_AddActiveCircuitsToObject(item, "active", state->circuits.active);
 }
 
