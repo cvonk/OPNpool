@@ -1,12 +1,10 @@
-﻿// time range slider: http://jsfiddle.net/ezanker/fu26u/204/
+﻿// to develop: use vsCode with Live Server plugin
 
-// To develop: use vsCode with Live Server plugin
-// To debug code on page load run "window.location.reload()" in the JavaScript Console.
 (function() {
     "use strict";
 
     let ipName;
-    const ipName_default =  "http://pool.iot.vonk";  // "http://esp32-wrover-1.iot.vonk";
+    const ipName_default =  "http://esp32-wrover-1.iot.vonk";  // "http://pool.iot.vonk";
     let message_pending = false;
     let first_status_req = true;
     let delay_cnt = 0;
@@ -28,22 +26,26 @@
             'ft3': {},
             'ft4': {}
         },
-        'temps': {
-            'air': { 'min': 32, 'max': 100, 'unit': '°F' },
-            'solar': { 'min': 32, 'max': 100, 'unit': '°F' },
-            'water': { 'min': 32, 'max': 100, 'unit': '°F' },
+        'readonly': {
+            'temp': {
+                'air': { 'min': 32, 'max': 100, 'unit': '°F' },
+                'solar': { 'min': 32, 'max': 100, 'unit': '°F' },
+                'water': { 'min': 32, 'max': 100, 'unit': '°F' },
+            },
+            'pump': {
+                'rpm': {'min': 0, 'max': 3500, 'unit': 'rpm'},
+                'pwr': {'min': 0, 'max': 1300, 'unit': 'W'},
+            },
+            'chlor': {
+                'salt': { 'min': 0, 'max': 6500, 'unit': 'ppm'},
+                'pct': { 'min': 0, 'max': 100, 'unit': '%'},
+            },
         },
-        'pump': {
-            'rpm': {'min': 0, 'max': 3500, 'unit': 'rpm'},
-            'pwr': {'min': 0, 'max': 1300, 'unit': 'W'},
-        },
-        'thermostats': {
-            'pool': { 'min': 32, 'max': 100, 'unit': '°F' },
-            'spa': { 'min': 32, 'max': 100, 'unit': '°F'},
-        },
-        'chlor': {
-            'salt': { 'min': 0, 'max': 6500, 'unit': 'ppm'},
-            'pct': { 'min': 0, 'max': 100, 'unit': '%'},
+        'readwrite' : {
+            'thermo': {
+                'pool': { 'min': 32, 'max': 100, 'unit': '°F' },
+                'spa': { 'min': 32, 'max': 100, 'unit': '°F'},
+            },
         },
     };
 
@@ -173,40 +175,49 @@
         }
     }
 
-    function update_circuits(json_active)
+    function update_circuits(json_circuits)
     {
         Object.keys(_ui.circuits).forEach( function(key) {
-            const val = json_active[key.toUpperCase()];
+            const val = json_circuits.active[key.toUpperCase()];
             this[key].obj.attr('checked', val).checkboxradio('refresh');
         }, _ui.circuits);
     }
 
-    function update_temps(json_temps, json_thermostats)
+    function update_readonly(json_temps, json_thermos, json_chlor, json_pump)
     {
-        update_round_slider(_ui.temps.air, json_temps['AIR']);
-        update_round_slider(_ui.temps.solar, json_temps['SOLAR']);
-        update_round_slider(_ui.temps.water, json_thermostats['POOL'].temp);
-    }
+        update_round_slider(_ui.readonly.temp.air, json_temps.AIR);
+        update_round_slider(_ui.readonly.temp.solar, json_temps.SOLAR);
+        update_round_slider(_ui.readonly.temp.water, json_thermos['POOL'].temp);
 
-    function update_pump(json_pump)
-    {
-        _ui.pump.rpm.obj_lbl.text((json_pump.running ? 'Running' : 'Idle' ) + ' in ' + json_pump.mode + ' mode');
-        _ui.pump.pwr.obj_lbl.text((json_pump.running ? 'Running' : 'Idle' ) + ' with status ' + json_pump.status);
-        update_round_slider(_ui.pump.rpm, json_pump.rpm);
-        update_round_slider(_ui.pump.pwr, json_pump.pwr);
-    }
+        _ui.readonly.pump.rpm.obj_lbl.text((json_pump.running ? 'Running' : 'Idle' ) + ' in ' + json_pump.mode + ' mode');
+        _ui.readonly.pump.pwr.obj_lbl.text((json_pump.running ? 'Running' : 'Idle' ) + ' with status ' + json_pump.status);
+        update_round_slider(_ui.readonly.pump.rpm, json_pump.rpm);
+        update_round_slider(_ui.readonly.pump.pwr, json_pump.pwr);
 
-    function update_chlor(json_chlor)
-    {
         //if (!jQuery.isEmptyObject(json_chlor)) {
         const salt_status = json_chlor.salt == 0   ? "Sensor malfunction"
                           : json_chlor.salt < 2600 ? "Very low salt level"
                           : json_chlor.salt < 2800 ? "Low salt level"
                           : json_chlor.salt < 4500 ? "Good salt level" : "High salt level";
-        _ui.chlor.salt.obj_lbl.text(salt_status);
-        _ui.chlor.pct.obj_lbl.text('Status ' + json_chlor.status);
-        update_round_slider(_ui.chlor.salt, json_chlor.salt);
-        update_round_slider(_ui.chlor.pct, json_chlor.pct);
+        _ui.readonly.chlor.salt.obj_lbl.text(salt_status);
+        _ui.readonly.chlor.pct.obj_lbl.text('Status ' + json_chlor.status);
+        update_round_slider(_ui.readonly.chlor.salt, json_chlor.salt);
+        update_round_slider(_ui.readonly.chlor.pct, json_chlor.pct);
+    }
+
+    function update_readwrite(json_thermos)
+    {
+        Object.keys(_ui.readwrite.thermo).forEach( function(key) {
+            ['off', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
+                const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
+                const val = src == json_thermos[key.toUpperCase()].src;
+                $(sel).attr("checked", val).checkboxradio("refresh");
+            });
+            const json_thermostat = json_thermos[key.toUpperCase()];
+            update_round_slider(this[key], json_thermostat.sp);
+            this[key].obj_lbl.text((json_thermostat.heating ? 'heating' : 'idle'));
+
+        }, _ui.readwrite.thermo);
     }
 
     function update_system(system)
@@ -214,56 +225,6 @@
         $("#date").val(system.tod.date);
         $("#time").val(system.tod.time);
     }
-
-    function update_thermostats(json_thermostats)
-    {
-        Object.keys(_ui.thermostats).forEach( function(key) {
-            ['off', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
-                const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
-                const val = src == json_thermostats[key.toUpperCase()].src;
-                $(sel).attr("checked", val).checkboxradio("refresh");
-            });
-            const json_thermostat = json_thermostats[key.toUpperCase()];
-            update_round_slider(this[key], json_thermostat.sp);
-            this[key].obj_lbl.text((json_thermostat.heating ? 'heating' : 'idle'));
-
-        }, _ui.thermostats);
-    }
-
-    function disable_inputs(value)
-    {
-        $("input[type='checkbox']").attr("disabled", value);
-        $("input[type='radio']").attr("disabled", value);
-        $(".my-setpoint").slider(value ? "disable" : "enable");
-    }
-
-/*
-    function overlay_page(value)
-    {
-        if (value) {
-            $('#pageone').css({
-                opacity: 0.7
-            });
-            $('body').css({
-                'overflow': 'hidden'
-            });
-        } else {
-            $("#pageone").css('opacity', "");
-        }
-    }
-
-    function show_spinner(value)
-    {
-        if (value.length) {
-            $.mobile.loading('show', {
-                text: value,
-                textVisible: true
-            });
-        } else {
-            $.mobile.loading('hide');
-        }
-    }
-*/
 
     function update(jsonData)
     {
@@ -274,142 +235,77 @@
             message_pending = false;
         } else {
             console.log("rx", jsonData);
-            update_circuits(jsonData.circuits.active);
-            update_temps(jsonData.temps, jsonData.thermostats);
-            update_thermostats(jsonData.thermostats);
-            update_chlor(jsonData.chlor);
-            update_pump(jsonData.pump);
+            update_circuits(jsonData.circuits);
+            update_readonly(jsonData.temps, jsonData.thermos, jsonData.chlor, jsonData.pump);
+            update_readwrite(jsonData.thermos);
             update_system(jsonData.system);
         }
     }
 
     function initialize()
     {
-        //hideInputElements(true);
-
         Object.keys(_ui.circuits).forEach( function(key) {
             this[key].obj = $('#circuit_' + key);
         }, _ui.circuits);
 
-        Object.keys(_ui.temps).forEach( function(key) {
-            this[key].obj = $('#temp_' + key);
-            this[key].obj_lbl = $('temp_' + key + '_lbl');
-            this[key].obj.roundSlider({
-                sliderType: "min-range",
-                circleShape: "half-top",
-                handleSize: 0,
-                value: 0,
-                readOnly: true,
-                min: this[key].min,
-                max: this[key].max,
-                radius: 120, // determines width & height
-                width: 35,
-                svgMode: false,
-                tooltipFormat: function(args) {
-                    return args.value + " " + _ui.temps[key].unit;
-                },
-            });
-        }, _ui.temps);
+        Object.keys(_ui.readonly).forEach( function(major_key) {
+            Object.keys(this[major_key]).forEach( function(minor_key) {
+                this[minor_key].obj = $('#' + major_key + '_' + minor_key);
+                this[minor_key].obj_lbl = $('#' + major_key + '_' + minor_key + '_lbl');
+                this[minor_key].obj.roundSlider({
+                    sliderType: "min-range",
+                    circleShape: "half-top",
+                    handleSize: 0,
+                    value: 0,
+                    readOnly: true,
+                    min: this[minor_key].min,
+                    max: this[minor_key].max,
+                    radius: 120, // determines width & height
+                    width: 35,
+                    svgMode: false,
+                    tooltipFormat: function(args) {
+                        return args.value + " " + _ui.readonly[major_key][minor_key].unit;
+                    },
+                });
+            }, this[major_key]);
+        }, _ui.readonly);
 
-        Object.keys(_ui.pump).forEach( function(key) {
-            this[key].obj = $('#pump_' + key);
-            this[key].obj_lbl = $('#pump_' + key + '_lbl');
-            this[key].obj.roundSlider({
-                sliderType: "min-range",
-                circleShape: "half-top",
-                handleSize: 0,
-                value: 0,
-                readOnly: true,
-                min: this[key].min,
-                max: this[key].max,
-                radius: 120, // determines width & height
-                width: 35,
-                svgMode: false,
-                tooltipFormat: function(args) {
-                    return args.value + " " + _ui.pump[key].unit;
-                },
-            });
-        }, _ui.pump);
-
-        Object.keys(_ui.thermostats).forEach( function(key) {
-            this[key].obj = $('#thermostat_' + key);
-            this[key].obj_lbl = $('#thermostat_' + key + '_lbl');
-            this[key].obj.roundSlider({
-                sliderType: "min-range",
-                circleShape: "half-top",
-                handleShape: "round",
-                value: 0,
-                readOnly: false,
-                min: this[key].min,
-                max: this[key].max,
-                step: 1,
-                radius: 120, // determines width & height
-                width: 35,
-                svgMode: false,
-                animation: true,
-                keyboardAction: true,
-                mouseScrollAction: true,
-                tooltipFormat: function(args) {
-                    return args.value + " " + _ui.thermostats[key].unit;
-                },
-                drag: function(args) {
-                    update_round_slider(_ui.thermostats[key], args.value);
-                },
-                change: function(args) {
-                    update_round_slider(_ui.thermostats[key], args.value);
-                    let pair = {};
-                    const key1 = '?homeassistant/climate/pool/' + key.toLowerCase() + '/set_temp';
-                    pair[key1] = args.value
-                    send_message(pair);
-                }
-            });
-            this[key].track_obj = $('#thermostat_' + key + ' > div > div.rs-inner-container > div > div')[0];  /* for non-svg mode */
-        }, _ui.thermostats);
-
-        Object.keys(_ui.chlor).forEach( function(key) {
-            this[key].obj = $('#chlor_' + key);
-            this[key].obj_lbl = $('#chlor_' + key + '_lbl');
-            this[key].obj.roundSlider({
-                sliderType: "min-range",
-                circleShape: "half-top",
-                handleSize: 0,
-                value: 0,
-                readOnly: true,
-                min: this[key].min,
-                max: this[key].max,
-                radius: 120, // determines width & height
-                width: 35,
-                svgMode: false,
-                tooltipFormat: function(args) {
-                    return args.value + " " + _ui.chlor[key].unit;
-                },
-            });
-        }, _ui.chlor);
-
-/*
-        _ui.chlor.salt.obj = new JustGage({
-            id: "chlor_salt",
-            label: 'Salt level',
-            symbol: " ppm",
-            value: 0,
-            min: 0,
-            max: 6500,
-            relativeGaugeSize: true,
-            valueFontColor: "white",
-            levelColors: ['#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#0000FF', '#48CCCD', '#48CCCD', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#85A137', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800', '#FF2800'],
-        });
-
-        _ui.chlor.pct.obj = new JustGage({
-            id: "chlor_pct",
-            label: 'Percentage',
-            symbol: "%",
-            value: 0,
-            min: 0,
-            max: 100,
-            relativeGaugeSize: true,
-            valueFontColor: "white",
-        });
-*/
+        Object.keys(_ui.readwrite).forEach( function(major_key) {
+            Object.keys(this[major_key]).forEach( function(minor_key) {
+                this[minor_key].obj = $('#' + major_key + '_' + minor_key);
+                this[minor_key].obj_lbl = $('#' + major_key + '_' + minor_key + '_lbl');
+                this[minor_key].obj.roundSlider({
+                    sliderType: "min-range",
+                    circleShape: "half-top",
+                    handleShape: "round",
+                    value: 0,
+                    readOnly: false,
+                    min: this[minor_key].min,
+                    max: this[minor_key].max,
+                    step: 1,
+                    radius: 120, // determines width & height
+                    width: 35,
+                    svgMode: false,
+                    animation: true,
+                    keyboardAction: true,
+                    mouseScrollAction: true,
+                    tooltipFormat: function(args) {
+                        return args.value + " " + _ui.readwrite[major_key][minor_key].unit;
+                    },
+                    drag: function(args) {
+                        update_round_slider(_ui.readwrite[major_key][minor_key], args.value);
+                    },
+                    change: function(args) {
+                        update_round_slider(_ui.readwrite[major_key][minor_key], args.value);
+                        let pair = {};
+                        const key1 = '?homeassistant/climate/pool/' + minor_key + '/set_temp';
+                        pair[key1] = args.value
+                        send_message(pair);
+                    }
+                });
+                this[minor_key].track_obj = $('#' + major_key + '_' + minor_key + ' > div > div.rs-inner-container > div > div')[0];  /* for non-svg mode */
+            }, this[major_key]);
+        }, _ui.readwrite);
 
         // register change notifications
 
