@@ -415,7 +415,7 @@
 
         $(".circuit").on("change", function(event) {
             let pair = {};
-            pair["homeassistant/switch/pool/" + event.target.value + "_circuit/set"] = event.target.checked ? "ON" : "OFF";
+            pair["homeassistant/switch/pool/" + event.target.value + "/set"] = event.target.checked ? "ON" : "OFF";
             send_message(pair);
         });
         $(".heat_src").on("change", function(event) {
