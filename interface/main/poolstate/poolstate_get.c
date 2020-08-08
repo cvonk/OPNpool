@@ -71,24 +71,24 @@ _temp(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poo
 static esp_err_t
 _thermostat(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * const value)
 {
-    poolstate_thermostat_t const * const thermostat = &state->thermostats[idx];
+    poolstate_thermo_t const * const thermostat = &state->thermostats[idx];
     switch (typ) {
-        case POOLSTATE_ELEM_THERMOSTAT_TYP_TEMP:
+        case POOLSTATE_ELEM_THERMO_TYP_TEMP:
             _alloc_uint(value, thermostat->temp);
             break;
-        case POOLSTATE_ELEM_THERMOSTAT_TYP_SET_POINT:
+        case POOLSTATE_ELEM_THERMO_TYP_SET_POINT:
             _alloc_uint(value, thermostat->set_point);
             break;
-        case POOLSTATE_ELEM_THERMOSTAT_TYP_HEAT_SRC:
+        case POOLSTATE_ELEM_THERMO_TYP_HEAT_SRC:
             _alloc_str(value, network_heat_src_str(thermostat->heat_src));
             break;
-        case POOLSTATE_ELEM_THERMOSTAT_TYP_HEATING:
+        case POOLSTATE_ELEM_THERMO_TYP_HEATING:
             _alloc_bool(value, thermostat->heating);
             break;
-        case POOLSTATE_ELEM_THERMOSTAT_TYP_START:
+        case POOLSTATE_ELEM_THERMO_TYP_START:
             _alloc_str(value, network_time_str(thermostat->sched.start / 60, thermostat->sched.start % 60));
             break;
-        case POOLSTATE_ELEM_THERMOSTAT_TYP_STOP:
+        case POOLSTATE_ELEM_THERMO_TYP_STOP:
             _alloc_str(value, network_time_str(thermostat->sched.stop / 60, thermostat->sched.stop % 60));
             break;
         default:
@@ -180,7 +180,7 @@ typedef struct dispatch_t {
 static dispatch_t const _dispatches[] = {
     { POOLSTATE_ELEM_TYP_SYSTEM,     _system},
     { POOLSTATE_ELEM_TYP_TEMP,       _temp},
-    { POOLSTATE_ELEM_TYP_THERMOSTAT, _thermostat},
+    { POOLSTATE_ELEM_TYP_THERMO, _thermostat},
     { POOLSTATE_ELEM_TYP_PUMP,       _pump},
     { POOLSTATE_ELEM_TYP_CHLOR,      _chlor},
 };
