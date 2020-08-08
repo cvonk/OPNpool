@@ -33,18 +33,18 @@ poolstate_chlor_status_str(poolstate_chlor_status_t const chlor_state_id)
 
 static const char * const _poolstate_thermostats[] = {
 #define XX(num, name) #name,
-  POOLSTATE_THERMOSTAT_MAP(XX)
+  POOLSTATE_THERMO_MAP(XX)
 #undef XX
 };
 
 const char *
-poolstate_thermostat_str(poolstate_thermostats_t const thermostat_id)
+poolstate_thermo_str(poolstate_thermostats_t const thermostat_id)
 {
   return ELEM_AT(_poolstate_thermostats, thermostat_id, hex8_str(thermostat_id));
 }
 
 int
-poolstate_thermostat_nr(char const * const thermostat_str)
+poolstate_thermo_nr(char const * const thermostat_str)
 {
     ELEM_POS(_poolstate_thermostats, thermostat_str);
 }

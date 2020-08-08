@@ -81,7 +81,7 @@ httpd_json(httpd_req_t * const req)
             assert( asprintf( &resp, "%s", json) >= 0 );
         }
         if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
-            ESP_LOGI(TAG, "tx \"%s\"", resp);
+            ESP_LOGI(TAG, "tx \"%s\"\n", resp);
         }
         free((void *)json);
         httpd_resp_send(req, resp, strlen(resp));
