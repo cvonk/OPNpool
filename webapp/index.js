@@ -4,7 +4,7 @@
     "use strict";
 
     let ipName;
-    const ipName_default =  "http://esp32-wrover-1.iot.vonk";  // "http://pool.iot.vonk";
+    const ipName_default =  "http://pool.iot.vonk"; // "http://esp32-wrover-1.iot.vonk";
     let message_pending = false;
     let first_status_req = true;
     let delay_cnt = 0;
