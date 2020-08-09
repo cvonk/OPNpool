@@ -261,31 +261,15 @@
                     readOnly: true,
                     min: this[minor_key].min,
                     max: this[minor_key].max,
-                    //radius: 120, // determines width & height
-                    //width: 35,
+                    radius: 120, // determines width & height
+                    width: 35,
                     svgMode: false,
                     tooltipFormat: function(args) {
                         return args.value + " " + _ui.readonly[major_key][minor_key].unit;
                     },
-                    beforeCreate: function () {
-                        this.options.radius = this.control.parent().width() / 2;
-                        this["_bind"]($(window), "resize", function () {
-                            const radius = this.control.parent().width() / 2;
-                            this.option("radius", radius);
-                            this.option("width", radius/4);
-                        });
-                        let collapsable = $('#' + major_key + '_' + minor_key + '_collapsible'); //temp_water_collapsible
-                        collapsable.on('collapsibleexpand', function(event, ui) {
-                            let obj = $('#' + major_key + '_' + minor_key);
-                            const radius = obj.parent().width() / 2;
-                            console.log("expand", obj.roundSlider({radius:radius, width:radius/4}));
-                        });
-                    }
                 });
             }, this[major_key]);
         }, _ui.readonly);
-
-        // event.targettemp1 > div > div > div > div
 
         Object.keys(_ui.readwrite).forEach( function(major_key) {
             Object.keys(this[major_key]).forEach( function(minor_key) {
@@ -303,7 +287,7 @@
                     radius: 120, // determines width & height
                     width: 35,
                     svgMode: true,
-                    animation: false,
+                    animation: true,
                     keyboardAction: true,
                     mouseScrollAction: true,
                     tooltipFormat: function(args) {
@@ -318,23 +302,10 @@
                         const key1 = '?homeassistant/climate/pool/' + minor_key + '/set_temp';
                         pair[key1] = args.value
                         send_message(pair);
-                    },
-                    beforeCreate: function () {
-                        this.options.radius = this.control.parent().width() / 2;
-                        this["_bind"]($(window), "resize", function () {
-                            const radius = this.control.parent().width() / 2;
-                            this.option("radius", radius);
-                            this.option("width", radius/4);
-                        });
-                        let collapsable = $('#' + major_key + '_' + minor_key + '_collapsible'); //temp_water_collapsible
-                        collapsable.on('collapsibleexpand', function(event, ui) {
-                            let obj = $('#' + major_key + '_' + minor_key);
-                            const radius = obj.parent().width() / 2;
-                            console.log("expand", obj.roundSlider({radius:radius, width:radius/4}));
-                        });
                     }
                 });
                 this[minor_key].track_obj = $('#' + major_key + '_' + minor_key + ' > div > div.rs-inner-container > div > svg > path.rs-transition.rs-range')[0]; /* svg mode */
+                console.log(this[minor_key].track_obj);
                 //this[minor_key].track_obj = $('#' + major_key + '_' + minor_key + ' > div > div.rs-inner-container > div > div')[0];  /* for non-svg mode */
             }, this[major_key]);
         }, _ui.readwrite);
