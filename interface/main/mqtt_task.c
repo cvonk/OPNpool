@@ -41,18 +41,20 @@ static esp_mqtt_client_handle_t _connect2broker(ipc_t const * const ipc);  // fo
 
 typedef struct mqtt_subscriber_t {
     char const * topic;
+    bool local;
     struct mqtt_subscriber_t const * next;
 } mqtt_subscriber_t;
 
 mqtt_subscriber_t * _subscribers = NULL;
 
 static void
-_add_subscriber(char const * const topic)
+_add_subscriber(char const * const topic, bool const local)
 {
-    mqtt_subscriber_t * mqtt_subscriber = malloc(sizeof(mqtt_subscriber_t));
-    mqtt_subscriber->topic = topic,
-    mqtt_subscriber->next = _subscribers,
-    _subscribers = mqtt_subscriber;  // insert at HEAD of linked list
+    mqtt_subscriber_t * subscriber = malloc(sizeof(mqtt_subscriber_t));
+    subscriber->topic = topic,
+    subscriber->local = local,
+    subscriber->next = _subscribers,
+    _subscribers = subscriber;  // insert at HEAD of linked list
 }
 
 static esp_err_t
@@ -153,16 +155,23 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
                 for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber && !done; subscriber = subscriber->next) {
                     if (strncmp(subscriber->topic, event->topic, event->topic_len) == 0) {
 
-                        mqtt_dispatch_t const * handler = _mqtt_dispatches;
-                        for (uint ii = 0; ii < ARRAY_SIZE(_mqtt_dispatches) && !done; ii++, handler++) {
+                        ESP_LOGW(TAG, " matched subscriber topic (%s)", subscriber->topic);
 
-                            handler->fnc(event, ipc);
-                            done = true;
+                        if (subscriber->local) {
+                            mqtt_dispatch_t const * handler = _mqtt_dispatches;
+                            for (uint ii = 0; ii < ARRAY_SIZE(_mqtt_dispatches) && !done; ii++, handler++) {
+                                if (strncmp(handler->message, event->data, event->data_len) == 0) {
+                                    handler->fnc(event, ipc);
+                                }
+                            }
+                        } else {
+                            ESP_LOGW(TAG, " passing off to pool_task");
+                            ipc_send_to_pool(IPC_TO_POOL_TYP_SET, event->topic, event->topic_len, event->data, event->data_len, ipc);
                         }
+                        done = true;
                     }
                 }
                 if (!done) {  // perhaps `pool_task` knows what to do
-                    ipc_send_to_pool(IPC_TO_POOL_TYP_SET, event->topic, event->topic_len, event->data, event->data_len, ipc);
                 }
             }
             break;
@@ -198,10 +207,10 @@ mqtt_task(void * ipc_void)
     {
         char * topic;
         assert( asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name) >= 0 );
-        _add_subscriber(topic);
+        _add_subscriber(topic, true);
         // don't free(topic) stays in subscribers linked list
         assert( asprintf(&topic, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC) >= 0 );
-        _add_subscriber(topic);
+        _add_subscriber(topic, true);
         // don't free(topic) stays in subscribers linked list
     }
 	_mqttEventGrp = xEventGroupCreate();
@@ -213,9 +222,6 @@ mqtt_task(void * ipc_void)
         ipc_to_mqtt_msg_t msg;
 		if (xQueueReceive(ipc->to_mqtt_q, &msg, (TickType_t)(1000L / portTICK_PERIOD_MS)) == pdPASS) {
 
-            if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
-                ESP_LOGI(TAG, "%u %s", msg.dataType, msg.data);
-            }
             switch (msg.dataType) {
                 case IPC_TO_MQTT_TYP_STATE:
                 case IPC_TO_MQTT_TYP_RESTART:
@@ -235,11 +241,11 @@ mqtt_task(void * ipc_void)
                 }
                 case IPC_TO_MQTT_TYP_SUBSCRIBE: {
                     // 2BD should remember, for when the connection to the broker gets reestablised ..
-                    if (CONFIG_POOL_DBGLVL_MQTTTASK >1) {
+                    _add_subscriber(msg.data, false);  // used when reconnecting to broker
+                    esp_mqtt_client_subscribe(client, msg.data, 1);
+                    if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
                         ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
                     }
-                    esp_mqtt_client_subscribe(client, msg.data, 1);
-                    _add_subscriber(msg.data);  // used when reconnecting to broker
                     // don't free(msg.data), stays in _subscribers linked list
                     break;
                 }
@@ -248,7 +254,7 @@ mqtt_task(void * ipc_void)
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
                     if (CONFIG_POOL_DBGLVL_MQTTTASK >1) {
-                        ESP_LOGI(TAG, "\"%s\": \"%s\"", topic, message);
+                        ESP_LOGI(TAG, "tx %s: \"%s\"", topic, message);
                     }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
                     free(msg.data);

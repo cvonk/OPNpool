@@ -84,9 +84,10 @@ _circuit_state(poolstate_t const * const state, poolstate_get_params_t const * c
 {
     uint8_t const value = state->circuits.active[params->idx];
     char * combined;
-    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
+    assert( asprintf(&combined, "homeassistant/%s/pool/%s/state"
                      "\t"
-                     "%s", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id, value ? "ON" : "OFF") >= 0 );
+                     "%s",
+                     hass_dev_typ_str(hass->dev_typ), hass->id, value ? "ON" : "OFF") >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
@@ -133,11 +134,10 @@ _json_state(poolstate_t const * const state, poolstate_get_params_t const * cons
     poolstate_get_value_t value;
     if (poolstate_get_value(state, params, &value) == ESP_OK) {
         char * combined;
-        assert( asprintf(&combined, "homeassistant/%s/%s/%s/state"
+        assert( asprintf(&combined, "homeassistant/%s/pool/%s/state"
                         "\t"
                         "%s",
-                        hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id,
-                        value) >= 0 );
+                        hass_dev_typ_str(hass->dev_typ), hass->id, value) >= 0 );
         free(value);
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
         free(combined);
@@ -180,11 +180,11 @@ _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * co
     uint8_t const target_temp = thermostat->set_point;
     uint8_t const current_temp = thermostat->temp;
     char * combined;
-    assert( asprintf(&combined, "homeassistant/%s/%s/%s/state\t{"
+    assert( asprintf(&combined, "homeassistant/%s/pool/%s/state\t{"
                      "\"mode\":\"%s\","
                      "\"target_temp\":%u,"
-                     "\"current_temp\":%u}", hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id,
-                     network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
+                     "\"current_temp\":%u}",
+                     hass_dev_typ_str(hass->dev_typ), hass->id, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     assert( asprintf(&combined, "homeassistant/%s/%s/%s/available\t"
@@ -247,6 +247,12 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_POOL } },
     { { HASS_DEV_TYP_switch,  "spa_circuit",  "Spa circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_SPA } },
     { { HASS_DEV_TYP_switch,  "aux1_circuit", "AUX1 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_AUX1 } },
+    { { HASS_DEV_TYP_switch,  "aux2_circuit", "AUX2 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_AUX2 } },
+    { { HASS_DEV_TYP_switch,  "aux3_circuit", "AUX3 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_AUX3 } },
+    { { HASS_DEV_TYP_switch,  "ft1_circuit",  "Ft1 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT1 } },
+    { { HASS_DEV_TYP_switch,  "ft2_circuit",  "Ft2 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT2 } },
+    { { HASS_DEV_TYP_switch,  "ft3_circuit",  "Ft3 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT3 } },
+    { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
     { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_start",   "pool start",   NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_stop",    "pool stop",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_POOL } },
@@ -274,9 +280,11 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
             dispatch->fnc.state(state, &dispatch->fnc_params, &dispatch->hass, ipc);
         }
     }
+#if 0
     char const * const json = poolstate_to_json(state, POOLSTATE_ELEM_TYP_ALL);
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
     free((void *)json);
+#endif
     return ESP_OK;
 }
 
@@ -312,7 +320,7 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
 void
 hass_task(void * ipc_void)
 {
-    bool first_time = true;
+    bool mqtt_subscribe = true;
  	ipc_t * const ipc = ipc_void;
 
     while (1) {
@@ -329,18 +337,19 @@ hass_task(void * ipc_void)
                 char * cfg;
                 dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);
 
-                if (first_time) {
+                if (mqtt_subscribe) {
                     for (uint jj = 0; jj < ARRAY_SIZE(set_topics) && set_topics[jj]; jj++) {
+                        ESP_LOGW(TAG, "1st %s", set_topics[jj]);
                         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topics[jj], ipc);
                         free(set_topics[jj]);
                     }
-                    first_time = false;
                 }
                 ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
                 free(cfg);
                 free(base);
             }
         }
+        mqtt_subscribe = false;
         vTaskDelay((TickType_t)5 * 60 * 1000 / portTICK_PERIOD_MS);
     }
 }

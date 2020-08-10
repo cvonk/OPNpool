@@ -69,7 +69,7 @@ menu "Pool Interface"
 
     config POOL_DBGLVL_POOLSTATE
         int "Poolstate debug level"
-        default 2
+        default 1
         help
             0 for no debug, 1 for errors only, 2 for all
 
@@ -81,7 +81,7 @@ menu "Pool Interface"
 
     config POOL_DBGLVL_MQTTTASK
         int "MQTT task debug level"
-        default 1
+        default 2
         help
             0 for no debug, 1 for errors only, 2 for all
 
@@ -93,7 +93,7 @@ menu "Pool Interface"
 
     config POOL_DBGLVL_HTTPD
         int "HTTPd debug level"
-        default 2
+        default 1
         help
             0 for no debug, 1 for errors only, 2 for all
 

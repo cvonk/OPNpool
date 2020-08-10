@@ -45,7 +45,7 @@ httpd_root(httpd_req_t * const req)
         "    #iframe {position:absolute;left:0px;top:0px;}\n"
         "  </style>\n"
         "  <h1>Page loading</h1>\n"
-        "  <iframe id='iframe' name='iframe1' frameborder='0' width='100%' height='100%' src='//coertvonk.com/cvonk/pool'></iframe>\n"
+        "  <iframe id='iframe' name='iframe1' frameborder='0' width='100%' height='100%' src='//coertvonk.com/cvonk/pool/'></iframe>\n"
         "</body>\n"
         "</html>";
     httpd_resp_send(req, resp_str, strlen(resp_str));
