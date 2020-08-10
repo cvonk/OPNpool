@@ -32,7 +32,7 @@ httpd_register_cb(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * cons
         http_uri->user_ctx = (void *) ipc;
         ESP_ERROR_CHECK( httpd_register_uri_handler(httpd_handle, http_uri) );
         if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
-            ESP_LOGI(TAG, "Listening at http://" IPSTR "/%s", IP2STR(ip), http_uri->uri);
+            ESP_LOGI(TAG, "Listening at http://" IPSTR "%s", IP2STR(ip), http_uri->uri);
         }
     }
 }
