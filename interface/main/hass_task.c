@@ -187,9 +187,9 @@ _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * co
                      hass_dev_typ_str(hass->dev_typ), hass->id, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
-    assert( asprintf(&combined, "homeassistant/%s/%s/%s/available\t"
+    assert( asprintf(&combined, "homeassistant/%s/pool/%s/available\t"
                      "online",
-                     hass_dev_typ_str(hass->dev_typ), ipc->dev.name, hass->id) >= 0 );
+                     hass_dev_typ_str(hass->dev_typ), hass->id) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
