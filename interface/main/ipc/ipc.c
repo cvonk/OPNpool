@@ -51,7 +51,7 @@ ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_
         ESP_LOGE(TAG, "to_mqtt_q full");
         free(msg.data);
     }
-    vTaskDelay(0);  // give `mqtt_task` a chance to catch up
+    vTaskDelay(1);  // give `mqtt_task` a chance to catch up
 }
 
 /**
