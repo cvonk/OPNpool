@@ -3,3 +3,6 @@
 **/sdkconfig
 .#*
 #*#
+interface/debug.log
+interface/sdkconfig.old
+interface/main/trace.txt

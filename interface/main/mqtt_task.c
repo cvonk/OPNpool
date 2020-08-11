@@ -20,6 +20,7 @@
 #include <esp_ota_ops.h>
 #include <esp_core_dump.h>
 #include <esp_flash.h>
+#include <esp_heap_trace.h>
 
 #include "ipc/ipc.h"
 #include "mqtt_task.h"
@@ -113,6 +114,19 @@ _dispatch_who(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
     free(payload);
 }
 
+static void
+_heap_trace_start(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
+{
+    ESP_ERROR_CHECK( heap_trace_start(HEAP_TRACE_LEAKS) );
+}
+
+static void
+_heap_trace_stop(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
+{
+    ESP_ERROR_CHECK( heap_trace_stop() );
+    heap_trace_dump();
+}
+
 typedef void (* mqtt_dispatch_fnc_t)(esp_mqtt_event_handle_t event, ipc_t const * const ipc);
 
 typedef struct mqtt_dispatch_t {
@@ -123,6 +137,8 @@ typedef struct mqtt_dispatch_t {
 static mqtt_dispatch_t _mqtt_dispatches[] = {
     {"who", _dispatch_who},
     {"restart", _dispatch_restart},
+    {"htstart", _heap_trace_start},
+    {"htstop", _heap_trace_stop},
 };
 
 static esp_err_t
@@ -155,7 +171,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
                 for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber && !done; subscriber = subscriber->next) {
                     if (strncmp(subscriber->topic, event->topic, event->topic_len) == 0) {
 
-                        ESP_LOGW(TAG, " matched subscriber topic (%s)", subscriber->topic);
+                        //ESP_LOGW(TAG, " matched subscriber topic (%s)", subscriber->topic);
 
                         if (subscriber->local) {
                             mqtt_dispatch_t const * handler = _mqtt_dispatches;
@@ -165,7 +181,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
                                 }
                             }
                         } else {
-                            ESP_LOGW(TAG, " passing off to pool_task");
+                            //ESP_LOGW(TAG, " passing off to pool_task");
                             ipc_send_to_pool(IPC_TO_POOL_TYP_SET, event->topic, event->topic_len, event->data, event->data_len, ipc);
                         }
                         done = true;
@@ -254,7 +270,7 @@ mqtt_task(void * ipc_void)
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
                     if (CONFIG_POOL_DBGLVL_MQTTTASK >1) {
-                        ESP_LOGI(TAG, "tx %s: \"%s\"", topic, message);
+                        ESP_LOGI(TAG, "tx %s: %s", topic, message);
                     }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
                     free(msg.data);

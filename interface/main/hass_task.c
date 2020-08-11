@@ -70,7 +70,9 @@ _parse_topic(char * data, char * args[], uint const args_len) {
 static void
 _circuit_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
-    assert( asprintf(set_topics++, "%s/%s", base, "set") >= 0 );
+    if (set_topics) {
+        assert( asprintf(set_topics++, "%s/%s", base, "set") >= 0 );
+    }
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                     "\"~\":\"%s\","
                     "\"name\":\"Pool %s\","
@@ -149,8 +151,10 @@ _json_state(poolstate_t const * const state, poolstate_get_params_t const * cons
 static void
 _thermo_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
-    assert( asprintf(set_topics++, "%s/%s", base, "set_mode") >= 0 );
-    assert( asprintf(set_topics++, "%s/%s", base, "set_temp") >= 0 );
+    if (set_topics) {
+        assert( asprintf(set_topics++, "%s/%s", base, "set_mode") >= 0 );
+        assert( asprintf(set_topics++, "%s/%s", base, "set_temp") >= 0 );
+    }
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                      "\"~\":\"%s\","
                      "\"name\":\"Pool %s\","
@@ -327,22 +331,24 @@ hass_task(void * ipc_void)
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
             if (dispatch->fnc.init) {
-                char * set_topics[4];
-                for (uint jj = 0; jj < ARRAY_SIZE(set_topics); jj++) {
-                    set_topics[jj] = NULL;
-                }
                 char * base;
                 assert( asprintf(&base, "homeassistant/%s/pool/%s", hass_dev_typ_str(dispatch->hass.dev_typ), dispatch->hass.id) >= 0 );
 
                 char * cfg;
-                dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);
-
                 if (mqtt_subscribe) {
-                    for (uint jj = 0; jj < ARRAY_SIZE(set_topics) && set_topics[jj]; jj++) {
-                        ESP_LOGW(TAG, "1st %s", set_topics[jj]);
-                        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, set_topics[jj], ipc);
-                        free(set_topics[jj]);
+                    char * set_topics[4] = {};
+
+                    dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);
+
+                    char * * topic = set_topics;
+                    for (uint jj = 0; jj < ARRAY_SIZE(set_topics) && *topic; jj++, topic++) {
+                        //ESP_LOGW(TAG, "1st %s", topic);
+                        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, *topic, ipc);
+                        free(*topic);
                     }
+                } else {
+
+                    dispatch->fnc.init(base, &dispatch->hass, NULL, &cfg);
                 }
                 ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
                 free(cfg);

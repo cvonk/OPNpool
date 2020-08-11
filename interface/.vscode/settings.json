@@ -61,4 +61,8 @@
     "files.trimTrailingWhitespace": true,
     "editor.detectIndentation": false,
     "cmake.configureOnOpen": false,
+    "idf.openOcdConfigs": [
+        "interface/ftdi/esp32_devkitj_v1.cfg",
+        "board/esp32-wrover.cfg"   // update "board/esp32-wrover.cfg" or "board/esp-wroom-32.cfg"
+    ],
 }
