@@ -87,7 +87,7 @@ menu "Pool Interface"
 
     config POOL_DBGLVL_HASSTASK
         int "Home assistant task debug level"
-        default 2
+        default 1
         help
             0 for no debug, 1 for errors only, 2 for all
 

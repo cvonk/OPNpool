@@ -8,10 +8,12 @@
  **/
 
 #include <esp_system.h>
-#include <esp_log.h>
 #include <esp_wifi.h>
 #include <nvs_flash.h>
 #include <sys/param.h>
+//#include <esp_sysview_trace.h>
+#include <esp_heap_trace.h>
+#include <esp_log.h>
 #include <esp_ota_ops.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -102,6 +104,9 @@ _connect2wifi_and_start_httpd(ipc_t * const ipc)
     ESP_ERROR_CHECK(wifi_connect_start(NULL));
 }
 
+#define NUM_RECORDS 100
+static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in internal RAM
+
 void
 app_main()
 {
@@ -118,6 +123,17 @@ app_main()
     poolstate_init();
 
     _connect2wifi_and_start_httpd(&ipc);
+
+    // redirect log messages to the host using SystemView tracing module
+    //esp_log_set_vprintf(&esp_sysview_vprintf);
+    // init host-based heap tracing
+    if (heap_trace_init_standalone(trace_record, NUM_RECORDS) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to init heap trace!");
+        return;
+    }
+    //ESP_LOGW(TAG, "step 1");
+    //heap_trace_start(HEAP_TRACE_ALL);  // stopped using MQTT `htstop` command
+    //ESP_LOGW(TAG, "step 2");
 
     // from here the tasks take over
 

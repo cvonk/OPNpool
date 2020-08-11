@@ -316,7 +316,11 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
                     case STATE_CHECK_CRC:
                         break;
                     case STATE_DONE:
-                        return local.crc_ok ? ESP_OK: ESP_FAIL;
+                        if (!local.crc_ok) {
+                            free(pkt->skb);
+                            return ESP_FAIL;
+                        }
+                        return ESP_OK;
                         break;
                 }
                 state = new_state;
