@@ -269,7 +269,7 @@ mqtt_task(void * ipc_void)
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    if (CONFIG_POOL_DBGLVL_MQTTTASK >1) {
+                    if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
                         ESP_LOGI(TAG, "tx %s: %s", topic, message);
                     }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
