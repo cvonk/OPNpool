@@ -81,7 +81,7 @@ menu "Pool Interface"
 
     config POOL_DBGLVL_MQTTTASK
         int "MQTT task debug level"
-        default 2
+        default 1
         help
             0 for no debug, 1 for errors only, 2 for all
 
