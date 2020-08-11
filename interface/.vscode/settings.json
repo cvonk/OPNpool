@@ -9,7 +9,7 @@
     },
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
     "idf.adapterTargetName": "esp32",
-    "idf.portWin": "COM4",
+    "idf.portWin": "COM3",
     "idf.baudRate": "115200",
     "idf.espIdfPathWin": "C:/users/coert/espressif/esp-idf-master",
     "idf.toolsPathWin": "C:/users/coert/espressif/bin-master",
