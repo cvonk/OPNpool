@@ -20,7 +20,7 @@
 #include <esp_ota_ops.h>
 #include <esp_core_dump.h>
 #include <esp_flash.h>
-#include <esp_heap_trace.h>
+//#include <esp_heap_trace.h>
 
 #include "ipc/ipc.h"
 #include "mqtt_task.h"
@@ -117,14 +117,14 @@ _dispatch_who(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
 static void
 _heap_trace_start(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
 {
-    ESP_ERROR_CHECK( heap_trace_start(HEAP_TRACE_LEAKS) );
+    //ESP_ERROR_CHECK( heap_trace_start(HEAP_TRACE_LEAKS) );
 }
 
 static void
 _heap_trace_stop(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
 {
-    ESP_ERROR_CHECK( heap_trace_stop() );
-    heap_trace_dump();
+    //ESP_ERROR_CHECK( heap_trace_stop() );
+    //heap_trace_dump();
 }
 
 typedef void (* mqtt_dispatch_fnc_t)(esp_mqtt_event_handle_t event, ipc_t const * const ipc);
