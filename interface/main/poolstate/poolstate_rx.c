@@ -47,28 +47,28 @@ _ctrl_time(cJSON * const dbg, network_msg_ctrl_time_t const * const msg, poolsta
 static void
 _ctrl_heat(cJSON * const dbg, network_msg_ctrl_heat_t const * const msg, poolstate_t * const state)
 {
-    state->thermostats[POOLSTATE_THERMO_POOL].temp = msg->poolTemp;
-    state->thermostats[POOLSTATE_THERMO_POOL].set_point = msg->poolTempSetpoint;
-    state->thermostats[POOLSTATE_THERMO_POOL].heat_src = msg->heatSrc & 0x03;
-    state->thermostats[POOLSTATE_THERMO_SPA].temp = msg->spaTemp;
-    state->thermostats[POOLSTATE_THERMO_SPA].set_point = msg->spaTempSetpoint;
-    state->thermostats[POOLSTATE_THERMO_SPA].heat_src = msg->heatSrc >> 2;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].temp = msg->spaTemp;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject_generic(dbg, "thermostats", state->thermostats, true, true, true, false, false);
+        cJSON_AddThermosToObject_generic(dbg, "thermos", state->thermos, true, true, true, false, false);
     }
 }
 
 static void
 _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg, poolstate_t * const state)
 {
-    state->thermostats[POOLSTATE_THERMO_POOL].set_point = msg->poolTempSetpoint;
-    state->thermostats[POOLSTATE_THERMO_POOL].heat_src = msg->heatSrc & 0x03;
-    state->thermostats[POOLSTATE_THERMO_SPA].set_point = msg->spaTempSetpoint;
-    state->thermostats[POOLSTATE_THERMO_SPA].heat_src = msg->heatSrc >> 2;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject_generic(dbg, "thermostats", state->thermostats, false, true, true, false, false);
+        cJSON_AddThermosToObject_generic(dbg, "thermos", state->thermos, false, true, true, false, false);
     }
 }
 
@@ -86,34 +86,21 @@ static void
 _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const msg, poolstate_t * const state)
 {
     network_msg_ctrl_sched_resp_sub_t const * msg_sched = msg->scheds;
-    poolstate_thermo_t * state_thermostat = state->thermostats;
+    poolstate_thermo_t * state_thermostat = state->thermos;
 
-    for (uint  ii = 0; ii < POOLSTATE_THERMO_COUNT; ii++, msg_sched++, state_thermostat++) {
+    for (uint  ii = 0; ii < POOLSTATE_THERMO_TYP_COUNT; ii++, msg_sched++, state_thermostat++) {
         state_thermostat->sched.circuit = msg_sched->circuit;
         state_thermostat->sched.start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
         state_thermostat->sched.stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
     }
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject_generic(dbg, "thermostats", state->thermostats, false, false, false, false, true);
+        cJSON_AddThermosToObject_generic(dbg, "thermos", state->thermos, false, false, false, false, true);
     }
 }
 
 static void
 _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, poolstate_t * state)
 {
-    state->system.tod.time.minute = msg->minute;
-    state->system.tod.time.hour = msg->hour;
-    state->system.version.major = msg->major;
-    state->system.version.minor = msg->minor;
-    state->temps[POOLSTATE_TEMP_AIR].temp = msg->airTemp;
-    state->temps[POOLSTATE_TEMP_SOLAR].temp = msg->solarTemp;
-    state->thermostats[POOLSTATE_THERMO_POOL].temp = msg->poolTemp;
-    state->thermostats[POOLSTATE_THERMO_POOL].heat_src = msg->heatSrc & 0x03;
-    state->thermostats[POOLSTATE_THERMO_POOL].heating = msg->heating & 0x04;
-    state->thermostats[POOLSTATE_THERMO_SPA].temp = msg->poolTemp;
-    state->thermostats[POOLSTATE_THERMO_SPA].heat_src = msg->heatSrc >> 2;
-    state->thermostats[POOLSTATE_THERMO_SPA].heating = msg->heating & 0x08;
-
     bool * state_active = state->circuits.active;
     uint16_t msg_mask = 0x00001;
     uint16_t const msg_active = ((uint16_t)msg->activeHi << 8) | msg->activeLo;
@@ -122,6 +109,23 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
         msg_mask <<= 1;
     }
     state->circuits.delay = msg->delay;
+    // only update water temp when the pump is running
+    if (state->circuits.active[NETWORK_CIRCUIT_POOL]) {
+        state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
+    }
+    if (state->circuits.active[NETWORK_CIRCUIT_SPA]) {
+        state->thermos[POOLSTATE_THERMO_TYP_SPA].temp = msg->poolTemp;
+    }
+    state->system.tod.time.minute = msg->minute;
+    state->system.tod.time.hour = msg->hour;
+    state->system.version.major = msg->major;
+    state->system.version.minor = msg->minor;
+    state->temps[POOLSTATE_TEMP_TYP_AIR].temp = msg->airTemp;
+    state->temps[POOLSTATE_TEMP_TYP_SOLAR].temp = msg->solarTemp;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].heating = msg->heating & 0x04;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heating = msg->heating & 0x08;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddStateToObject(dbg, "state", state);

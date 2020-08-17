@@ -179,7 +179,7 @@ static esp_err_t
 _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
 {
     uint8_t const idx = params->idx;
-    poolstate_thermo_t const * const thermostat = &state->thermostats[idx];
+    poolstate_thermo_t const * const thermostat = &state->thermos[idx];
     uint8_t const heat_src = thermostat->heat_src;
     uint8_t const target_temp = thermostat->set_point;
     uint8_t const current_temp = thermostat->temp;
@@ -205,16 +205,16 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
     poolstate_t state;
     poolstate_get(&state);
 
-    uint8_t pool_set_point = state.thermostats[POOLSTATE_THERMO_POOL].set_point;
-    uint8_t pool_heat_src = state.thermostats[POOLSTATE_THERMO_POOL].heat_src;
-    uint8_t spa_set_point = state.thermostats[POOLSTATE_THERMO_SPA].set_point;
-    uint8_t spa_heat_src = state.thermostats[POOLSTATE_THERMO_SPA].heat_src;
+    uint8_t pool_set_point = state.thermos[POOLSTATE_THERMO_TYP_POOL].set_point;
+    uint8_t pool_heat_src = state.thermos[POOLSTATE_THERMO_TYP_POOL].heat_src;
+    uint8_t spa_set_point = state.thermos[POOLSTATE_THERMO_TYP_SPA].set_point;
+    uint8_t spa_heat_src = state.thermos[POOLSTATE_THERMO_TYP_SPA].heat_src;
 
-    poolstate_thermostats_t const thermostat_nr = POOLSTATE_THERMO_POOL;  // 2BD: should be based on the topic
+    poolstate_thermo_typ_t const thermostat_nr = POOLSTATE_THERMO_TYP_POOL;  // 2BD: should be based on the topic
     if (strcmp(subtopic, "set_mode") == 0) {
         int value;
         if ((value = network_heat_src_nr(value_str)) >= 0) {
-            if (thermostat_nr == POOLSTATE_THERMO_POOL) {
+            if (thermostat_nr == POOLSTATE_THERMO_TYP_POOL) {
                 pool_heat_src = value;
             } else {
                 spa_heat_src = value;
@@ -222,7 +222,7 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
         }
     } else if (strcmp(subtopic, "set_temp") == 0) {
         uint8_t const value = atoi(value_str);
-        if (thermostat_nr == POOLSTATE_THERMO_POOL) {
+        if (thermostat_nr == POOLSTATE_THERMO_TYP_POOL) {
             pool_set_point = value;
         } else {
             spa_set_point = value;
@@ -257,14 +257,14 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "ft2_circuit",  "Ft2 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT2 } },
     { { HASS_DEV_TYP_switch,  "ft3_circuit",  "Ft3 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT3 } },
     { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
-    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_POOL } },
-    { { HASS_DEV_TYP_sensor,  "pool_start",   "pool start",   NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_POOL } },
-    { { HASS_DEV_TYP_sensor,  "pool_stop",    "pool stop",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_POOL } },
-    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_SPA } },
-    { { HASS_DEV_TYP_sensor,  "spa_start",    "spa start",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_SPA } },
-    { { HASS_DEV_TYP_sensor,  "spa_stop",     "spa stop",     NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_SPA } },
-    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_AIR  } },
-    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_POOL } },
+    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_sensor,  "pool_start",   "pool start",   NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_sensor,  "pool_stop",    "pool stop",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
+    { { HASS_DEV_TYP_sensor,  "spa_start",    "spa start",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_SPA } },
+    { { HASS_DEV_TYP_sensor,  "spa_stop",     "spa stop",     NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_SPA } },
+    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
+    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
     { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
     { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },

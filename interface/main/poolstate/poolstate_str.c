@@ -31,32 +31,32 @@ poolstate_chlor_status_str(poolstate_chlor_status_t const chlor_state_id)
   return ELEM_AT(_poolstate_chlor_statuses, chlor_state_id, hex8_str(chlor_state_id));
 }
 
-static const char * const _poolstate_thermostats[] = {
+static const char * const _poolstate_thermos[] = {
 #define XX(num, name) #name,
-  POOLSTATE_THERMO_MAP(XX)
+  POOLSTATE_THERMO_TYP_MAP(XX)
 #undef XX
 };
 
 const char *
-poolstate_thermo_str(poolstate_thermostats_t const thermostat_id)
+poolstate_thermo_str(poolstate_thermo_typ_t const thermostat_id)
 {
-  return ELEM_AT(_poolstate_thermostats, thermostat_id, hex8_str(thermostat_id));
+  return ELEM_AT(_poolstate_thermos, thermostat_id, hex8_str(thermostat_id));
 }
 
 int
 poolstate_thermo_nr(char const * const thermostat_str)
 {
-    ELEM_POS(_poolstate_thermostats, thermostat_str);
+    ELEM_POS(_poolstate_thermos, thermostat_str);
 }
 
 static const char * const _poolstate_temps[] = {
 #define XX(num, name) #name,
-  POOLSTATE_TEMP_MAP(XX)
+  POOLSTATE_TEMP_TYP_MAP(XX)
 #undef XX
 };
 
 const char *
-poolstate_temp_str(poolstate_temps_t const temp_id)
+poolstate_temp_str(poolstate_temp_typ_t const temp_id)
 {
   return ELEM_AT(_poolstate_temps, temp_id, hex8_str(temp_id));
 }

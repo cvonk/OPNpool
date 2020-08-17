@@ -47,19 +47,19 @@ typedef enum {
 } poolstate_elem_system_typ_t;
 
 /**
- * poolstate_thermostats_t
+ * poolstate_thermo_typ_t
  **/
 
-#define POOLSTATE_THERMO_MAP(XX) \
+#define POOLSTATE_THERMO_TYP_MAP(XX) \
   XX(0, POOL) \
   XX(1, SPA)  \
   XX(2, COUNT)
 
 typedef enum {
-#define XX(num, name) POOLSTATE_THERMO_##name = num,
-  POOLSTATE_THERMO_MAP(XX)
+#define XX(num, name) POOLSTATE_THERMO_TYP_##name = num,
+  POOLSTATE_THERMO_TYP_MAP(XX)
 #undef XX
-} poolstate_thermostats_t;
+} poolstate_thermo_typ_t;
 
 typedef struct poolstate_sched_t {
     uint8_t  circuit;
@@ -87,22 +87,22 @@ typedef enum {
 #define XX(num, name) POOLSTATE_ELEM_THERMO_TYP_##name = num,
   POOLSTATE_ELEM_THERMO_TYP_MAP(XX)
 #undef XX
-} poolstate_elem_thermostat_typ_t;
+} poolstate_elem_thermo_typ_t;
 
 /**
  * poolstate_temp_t
  **/
 
-#define POOLSTATE_TEMP_MAP(XX) \
+#define POOLSTATE_TEMP_TYP_MAP(XX) \
   XX(0, AIR) \
   XX(1, SOLAR)  \
   XX(2, COUNT)
 
 typedef enum {
-#define XX(num, name) POOLSTATE_TEMP_##name = num,
-  POOLSTATE_TEMP_MAP(XX)
+#define XX(num, name) POOLSTATE_TEMP_TYP_##name = num,
+  POOLSTATE_TEMP_TYP_MAP(XX)
 #undef XX
-} poolstate_temps_t;
+} poolstate_temp_typ_t;
 
 typedef struct poolstate_temp_t {
     uint8_t temp;
@@ -210,12 +210,12 @@ typedef enum {
  **/
 
 typedef struct poolstate_t {
-    poolstate_system_t      system;
-    poolstate_temp_t        temps[POOLSTATE_TEMP_COUNT];
-    poolstate_thermo_t  thermostats[POOLSTATE_THERMO_COUNT];
-    poolstate_circuits_t    circuits;
-    poolstate_pump_t        pump;
-    poolstate_chlor_t       chlor;
+    poolstate_system_t    system;
+    poolstate_temp_t      temps[POOLSTATE_TEMP_TYP_COUNT];
+    poolstate_thermo_t    thermos[POOLSTATE_THERMO_TYP_COUNT];
+    poolstate_circuits_t  circuits;
+    poolstate_pump_t      pump;
+    poolstate_chlor_t     chlor;
 } poolstate_t;
 
 #define POOLSTATE_ELEM_TYP_MAP(XX) \
@@ -249,7 +249,7 @@ void cJSON_AddVersionToObject(cJSON * const obj, char const * const key, poolsta
 void cJSON_AddSystemToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddSchedToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * const sched);
 void cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermo_t const * const thermostat, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched);
-void cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermostats, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched);
+void cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermos, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched);
 void cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddTempToObject(cJSON * const obj, char const * const key, poolstate_temp_t const * const temp);
 void cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_t const * state);
@@ -277,7 +277,7 @@ esp_err_t poolstate_get_value(poolstate_t const * const state, poolstate_get_par
 
 /* poolstate_str.c */
 const char * poolstate_chlor_status_str(poolstate_chlor_status_t const chlor_state_id);
-const char * poolstate_thermo_str(poolstate_thermostats_t const thermostat_id);
-const char * poolstate_temp_str(poolstate_temps_t const temp_id);
+const char * poolstate_thermo_str(poolstate_thermo_typ_t const thermostat_id);
+const char * poolstate_temp_str(poolstate_temp_typ_t const temp_id);
 int poolstate_temp_nr(char const * const temp_str);
 int poolstate_thermo_nr(char const * const thermostat_str);
