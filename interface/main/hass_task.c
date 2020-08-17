@@ -169,7 +169,6 @@ _thermo_init(char const * const base, dispatch_hass_t const * const hass, char *
                      "\"min_temp\":15,"
                      "\"max_temp\":110,"
                      "\"temp_step\":1,"
-//                     "\"unit_of_meas\":\"%s\","
                      "\"temp_unit\":\"%s\","
                      "\"avty_t\":\"~/available\","
                      "\"pl_avail\":\"online\","
