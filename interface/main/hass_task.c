@@ -169,10 +169,12 @@ _thermo_init(char const * const base, dispatch_hass_t const * const hass, char *
                      "\"min_temp\":15,"
                      "\"max_temp\":110,"
                      "\"temp_step\":1,"
+                     "\"temp_unit\":\"%s\"}"
                      "\"avty_t\":\"~/available\","
                      "\"pl_avail\":\"online\","
                      "\"pl_not_avail\":\"offline\","
-                     "\"modes\":[\"off\",\"heat\"]}", base, base, hass->name) >= 0);
+                     "\"modes\":[\"off\",\"heat\"]}",
+                     base, base, hass->name, hass->unit ? hass->unit : "") >= 0);
 }
 
 static esp_err_t
@@ -257,10 +259,10 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "ft2_circuit",  "Ft2 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT2 } },
     { { HASS_DEV_TYP_switch,  "ft3_circuit",  "Ft3 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT3 } },
     { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
-    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_start",   "pool start",   NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_sensor,  "pool_stop",    "pool stop",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_POOL } },
-    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   NULL  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
+    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_sensor,  "spa_start",    "spa start",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_sensor,  "spa_stop",     "spa stop",     NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_START, POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
