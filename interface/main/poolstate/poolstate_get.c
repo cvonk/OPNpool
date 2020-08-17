@@ -71,7 +71,7 @@ _temp(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poo
 static esp_err_t
 _thermostat(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * const value)
 {
-    poolstate_thermo_t const * const thermostat = &state->thermostats[idx];
+    poolstate_thermo_t const * const thermostat = &state->thermos[idx];
     switch (typ) {
         case POOLSTATE_ELEM_THERMO_TYP_TEMP:
             _alloc_uint(value, thermostat->temp);
@@ -178,18 +178,17 @@ typedef struct dispatch_t {
 } dispatch_t;
 
 static dispatch_t const _dispatches[] = {
-    { POOLSTATE_ELEM_TYP_SYSTEM,     _system},
-    { POOLSTATE_ELEM_TYP_TEMP,       _temp},
+    { POOLSTATE_ELEM_TYP_SYSTEM, _system},
+    { POOLSTATE_ELEM_TYP_TEMP,   _temp},
     { POOLSTATE_ELEM_TYP_THERMO, _thermostat},
-    { POOLSTATE_ELEM_TYP_PUMP,       _pump},
-    { POOLSTATE_ELEM_TYP_CHLOR,      _chlor},
+    { POOLSTATE_ELEM_TYP_PUMP,   _pump},
+    { POOLSTATE_ELEM_TYP_CHLOR,  _chlor},
 };
 
 esp_err_t
 poolstate_get_value(poolstate_t const * const state, poolstate_get_params_t const * const params, poolstate_get_value_t * const value)
 {
     dispatch_t const * dispatch = _dispatches;
-    //ESP_LOGI(TAG, "typ = %u, sub_typ = %u, idx = %u", params->elem_typ, params->elem_sub_typ, params->idx);
     for (uint8_t ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
         if (params->elem_typ == dispatch->typ) {
 

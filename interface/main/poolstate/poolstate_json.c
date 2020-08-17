@@ -87,7 +87,7 @@ cJSON_AddSystemToObject(cJSON * const obj, char const * const key, poolstate_t c
 }
 
 /**
- * poolstate->thermostats
+ * poolstate->thermos
  **/
 
 void
@@ -121,12 +121,12 @@ cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate
 }
 
 void
-cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermostats,
+cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermos,
                                      bool const showTemp, bool showSp, bool const showSrc, bool const showHeating, bool const showSched)
 {
     cJSON * const item = _create_item(obj, key);
-    for (uint ii = 0; ii < POOLSTATE_THERMO_COUNT; ii++, thermostats++) {
-        cJSON_AddThermostatToObject(item, poolstate_thermo_str(ii), thermostats,
+    for (uint ii = 0; ii < POOLSTATE_THERMO_TYP_COUNT; ii++, thermos++) {
+        cJSON_AddThermostatToObject(item, poolstate_thermo_str(ii), thermos,
                                     showTemp, showSp, showSrc, showHeating, showSched);
     }
 }
@@ -134,7 +134,7 @@ cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, pool
 void
 cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
 {
-    cJSON_AddThermosToObject_generic(obj, key, state->thermostats, true, true, true, true, true);
+    cJSON_AddThermosToObject_generic(obj, key, state->thermos, true, true, true, true, true);
 }
 
 /**
@@ -154,7 +154,7 @@ cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_t co
 {
     cJSON * const item = _create_item(obj, key);
     poolstate_temp_t const * temp = state->temps;
-    for (uint ii = 0; ii < POOLSTATE_TEMP_COUNT; ii++, temp++) {
+    for (uint ii = 0; ii < POOLSTATE_TEMP_TYP_COUNT; ii++, temp++) {
         cJSON_AddTempToObject(item, poolstate_temp_str(ii), temp);
     }
 }
@@ -191,7 +191,7 @@ cJSON_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t co
     cJSON * const item = _create_item(obj, key);
     cJSON_AddSystemToObject(item, "system", state);
     cJSON_AddTempsToObject(item, "temps", state);
-    cJSON_AddThermosToObject_generic(item, "thermostats", state->thermostats, true, false, true, true, false);
+    cJSON_AddThermosToObject_generic(item, "thermos", state->thermos, true, false, true, true, false);
     cJSON_AddActiveCircuitsToObject(item, "active", state->circuits.active);
 }
 
