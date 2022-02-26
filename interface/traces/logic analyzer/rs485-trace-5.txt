@@ -1,0 +1,428 @@
+I (977) wifi:mode : sta (30:ae:a4:cc:45:04)
+I (977) wifi:enable tsf
+I (977) pool_main: SYSTEM_EVENT_STA_START
+I (977) pool_reset: waiting for BOOT/RESET button ..
+I (987) wifi:new:<6,0>, old:<1,0>, ap:<255,255>, sta:<6,0>, prof:1
+I (987) wifi:state: init -> auth (b0)
+I (997) wifi:state: auth -> assoc (0)
+I (997) wifi:state: assoc -> run (10)
+W (1007) wifi:<ba-add>idx:0 (ifx:0, d8:50:e6:45:94:12), tid:0, ssn:0, winSize:64
+I (1017) wifi:connected with Guest Barn, aid = 5, channel 6, BW20, bssid = d8:50:e6:45:94:12
+I (1017) wifi:security: WPA2-PSK, phy: bgn, rssi: -19
+I (1027) wifi:pm start, type: 1
+
+I (1077) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)       
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+I (1197) pool_transmitqueue: requesting C8
+I (1207) pool_transmitter: sending C8
+DBG typ=C8 dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"heatReq":{}},"raw":{"header":["01","10","20","C8","00"]},"data":[]}
+
+#
+
+I (1227) pool_transmitter: sent.
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 08 0D (header)
+ 32 32 2B 04 00 00 00 00 FF 00 00 00 00 (data)
+ 26C (checksum)
+{"ctrl":{"heat":{"pool":{"temp":50,"sp":4,"src":"none"},"spa":{"temp":50,"sp":0,"src":"none"}}}}
+
+#
+
+I (1307) pool_transmitqueue: requesting DE
+I (1307) pool_transmitter: sending DE
+DBG typ=DE dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"schedReq":{}},"raw":{"header":["01","10","20","DE","00"]},"data":[]}
+
+#
+
+I (1327) pool_transmitter: sent.
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 1E 10 (header)
+ 01 00 00 0F 00 00 00 00 00 00 06 01 01 E0 02 58 (data)
+ 245 (checksum)
+{"ctrl":{"sched":{"pool":{"start":"08:00","stop":"10:00"}}}}
+
+#
+
+I (1407) pool_transmitqueue: requesting C5
+I (1407) pool_transmitter: sending C5
+DBG typ=C5 dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"timeReq":{}},"raw":{"header":["01","10","20","C5","00"]},"data":[]}
+
+#
+
+I (1417) pool_transmitter: sent.
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 05 08 (header)
+ 09 3A 20 19 02 16 00 00 (data)
+ 166 (checksum)
+{"ctrl":{"time":{"time":"09:58","date":"2022-02-25"}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 6545 ms, msg01
+
+ 10 02 (preamble)
+ 50 00 (header)
+ 00 (data)
+ 62 (checksum)
+{"chlo":{"pingReq":{}}}
+{
+"chlo":{
+    "pingReq":{
+        
+    }
+    }
+}
+#
+
+ 10 03 FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ 
+ #
+ 
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 04 (data)
+ 120 (checksum)
+{"pump":{"setStateReq":{"running":false}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 04 (data)
+ 120 (checksum)
+{"pump":{"setStateResp":{"running":false}}}
+
+#
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"0?:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 04 00 00 00 00 00 00 00 00 00 00 00 00 09 3A (data)
+ 172 (checksum)
+{"pump":{"status":{"running":false,"mode":"filter","status":0,"pwr":0,"rpm":0,"err":0,"timer":0,"time":"09:58"}}}
+
+#
+
+ 10 02 (preamble)
+ 50 11 (header)
+ 00 (data)
+ 73 (checksum)
+{"chlo":{"lvlSet":{"pct":0}}}
+
+#
+
+ 10 03 FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"69:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 04 (data)
+ 120 (checksum)
+{"pump":{"setStateReq":{"running":false}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 04 (data)
+ 120 (checksum)
+{"pump":{"setStateResp":{"running":false}}}
+
+#
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ 10 02 (preamble)
+ 50 11 (header)
+ 00 (data)
+ 73 (checksum)
+{"chlo":{"lvlSet":{"pct":0}}}
+
+#
+
+ 10 03 FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 40F (checksum)
+{"ctrl":{"state":{"system":{"time":"09:58","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3B 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 410 (checksum)
+{"ctrl":{"state":{"system":{"time":"09:59","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3B 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)       
+ 410 (checksum)
+{"ctrl":{"state":{"system":{"time":"09:59","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3B 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 410 (checksum)
+{"ctrl":{"state":{"system":{"time":"09:59","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+
+#
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 04 00 00 00 00 00 00 00 00 00 00 00 00 09 3B (data)
+ 173 (checksum)
+{"pump":{"status":{"running":false,"mode":"filter","status":0,"pwr":0,"rpm":0,"err":0,"timer":0,"time":"09:;9"}}}
+
+#
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 09 3B 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
+ 410 (checksum)
+{"ctrl":{"state":{"system":{"time":"09:59","fw":2.799999952},"active":[],"delay":[],"pool":{"temp":50,"src":"none","heating":false},"spa":{"temp":50,"src":"none","heating":false},"temp":{"air":43}}}}   
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ClearCommError failed (PermissionError(13, 'Access is denied.', None, 5))
+Waiting for the device to recon

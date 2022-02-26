@@ -1,0 +1,38 @@
+{
+    "C_Cpp.clang_format_style": "Google",
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0}",
+    "[cpp]": {
+        "editor.quickSuggestions": true
+    },
+    "[c]": {
+        "editor.quickSuggestions": true
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "idf.adapterTargetName": "esp32",
+    "idf.portWin": "COM4",
+    "idf.baudRate": "115200",
+    "idf.espIdfPathWin": "C:/users/coert/espressif/esp-idf-master",
+    "idf.toolsPathWin": "C:/users/coert/espressif/bin-master",
+    "idf.pythonBinPathWin": "C:/users/coert/espressif/bin-master/python_env/idf4.3_py3.8_env/Scripts/python.exe",
+    "idf.customExtraPaths": "C:/Users/coert/espressif/bin-master/tools/xtensa-esp32-elf/esp-2020r2-8.2.0/xtensa-esp32-elf/bin;C:/Users/coert/espressif/bin-master/tools/xtensa-esp32s2-elf/esp-2020r2-8.2.0/xtensa-esp32s2-elf/bin;C:/Users/coert/espressif/bin-master/tools/esp32ulp-elf/2.28.51-esp-20191205/esp32ulp-elf-binutils/bin;C:/Users/coert/espressif/bin-master/tools/esp32s2ulp-elf/2.28.51-esp-20191205/esp32s2ulp-elf-binutils/bin;C:/Users/coert/espressif/bin-master/tools/cmake/3.16.4/bin;C:/Users/coert/espressif/bin-master/tools/openocd-esp32/v0.10.0-esp32-20200420/openocd-esp32/bin;C:/Users/coert/espressif/bin-master/tools/ninja/1.10.0/;C:/Users/coert/espressif/bin-master/tools/idf-exe/1.0.1/;C:/Users/coert/espressif/bin-master/tools/ccache/3.7/;C:/Users/coert/espressif/bin-master/tools/dfu-util/0.9/dfu-util-0.9-win64;C:/Users/coert/espressif/bin-master/python_env/idf4.3_py3.8_env/Scripts;C:/Users/coert/espressif/esp-idf-master/tools;C:/Users/coert/espressif/esp-idf-master/components/partition_table",
+    "idf.customExtraVars": "{\"IDF_CCACHE_ENABLE\":\"1\",\"OPENOCD_SCRIPTS\":\"C:/users/coert/espressif/bin-master/tools/openocd-esp32/v0.10.0-esp32-20200420/openocd-esp32/share/openocd/scripts\"}",
+     "files.associations": {
+        "*.ipp": "c",
+        "sockets.h": "c",
+        "*.inc": "c",
+        "clock_ota.h": "c",
+        "esp_intr.h": "c",
+        "esp_ota_ops.h": "c",
+        "esp_flash_partitions.h": "c",
+        "esp_wifi.h": "c",
+        "rmt.h": "c",
+        "led_strip.h": "c",
+        "*.gs": "javascript",
+        "esp_log.h": "c"
+    },
+    "clang-format.executable": "C:/Program Files/LLVM/bin/clang-format.exe",
+    "workbench.tree.indent": 20,
+    "files.trimTrailingWhitespace": true,
+    "editor.detectIndentation": false,
+    "cmake.configureOnOpen": false,
+}

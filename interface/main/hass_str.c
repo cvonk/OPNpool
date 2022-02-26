@@ -1,12 +1,12 @@
 /**
-* @brief packet_task, packetizes RS485 byte stream from Pentair bus
+* @brief packet_task, packetizes RS-485 byte stream from Pentair bus
  *
  * The Pentair controller uses two different protocols to communicate with its peripherals:
  *   - 	A5 has messages such as 0x00 0xFF <ldb> <sub> <dst> <src> <cfi> <len> [<data>] <chH> <ckL>
  *   -  IC has messages such as 0x10 0x02 <data0> <data1> <data2> .. <dataN> <ch> 0x10 0x03
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2020, Coert Vonk
+ * (c) Copyright 2020-2022, Coert Vonk
  * All rights reserved. Use of copyright notice does not imply publication.
  * All text above must be included in any redistribution
  **/

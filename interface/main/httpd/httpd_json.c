@@ -36,7 +36,7 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
             } else if (strcmp(key, "callback") == 0) {
                 callback = strdup(value);
                 assert( callback );
-            } else {
+            } else if (strcmp(key, "_") != 0) {
                 char const * const key_dec = httpd_urldecode(key);
                 if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
                     ESP_LOGI(TAG, "rx query var => queueing (\"%s\": \"%s\")", key_dec, value);

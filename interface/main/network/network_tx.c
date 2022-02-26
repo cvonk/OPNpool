@@ -2,7 +2,7 @@
  * @brief Data Link layer: encode messages to data link layer packets
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2015 - 2020, Coert Vonk
+ * (c) Copyright 2015 - 2022, Coert Vonk
  * All rights reserved. Use of copyright notice does not imply publication.
  * All text above must be included in any redistribution
  **/

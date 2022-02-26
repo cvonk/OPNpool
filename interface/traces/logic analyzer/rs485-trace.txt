@@ -1,0 +1,777 @@
+# 6244 ms, msg00
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+"ctrl":{
+    "state":{
+        "system":{
+            "time":"18:26",
+            "fw":2.8
+        },
+        "active":[
+            "pool"
+        ],
+        "delay":[
+            
+        ],
+        "pool":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "spa":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "temp":{
+            "air":55
+        }
+    }
+}
+}
+# 6358 ms, msg01
+
+I (1215) pool_transmitqueue: requesting C8
+I (1225) pool_transmitter: sending C8
+DBG typ=C8 dataLen=0 data.circuitSet=(00 00)
+I (1245) pool_transmitter: sent.
+{"ctrl":{"heatReq":{}},"raw":{"header":["01","10","20","C8","00"]},"data":[]}
+{
+    "ctrl":{
+        "heatReq":{
+            
+        }
+    },
+    "raw":{
+        "header":[
+            "01",
+            "10",
+            "20",
+            "C8",
+            "00"
+        ]
+    },
+    "data":[
+        
+    ]
+}
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 08 0D (header)
+ 34 34 37 04 00 00 00 00 FF 00 00 00 00 (data)
+ 27C (checksum)
+{"ctrl":{"heat":{"pool":{"temp":52,"sp":4,"src":"none"},"spa":{"temp":52,"sp":0,"src":"none"}}}}
+{
+    "ctrl":{
+        "heat":{
+            "pool":{
+                "temp":52,
+                "sp":4,
+                "src":"none"
+            },
+            "spa":{
+                "temp":52,
+                "sp":0,
+                "src":"none"
+            }
+        }
+    }
+}
+
+# 6457 ms, msg02
+
+I (1325) pool_transmitqueue: requesting DE
+I (1325) pool_transmitter: sending DE
+DBG typ=DE dataLen=0 data.circuitSet=(00 00)
+I (1345) pool_transmitter: sent.
+{"ctrl":{"schedReq":{}},"raw":{"header":["01","10","20","DE","00"]},"data":[]}
+{
+    "ctrl":{
+        "schedReq":{
+            
+        }
+    },
+    "raw":{
+        "header":[
+            "01",
+            "10",
+            "20",
+            "DE",
+            "00"
+        ]
+    },
+    "data":[
+        
+    ]
+}
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 1E 10 (header)
+ 01 00 00 0F 00 00 00 00 00 00 06 01 01 E0 02 58 (data)
+ 245 (checksum)
+{"ctrl":{"sched":{"pool":{"start":"08:00","stop":"10:00"}}}}
+{
+"ctrl":{
+    "sched":{
+        "pool":{
+            "start":"08:00",
+            "stop":"10:00"
+        }
+    }
+}
+}
+
+# 6554 ms, msg03
+
+I (1425) pool_transmitqueue: requesting C5
+I (1425) pool_transmitter: sending C5
+DBG typ=C5 dataLen=0 data.circuitSet=(00 00)
+{"ctrl":{"timeReq":{}},"raw":{"header":["01","10","20","C5","00"]},"data":[]}
+{
+"ctrl":{
+    "timeReq":{
+        
+    }
+},
+    "raw":{
+        "header":[
+            "01",
+            "10",
+            "20",
+            "C5",
+            "00"
+        ]
+    },
+    "data":[
+        
+    ]
+}
+I (1435) pool_transmitter: sent.
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 05 08 (header)
+ 12 1A 10 18 02 16 00 00 (data)
+ 13E (checksum)
+{"ctrl":{"time":{"time":"18:26","date":"2022-02-24"}}}
+{
+"ctrl":{
+    "time":{
+        "time":"18:26",
+        "date":"2022-02-24"
+    }
+}
+}
+
+# 6743 ms, msg05
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ # 8258 ms, msg06
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+"ctrl":{
+    "state":{
+        "system":{
+            "time":"18:26",
+            "fw":2.8
+        },
+        "active":[
+            "pool"
+        ],
+        "delay":[
+            
+        ],
+        "pool":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "spa":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "temp":{
+            "air":55
+        }
+    }
+}
+}
+
+# 8759 ms, msg07
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 10782 ms, msg08
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 11102 ms, msg09
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+{
+    "pump":{
+        "statusReq":{            
+        }
+    }
+}
+# 11118 ms, msg10
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 0A 00 00 02 EC 09 C4 00 00 00 00 00 01 12 1A (data)
+ 31D (checksum)
+{"pump":{"status":{"running":true,"mode":"filter","status":0,"pwr":748,"rpm":2500,"err":0,"timer":1,"time":"18:26"}}}
+{
+"pump":{
+    "status":{
+        "running":true,
+        "mode":"filter",
+        "status":0,
+        "pwr":748,
+        "rpm":2500,
+        "err":0,
+        "timer":1,
+        "time":"18:26"
+    }
+}
+}
+
+# 12306 ms, msg11
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+"ctrl":{
+    "state":{
+        "system":{
+            "time":"18:26",
+            "fw":2.8
+        },
+        "active":[
+            "pool"
+        ],
+        "delay":[
+            
+        ],
+        "pool":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "spa":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "temp":{
+            "air":55
+        }
+    }
+}
+}
+
+# 12806 ms, mgs12
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 14314 ms, msg13
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+"ctrl":{
+    "state":{
+        "system":{
+            "time":"18:26",
+            "fw":2.8
+        },
+        "active":[
+            "pool"
+        ],
+        "delay":[
+            
+        ],
+        "pool":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "spa":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "temp":{
+            "air":55
+        }
+    }
+}
+}
+
+# 14814 ms, msg14
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ # 16338 ms, msg15
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"1>:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+"ctrl":{
+    "state":{
+        "system":{
+            "time":"1>:26",
+            "fw":2.8
+        },
+        "active":[
+            "pool"
+        ],
+        "delay":[
+            
+        ],
+        "pool":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "spa":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "temp":{
+            "air":55
+        }
+    }
+}
+}
+
+# 16838 ms, msg16
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 18353 ms, msg17
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)      
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+"ctrl":{
+    "state":{
+        "system":{
+            "time":"18:26",
+            "fw":2.8
+        },
+        "active":[
+            "pool"
+        ],
+        "delay":[
+            
+        ],
+        "pool":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "spa":{
+            "temp":52,
+            "src":"none",
+            "heating":false
+        },
+        "temp":{
+            "air":55
+        }
+    }
+}
+}
+# 18861 ms, msg18
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 20372 ms, msg19
+
+ 10 02 (preamble)
+ 50 11 (header)
+ 50 (data)
+ C3 (checksum)
+{"chlo":{"lvlSet":{"pct":80}}}
+{
+"chlo":{
+    "lvlSet":{
+        "pct":80
+    }
+}
+}
+
+# 20409 ms, msg20
+
+ 10 03 10 02 (preamble)
+ 00 12 (header)
+ 00 C0 (data)
+ E4 (checksum)
+{"chlo":{"lvlSetResp":{"salt":0,"flow":true}}}
+{
+"chlo":{
+    "lvlSetResp":{
+        "salt":0,
+        "flow":true
+    }
+}
+}
+
+# 20873 ms, msg21
+
+ 10 03 FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+# 22392 ms, msg22
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+{
+    "ctrl":{
+        "state":{
+            "system":{
+                "time":"18:26",
+                "fw":2.8
+            },
+            "active":[
+                "pool"
+            ],
+            "delay":[
+                
+            ],
+            "pool":{
+                "temp":52,
+                "src":"none",
+                "heating":false
+            },
+            "spa":{
+                "temp":52,
+                "src":"none",
+                "heating":false
+            },
+            "temp":{
+                "air":55
+            }
+        }
+    }
+}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF 00 FF A5 (preamble)
+ 00 60 10 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlReq":{"control":"remote"}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 04 01 (header)
+ FF (data)
+ 219 (checksum)
+{"pump":{"setCtrlResp":{"control":"remote"}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateReq":{"running":true}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 06 01 (header)
+ 0A (data)
+ 126 (checksum)
+{"pump":{"setStateResp":{"running":true}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 01 04 (header)
+ 02 C4 09 C4 (data)
+ 2AD (checksum)
+{"pump":{"setReguReq":{"rpm":2500}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 01 02 (header)
+ 09 C4 (data)
+ 1E5 (checksum)
+{"pump":{"setReguResp":{"now":2500}}}
+
+# 
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)      
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)      
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"1>:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+#
+
+ 10 02 (preamble)
+ 50 11 (header)
+ 50 (data)
+ C3 (checksum)
+{"chlo":{"lvlSet":{"pct":80}}}
+
+# 
+
+ 10 03 10 02 (preamble)
+ 00 12 (header)
+ 00 C0 (data)
+ E4 (checksum)
+{"chlo":{"lvlSetResp":{"salt":0,"flow":true}}}
+
+# 
+
+ 10 03 FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ #
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ #
+
+ FF 00 FF A5 (preamble)
+ 00 60 10 07 00 (header)
+ (data)
+ 11C (checksum)
+{"pump":{"statusReq":{}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 10 60 07 0F (header)
+ 0A 00 00 03 23 09 C4 00 00 00 00 00 01 12 1A (data)
+ 255 (checksum)
+{"pump":{"status":{"running":true,"mode":"filter","status":0,"pwr":803,"rpm":2500,"err":0,"timer":1,"time":"18:26"}}}
+
+# 
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1A 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 428 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:26","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ #
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1B 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 429 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:27","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ #
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1B 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)      
+ 429 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:27","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ #
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1B 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 429 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:27","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+
+ #
+
+ FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
+ 01 0F 10 02 1D (header)
+ 12 1B 20 00 00 00 00 00 00 00 00 00 00 01 34 34 02 50 37 FF 02 D0 00 01 00 00 00 29 0B (data)
+ 429 (checksum)
+{"ctrl":{"state":{"system":{"time":"18:27","fw":2.8},"active":["pool"],"delay":[],"pool":{"temp":52,"src":"none","heating":false},"spa":{"temp":52,"src":"none","heating":false},"temp":{"air":55}}}}
+
+# 
+
+ FF 00 FF A5 (preamble)
+ 00 90 10 D2 01 (header)
+ D2 (data)
+ 2EA (checksum)
+ClearCommError failed 
