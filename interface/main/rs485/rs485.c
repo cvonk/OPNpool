@@ -2,7 +2,7 @@
  * @brief RS485 driver: receive/sent bytes to/from the RS485 transceiver
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2020, Coert Vonk
+ * (c) Copyright 2020-2022, Coert Vonk
  * All rights reserved. Use of copyright notice does not imply publication.
  * All text above must be included in any redistribution
  **/

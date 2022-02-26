@@ -1,8 +1,16 @@
 /**
  * @brief Main App: Pool Interface using ESP32
  *
+ * Sniffs the Pentair RS-485 bus to collect pool state information.  The pool state is output
+ * in JavaScript Object Notation (JSON).  The Arduino program allows sending select parameters
+ * to the pool controller.
+ *
+ * Platform: ESP32
+ * Documentation : https://coertvonk.com/sw/embedded/pentair-interface-11554
+ * Tested with: Pentair SunTouch running firmware 2.80, connected intelliFlow pump and intelliChlor
+ * 
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2015 - 2020, Coert Vonk
+ * (c) Copyright 2015 - 2022, Coert Vonk
  * All rights reserved. Use of copyright notice does not imply publication.
  * All text above must be included in any redistribution
  **/

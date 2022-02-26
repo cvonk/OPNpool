@@ -6,7 +6,7 @@
  *   -  IC has messages such as 0x10 0x02 <data0> <data1> <data2> .. <dataN> <ch> 0x10 0x03
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2020, Coert Vonk
+ * (c) Copyright 2020-2022, Coert Vonk
  * All rights reserved. Use of copyright notice does not imply publication.
  * All text above must be included in any redistribution
  **/
