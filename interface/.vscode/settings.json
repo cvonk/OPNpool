@@ -5,6 +5,7 @@
     "esp_system.h": "c",
     "string.h": "c",
     "esp_log.h": "c",
-    "semphr.h": "c"
+    "semphr.h": "c",
+    "esp_attr.h": "c"
   }
 }
