@@ -85,11 +85,26 @@ _thermostat(poolstate_t const * const state, uint8_t const typ, uint8_t const id
         case POOLSTATE_ELEM_THERMO_TYP_HEATING:
             _alloc_bool(value, thermostat->heating);
             break;
-        case POOLSTATE_ELEM_THERMO_TYP_START:
-            _alloc_str(value, network_time_str(thermostat->sched.start / 60, thermostat->sched.start % 60));
+        default:
+            ESP_LOGW(TAG, "%s unknown sub_typ(%u)", __func__, typ);
+            return ESP_FAIL;
+    }
+    return ESP_OK;
+}
+
+static esp_err_t
+_schedule(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * const value)
+{
+    poolstate_sched_t const * const sched = &state->scheds[idx];
+    switch (typ) {
+        case POOLSTATE_ELEM_SCHED_TYP_CIRCUIT:
+            _alloc_str(value, network_circuit_str(sched->circuit));
             break;
-        case POOLSTATE_ELEM_THERMO_TYP_STOP:
-            _alloc_str(value, network_time_str(thermostat->sched.stop / 60, thermostat->sched.stop % 60));
+        case POOLSTATE_ELEM_SCHED_TYP_START:
+            _alloc_str(value, network_time_str(sched->start / 60, sched->start % 60));
+            break;
+        case POOLSTATE_ELEM_SCHED_TYP_STOP:
+            _alloc_str(value, network_time_str(sched->stop / 60, sched->stop % 60));
             break;
         default:
             ESP_LOGW(TAG, "%s unknown sub_typ(%u)", __func__, typ);
@@ -181,6 +196,7 @@ static dispatch_t const _dispatches[] = {
     { POOLSTATE_ELEM_TYP_SYSTEM, _system},
     { POOLSTATE_ELEM_TYP_TEMP,   _temp},
     { POOLSTATE_ELEM_TYP_THERMO, _thermostat},
+    { POOLSTATE_ELEM_TYP_SCHED,  _schedule},
     { POOLSTATE_ELEM_TYP_PUMP,   _pump},
     { POOLSTATE_ELEM_TYP_CHLOR,  _chlor},
 };

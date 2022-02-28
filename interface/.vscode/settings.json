@@ -6,6 +6,24 @@
     "string.h": "c",
     "esp_log.h": "c",
     "semphr.h": "c",
-    "esp_attr.h": "c"
-  }
+    "esp_attr.h": "c",
+    "freertos.h": "c",
+    "nvs_flash.h": "c",
+    "esp_wifi.h": "c",
+    "*.tcc": "c",
+    "optional": "c",
+    "istream": "c",
+    "ostream": "c",
+    "ratio": "c",
+    "system_error": "c",
+    "array": "c",
+    "functional": "c",
+    "regex": "c",
+    "tuple": "c",
+    "type_traits": "c",
+    "utility": "c",
+    "typeinfo": "cpp"
+  },
+  "idf.portWin": "COM6",
+  "idf.adapterTargetName": "esp32"
 }

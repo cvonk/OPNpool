@@ -68,6 +68,27 @@ _service_requests_from_mqtt_and_httpd(rs485_handle_t rs485, ipc_t const * const 
 }
 
 static void
+_queue_req(rs485_handle_t const rs485, network_msg_typ_t const typ)
+{
+    network_msg_t msg = {
+            .typ = typ
+    };
+    datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
+
+    if (network_tx_msg(&msg, pkt)) {
+        if (CONFIG_POOL_DBGLVL_POOLTASK > 1) {
+            ESP_LOGW(TAG, "%s typ=%u", __func__, typ);
+        }
+        datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
+    } else {
+        if (CONFIG_POOL_DBGLVL_POOLTASK > 0) {
+            ESP_LOGE(TAG, "%s network_tx_typ failed", __func__);
+        }
+        free(pkt);
+    }
+}
+
+static void
 _forward_queued_pkt_to_rs485(rs485_handle_t const rs485, ipc_t const * const ipc)
 {
     datalink_pkt_t const * const pkt = rs485->dequeue(rs485);
@@ -104,6 +125,11 @@ pool_task(void * ipc_void)
 {
  	ipc_t * const ipc = ipc_void;
     rs485_handle_t const rs485 = rs485_init();
+
+    // request information from the controller
+    //_queue_req(rs485, MSG_TYP_CTRL_TIME_REQ);
+    _queue_req(rs485, MSG_TYP_CTRL_HEAT_REQ);
+    _queue_req(rs485, MSG_TYP_CTRL_SCHED_REQ);
 
     while (1) {
 

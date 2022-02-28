@@ -31,7 +31,7 @@ typedef uint8_t datalink_data_t;
 
 // state info retained between successive datalink_rx() calls
 typedef struct datalink_pkt_t {
-	datalink_prot_t    prot;
+	  datalink_prot_t    prot;
     uint8_t            prot_typ;  // message type
     uint8_t            src;  // source
     uint8_t            dst;  // destination

@@ -54,6 +54,7 @@ typedef struct ipc_to_mqtt_msg_t {
 
 #define IPC_TO_POOL_TYP_MAP(XX) \
   XX(0x00, SET)   \
+  XX(0x01, REQ)
 
 typedef enum {
 #define XX(num, name) IPC_TO_POOL_TYP_##name = num,

@@ -99,6 +99,9 @@ I (1417) pool_transmitter: sent.
  00 90 10 D2 01 (header)
  D2 (data)
  2EA (checksum)
+
+#
+
  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
  01 0F 10 02 1D (header)
  09 3A 00 00 00 00 00 00 00 00 00 00 00 01 32 32 02 50 2B FF 02 D0 00 01 00 00 00 29 0B (data)
