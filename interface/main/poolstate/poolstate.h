@@ -95,16 +95,6 @@ typedef enum {
 #undef XX
 } poolstate_elem_sched_typ_t;
 
-#define POOLSTATE_SCHED_TYP_MAP(XX) \
-  XX(0, SCHED1) \
-  XX(1, SCHED2)
-
-typedef enum {
-#define XX(num, name) POOLSTATE_SCHED_TYP_##name = num,
-  POOLSTATE_SCHED_TYP_MAP(XX)
-#undef XX
-} poolstate_sched_typ_t;
-
 typedef struct poolstate_sched_t {
     network_circuit_t circuit;
     uint16_t          start;
