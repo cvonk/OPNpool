@@ -2,7 +2,7 @@ menu "Pool Interface"
 
     config OTA_UPDATE_FIRMWARE_URL
         string "Firmware upgrade url endpoint"
-        default "https://coertvonk.com/cvonk/pool/interface.bin"
+        default "http://coertvonk.com/cvonk/pool/interface.bin"
         help
             URL of server which hosts the firmware image. (make sure it matches Kconfig in factory dir)
 

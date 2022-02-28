@@ -89,7 +89,8 @@ I (1325) pool_transmitqueue: requesting DE
 I (1325) pool_transmitter: sending DE
 DBG typ=DE dataLen=0 data.circuitSet=(00 00)
 I (1345) pool_transmitter: sent.
-{"ctrl":{"schedReq":{}},"raw":{"header":["01","10","20","DE","00"]},"data":[]}
+{"ctrl":{"schedReq":{}},"raw":{"header":[
+    "01","10","20","DE","00"]},"data":[]}
 {
     "ctrl":{
         "schedReq":{

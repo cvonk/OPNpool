@@ -49,6 +49,18 @@ poolstate_thermo_nr(char const * const thermostat_str)
     ELEM_POS(_poolstate_thermos, thermostat_str);
 }
 
+static const char * const _poolstate_scheds[] = {
+#define XX(num, name) #name,
+  POOLSTATE_SCHED_TYP_MAP(XX)
+#undef XX
+};
+
+const char *
+poolstate_sched_str(poolstate_sched_typ_t const sched_id)
+{
+  return ELEM_AT(_poolstate_scheds, sched_id, hex8_str(sched_id));
+}
+
 static const char * const _poolstate_temps[] = {
 #define XX(num, name) #name,
   POOLSTATE_TEMP_TYP_MAP(XX)

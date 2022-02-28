@@ -1,7 +1,7 @@
 /**
  * @brief Provision WiFi using BLE and phone app, then start OTA update
  **/
-// Copyright © 2020, Johan and Coert Vonk
+// Copyright © 2020-2022, Coert Vonk
 // SPDX-License-Identifier: MIT
 /*
    loosly based on: ...\espressif\esp-idf-v4.1-beta2\examples\provisioning\legacy\ble_prov\main\ble_main.c
