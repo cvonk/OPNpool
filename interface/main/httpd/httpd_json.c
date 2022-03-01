@@ -49,6 +49,11 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
     return callback;
 }
 
+/*
+ * URI handler for incoming GET "/json" requests.
+ * Registered in `httpd_register_handlers`
+ */
+
 esp_err_t
 httpd_json(httpd_req_t * const req)
 {

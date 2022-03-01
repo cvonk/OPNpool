@@ -13,7 +13,7 @@ uint8_t network_ic_len(uint8_t const ic_typ);
 esp_err_t network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity);
 
 /* network_tx.c */
-bool network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt);
+bool network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt);
 
 /* network_str.c */
 char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t const day);

@@ -17,8 +17,8 @@ typedef enum {
 
 /* hass_task.c */
 void hass_task(void * ipc_void);
-esp_err_t hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * const pkt);
-esp_err_t hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc);
+esp_err_t hass_create_message(char * const topic, char const * const value_str, datalink_pkt_t * const pkt);
+esp_err_t hass_tx_state_to_mqtt(poolstate_t const * const state, ipc_t const * const ipc);
 
 /* hass_str.c */
 char const * hass_dev_typ_str(hass_dev_typ_t const dev_typ);

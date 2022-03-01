@@ -1,5 +1,5 @@
 /**
-* @brief hass, interacts with home assistant (home-assistant.io
+* @brief Listen for commands over MQTT, and support MQTT device discovery.
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2020-2022, Coert Vonk
@@ -50,6 +50,10 @@ typedef struct dispatch_t {
     poolstate_get_params_t   fnc_params;
 } dispatch_t;
 
+/*
+ * Parses a topic string, splitting it at each '/' delimiter
+ */
+
 static uint
 _parse_topic(char * data, char * args[], uint const args_len) {
 
@@ -67,6 +71,12 @@ _parse_topic(char * data, char * args[], uint const args_len) {
     return ii;
 }
 
+/*
+ * Creates a MQTT discovery message for a `circuit`.
+ * It `set_topic` is specified, it also create a MQTT topic(s) that the device will listen to
+ * to let other MQTT clients change pool controller settings.
+ */
+
 static void
 _circuit_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
@@ -80,6 +90,11 @@ _circuit_init(char const * const base, dispatch_hass_t const * const hass, char 
                     "\"stat_t\":\"~/state\"}",
                     base, base, hass->name) >= 0 );
 }
+
+/*
+ * Publishes the state of a circuit to MQTT (by sending a message to the MQTT task).
+ * Called as a registered function from hass_tx_state_to_mqtt().
+ */
 
 static esp_err_t
 _circuit_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
@@ -95,6 +110,11 @@ _circuit_state(poolstate_t const * const state, poolstate_get_params_t const * c
     return ESP_OK;
 }
 
+/*
+ * Creates a `network_msg_ctrl_circuit_set` message and returns ESP_OK.
+ * Called as a registered function from hass_create_message().
+ */
+
 static esp_err_t
 _circuit_set(char const * const subtopic, poolstate_get_params_t const * const params, char const * const value_str, datalink_pkt_t * const pkt)
 {
@@ -109,7 +129,7 @@ _circuit_set(char const * const subtopic, poolstate_get_params_t const * const p
         .typ = MSG_TYP_CTRL_CIRCUIT_SET,
         .u.ctrl_circuit_set = &circuit_set,
     };
-    if (network_tx_msg(&msg, pkt)) {
+    if (network_create_msg(&msg, pkt)) {
         if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
             ESP_LOGW(TAG, "%s: circuit=%u, value=%u, pkt=%p", __func__, circuit_min_1, value, pkt);
         }
@@ -119,8 +139,14 @@ _circuit_set(char const * const subtopic, poolstate_get_params_t const * const p
     return ESP_FAIL;
 }
 
+/*
+ * Creates a MQTT discovery message.
+ * It `set_topic` is specified, it also create a MQTT topic(s) that the device will listen to
+ * to let other MQTT clients change pool controller settings.
+ */
+
 static void
-_json_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
+_generic_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                      "\"~\":\"%s\","
@@ -130,8 +156,13 @@ _json_init(char const * const base, dispatch_hass_t const * const hass, char * *
                      base, base, hass->name, hass->unit ? hass->unit : "") >= 0 );
 }
 
+/*
+ * Publishes a generic state to MQTT (by sending a message to the MQTT task).
+ * Called as a registered function from hass_tx_state_to_mqtt().
+ */
+
 static esp_err_t
-_json_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+_generic_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
 {
     poolstate_get_value_t value;
     if (poolstate_get_value(state, params, &value) == ESP_OK) {
@@ -147,6 +178,12 @@ _json_state(poolstate_t const * const state, poolstate_get_params_t const * cons
     }
     return ESP_FAIL;
 }
+
+/*
+ * Creates a MQTT discovery message for a `thermostat`.
+ * It `set_topic` is specified, it also create a MQTT topic(s) that the device will listen to
+ * to let other MQTT clients change pool controller settings.
+ */
 
 static void
 _thermo_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
@@ -177,6 +214,11 @@ _thermo_init(char const * const base, dispatch_hass_t const * const hass, char *
                      base, base, hass->name, hass->unit ? hass->unit : "") >= 0);
 }
 
+/*
+ * Publishes the state a thermostat to MQTT (by sending a message to the MQTT task).
+ * Called as a registered function from hass_tx_state_to_mqtt().
+ */
+
 static esp_err_t
 _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
 {
@@ -200,6 +242,11 @@ _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * co
     free(combined);
     return ESP_OK;
 }
+
+/*
+ * Creates a `network_msg_ctrl_heat_set` message and returns ESP_OK.
+ * Called as a registered function from hass_create_message().
+ */
 
 static esp_err_t
 _thermo_set(char const * const subtopic, poolstate_get_params_t const * const params, char const * const value_str, datalink_pkt_t * const pkt)
@@ -239,7 +286,7 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
             .typ = MSG_TYP_CTRL_HEAT_SET,
             .u.ctrl_heat_set = &heat_set,
     };
-    if (network_tx_msg(&msg, pkt)) {
+    if (network_create_msg(&msg, pkt)) {
         if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
             ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
         }
@@ -261,31 +308,35 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
     { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
-#if 1
-    { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
-    { { HASS_DEV_TYP_sensor,  "sch1_start",   "sch1 start",   NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START, 0 } },
-    { { HASS_DEV_TYP_sensor,  "sch1_stop",    "sch1 stop",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP, 0 } },
-    { { HASS_DEV_TYP_sensor,  "sch2_circuit", "sch2 circuit", NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 1 } },
-    { { HASS_DEV_TYP_sensor,  "sch2_start",   "sch2 start",   NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START,  1 } },
-    { { HASS_DEV_TYP_sensor,  "sch2_stop",    "sch2 stop",    NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP,   1 } },
-#endif
-    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
-    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
-    { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pumps_tatus",  "pump status",  NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_STATUS,  0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_pct",    "chlor pct",    "%"   }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_PCT,    0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_salt",   "chlor salt",   "ppm" }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_SALT,   0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_status", "chlor status", NULL  }, { _json_init,    _json_state,    NULL         }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_STATUS, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch1_start",   "sch1 start",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch1_stop",    "sch1 stop",    NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch2_circuit", "sch2 circuit", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 1 } },
+    { { HASS_DEV_TYP_sensor,  "sch2_start",   "sch2 start",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START,  1 } },
+    { { HASS_DEV_TYP_sensor,  "sch2_stop",    "sch2 stop",    NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP,   1 } },
+    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
+    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_status",  "pump status",  NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_STATUS,  0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_pct",    "chlor pct",    "%"   }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_PCT,    0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_salt",   "chlor salt",   "ppm" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_SALT,   0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_status", "chlor status", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_STATUS, 0 } },
 };
 
+/*
+ * Publishes the state information to MQTT
+ */
+
 esp_err_t
-hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
+hass_tx_state_to_mqtt(poolstate_t const * const state, ipc_t const * const ipc)
 {
     dispatch_t const * dispatch = _dispatches;
     for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
         if (dispatch->fnc.state) {
+
+            // the registered `state` function publishes the state using the MQTT task.
 
             dispatch->fnc.state(state, &dispatch->fnc_params, &dispatch->hass, ipc);
         }
@@ -298,8 +349,12 @@ hass_tx_state(poolstate_t const * const state, ipc_t const * const ipc)
     return ESP_OK;
 }
 
+/*
+ * Create a message to be sent to the pool controller
+ */
+
 esp_err_t
-hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
+hass_create_message(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
 {
     if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
         ESP_LOGI(TAG, "topic = \"%s\", value = \"%s\"", topic, value_str);
@@ -317,6 +372,10 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
             if (strcmp(dev_typ, hass_dev_typ_str(dispatch->hass.dev_typ)) == 0 &&
                 strcmp(hass_id, dispatch->hass.id) == 0 && dispatch->fnc.set) {
 
+                // The registered `set` function will create a corresponding message if
+                // successfull return ESP_OK.  In that case, the caller will call
+                // datalink_tx_pkt_queue() to transmit the message.
+
                 return dispatch->fnc.set(subtopic, &dispatch->fnc_params, value_str, pkt);
             }
         }
@@ -324,9 +383,12 @@ hass_rx_set(char * const topic, char const * const value_str, datalink_pkt_t * c
     return ESP_FAIL;
 }
 
-/**
- * every 5 minutes publish .../config topics to homeassistant over MQTT
- **/
+/*
+ * The hass_task's duties are
+ *   - listen for commands over MQTT,
+ *   - support MQTT device discovery.
+ */
+
 void
 hass_task(void * ipc_void)
 {
@@ -336,6 +398,7 @@ hass_task(void * ipc_void)
     while (1) {
         dispatch_t const * dispatch = _dispatches;
         for (uint ii = 0; ii < ARRAY_SIZE(_dispatches); ii++, dispatch++) {
+
             if (dispatch->fnc.init) {
                 char * base;
                 assert( asprintf(&base, "homeassistant/%s/pool/%s", hass_dev_typ_str(dispatch->hass.dev_typ), dispatch->hass.id) >= 0 );
@@ -344,18 +407,28 @@ hass_task(void * ipc_void)
                 if (mqtt_subscribe) {
                     char * set_topics[4] = {};
 
+                    // the registered `init` function will create a MQTT topic(s) that the device will
+                    // listen to to let other MQTT clients change pool controller settings such as
+                    // thermostat set point or heating mode.  It also creates a MQTT discovery message.
+
                     dispatch->fnc.init(base, &dispatch->hass, set_topics, &cfg);
+
+                    // subscribe to the MQTT topic(s) (by sending a request to the MQTT task)
 
                     char * * topic = set_topics;
                     for (uint jj = 0; jj < ARRAY_SIZE(set_topics) && *topic; jj++, topic++) {
-                        //ESP_LOGW(TAG, "1st %s", topic);
                         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_SUBSCRIBE, *topic, ipc);
                         free(*topic);
                     }
                 } else {
 
+                    // the registered `init` function will create a MQTT discovery message.
+
                     dispatch->fnc.init(base, &dispatch->hass, NULL, &cfg);
                 }
+
+                // publish the MQTT discovery message (by sendint it to the MQTT task)
+
                 ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
                 free(cfg);
                 free(base);

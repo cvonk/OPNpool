@@ -15,6 +15,11 @@
 
 //static char const * const TAG = "httpd_ico";
 
+/*
+ * URI handler for incoming GET "/favicon.ico" requests.
+ * Registered in `httpd_register_handlers`
+ */
+
 esp_err_t
 httpd_ico(httpd_req_t * const req)
 {
