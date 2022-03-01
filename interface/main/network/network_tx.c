@@ -45,11 +45,13 @@ static const network_datalink_map_t _msg_typ_map[] = {
 };
 
 bool
-network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
+network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
 {
     network_datalink_map_t const * map = _msg_typ_map;
     for (uint ii = 0; ii < ARRAY_SIZE(_msg_typ_map); ii++, map++) {
         if (msg->typ == map->network.typ) {
+
+            // create a packet
             pkt->prot = map->datalink.prot;
             pkt->prot_typ = map->datalink.prot_typ;
             pkt->data_len = map->network.data_len;
@@ -64,49 +66,6 @@ network_tx_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
         ESP_LOGE(TAG, "unknown msg typ (%u)", msg->typ);
     }
     return false;
-}
-
-#if 0
-void
-network_tx_circuit_set_msg(rs485_handle_t const rs485_handle, uint8_t circuit, uint8_t value)
-{
-    size_t msg_size = sizeof(network_msg_ctrl_circuit_set_t);
-    skb_handle_t const txb = _skb_alloc_a5(msg_size);
-
-    network_msg_ctrl_circuit_set_t * const msg = (network_msg_ctrl_circuit_set_t *) skb_put(txb, msg_size);
-    msg->circuit = circuit + 1;
-    msg->value = value;
-    network_tx_skb(rs485_handle, txb, NETWORK_TYP_CTRL_CIRCUIT_SET);
-    //datalink_tx_pkt_queue(rs485_handle, txb, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRCUIT_SET);  // will free when done
-}
-
-
-void
-EncodeA5::circuitMsg(element_t * element, uint_least8_t const circuit, uint_least8_t const value)
-{
-	*element = {
-		.typ = NETWORK_TYP_CTRL_circuitSet,
-		.dataLen = sizeof(network_msg_ctrl_circuit_set_t),
-		.data = {
-			.circuitSet = {
-				.circuit = circuit,
-				.value = value
-			}
-		}
-	};
-}
-
-void
-EncodeA5::heatMsg(element_t * element, uint8_t const poolTempSetpoint, uint8_t const spaTempSetpoint, uint8_t const heatSrc)
-{
-	element->typ = NETWORK_TYP_CTRL_heatSet;
-	element->dataLen = sizeof(network_msg_ctrl_heat_set_t);
-	element->data.heatSet = {
-		.poolTempSetpoint = poolTempSetpoint,
-		.spaTempSetpoint = spaTempSetpoint,
-		.heatSrc = heatSrc,
-		.UNKNOWN_3 = {}
-	};
 }
 
 #if 0

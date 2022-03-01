@@ -19,13 +19,17 @@
 static char const * const TAG = "httpd";
 
 static httpd_uri_t _httpd_uris[] = {
-    { .uri = "/",            .method = HTTP_GET, .handler = httpd_root },
-    { .uri = "/json",        .method = HTTP_GET, .handler = httpd_json },
-    { .uri = "/favicon.ico", .method = HTTP_GET, .handler = httpd_ico  },
+    { .uri = "/",            .method = HTTP_GET, .handler = httpd_root },  // httpd_root.c
+    { .uri = "/json",        .method = HTTP_GET, .handler = httpd_json },  // httpd_json.c
+    { .uri = "/favicon.ico", .method = HTTP_GET, .handler = httpd_ico  },  // httpd_ico.c
 };
 
+/*
+ * Register the URI handlers for incoming GET requests.
+ */
+
 void
-httpd_register_cb(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * const ip, ipc_t const * const ipc)
+httpd_register_handlers(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * const ip, ipc_t const * const ipc)
 {
     httpd_uri_t * http_uri = _httpd_uris;
     for (int ii = 0; ii < ARRAY_SIZE(_httpd_uris); ii++, http_uri++) {
@@ -38,8 +42,12 @@ httpd_register_cb(httpd_handle_t const httpd_handle, esp_ip4_addr_t const * cons
     }
 }
 
-// caller MUST free alloc'ed mem
-// https://github.com/wcharczuk/urlencode/blob/master/urldecode.c
+/*
+ * Decodes a URL string
+ * Caller MUST free alloc'ed mem.
+ * From https://github.com/wcharczuk/urlencode
+ */
+
 char *
 httpd_urldecode(char const * in)
 {

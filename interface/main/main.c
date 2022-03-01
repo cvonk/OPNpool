@@ -60,24 +60,37 @@ _initNvsFlash(void)
     ESP_ERROR_CHECK(ret);
 }
 
+/*
+ * Start a wildcard HTTP server, calling `httpd_register_handlers` to register the
+ * URI handlers for incoming GET requests.
+ */
+
 static esp_err_t
 _wifi_connect_cb(void * const priv_void, esp_ip4_addr_t const * const ip)
 {
     wifi_connect_priv_t * const priv = priv_void;
     ipc_t * const ipc = priv->ipc;
 
+    // note the MAC and IP addresses
+
     snprintf(ipc->dev.ipAddr, WIFI_DEVIPADDR_LEN, IPSTR, IP2STR(ip));
 	board_name(ipc->dev.name, WIFI_DEVNAME_LEN);
+
+    // start wildchard HTTP server
 
     httpd_config_t httpd_config = HTTPD_DEFAULT_CONFIG();
     httpd_config.uri_match_fn = httpd_uri_match_wildcard;
     ESP_ERROR_CHECK(httpd_start(&priv->httpd_handle, &httpd_config));
 
-    httpd_register_cb(priv->httpd_handle, ip, ipc);
+    httpd_register_handlers(priv->httpd_handle, ip, ipc);
 
     ipc->dev.count.wifiConnect++;
     return ESP_OK;
 }
+
+/*
+ * Stop the wildcard HTTP server
+ */
 
 static esp_err_t
 _wifi_disconnect_cb(void * const priv_void, bool const auth_err)
@@ -91,11 +104,16 @@ _wifi_disconnect_cb(void * const priv_void, bool const auth_err)
     }
     if (auth_err) {
         ipc->dev.count.wifiAuthErr++;
-        // should probably reprovision on repeated auth_err and return ESP_FAIL
+        // 2BD: should probably reprovision on repeated auth_err and return ESP_FAIL
     }
     ESP_LOGW(TAG, "Wifi disconnect connectCnt=%u, authErrCnt=%u", ipc->dev.count.wifiConnect, ipc->dev.count.wifiAuthErr);
     return ESP_OK;
 }
+
+/*
+ * Connect to WiFi accesspoint.
+ * Register callbacks when connected or disconnected.
+ */
 
 static void
 _connect2wifi_and_start_httpd(ipc_t * const ipc)
