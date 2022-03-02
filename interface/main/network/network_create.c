@@ -1,5 +1,5 @@
 /**
- * @brief Data Link layer: encode messages to data link layer packets
+ * @brief Network layer: create message
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2022, Coert Vonk
@@ -67,21 +67,3 @@ network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
     }
     return false;
 }
-
-#if 0
-void
-EncodeA5::setTime(JsonObject * root, network_msg_t * sys, datalink_hdr_a5_t * const hdr, struct network_msg_ctrl_time_t * const msg)
-{
-	*msg = {
-		.hour = 14,
-		.minute = 49,
-		.UNKNOWN_2 = 0x00,
-		.day = 23,
-		.month = 5,
-		.year = 15,
-	};
-	send_a5(root, sys, network_typ_ctrl_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
-}
-#endif
-
-#endif
