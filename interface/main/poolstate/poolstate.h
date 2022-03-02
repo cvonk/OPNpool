@@ -299,7 +299,6 @@ esp_err_t poolstate_get_value(poolstate_t const * const state, poolstate_get_par
 /* poolstate_str.c */
 const char * poolstate_chlor_status_str(poolstate_chlor_status_t const chlor_state_id);
 const char * poolstate_thermo_str(poolstate_thermo_typ_t const thermostat_id);
-const char * poolstate_sched_str(poolstate_sched_typ_t const sched_id);
 const char * poolstate_temp_str(poolstate_temp_typ_t const temp_id);
 int poolstate_temp_nr(char const * const temp_str);
 int poolstate_thermo_nr(char const * const thermostat_str);

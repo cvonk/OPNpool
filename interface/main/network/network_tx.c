@@ -83,5 +83,3 @@ EncodeA5::setTime(JsonObject * root, network_msg_t * sys, datalink_hdr_a5_t * co
 	send_a5(root, sys, network_typ_ctrl_timeSet, hdr, (uint8_t *)msg, sizeof(*msg));
 }
 #endif
-
-#endif
