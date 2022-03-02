@@ -1,5 +1,5 @@
 /**
- * @brief Network layer: decode packets from the data link layer to messages
+ * @brief Network layer: decode datalink_pkt to network_msg
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2022, Coert Vonk

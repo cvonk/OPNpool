@@ -1,5 +1,5 @@
 /**
- * @brief Network layer: create message
+ * @brief Network layer: create datalink_pkt from network_msg
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2022, Coert Vonk
@@ -44,6 +44,10 @@ static const network_datalink_map_t _msg_typ_map[] = {
 #undef XX
 };
 
+/*
+ * Create datalink_pkt from network_msg.
+ */
+
 bool
 network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
 {
@@ -51,7 +55,6 @@ network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
     for (uint ii = 0; ii < ARRAY_SIZE(_msg_typ_map); ii++, map++) {
         if (msg->typ == map->network.typ) {
 
-            // create a packet
             pkt->prot = map->datalink.prot;
             pkt->prot_typ = map->datalink.prot_typ;
             pkt->data_len = map->network.data_len;
