@@ -17,7 +17,7 @@
 #include "../skb/skb.h"
 #include "network.h"
 
-static char const * const TAG = "network_tx";
+static char const * const TAG = "network_create";
 
 skb_handle_t
 _skb_alloc_a5(size_t const msg_size)
