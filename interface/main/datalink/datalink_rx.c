@@ -81,6 +81,13 @@ _preamble_complete(struct proto_info_t * const pi, uint8_t const b, bool * part_
 	return false;
 }
 
+/*
+ * Waits until a A5/IC protocol preamgle is received (or times-out)
+ * Writes the protocol type to `pkt->prot`.
+ * The bytes received are stored in `local->head[]`, updates `local->head_len` and `local->tail_len`.
+ * Called from `datalink_rx_pkt`
+ */
+
 static esp_err_t
 _find_preamble(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_t * const pkt)
 {
@@ -135,6 +142,13 @@ _find_preamble(rs485_handle_t const rs485, local_data_t * const local, datalink_
 	return ESP_FAIL;
 }
 
+/*
+ * Reads a A5/IC protocol header (or times-out)
+ * Writes the header details to `pkt->prot_typ`, `pkt->src`, `pkt->dst`, `pkt->data_len`
+ * The bytes received are stored in `local->head[]`
+ * Called from `datalink_rx_pkt`
+ */
+
 static esp_err_t
 _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_t * const pkt)
 {
@@ -180,6 +194,12 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 	return ESP_FAIL;
 }
 
+/*
+ * Reads a A5/IC protocol data (or times-out)
+ * Writes the data to `pkt->data[]`
+ * Called from `datalink_rx_pkt`
+ */
+
 static esp_err_t
 _read_data(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_t * const pkt)
 {
@@ -198,6 +218,12 @@ _read_data(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 	}
 	return ESP_FAIL;
 }
+
+/*
+ * Reads a A5/IC protocol tail (or times-out)
+ * The bytes received are stored in `local->tail` (the CRC)
+ * Called from `datalink_rx_pkt`
+ */
 
 static esp_err_t
 _read_tail(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_t * const pkt)
@@ -259,13 +285,6 @@ _check_crc(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
     return ESP_FAIL;
 }
 
-/**
- * Receive packets from the Pentair RS-485 bus.
- * Returns true when a complete packet has been received
- *
- * It relies on data from the network layer, for the correct length of the data pkt.
- */
-
 typedef esp_err_t (* state_fnc_t)(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_t * const pkt);
 
 typedef struct state_transition_t {
@@ -283,6 +302,12 @@ static state_transition_t state_transitions[] = {
     { STATE_CHECK_CRC,     _check_crc,     STATE_DONE,          STATE_FIND_PREAMBLE },
 };
 
+/**
+ * Receive a packet from the RS-485 bus.
+ * Uses a state machine `state_transitions[]`.
+ * Called from `pool_task`.
+ */
+
 esp_err_t
 datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
 {
@@ -296,9 +321,17 @@ datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt)
         for (uint ii = 0; ii < ARRAY_SIZE(state_transitions); ii++, transition++) {
             if (state == transition->state) {
 
+                // calls the registered function for the current state.
+                // it will store head/tail in `local` and update `pkt`
+
                 bool const ok = transition->fnc(rs485, &local, pkt) == ESP_OK;
 
+                // find the new state
+
                 state_t const new_state = ok ? transition->on_ok : transition->on_err;
+
+                // claim socket buffers to store the bytes received
+
                 switch (new_state) {
                     case STATE_FIND_PREAMBLE:
                         skb_reset(pkt->skb);

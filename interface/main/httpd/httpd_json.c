@@ -22,6 +22,11 @@
 
 static char const * const TAG = "httpd_json";
 
+/*
+ * Parse the query variables, and queue them for the pool_task.
+ * This will in turn, create a corresponding message and send it to the pool controller.
+ */
+
 static char *
 _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const ipc)
 {

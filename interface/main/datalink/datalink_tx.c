@@ -57,8 +57,13 @@ _enter_a5_tail(datalink_tail_a5_t * const tail, uint8_t const * const start, uin
     tail->crc[1] = crcVal & 0xFF;
 }
 
+/*
+ * Adds a header and tail to the packet and queues it for transmission on the RS-485 bus.
+ * Called from `pool_task`
+ */
+
 void
-datalink_tx_pkt_queue(rs485_handle_t const rs485_handle, datalink_pkt_t const * const pkt)
+datalink_tx_pkt_queue(rs485_handle_t const rs485, datalink_pkt_t const * const pkt)
 {
     skb_handle_t const skb = pkt->skb;
 
@@ -91,5 +96,8 @@ datalink_tx_pkt_queue(rs485_handle_t const rs485_handle, datalink_pkt_t const * 
         (void) skb_print(TAG, skb, dbg, dbg_size);
         ESP_LOGI(TAG, "%s: { %s}", datalink_prot_str(pkt->prot), dbg);
     }
-    rs485_handle->queue(rs485_handle, pkt);
+
+    // queue for transmission by `pool_task`
+
+    rs485->queue(rs485, pkt);
 }
