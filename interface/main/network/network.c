@@ -1,5 +1,5 @@
 /**
- * @brief Data Link layer: packets from the data link layer to/from messages
+ * @brief Network layer: Creates messages from datalink packets
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2022, Coert Vonk

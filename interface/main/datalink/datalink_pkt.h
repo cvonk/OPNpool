@@ -26,15 +26,14 @@ typedef enum {
 typedef uint8_t datalink_data_t;
 
 /**
- * datalink_pkt_t
+ * State info retained between successive datalink_rx() calls
  **/
 
-// state info retained between successive datalink_rx() calls
 typedef struct datalink_pkt_t {
-	  datalink_prot_t    prot;
-    uint8_t            prot_typ;  // message type
-    uint8_t            src;  // source
-    uint8_t            dst;  // destination
+	  datalink_prot_t    prot;      // datalink_prot as detected by `_read_head`
+    uint8_t            prot_typ;  // from datalink_hdr_a5->typ
+    uint8_t            src;       // from datalink_hdr_a5->src
+    uint8_t            dst;       // from datalink_hdr_a5->dst
     datalink_data_t *  data;
     size_t             data_len;
     skb_handle_t       skb;

@@ -1,5 +1,5 @@
 /**
- * @brief Data Link layer: decode packets from the data link layer to messages
+ * @brief Network layer: decode packets from the data link layer to messages
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2022, Coert Vonk
@@ -22,6 +22,10 @@ typedef struct hdr_data_hdr_copy_t {
     uint8_t src;  // source
     uint8_t typ;  // message type
 } hdr_data_hdr_copy_t;
+
+/*
+ *
+ */
 
 static void
 _decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const network)
@@ -130,6 +134,10 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const netw
     }
 };
 
+/*
+ *
+ */
+
 static void
 _decode_msg_a5_pump(datalink_pkt_t const * const pkt, network_msg_t * const network)
 {
@@ -212,6 +220,10 @@ _decode_msg_a5_pump(datalink_pkt_t const * const pkt, network_msg_t * const netw
     }
 }
 
+/*
+ *
+ */
+
 static void
 _decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const network)
 {
@@ -259,15 +271,21 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const net
     }
 }
 
+/*
+ * 
+ */
+
 esp_err_t
 network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity)
 {
+    // reset mechanism that converts various formats to string
 	name_reset_idx();
 
+    // silently ignore packets that we don't support
     datalink_addrgroup_t const dst = datalink_groupaddr(pkt->dst);
     if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst == DATALINK_ADDRGROUP_X09) ||
         (pkt->prot == DATALINK_PROT_IC && dst != DATALINK_ADDRGROUP_ALL && dst != DATALINK_ADDRGROUP_CHLOR)) {
-        return ESP_FAIL;  // silently ignore
+        return ESP_FAIL;
     }
 	switch (pkt->prot) {
 		case DATALINK_PROT_A5_CTRL:
