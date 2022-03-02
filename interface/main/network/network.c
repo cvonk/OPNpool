@@ -1,5 +1,5 @@
 /**
- * @brief Network layer: Creates messages from datalink packets and visa versa
+ * @brief Network layer: Creates network_msg from datalink_pkt and visa versa
  *
  * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
  * (c) Copyright 2015 - 2022, Coert Vonk
