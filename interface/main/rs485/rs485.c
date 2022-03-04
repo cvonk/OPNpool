@@ -40,11 +40,13 @@ _read_bytes(uint8_t * dst, uint32_t len)
     return uart_read_bytes(_uart_port, dst, len, _rxTimeout);
 }
 
+#if 0
 static int
 _write(uint8_t src)
 {
     return uart_write_bytes(_uart_port, (char *) &src, 1);
 }
+#endif
 
 static int
 _write_bytes(uint8_t * src, size_t len)
@@ -139,7 +141,9 @@ rs485_init(void)
     handle->available = _available;
     handle->read_bytes = _read_bytes;
     handle->write_bytes = _write_bytes;
+#if 0
     handle->write = _write;
+#endif
     handle->flush = _flush;
     handle->tx_mode = _tx_mode;
     handle->queue = _queue;

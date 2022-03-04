@@ -117,7 +117,12 @@ void app_main(void)
         return;
     }
     if (provisioned) {
-        wifi_connect_start(NULL);
+        // 2BD: for some reason `esp_wifi_start` fails with ESP_ERR_WIFI_CONN
+        //   wifi_connect: WIFI_EVENT_STA_START
+        //   E (52348) wifi:sta is connecting, return error
+        //   ESP_ERROR_CHECK failed: esp_err_t 0x3007 (ESP_ERR_WIFI_CONN)
+        // no despair, 'cause the device reboots, and then establishes WiFi connection
+        ESP_ERROR_CHECK(wifi_connect_start(NULL));
     } else {
         _start_provisioning();
     }
