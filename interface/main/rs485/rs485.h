@@ -16,18 +16,20 @@ typedef void (* rs485_queue_fnc_t)(rs485_handle_t const handle, datalink_pkt_t c
 typedef datalink_pkt_t const * (* rs485_dequeue_fnc_t)(rs485_handle_t const handle);
 
 typedef struct rs485_instance_t {
-    rs485_available_fnc_t available;
-    rs485_read_bytes_fnc_t read_bytes;
-    rs485_write_bytes_fnc_t write_bytes;
-    rs485_write_fnc_t write;
-    rs485_flush_fnc_t flush;
-    rx485_tx_mode_fnc_t tx_mode;
-    rs485_queue_fnc_t queue;
-    rs485_dequeue_fnc_t dequeue;
-    QueueHandle_t tx_q;
+    rs485_available_fnc_t available;      // bytes available in rx buffer
+    rs485_read_bytes_fnc_t read_bytes;    // read bytes from rx buffer
+    rs485_write_bytes_fnc_t write_bytes;  // write bytes to tx buffer 
+#if 0
+    rs485_write_fnc_t write;              // write 1 byte to tx buffer
+#endif
+    rs485_flush_fnc_t flush;              // wait until all bytes are transmitted
+    rx485_tx_mode_fnc_t tx_mode;          // controls RTS pin (for half-duplex)
+    rs485_queue_fnc_t queue;              // queue to handle->tx_q
+    rs485_dequeue_fnc_t dequeue;          // dequeue from handle->tx_q
+    QueueHandle_t tx_q;                   // transmit queue
 } rs485_instance_t;
 
-typedef struct  rs485_q_msg_t{
+typedef struct  rs485_q_msg_t {
     datalink_pkt_t const * const pkt;
 } rs485_q_msg_t;
 

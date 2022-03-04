@@ -50,7 +50,7 @@ typedef struct wifi_connect_priv_t {
 } wifi_connect_priv_t;
 
 static void
-_initNvsFlash(void)
+_init_nvs(void)
 {
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -138,7 +138,7 @@ static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in 
 void
 app_main()
 {
-    _initNvsFlash();
+    _init_nvs();
 
     ESP_LOGI(TAG, "starting ..");
     xTaskCreate(&factory_reset_task, "factory_reset_task", 4096, NULL, 5, NULL);
