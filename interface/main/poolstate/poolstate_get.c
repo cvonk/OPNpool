@@ -124,8 +124,8 @@ _pump(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poo
         case POOLSTATE_ELEM_PUMP_TYP_RUNNING:
             _alloc_bool(value, pump->running);
             break;
-        case POOLSTATE_ELEM_PUMP_TYP_STATUS:
-            _alloc_uint(value, pump->status);
+        case POOLSTATE_ELEM_PUMP_TYP_STATE:
+            _alloc_str(value, network_pump_state_str(pump->state));
             break;
         case POOLSTATE_ELEM_PUMP_TYP_PWR:
             _alloc_uint(value, pump->pwr);

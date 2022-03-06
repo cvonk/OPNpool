@@ -96,6 +96,20 @@ NETWORK_TYP_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 
  * macro "magic" to get an enum and matching *_str functions (in *_str.c)
  **/
 
+#define NETWORK_MODE_MAP(XX) \
+  XX( 0, SERVICE) \
+  XX( 1, X01) \
+  XX( 2, TEMPINC) \
+  XX( 3, FREEZEPROT) \
+  XX( 4, TIMEOUT) \
+  XX( 5, COUNT)
+
+typedef enum {
+#define XX(num, name) NETWORK_MODE_##name = num,
+  NETWORK_MODE_MAP(XX)
+#undef XX
+} network_mode_t;
+
 // MUST add 1 for network messages (1-based)
 #define NETWORK_CIRCUIT_MAP(XX) \
   XX( 0, SPA)  \
@@ -136,6 +150,19 @@ typedef enum {
 #undef XX
 } network_pump_mode_t;
 
+#define NETWORK_PUMP_STATE_MAP(XX) \
+  XX(0, NORMAL) \
+  XX(1, PRIMING)  \
+  XX(2, RUNNING)  \
+  XX(3, X03)  \
+  XX(4, SYSPRIMING)
+
+typedef enum {
+#define XX(num, name) NETWORK_PUMP_STATE_##name = num,
+  NETWORK_PUMP_STATE_MAP(XX)
+#undef XX
+} network_pump_state_t;
+
 #define NETWORK_HEAT_SRC_MAP(XX) \
   XX(0, off)        \
   XX(1, heat)       \
@@ -147,6 +174,8 @@ typedef enum {
   NETWORK_HEAT_SRC_MAP(XX)
 #undef XX
 } network_heat_src_t;
+
+
 
 /*
  * A5 messages, used to communicate with components except IntelliChlor
@@ -189,8 +218,8 @@ typedef struct network_msg_ctrl_state_t {
     uint8_t minute;             // 1
     uint8_t activeLo;           // 2
     uint8_t activeHi;           // 3
-    uint8_t UNKNOWN_4to8[5];    // 4..8
-    uint8_t remote;             // 9
+    uint8_t UNKNOWN_4to8[5];    // 4..8 additional circuits on fancy controllers
+    uint8_t mode;               // 9
     uint8_t heating;            // 10
     uint8_t UNKNOWN_11;         // 11
     uint8_t delay;              // 12
@@ -201,8 +230,7 @@ typedef struct network_msg_ctrl_state_t {
     uint8_t minor;              // 17
     uint8_t airTemp;            // 18
     uint8_t solarTemp;          // 19
-    uint8_t UNKNOWN_20;         // 20
-    uint8_t UNKNOWN_21;         // 21
+    uint8_t UNKNOWN_20tp21[2];  // 20..21
     uint8_t heatSrc;            // 22
     uint8_t UNKNOWN_23to28[6];  // 23..28
 } PACK8 network_msg_ctrl_state_t;
@@ -216,12 +244,12 @@ typedef struct network_msg_ctrl_time_req_t {
 typedef struct network_msg_ctrl_time_t {
     uint8_t hour;            // 0
     uint8_t minute;          // 1
-    uint8_t UNKNOWN_2;        // 2 (DST adjust?)
+    uint8_t UNKNOWN_2;       // 2 (DST adjust?)
     uint8_t day;             // 3
     uint8_t month;           // 4
     uint8_t year;            // 5
     uint8_t clkSpeed;        // 6
-    uint8_t daylightSavings; // 7
+    uint8_t daylightSavings; // 7 
 } PACK8 network_msg_ctrl_time_t;
 
 typedef struct network_msg_ctrl_heat_req_t {
@@ -289,7 +317,7 @@ typedef struct network_msg_pump_status_req_t {
 typedef struct network_msg_pump_status_resp_t {
     uint8_t running;     // 0
     uint8_t mode;        // 1
-    uint8_t status;      // 2
+    uint8_t state;       // 2
     uint8_t powerHi;     // 3
     uint8_t powerLo;     // 4 [Watt]
     uint8_t rpmHi;       // 5

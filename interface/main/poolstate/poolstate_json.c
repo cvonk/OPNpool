@@ -34,6 +34,7 @@ static poolstate_json_dispatch_t _dispatches[] = {
     { POOLSTATE_ELEM_TYP_THERMO,   "thermos",  cJSON_AddThermosToObject  },
     { POOLSTATE_ELEM_TYP_SCHED,    "scheds",   cJSON_AddSchedsToObject   },
     { POOLSTATE_ELEM_TYP_CIRCUITS, "circuits", cJSON_AddCircuitsToObject },
+    { POOLSTATE_ELEM_TYP_MODES,    "modes",    cJSON_AddModesToObject    },
     { POOLSTATE_ELEM_TYP_PUMP,     "pump",     cJSON_AddPumpToObject     },
     { POOLSTATE_ELEM_TYP_CHLOR,    "chlor",    cJSON_AddChlorToObject    },
 };
@@ -175,7 +176,7 @@ cJSON_AddSchedsToObject(cJSON * const obj, char const * const key, poolstate_t c
 void
 cJSON_AddTempToObject(cJSON * const obj, char const * const key, poolstate_temp_t const * const temp)
 {
-    if (temp->temp != 0xFF) {
+    if (temp->temp != 0xFF && temp->temp != 0x00) {
         cJSON_AddNumberToObject(obj, key, temp->temp);
     }
 }
@@ -191,11 +192,27 @@ cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_t co
 }
 
 /**
- * poolstate->circuits
+ * poolstate->modes
  **/
 
 void
-cJSON_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, bool const * active)
+cJSON_AddModesToObject(cJSON * const obj, char const * const key, poolstate_t const * const state)
+{
+    poolstate_modes_t const * const modes = &state->modes;
+    cJSON * const item = _create_item(obj, key);
+
+    bool const * set = modes->set;
+    for (uint ii = 0; ii < NETWORK_MODE_COUNT; ii++, set++) {
+        cJSON_AddBoolToObject(item, network_mode_str(ii), *set);
+    }
+}
+
+/**
+ * poolstate->circuits, poolstate->delay 
+ **/
+
+void
+cJSON_AddCircuitDetailToObject(cJSON * const obj, char const * const key, bool const * active)
 {
     cJSON * const item = _create_item(obj, key);
     for (uint ii = 0; ii < NETWORK_CIRCUIT_COUNT; ii++, active++) {
@@ -208,8 +225,8 @@ cJSON_AddCircuitsToObject(cJSON * const obj, char const * const key, poolstate_t
 {
     poolstate_circuits_t const * const circuits = &state->circuits;
     cJSON * const item = _create_item(obj, key);
-    cJSON_AddActiveCircuitsToObject(item, "active", circuits->active);
-    cJSON_AddNumberToObject(item, "delay", circuits->delay);
+    cJSON_AddCircuitDetailToObject(item, "active", circuits->active);
+    cJSON_AddCircuitDetailToObject(item, "delay", circuits->delay);
 }
 
 /**
@@ -224,7 +241,8 @@ cJSON_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t co
     cJSON_AddTempsToObject(item, "temps", state);
     cJSON_AddThermosToObject_generic(item, "thermos", state->thermos, true, false, true, true);
     cJSON_AddSchedsToObject_generic(item, "scheds", state->scheds, true);
-    cJSON_AddActiveCircuitsToObject(item, "active", state->circuits.active);
+    cJSON_AddModesToObject(item, "modes", state);
+    cJSON_AddCircuitsToObject(item, "circuits", state);
 }
 
 /**
@@ -256,6 +274,12 @@ cJSON_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_t con
 }
 
 void
+cJSON_AddPumpStateToObject(cJSON * const obj, char const * const key, uint8_t const state)
+{
+    cJSON_AddStringToObject(obj, key, network_pump_state_str(state));
+}
+
+void
 cJSON_AddPumpRunningToObject(cJSON * const obj, char const * const key, bool const running)
 {
     cJSON_AddBoolToObject(obj, key, running);
@@ -267,7 +291,7 @@ cJSON_AddPumpStatusToObject(cJSON * const obj, char const * const key, poolstate
     cJSON * const item = _create_item(obj, key);
     cJSON_AddPumpRunningToObject(item, "running", pump->running);
     cJSON_AddPumpModeToObject(item, "mode", pump->mode);
-    cJSON_AddNumberToObject(item, "status", pump->status);
+    cJSON_AddPumpStateToObject(item, "state", pump->state);
 }
 
 void
@@ -278,7 +302,7 @@ cJSON_AddPumpToObject(cJSON * const obj, char const * const key, poolstate_t con
     cJSON_AddTimeToObject(item, "time", &pump->time);
     cJSON_AddPumpModeToObject(item, "mode", pump->mode);
     cJSON_AddPumpRunningToObject(item, "running", pump->running);
-    cJSON_AddNumberToObject(item, "status", pump->status);
+    cJSON_AddPumpStateToObject(item, "state", pump->state);
     cJSON_AddNumberToObject(item, "pwr", pump->pwr);
     cJSON_AddNumberToObject(item, "rpm", pump->rpm);
     if (pump->gpm) {

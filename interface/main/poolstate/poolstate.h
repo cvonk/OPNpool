@@ -13,7 +13,7 @@
 typedef struct poolstate_time_t {
     uint8_t hour;
     uint8_t minute;
-} poolstate_time_t ;
+} poolstate_time_t;
 
 typedef struct poolstate_date_t {
     uint8_t day;
@@ -132,12 +132,20 @@ typedef enum {
 } poolstate_elem_temp_typ_t;
 
 /**
+ * poolstate_mode_t
+ **/
+
+typedef struct poolstate_modes_t {
+    bool     set[NETWORK_MODE_COUNT];
+} poolstate_modes_t;
+
+/**
  * poolstate_circuits_t
  **/
 
 typedef struct poolstate_circuits_t {
     bool     active[NETWORK_CIRCUIT_COUNT];
-    uint8_t  delay;
+    bool     delay[NETWORK_CIRCUIT_COUNT];
 } poolstate_circuits_t;
 
 #define POOLSTATE_ELEM_CIRCUITS_TYP_MAP(XX) \
@@ -158,7 +166,7 @@ typedef struct {
     poolstate_time_t time;
     uint8_t  mode;
     bool     running;
-    uint8_t  status;
+    uint8_t  state;
     uint16_t pwr;
     uint16_t gpm;
     uint16_t rpm;
@@ -171,7 +179,7 @@ typedef struct {
   XX(0, TIME) \
   XX(1, MODE) \
   XX(2, RUNNING) \
-  XX(3, STATUS) \
+  XX(3, STATE) \
   XX(4, PWR) \
   XX(5, GPM) \
   XX(6, RPM) \
@@ -228,6 +236,7 @@ typedef struct poolstate_t {
     poolstate_temp_t      temps[POOLSTATE_TEMP_TYP_COUNT];
     poolstate_thermo_t    thermos[POOLSTATE_THERMO_TYP_COUNT];
     poolstate_sched_t     scheds[POOLSTATE_SCHED_TYP_COUNT];
+    poolstate_modes_t     modes;
     poolstate_circuits_t  circuits;
     poolstate_pump_t      pump;
     poolstate_chlor_t     chlor;
@@ -241,7 +250,8 @@ typedef struct poolstate_t {
   XX(0x04, CIRCUITS) \
   XX(0x05, PUMP) \
   XX(0x06, CHLOR) \
-  XX(0x07, ALL)
+  XX(0x07, MODES) \
+  XX(0x08, ALL)
 
 typedef enum {
 #define XX(num, name) POOLSTATE_ELEM_TYP_##name = num,
@@ -274,7 +284,7 @@ void cJSON_AddSchedsToObject(cJSON * const obj, char const * const key, poolstat
 
 void cJSON_AddTempToObject(cJSON * const obj, char const * const key, poolstate_temp_t const * const temp);
 void cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_t const * state);
-void cJSON_AddActiveCircuitsToObject(cJSON * const obj, char const * const key, bool const * active);
+void cJSON_AddModesToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddCircuitsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value);

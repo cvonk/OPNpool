@@ -30,6 +30,7 @@ poolstate_init(void)
     _protected.state = malloc(sizeof(poolstate_t));
     assert(_protected.xMutex && _protected.state);
     memset(_protected.state, 0, sizeof(poolstate_t));
+	_protected.state->chlor.name[0] = '\0';
 }
 
 void
