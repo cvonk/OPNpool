@@ -224,15 +224,18 @@ _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * co
 {
     uint8_t const idx = params->idx;
     poolstate_thermo_t const * const thermostat = &state->thermos[idx];
-    uint8_t const heat_src = thermostat->heat_src;
-    uint8_t const target_temp = thermostat->set_point;
     uint8_t const current_temp = thermostat->temp;
+    uint8_t const target_temp = thermostat->set_point;
+    uint8_t const heat_src = thermostat->heat_src;
+    //bool const heating = thermostat->heating;
     char * combined;
     assert( asprintf(&combined, "homeassistant/%s/pool/%s/state\t{"
                      "\"mode\":\"%s\","
                      "\"target_temp\":%u,"
                      "\"current_temp\":%u}",
-                     hass_dev_typ_str(hass->dev_typ), hass->id, network_heat_src_str(heat_src), target_temp, current_temp) >= 0 );
+                     hass_dev_typ_str(hass->dev_typ), hass->id,
+                     network_heat_src_str(heat_src),
+                     target_temp, current_temp) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     assert( asprintf(&combined, "homeassistant/%s/pool/%s/available\t"
@@ -317,9 +320,15 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
     { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
+    { { HASS_DEV_TYP_sensor,  "system_version","version",     NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_VERSION,0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_mode",    "pump mode",    NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_MODE,    0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_running", "pump running", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RUNNING, 0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_state",   "pump state",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_STATE,   0 } },
     { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_gpm",     "pump gpm",     "P/m" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_GPM,     0 } },
     { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_status",  "pump status",  NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_STATUS,  0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_error",   "pump error",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_ERR,     0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_name",   "chlor name",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_NAME,   0 } },
     { { HASS_DEV_TYP_sensor,  "chlor_pct",    "chlor pct",    "%"   }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_PCT,    0 } },
     { { HASS_DEV_TYP_sensor,  "chlor_salt",   "chlor salt",   "ppm" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_SALT,   0 } },
     { { HASS_DEV_TYP_sensor,  "chlor_status", "chlor status", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_STATUS, 0 } },
