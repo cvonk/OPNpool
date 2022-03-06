@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.0">
+<eagle version="9.6.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -8776,10 +8776,9 @@ Source: AVX .. aphvc.pdf</description>
 </part>
 <part name="GND10" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="U$1" library="Coert Vonk" deviceset="FRAME_LETTER_L" device="">
-<attribute name="AUTHOR_NAME" value="Johan Vonk"/>
-<attribute name="DESCRIPTION" value="WiFi Interface for Pentair Suntouch Controller"/>
-<attribute name="REV" value="0.1"/>
-<attribute name="URL" value="https://coertvonk.com/family/johan"/>
+<attribute name="DESCRIPTION" value="WiFi Pool Interface"/>
+<attribute name="REV" value="1.0"/>
+<attribute name="URL" value="https://coertvonk.com/"/>
 </part>
 <part name="C2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="C0805K" package3d_urn="urn:adsk.eagle:package:23681/2" value="10uF mlcc">
 <spice>

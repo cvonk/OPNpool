@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.0">
+<eagle version="9.6.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -167,8 +167,8 @@
 <rectangle x1="29" y1="49.8" x2="46.5" y2="58" layer="46"/>
 <rectangle x1="29" y1="50" x2="47" y2="58" layer="41"/>
 <rectangle x1="29" y1="50" x2="47" y2="58" layer="42"/>
-<text x="3" y="42" size="1.778" layer="25">&gt;AUTHOR_NAME</text>
-<text x="31" y="36" size="1.778" layer="26" rot="MR180">&gt;AUTHOR_NAME</text>
+<text x="3" y="42" size="1.778" layer="25">Coert Vonk</text>
+<text x="31" y="36" size="1.778" layer="26" rot="MR180">Coert Vonk</text>
 </plain>
 <libraries>
 <library name="rcl" urn="urn:adsk.eagle:library:334">
