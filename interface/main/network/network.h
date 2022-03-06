@@ -19,8 +19,10 @@ bool network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const 
 char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t const day);
 char const * network_time_str(uint8_t const hours, uint8_t const minutes);
 char const * network_version_str(uint8_t const major, uint8_t const minor);
+const char * network_mode_str(network_mode_t const mode);
 const char * network_circuit_str(network_circuit_t const circuit);
 const char * network_pump_mode_str(network_pump_mode_t const pump_mode);
+const char * network_pump_state_str(network_pump_state_t const pump_state);
 char const * network_pump_prg_str(uint16_t const address);
 const char * network_heat_src_str(network_heat_src_t const heat_src);
 char const * network_typ_pump_str(network_typ_pump_t typ);

@@ -58,20 +58,36 @@ network_time_str(uint8_t const hours, uint8_t const minutes)
 char const *
 network_version_str(uint8_t const major, uint8_t const minor)
 {
-	uint const nrdigits = 5;  // 2.8
+	uint const nrdigits = 5;  // 2.080
 
 	if (name_str.idx + nrdigits + 1U >= ARRAY_SIZE(name_str.str)) {
 		return name_str.noMem;  // increase size of str.str[]
 	}
 	char * s = name_str.str + name_str.idx;
-	s[0] = name_str.digits[major / 10];
-	s[1] = name_str.digits[major % 10];
-	s[2] = '.';
+	s[0] = name_str.digits[major % 10];
+	s[1] = '.';
+	s[2] = '0';
 	s[3] = name_str.digits[minor / 10];
 	s[4] = name_str.digits[minor % 10];
 	s[nrdigits] = '\0';
 	name_str.idx += nrdigits + 1U;
 	return s;
+}
+
+/**
+ * network_mode_t
+ **/
+
+static const char * const _network_modes[] = {
+#define XX(num, name) #name,
+  NETWORK_MODE_MAP(XX)
+#undef XX
+};
+
+const char *
+network_mode_str(network_mode_t const mode)
+{
+    return ELEM_AT(_network_modes, mode, hex8_str(mode));
 }
 
 /**
@@ -114,6 +130,22 @@ const char *  // 1-based
 network_pump_mode_str(network_pump_mode_t const pump_mode)
 {
     return ELEM_AT(_network_pump_modes, pump_mode, hex8_str(pump_mode));
+}
+
+/**
+ * network_pump_state_t
+ **/
+
+static const char * const _network_pump_states[] = {
+#define XX(num, name) #name,
+  NETWORK_PUMP_STATE_MAP(XX)
+#undef XX
+};
+
+const char * 
+network_pump_state_str(network_pump_state_t const pump_state)
+{
+    return ELEM_AT(_network_pump_states, pump_state, hex8_str(pump_state));
 }
 
 /**

@@ -126,6 +126,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
 static void
 _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, poolstate_t * state)
 {
+    // update state->circuits.active
     bool * state_active = state->circuits.active;
     uint16_t msg_mask = 0x00001;
     uint16_t const msg_active = ((uint16_t)msg->activeHi << 8) | msg->activeLo;
@@ -133,24 +134,48 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
         *state_active = msg_active & msg_mask;
         msg_mask <<= 1;
     }
-    state->circuits.delay = msg->delay;
-    // only update water temp when the pump is running
-    if (state->circuits.active[NETWORK_CIRCUIT_POOL]) {
-        state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
+    // if both SPA and POOL bits are set, only SPA runs
+    if (state->circuits.active[NETWORK_CIRCUIT_SPA]) {
+        state->circuits.active[NETWORK_CIRCUIT_POOL] = false;
     }
+
+    // update state->circuits.delay
+    bool * state_delay = state->circuits.delay;
+    msg_mask = 0x00001;
+    for (uint ii = 0; ii < NETWORK_CIRCUIT_COUNT; ii++, state_delay++) {
+        *state_delay = msg->delay & msg_mask;
+        msg_mask <<= 1;
+    }
+
+    // update state->circuits.thermos (only update when the pump is running)
     if (state->circuits.active[NETWORK_CIRCUIT_SPA]) {
         state->thermos[POOLSTATE_THERMO_TYP_SPA].temp = msg->poolTemp;
     }
-    state->system.tod.time.minute = msg->minute;
-    state->system.tod.time.hour = msg->hour;
-    state->system.version.major = msg->major;
-    state->system.version.minor = msg->minor;
-    state->temps[POOLSTATE_TEMP_TYP_AIR].temp = msg->airTemp;
-    state->temps[POOLSTATE_TEMP_TYP_SOLAR].temp = msg->solarTemp;
+    if (state->circuits.active[NETWORK_CIRCUIT_POOL]) {
+        state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
+    }
     state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
     state->thermos[POOLSTATE_THERMO_TYP_POOL].heating = msg->heating & 0x04;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].heating = msg->heating & 0x08;
+
+    // update state->circuits.modes
+    bool * state_mode = state->modes.set;
+    msg_mask = 0x00001;
+    for (uint ii = 0; ii < NETWORK_MODE_COUNT; ii++, state_mode++) {
+        *state_mode = msg->mode & msg_mask;
+        msg_mask <<= 1;
+    }
+
+    // update state->system (date is updated through `network_msg_ctrl_time`)
+    state->system.tod.time.minute = msg->minute;
+    state->system.tod.time.hour = msg->hour;
+    state->system.version.major = msg->major;
+    state->system.version.minor = msg->minor;
+
+    // update state->temps
+    state->temps[POOLSTATE_TEMP_TYP_AIR].temp = msg->airTemp;
+    state->temps[POOLSTATE_TEMP_TYP_SOLAR].temp = msg->solarTemp;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddStateToObject(dbg, "state", state);
@@ -225,7 +250,7 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_resp_t const * const msg
     }
     state->pump.running = running;
     state->pump.mode = msg->mode;
-    state->pump.status = msg->status;
+    state->pump.state = msg->state;
     state->pump.pwr = ((uint16_t)msg->powerHi << 8) | msg->powerLo;
     state->pump.rpm = ((uint16_t)msg->rpmHi << 8) | msg->rpmLo;
     state->pump.gpm = msg->gpm;
