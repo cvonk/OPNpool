@@ -127,12 +127,12 @@ pool_task(void * ipc_void)
  	ipc_t * const ipc = ipc_void;
     rs485_handle_t const rs485 = rs485_init();
 
-    // request information from the controller
+    // request information from the controller (2BD: should be repeated periodically)
 
-    //_queue_req(rs485, MSG_TYP_CTRL_TIME_REQ);
     _queue_req(rs485, MSG_TYP_CTRL_HEAT_REQ);
     _queue_req(rs485, MSG_TYP_CTRL_SCHED_REQ);
-
+    _queue_req(rs485, MSG_TYP_CTRL_TIME_REQ);
+    
     while (1) {
 
         // read from ipc->to_pool_q
