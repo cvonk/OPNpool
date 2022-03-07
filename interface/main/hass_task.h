@@ -7,7 +7,8 @@
 #define HASS_DEV_TYP_MAP(XX) \
   XX(0, switch) \
   XX(1, sensor) \
-  XX(2, climate)
+  XX(2, climate) \
+  XX(3, select)
 
 typedef enum {
 #define XX(num, name) HASS_DEV_TYP_##name = num,

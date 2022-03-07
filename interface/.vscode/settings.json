@@ -22,7 +22,11 @@
     "tuple": "c",
     "type_traits": "c",
     "utility": "c",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "esp_http_server.h": "c",
+    "http_parser.h": "c",
+    "sdkconfig.h": "c",
+    "*.inc": "c"
   },
   "idf.portWin": "COM6",
   "idf.adapterTargetName": "esp32"

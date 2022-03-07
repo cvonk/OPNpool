@@ -22,6 +22,7 @@ static char const * const TAG = "datalink_rx";
 
 typedef struct proto_info_t {
 	uint8_t const * const preamble;
+	uint8_t const * const postamble;
 	uint const len;
     datalink_prot_t const prot;
 	uint idx;
@@ -191,6 +192,9 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 			}
         }
 	}
+    if (CONFIG_POOL_DBGLVL_DATALINK >0) {
+        ESP_LOGW(TAG, "unsupported pkt->prot 0x%02X", pkt->prot);
+    }
 	return ESP_FAIL;
 }
 
@@ -242,15 +246,20 @@ _read_tail(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
         }
 		case DATALINK_PROT_IC: {
             uint8_t * const crc = local->tail->ic.crc;
+            uint8_t * const postamble = local->tail->ic.postamble;
         	if (rs485->read_bytes(crc, sizeof(datalink_tail_ic_t)) == sizeof(datalink_tail_ic_t)) {
 				if (CONFIG_POOL_DBGLVL_DATALINK >1) {
 					ESP_LOGI(TAG, " %02X (checksum)", crc[0]);
+					ESP_LOGI(TAG, " %02X %02X (postamble)", postamble[0], postamble[1]);
 				}
 				return ESP_OK;
 			}
 			break;
         }
 	}
+    if (CONFIG_POOL_DBGLVL_DATALINK >0) {
+        ESP_LOGW(TAG, "unsupported pkt->prot 0x%02X !", pkt->prot);
+    }
 	return ESP_FAIL;
 }
 

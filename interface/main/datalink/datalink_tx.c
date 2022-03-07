@@ -44,7 +44,7 @@ _enter_a5_head(datalink_head_a5_t * const head, skb_handle_t const txb, uint8_t 
     }
     head->hdr.ver = 0x01;
     head->hdr.dst = datalink_devaddr(DATALINK_ADDRGROUP_CTRL, 0);
-    head->hdr.src = datalink_devaddr(DATALINK_ADDRGROUP_REMOTE, 0);
+    head->hdr.src = datalink_devaddr(DATALINK_ADDRGROUP_REMOTE, 2);  // 2BD 0x20 is the wired remote; 0x22 is the wireless remote (Screen Logic, or any app)
     head->hdr.typ = prot_typ;
     head->hdr.len = data_len;
 }

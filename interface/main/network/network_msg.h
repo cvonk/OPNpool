@@ -19,23 +19,25 @@
 // #define NETWORK_TYP_CTRL_REQ (0xC0)
 
 #define NETWORK_TYP_CTRL_MAP(XX) \
-  XX(0x01, SET_ACK)     \
-  XX(0x86, CIRCUIT_SET) \
-  XX(0x02, STATE)       \
-  XX(0x82, STATE_SET)   \
-  XX(0xC2, STATE_REQ )  \
-  XX(0x05, TIME)        \
-  XX(0x85, TIME_SET)    \
-  XX(0xC5, TIME_REQ)    \
-  XX(0x08, HEAT)        \
-  XX(0x88, HEAT_SET)    \
-  XX(0xC8, HEAT_REQ)    \
-  XX(0x1E, SCHED)       \
-  XX(0x9E, SCHED_SET)   \
-  XX(0xDE, SCHED_REQ)   \
-  XX(0x21, LAYOUT)      \
-  XX(0xA1, LAYOUT_SET)  \
-  XX(0xE1, LAYOUT_REQ)
+  XX(0x01, SET_ACK) \
+  XX(0x02, STATE)           XX(0x82, STATE_SET)    XX(0xC2, STATE_REQ )  \
+  XX(0x05, TIME_RESP)       XX(0x85, TIME_SET)     XX(0xC5, TIME_REQ)    \
+  XX(0x06, CIRCUIT_RESP)    XX(0x86, CIRCUIT_SET)  XX(0xC6, CIRCUIT_REQ) \
+  XX(0x08, HEAT_RESP)       XX(0x88, HEAT_SET)     XX(0xC8, HEAT_REQ)    \
+  XX(0x1E, SCHED_RESP)      XX(0x9E, SCHED_SET)    XX(0xDE, SCHED_REQ)   \
+  XX(0x21, LAYOUT_RESP)     XX(0xA1, LAYOUT_SET)   XX(0xE1, LAYOUT_REQ)  \
+  XX(0x0B, CIRC_NAMES_RESP) XX(0xCB, CIRC_NAMES_REQ) \
+  XX(0x11, SCHEDS_RESP)     XX(0xD1, SCHEDS_REQ)     \
+  XX(0x12, UNKN_D2_RESP)    XX(0xD2, UNKN_D2_REQ)    \
+  XX(0x1D, VALVE_RESP)      XX(0xDD, VALVE_REQ)      \
+  XX(0x22, SOLARPUMP_RESP)  XX(0xE2, SOLARPUMP_REQ)  \
+  XX(0x23, DELAY_RESP)      XX(0xE3, DELAY_REQ)      \
+  XX(0x28, HEAT_SETPT_RESP) XX(0xE8, HEAT_SETPT_REQ) \
+  XX(0xFC, VERSION_RESP)    XX(0xFD, VERSION_REQ)
+
+/* results of sending requests:
+NETWORK_TYP_CTRL_UNKNOWNxD9 = 0xD9, // sending [], returns: [11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00]
+*/
 
 typedef enum {
 #define XX(num, name) NETWORK_TYP_CTRL_##name = num,
@@ -68,29 +70,18 @@ typedef enum {
 
 // FYI there is a 0x14, has dst=0x50 data=[0x00]
  #define NETWORK_TYP_CHLOR_MAP(XX) \
-  XX(0x00, PING_REQ)   \
-  XX(0x01, PING_RESP)  \
-  XX(0x03, NAME)       \
-  XX(0x11, LEVEL_SET)  \
-  XX(0x12, LEVEL_RESP) \
-  XX(0x14, X14)
+  XX(0x00, PING_REQ)    \
+  XX(0x01, PING_RESP)   \
+  XX(0x03, NAME)        \
+  XX(0x11, LEVEL_SET)   \
+  XX(0x12, LEVEL_RESP)  \
+  XX(0x14, UNKN_14_REQ)
 
 typedef enum {
 #define XX(num, name) NETWORK_TYP_CHLOR_##name = num,
   NETWORK_TYP_CHLOR_MAP(XX)
 #undef XX
 } network_typ_chlor_t;
-
-/* results of sending requests:
-NETWORK_TYP_CTRL_UNKNOWNxCB = 0xCB, // sending [],   returns: 01 01 48 00 00
-NETWORK_TYP_CTRL_UNKNOWNxD1 = 0xD1, // sending [],   returns: 01 06 00 00 00 00 3F
-NETWORK_TYP_CTRL_UNKNOWNxD9 = 0xD9, // sending [],   returns: 11 3C 00 3F 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-NETWORK_TYP_CTRL_UNKNOWNxDD = 0xDD, // sending [],   returns: 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
-NETWORK_TYP_CTRL_UNKNOWNxE2 = 0xE2, // sending [],   returns: 05 00 00 => looks like a boring ic ping request
-NETWORK_TYP_CTRL_UNKNOWNxE3 = 0xE3, // sending [],   returns: 10 00
-NETWORK_TYP_CTRL_UNKNOWNxE8 = 0xE8, // sending [],   returns: 00 00 00 00 00 00 00 00 00 00
-NETWORK_TYP_CTRL_UNKNOWN_FD = 0xFD, // sending [],   returns: 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-*/
 
 /**
  * macro "magic" to get an enum and matching *_str functions (in *_str.c)
@@ -151,7 +142,7 @@ typedef enum {
 } network_pump_mode_t;
 
 #define NETWORK_PUMP_STATE_MAP(XX) \
-  XX(0, NORMAL) \
+  XX(0, OK) \
   XX(1, PRIMING)  \
   XX(2, RUNNING)  \
   XX(3, X03)  \
@@ -176,7 +167,6 @@ typedef enum {
 } network_heat_src_t;
 
 
-
 /*
  * A5 messages, used to communicate with components except IntelliChlor
  */
@@ -185,7 +175,7 @@ typedef struct network_msg_none_t {
 } network_msg_none_t;
 
 typedef struct network_msg_ctrl_set_ack_t {
-    uint8_t typ;
+    uint8_t typ;  // NETWORK_TYP_CTRL_*  type that it is ACK'íng
 } PACK8 network_msg_ctrl_set_ack_t;
 
 typedef struct network_msg_ctrl_circuit_set_t {
@@ -206,8 +196,8 @@ typedef struct network_msg_ctrl_sched_resp_sub_t {
 } PACK8 network_msg_ctrl_sched_resp_sub_t;
 
 typedef struct network_msg_ctrl_sched_resp_t {
-    uint8_t                           UNKNOWN_0to3[4];      // 0,1,2,3
-    network_msg_ctrl_sched_resp_sub_t scheds[2];  // 4,5,6,7,8,9, 10,11,12,13,14,15
+    uint8_t                           UNKNOWN_0to3[4];  // 0,1,2,3
+    network_msg_ctrl_sched_resp_sub_t scheds[2];        // 4,5,6,7,8,9, 10,11,12,13,14,15
 } PACK8 network_msg_ctrl_sched_resp_t;
 
 typedef struct network_msg_ctrl_state_req_t {
@@ -218,29 +208,33 @@ typedef struct network_msg_ctrl_state_t {
     uint8_t minute;             // 1
     uint8_t activeLo;           // 2
     uint8_t activeHi;           // 3
-    uint8_t UNKNOWN_4to8[5];    // 4..8 additional circuits on fancy controllers
+    uint8_t UNKNOWN_4to6[3];    // 4..6 more `active` circuits on fancy controllers
+    uint8_t UNKNOWN_7to8[2];    // 7..8
     uint8_t mode;               // 9
-    uint8_t heating;            // 10
+    uint8_t heatStatus;         // 10
     uint8_t UNKNOWN_11;         // 11
     uint8_t delay;              // 12
     uint8_t UNKNOWN_13;         // 13
-    uint8_t poolTemp;           // 14
-    uint8_t spaTemp;            // 15
-    uint8_t major;              // 16
-    uint8_t minor;              // 17
-    uint8_t airTemp;            // 18
-    uint8_t solarTemp;          // 19
-    uint8_t UNKNOWN_20tp21[2];  // 20..21
-    uint8_t heatSrc;            // 22
+    uint8_t poolTemp;           // 14 water sensor 1
+    uint8_t spaTemp;            // 15 water sensor 2
+    uint8_t UNKNOWN_16;         // 16 unknown          (was major)
+    uint8_t solarTemp;          // 17 solar sensor 1   (was minor)
+    uint8_t airTemp;            // 18 air sensor
+    uint8_t solarTemp2;         // 19 solar sensor 2
+    uint8_t UNKNOWN_20tp21[2];  // 20..21 more water sensors?
+    uint8_t heatSrc;            // 22 
     uint8_t UNKNOWN_23to28[6];  // 23..28
 } PACK8 network_msg_ctrl_state_t;
 
 // just a guess
 typedef network_msg_ctrl_state_t network_msg_ctrl_state_set_t;
 
+// TIME
+
 typedef struct network_msg_ctrl_time_req_t {
 } network_msg_ctrl_time_req_t;
 
+// message from controller to all (NETWORK_TYP_CTRL_TIME, or NETWORK_TYP_CTRL_TIME_SET)
 typedef struct network_msg_ctrl_time_t {
     uint8_t hour;            // 0
     uint8_t minute;          // 1
@@ -249,13 +243,98 @@ typedef struct network_msg_ctrl_time_t {
     uint8_t month;           // 4
     uint8_t year;            // 5
     uint8_t clkSpeed;        // 6
-    uint8_t daylightSavings; // 7 
+    uint8_t daylightSavings; // 7 (1=auto, 0=manual)
 } PACK8 network_msg_ctrl_time_t;
+
+typedef network_msg_ctrl_time_t network_msg_ctrl_time_set_t;
+typedef network_msg_ctrl_time_t network_msg_ctrl_time_resp_t;
+
+// VERSION
+
+typedef struct network_msg_ctrl_version_req_t {
+    uint8_t reqId;
+} network_msg_ctrl_version_req_t;
+
+typedef struct network_msg_ctrl_version_resp_t {
+    uint8_t reqId;        // req 00 -> resp 00 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    uint8_t UNKNOWN[16];  // req 01 -> resp 01 02 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+} network_msg_ctrl_version_resp_t;
+
+// VALVE
+
+typedef struct network_msg_ctrl_valve_req_t {
+} network_msg_ctrl_valve_req_t;
+
+typedef struct network_msg_ctrl_valve_resp_t {
+    uint8_t UNKNOWN[24]; // 03 00 00 00 00 FF FF 01 02 03 04 01 48 00 00 00 03 00 00 00 04 00 00 00
+} network_msg_ctrl_valve_resp_t;
+
+// SOLARPUMP
+
+typedef struct network_msg_ctrl_solarpump_req_t {
+} network_msg_ctrl_solarpump_req_t;
+
+typedef struct network_msg_ctrl_solarpump_resp_t {
+    uint8_t UNKNOWN[3];  // 05 00 00
+} network_msg_ctrl_solarpump_resp_t;
+
+// DELAY_REQ
+
+typedef struct network_msg_ctrl_delay_req_t {
+} network_msg_ctrl_delay_req_t;
+
+typedef struct network_msg_ctrl_delay_resp_t {
+    uint8_t UNKNOWN[2];  // 10 00
+} network_msg_ctrl_delay_resp_t;
+
+// HEAT_SETPT
+
+typedef struct network_msg_ctrl_heat_setpt_req_t {
+} network_msg_ctrl_heat_setpt_req_t;
+
+typedef struct network_msg_ctrl_heat_setpt_resp_t {
+    uint8_t UNKNOWN[10];  // 00 00 00 00 00 00 00 00 00 00 
+} network_msg_ctrl_heat_setpt_resp_t;
+
+// CIRC_NAMES
+
+typedef struct network_msg_ctrl_circ_names_req_t {
+    uint8_t reqId;  // 0x01
+} network_msg_ctrl_circ_names_req_t;
+
+typedef struct network_msg_ctrl_circ_names_resp_t {
+    uint8_t reqId;       // req 0x01 -> resp 01 01 48 00 00
+    uint8_t UNKNOWN[5];  // req 0x02 -> resp 02 00 03 00 00
+} network_msg_ctrl_circ_names_resp_t;
+
+// UNKN_D2_REQ
+
+typedef struct network_msg_ctrl_unkn_d2_req_t {
+    uint8_t UNKNOWN;  // 0xD2
+} network_msg_ctrl_unkn_d2_req_t;
+
+// SCHEDS
+
+typedef struct network_msg_ctrl_scheds_req_t {
+    uint8_t schedId;  // 0x01 (1 - 12)
+} network_msg_ctrl_scheds_req_t;
+
+typedef struct network_msg_ctrl_scheds_resp_t {  // 01 01 00 00 00 00 3F
+    uint8_t schedId;  // 0 
+    uint8_t circuit;  // 1
+    uint8_t startHr;  // 2
+    uint8_t startMin; // 3
+    uint8_t stopHr;   // 4
+    uint8_t stopMin;  // 5
+    uint8_t dayOfWk;  // 6 bitmask Mon (0x02), Tue (0x04), Wed (0x08), Thu(0x10), Fri (0x20), Sat (0x40), Sun(0x80)
+} network_msg_ctrl_scheds_resp_t;
+
+// HEAT
 
 typedef struct network_msg_ctrl_heat_req_t {
 } network_msg_ctrl_heat_req_t;
 
-typedef struct network_msg_ctrl_heat_t {
+typedef struct network_msg_ctrl_heat_resp_t {
     uint8_t poolTemp;          // 0
     uint8_t spaTemp;           // 1
     uint8_t airTemp;           // 2
@@ -269,7 +348,7 @@ typedef struct network_msg_ctrl_heat_t {
     uint8_t UNKNOWN_10;        // 10
     uint8_t UNKNOWN_11;        // 11
     uint8_t UNKNOWN_12;        // 12
-} PACK8 network_msg_ctrl_heat_t;
+} PACK8 network_msg_ctrl_heat_resp_t;
 
 typedef struct network_msg_ctrl_heat_set_t {
     uint8_t poolTempSetpoint;  // 0
@@ -278,14 +357,18 @@ typedef struct network_msg_ctrl_heat_set_t {
     uint8_t UNKNOWN_3;         // 3
 } PACK8 network_msg_ctrl_heat_set_t;
 
+// LAYOUT
+
 typedef struct network_msg_ctrl_layout_req {
 } network_msg_ctrl_layout_req;
 
-typedef struct network_msg_ctrl_layout_t {
-    uint8_t circuit[4];  // 0..3 corresponding to the buttons on the remote
-} PACK8 network_msg_ctrl_layout_t;
+typedef struct network_msg_ctrl_layout_resp_t {
+    uint8_t circuit[4];  // circuits assigned to each of the 4 buttons on the remote
+} PACK8 network_msg_ctrl_layout_resp_t;
 
-typedef network_msg_ctrl_layout_t network_msg_ctrl_layout_set_t;
+typedef network_msg_ctrl_layout_resp_t network_msg_ctrl_layout_set_t;
+
+// PUMP_REG
 
 typedef struct network_msg_pump_reg_set_t {
     uint8_t addressHi;   // 0
@@ -299,6 +382,8 @@ typedef struct network_msg_pump_reg_resp_t {
     uint8_t valueLo;     // 1
 } PACK8 network_msg_pump_reg_resp_t;
 
+// PUMP CTRL
+
 typedef struct network_msg_pump_ctrl_t {
     uint8_t ctrl;     // 0
 } PACK8 network_msg_pump_ctrl_t;
@@ -307,9 +392,13 @@ typedef struct network_msg_pump_mode_t {
     uint8_t mode;        // 0
 } PACK8 network_msg_pump_mode_t;
 
+// PUMP RUN
+
 typedef struct network_msg_pump_run_t {
     uint8_t running;       // 0
 } PACK8 network_msg_pump_run_t;
+
+// PUMP STATUS
 
 typedef struct network_msg_pump_status_req_t {
 } network_msg_pump_status_req_t;
@@ -361,9 +450,9 @@ typedef struct network_msg_chlor_level_resp_t {
     uint8_t err;  // call ; cold water
 } PACK8 network_msg_chlor_level_resp_t;
 
-typedef struct mChlor0X14_ic_t {
-    uint8_t UNKNOWN_0;
-} PACK8 mChlor0X14_ic_t;
+typedef struct network_msg_chlor_unkn_14_req_t {
+    uint8_t UNKNOWN;
+} PACK8 network_msg_chlor_unkn_14_req_t;
 
 typedef union network_msg_data_a5_t {
     network_msg_pump_reg_set_t pump_reg_set;
@@ -377,11 +466,26 @@ typedef union network_msg_data_a5_t {
     network_msg_ctrl_sched_resp_t ctrl_sched;
     network_msg_ctrl_state_t ctrl_state;
     network_msg_ctrl_state_set_t ctrl_state_set;
-    network_msg_ctrl_time_t ctrl_time;
-    network_msg_ctrl_heat_t ctrl_heat;
+    network_msg_ctrl_time_resp_t ctrl_time_resp;
+    network_msg_ctrl_heat_resp_t ctrl_heat_resp;
     network_msg_ctrl_heat_set_t ctrl_heat_set;
-    network_msg_ctrl_layout_t ctrl_layout;
-    network_msg_ctrl_layout_set_t ctrl_layout_set;
+    network_msg_ctrl_layout_resp_t ctrl_layout_resp;
+    network_msg_ctrl_layout_set_t ctrl_layout_set;    
+    network_msg_ctrl_version_req_t ctrl_version_req;
+    network_msg_ctrl_version_resp_t ctrl_version_resp;
+    network_msg_ctrl_valve_req_t ctrl_valve_req;
+    network_msg_ctrl_valve_resp_t ctrl_valve_resp;
+    network_msg_ctrl_solarpump_req_t ctrl_solarpump_req;
+    network_msg_ctrl_solarpump_resp_t ctrl_solarpump_resp;
+    network_msg_ctrl_delay_req_t ctrl_delay_req;
+    network_msg_ctrl_delay_resp_t ctrl_delay_resp;
+    network_msg_ctrl_heat_setpt_req_t ctrl_heat_setpt_req;
+    network_msg_ctrl_heat_setpt_resp_t ctrl_heat_setpt_resp;
+    network_msg_ctrl_circ_names_req_t ctrl_circ_names_req;
+    network_msg_ctrl_circ_names_resp_t ctrl_circ_names_resp;
+    network_msg_ctrl_unkn_d2_req_t ctrl_unkn_d2_req;
+    network_msg_ctrl_scheds_req_t ctrl_scheds_req;
+    network_msg_ctrl_scheds_resp_t ctrl_scheds_resp;
 } PACK8 network_msg_data_a5_t;
 
 typedef union network_msg_data_ic_t {
@@ -390,6 +494,7 @@ typedef union network_msg_data_ic_t {
     network_msg_chlor_name_t chlor_name;
     network_msg_chlor_level_set_t chlor_level_set;
     network_msg_chlor_level_resp_t chlor_level_resp;
+    network_msg_chlor_unkn_14_req_t chlor_unkn_14_req;
 } PACK8 network_msg_data_ic_t;
 
 typedef union network_msg_data_t {
@@ -403,18 +508,18 @@ typedef union network_msg_data_t {
   XX( 1, CTRL_SET_ACK,     network_msg_ctrl_set_ack_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SET_ACK)     \
   XX( 2, CTRL_CIRCUIT_SET, network_msg_ctrl_circuit_set_t, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRCUIT_SET) \
   XX( 3, CTRL_SCHED_REQ,   network_msg_ctrl_sched_req_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHED_REQ)   \
-  XX( 4, CTRL_SCHED_RESP,  network_msg_ctrl_sched_resp_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHED)       \
+  XX( 4, CTRL_SCHED_RESP,  network_msg_ctrl_sched_resp_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHED_RESP)  \
   XX( 5, CTRL_STATE_REQ,   network_msg_ctrl_state_req_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_STATE_REQ)   \
   XX( 6, CTRL_STATE,       network_msg_ctrl_state_t,       DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_STATE)       \
   XX( 7, CTRL_STATE_SET,   network_msg_ctrl_state_set_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_STATE_SET)   \
   XX( 8, CTRL_TIME_REQ,    network_msg_ctrl_time_req_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME_REQ)    \
-  XX( 9, CTRL_TIME,        network_msg_ctrl_time_t,        DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME)        \
-  XX(10, CTRL_TIME_SET,    network_msg_ctrl_time_t,        DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME_SET)    \
+  XX( 9, CTRL_TIME_RESP,   network_msg_ctrl_time_resp_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME_RESP)   \
+  XX(10, CTRL_TIME_SET,    network_msg_ctrl_time_set_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_TIME_SET)    \
   XX(11, CTRL_HEAT_REQ,    network_msg_ctrl_heat_req_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_REQ)    \
-  XX(12, CTRL_HEAT,        network_msg_ctrl_heat_t,        DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT)        \
+  XX(12, CTRL_HEAT_RESP,   network_msg_ctrl_heat_resp_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_RESP)   \
   XX(13, CTRL_HEAT_SET,    network_msg_ctrl_heat_set_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_SET)    \
   XX(14, CTRL_LAYOUT_REQ,  network_msg_ctrl_layout_req,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT_REQ)  \
-  XX(15, CTRL_LAYOUT,      network_msg_ctrl_layout_t,      DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT)      \
+  XX(15, CTRL_LAYOUT,      network_msg_ctrl_layout_resp_t, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT_RESP) \
   XX(16, CTRL_LAYOUT_SET,  network_msg_ctrl_layout_set_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_LAYOUT_SET)  \
   XX(17, PUMP_REG_SET,     network_msg_pump_reg_set_t,     DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_REG)         \
   XX(18, PUMP_REG_RESP,    network_msg_pump_reg_resp_t,    DATALINK_PROT_A5_PUMP, NETWORK_TYP_PUMP_REG)         \
@@ -430,8 +535,24 @@ typedef union network_msg_data_t {
   XX(28, CHLOR_PING_RESP,  network_msg_chlor_ping_resp_t,  DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_PING_RESP)  \
   XX(29, CHLOR_NAME,       network_msg_chlor_name_t,       DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_NAME)       \
   XX(30, CHLOR_LEVEL_SET,  network_msg_chlor_level_set_t,  DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_LEVEL_SET)  \
-  XX(31, CHLOR_LEVEL_RESP, network_msg_chlor_level_resp_t, DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_LEVEL_RESP)
-
+  XX(31, CHLOR_LEVEL_RESP, network_msg_chlor_level_resp_t, DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_LEVEL_RESP) \
+  XX(32, CTRL_VALVE_REQ,   network_msg_ctrl_valve_req_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_VALVE_REQ)   \
+  XX(33, CTRL_VALVE_RESP,  network_msg_ctrl_valve_resp_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_VALVE_RESP)  \
+  XX(34, CTRL_VERSION_REQ,     network_msg_ctrl_version_req_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_VERSION_REQ)     \
+  XX(35, CTRL_VERSION_RESP,    network_msg_ctrl_version_resp_t,    DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_VERSION_RESP)    \
+  XX(36, CTRL_SOLARPUMP_REQ,   network_msg_ctrl_solarpump_req_t,   DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SOLARPUMP_REQ)   \
+  XX(37, CTRL_SOLARPUMP_RESP,  network_msg_ctrl_solarpump_resp_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SOLARPUMP_RESP)  \
+  XX(38, CTRL_DELAY_REQ,       network_msg_ctrl_delay_req_t,       DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_DELAY_REQ)       \
+  XX(39, CTRL_DELAY_RESP,      network_msg_ctrl_delay_resp_t,      DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_DELAY_RESP)      \
+  XX(40, CTRL_HEAT_SETPT_REQ,  network_msg_ctrl_heat_setpt_req_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_SETPT_REQ)  \
+  XX(41, CTRL_HEAT_SETPT_RESP, network_msg_ctrl_heat_setpt_resp_t, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_HEAT_SETPT_RESP) \
+  XX(42, CTRL_CIRC_NAMES_REQ,  network_msg_ctrl_circ_names_req_t,  DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRC_NAMES_REQ)  \
+  XX(43, CTRL_CIRC_NAMES_RESP, network_msg_ctrl_circ_names_resp_t, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRC_NAMES_RESP) \
+  XX(44, CTRL_SCHEDS_REQ,      network_msg_ctrl_scheds_req_t,      DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHEDS_REQ)      \
+  XX(45, CTRL_SCHEDS_RESP,     network_msg_ctrl_scheds_resp_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHEDS_RESP)     \
+  XX(46, CTRL_UNKN_D2_REQ,     network_msg_ctrl_unkn_d2_req_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_UNKN_D2_REQ)     \
+  XX(47, CHLOR_UNKN_14_REQ,    network_msg_chlor_unkn_14_req_t,    DATALINK_PROT_IC,      NETWORK_TYP_CHLOR_UNKN_14_REQ) 
+  
 typedef enum {
 #define XX(num, name, typ, proto, prot_typ) MSG_TYP_##name = num,
   NETWORK_MSG_TYP_MAP(XX)
@@ -440,7 +561,7 @@ typedef enum {
 
 typedef struct network_msg_t {
     network_msg_typ_t typ;
-    union {
+    union network_msg_union_t {
         network_msg_pump_reg_set_t * pump_reg_set;
         network_msg_pump_reg_resp_t * pump_reg_set_resp;
         network_msg_pump_ctrl_t * pump_ctrl;
@@ -451,16 +572,33 @@ typedef struct network_msg_t {
         network_msg_ctrl_circuit_set_t * ctrl_circuit_set;
         network_msg_ctrl_sched_resp_t * ctrl_sched_resp;
         network_msg_ctrl_state_t * ctrl_state;
-        network_msg_ctrl_time_t * ctrl_time;
-        network_msg_ctrl_heat_t * ctrl_heat;
+        network_msg_ctrl_time_set_t * ctrl_time_set;
+        network_msg_ctrl_time_resp_t * ctrl_time_resp;
+        network_msg_ctrl_heat_resp_t * ctrl_heat_resp;
         network_msg_ctrl_heat_set_t * ctrl_heat_set;
-        network_msg_ctrl_layout_t * ctrl_layout;
+        network_msg_ctrl_layout_resp_t * ctrl_layout_resp;
         network_msg_ctrl_layout_set_t * ctrl_layout_set;
+        network_msg_ctrl_version_req_t * ctrl_version_req;
+        network_msg_ctrl_version_resp_t * ctrl_version_resp;
+        network_msg_ctrl_valve_req_t * ctrl_valve_req;
+        network_msg_ctrl_valve_resp_t * ctrl_valve_resp;
+        network_msg_ctrl_solarpump_req_t * ctrl_solarpump_req;
+        network_msg_ctrl_solarpump_resp_t * ctrl_solarpump_resp;
+        network_msg_ctrl_delay_req_t * ctrl_delay_req;
+        network_msg_ctrl_delay_resp_t * ctrl_delay_resp;
+        network_msg_ctrl_heat_setpt_req_t * ctrl_heat_set_req;
+        network_msg_ctrl_heat_setpt_resp_t * ctrl_heat_set_resp;
+        network_msg_ctrl_circ_names_req_t * ctrl_circ_names_req;
+        network_msg_ctrl_circ_names_resp_t * ctrl_circ_names_resp;
+        network_msg_ctrl_unkn_d2_req_t * ctrl_unkn_d2_req;
+        network_msg_ctrl_scheds_req_t * ctrl_scheds_req;
+        network_msg_ctrl_scheds_resp_t * ctrl_scheds_resp;
         network_msg_chlor_ping_req_t * chlor_ping_req;
         network_msg_chlor_ping_resp_t * chlor_ping;
         network_msg_chlor_name_t * chlor_name;
         network_msg_chlor_level_set_t * chlor_level_set;
         network_msg_chlor_level_resp_t * chlor_level_resp;
+        network_msg_chlor_unkn_14_req_t * chlor_unkn_14_req;
         uint8_t * bytes;
     } u;
 } network_msg_t;
