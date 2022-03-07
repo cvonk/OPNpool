@@ -132,7 +132,7 @@ rs485_init(void)
     uart_driver_install(_uart_port, _rxBufSize * 2, 0, 0, NULL, 0);  // no tx buffer
     uart_set_mode(_uart_port, UART_MODE_RS485_HALF_DUPLEX);
 
-    QueueHandle_t const tx_q = xQueueCreate(2, sizeof(rs485_q_msg_t));
+    QueueHandle_t const tx_q = xQueueCreate(5, sizeof(rs485_q_msg_t));
     assert(tx_q);
 
     rs485_handle_t handle = malloc(sizeof(rs485_instance_t));

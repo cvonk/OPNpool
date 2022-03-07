@@ -19,6 +19,7 @@
 
 datalink_preamble_a5_t datalink_preamble_a5 = { 0x00, 0xFF, 0xA5 };  // use 0xA5 in the preamble to detection more reliable
 datalink_preamble_ic_t datalink_preamble_ic = { 0x10, 0x02 };
+datalink_preamble_ic_t datalink_postamble_ic = { 0x10, 0x03 };
 
 datalink_addrgroup_t
 datalink_groupaddr(uint16_t const addr)

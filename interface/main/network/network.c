@@ -28,8 +28,8 @@ network_ic_len(uint8_t const ic_typ)
             return sizeof(network_msg_chlor_level_set_t);
         case NETWORK_TYP_CHLOR_LEVEL_RESP:
             return sizeof(network_msg_chlor_ping_resp_t);
-        case NETWORK_TYP_CHLOR_X14:
-            return sizeof(mChlor0X14_ic_t);
+        case NETWORK_TYP_CHLOR_UNKN_14_REQ:
+            return sizeof(network_msg_chlor_unkn_14_req_t);
         default:
             return 0;
     };

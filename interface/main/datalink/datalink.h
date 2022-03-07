@@ -33,6 +33,7 @@ typedef enum {
 
 typedef uint8_t datalink_preamble_a5_t[3];
 typedef uint8_t datalink_preamble_ic_t[2];
+typedef uint8_t datalink_postamble_ic_t[2];
 
 typedef struct datalink_hdr_ic_t {
     uint8_t dst;  // destination
@@ -85,7 +86,8 @@ typedef struct datalink_tail_a5_t {
 } PACK8 datalink_tail_a5_t;
 
 typedef struct datalink_tail_ic_t {
-    uint8_t  crc[1];
+    uint8_t                 crc[1];
+    datalink_postamble_ic_t postamble;
 } PACK8 datalink_tail_ic_t;
 
 typedef union datalink_tail_t {
@@ -100,6 +102,7 @@ uint8_t datalink_devaddr(uint8_t group, uint8_t const id);
 uint16_t datalink_calc_crc(uint8_t const * const start, uint8_t const * const stop);
 extern datalink_preamble_a5_t datalink_preamble_a5;
 extern datalink_preamble_ic_t datalink_preamble_ic;
+extern datalink_postamble_ic_t datalink_postamble_ic;
 
 /* datalink_rx.c */
 esp_err_t datalink_rx_pkt(rs485_handle_t const rs485, datalink_pkt_t * const pkt);

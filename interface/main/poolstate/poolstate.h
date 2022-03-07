@@ -268,33 +268,17 @@ esp_err_t poolstate_get(poolstate_t * const state);
 esp_err_t poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, ipc_t const * const ipc_for_dbg);
 
 /* poolstate_json.c */
-void cJSON_AddTimeToObject(cJSON * const obj, char const * const key, poolstate_time_t const * const time);
-void cJSON_AddDateToObject(cJSON * const obj, char const * const key, poolstate_date_t const * const date);
 void cJSON_AddTodToObject(cJSON * const obj, char const * const key, poolstate_tod_t const * const tod);
-void cJSON_AddVersionToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version);
 void cJSON_AddSystemToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
-
-void cJSON_AddThermostatToObject(cJSON * const obj, char const * const key, poolstate_thermo_t const * const thermostat, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating);
-void cJSON_AddThermosToObject_generic(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermos, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating);
-void cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
-
-void cJSON_AddScheduleToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * const sched, bool const showSched);
-void cJSON_AddSchedsToObject_generic(cJSON * const obj, char const * const key, poolstate_sched_t const * scheds, bool const showSched);
-void cJSON_AddSchedsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
-
-void cJSON_AddTempToObject(cJSON * const obj, char const * const key, poolstate_temp_t const * const temp);
-void cJSON_AddTempsToObject(cJSON * const obj, char const * const key, poolstate_t const * state);
-void cJSON_AddModesToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
-void cJSON_AddCircuitsToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
+void cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_thermo_t const * thermos, bool const showTemp, bool showSp, bool const showSrc, bool const showHeating);
+void cJSON_AddSchedsToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * scheds, bool const showSched);
 void cJSON_AddStateToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddPumpPrgToObject(cJSON * const obj, char const * const key, uint16_t const value);
 void cJSON_AddPumpCtrlToObject(cJSON * const obj, char const * const key, uint8_t const ctrl);
 void cJSON_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_t const mode);
 void cJSON_AddPumpRunningToObject(cJSON * const obj, char const * const key, bool const running);
-void cJSON_AddPumpStatusToObject(cJSON * const obj, char const * const key, poolstate_pump_t const * const pump);
 void cJSON_AddPumpToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_chlor_t const * const chlor);
-void cJSON_AddChlorToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 char const * poolstate_to_json(poolstate_t const * const state, poolstate_elem_typ_t const typ);
 
 /* poolstate_get.c */

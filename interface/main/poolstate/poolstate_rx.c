@@ -45,7 +45,7 @@ _ctrl_time(cJSON * const dbg, network_msg_ctrl_time_t const * const msg, poolsta
 }
 
 static void
-_ctrl_heat(cJSON * const dbg, network_msg_ctrl_heat_t const * const msg, poolstate_t * const state)
+_ctrl_heat_resp(cJSON * const dbg, network_msg_ctrl_heat_resp_t const * const msg, poolstate_t * const state)
 {
     state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
     state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolTempSetpoint;
@@ -55,7 +55,7 @@ _ctrl_heat(cJSON * const dbg, network_msg_ctrl_heat_t const * const msg, poolsta
     state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject_generic(dbg, "thermos", state->thermos, true, true, true, false);
+        cJSON_AddThermosToObject(dbg, "thermos", state->thermos, true, true, true, false);
     }
 }
 
@@ -68,7 +68,21 @@ _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg,
     state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject_generic(dbg, "thermos", state->thermos, false, true, true, false);
+        cJSON_AddThermosToObject(dbg, "thermos", state->thermos, false, true, true, false);
+    }
+}
+
+static void
+_ctrl_hex_bytes(cJSON * const dbg, uint8_t const * const bytes, poolstate_t * const state, uint8_t nrBytes)
+{
+    char const * str[nrBytes];
+
+    for (uint8_t ii = 0; ii < nrBytes; ii++) {
+        str[ii] = hex8_str(bytes[ii]);
+    }
+    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+        cJSON * const array = cJSON_CreateStringArray(str, nrBytes);
+        cJSON_AddItemToObject(dbg, "raw", array);
     }
 }
 
@@ -96,7 +110,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
         state_sched->stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
     }
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddSchedsToObject_generic(dbg, "scheds", state->scheds, true);
+        cJSON_AddSchedsToObject(dbg, "scheds", state->scheds, true);
     }
 #else    
     network_msg_ctrl_sched_resp_sub_t const * msg_sched = msg->scheds;
@@ -118,7 +132,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
         }
     }
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject_generic(dbg, "thermos", state->thermos, false, false, false, false, true);
+        cJSON_AddThermosToObject(dbg, "thermos", state->thermos, false, false, false, false, true);
     }
 #endif
 }
@@ -154,10 +168,12 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
     if (state->circuits.active[NETWORK_CIRCUIT_POOL]) {
         state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
     }
-    state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
-    state->thermos[POOLSTATE_THERMO_TYP_POOL].heating = msg->heating & 0x04;
-    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
-    state->thermos[POOLSTATE_THERMO_TYP_SPA].heating = msg->heating & 0x08;
+
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].heating = msg->heatStatus & 0x04;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heating = msg->heatStatus & 0x08;
+
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;  // NETWORK_HEAT_SRC_*
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;     // NETWORK_HEAT_SRC_*
 
     // update state->circuits.modes
     bool * state_mode = state->modes.set;
@@ -170,8 +186,8 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
     // update state->system (date is updated through `network_msg_ctrl_time`)
     state->system.tod.time.minute = msg->minute;
     state->system.tod.time.hour = msg->hour;
-    state->system.version.major = msg->major;
-    state->system.version.minor = msg->minor;
+    //state->system.version.major = msg->major;
+    //state->system.version.minor = msg->minor;
 
     // update state->temps
     state->temps[POOLSTATE_TEMP_TYP_AIR].temp = msg->airTemp;
@@ -364,14 +380,16 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
             break;
         case MSG_TYP_CTRL_TIME_REQ:
             break;
-        case MSG_TYP_CTRL_TIME:
+        case MSG_TYP_CTRL_TIME_RESP:
+            _ctrl_time(dbg, msg->u.ctrl_time_resp, state);
+            break;
         case MSG_TYP_CTRL_TIME_SET:
-            _ctrl_time(dbg, msg->u.ctrl_time, state);
+            _ctrl_time(dbg, msg->u.ctrl_time_set, state);
             break;
         case MSG_TYP_CTRL_HEAT_REQ:
             break;
-        case MSG_TYP_CTRL_HEAT:
-            _ctrl_heat(dbg, msg->u.ctrl_heat, state);
+        case MSG_TYP_CTRL_HEAT_RESP:
+            _ctrl_heat_resp(dbg, msg->u.ctrl_heat_resp, state);
             break;
         case MSG_TYP_CTRL_HEAT_SET:
             _ctrl_heat_set(dbg, msg->u.ctrl_heat_set, state);
@@ -379,6 +397,38 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case MSG_TYP_CTRL_LAYOUT_REQ:
         case MSG_TYP_CTRL_LAYOUT:
         case MSG_TYP_CTRL_LAYOUT_SET:
+        case MSG_TYP_CTRL_VALVE_REQ:
+        case MSG_TYP_CTRL_SOLARPUMP_REQ:
+        case MSG_TYP_CTRL_DELAY_REQ:
+        case MSG_TYP_CTRL_HEAT_SETPT_REQ:
+            break;
+        case MSG_TYP_CTRL_VERSION_REQ:
+        case MSG_TYP_CTRL_SCHEDS_REQ:
+        case MSG_TYP_CTRL_CIRC_NAMES_REQ:
+        case MSG_TYP_CTRL_UNKN_D2_REQ:
+        case MSG_TYP_CHLOR_UNKN_14_REQ:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, 1);
+            break;
+        case MSG_TYP_CTRL_VERSION_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_version_resp_t));
+            break;
+        case MSG_TYP_CTRL_VALVE_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_valve_resp_t));
+            break;
+        case MSG_TYP_CTRL_SOLARPUMP_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_solarpump_resp_t));
+            break;
+        case MSG_TYP_CTRL_DELAY_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_delay_resp_t));
+            break;
+        case MSG_TYP_CTRL_HEAT_SETPT_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_heat_setpt_resp_t));
+            break;
+        case MSG_TYP_CTRL_CIRC_NAMES_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_circ_names_resp_t));
+            break;
+        case MSG_TYP_CTRL_SCHEDS_RESP:
+            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_scheds_resp_t));
             break;
         case MSG_TYP_PUMP_REG_SET:
             _pump_reg_set(dbg, msg->u.pump_reg_set);
