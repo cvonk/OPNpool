@@ -210,7 +210,7 @@ _thermo_init(char const * const base, dispatch_hass_t const * const hass, char *
                      "\"avty_t\":\"~/available\","
                      "\"pl_avail\":\"online\","
                      "\"pl_not_avail\":\"offline\","
-                     "\"modes\":[\"off\",\"heat\"]}",
+                     "\"modes\":[\"off\",\"heat\"]}",  // hassio only supports [“auto”, “off”, “cool”, “heat”, “dry”, “fan_only”]
                      base, base, hass->name, hass->unit ? hass->unit : "") >= 0);
 }
 
@@ -299,6 +299,105 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
     return ESP_FAIL;
 }
 
+/*
+ * Creates a MQTT discovery message for a `heat source`.
+ * It `set_topic` is specified, it also create a MQTT topic(s) that the device will listen to
+ * to let other MQTT clients change pool controller settings.
+ */
+
+static void
+_heatsrc_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
+{
+    if (set_topics) {
+        assert( asprintf(set_topics++, "%s/%s", base, "set_heatsrc") >= 0 );
+    }
+    assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                     "\"~\":\"%s\","
+                     "\"name\":\"Pool %s\","
+                     "\"cmd_t\":\"~/set_heatsrc\","                     
+                     "\"stat_t\":\"~/state\","
+                     "\"avty_t\":\"~/available\","
+                     "\"pl_avail\":\"online\","
+                     "\"pl_not_avail\":\"offline\","
+                     "\"options\":[\"off\",\"heater\",\"solar_pref\",\"solar\"]}",
+                     base, base, hass->name) >= 0);
+}
+
+/*
+ * Publishes the heating src to MQTT (by sending a message to the MQTT task).
+ * Called as a registered function from hass_tx_state_to_mqtt().
+ */
+
+static esp_err_t
+_heatsrc_state(poolstate_t const * const state, poolstate_get_params_t const * const params, dispatch_hass_t const * const hass, ipc_t const * const ipc)
+{
+    uint8_t const idx = params->idx;
+    poolstate_thermo_t const * const thermostat = &state->thermos[idx];
+    uint8_t const heat_src = thermostat->heat_src;
+    char * combined;
+    assert( asprintf(&combined, "homeassistant/%s/pool/%s/state\t%s",
+                     hass_dev_typ_str(hass->dev_typ), hass->id,
+                     network_heat_src_str(heat_src)) >= 0 );
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+    free(combined);
+    assert( asprintf(&combined, "homeassistant/%s/pool/%s/available\t"
+                     "online",
+                     hass_dev_typ_str(hass->dev_typ), hass->id) >= 0 );
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+    free(combined);
+    return ESP_OK;
+}
+
+/*
+ * Creates a `network_msg_ctrl_heat_set` message and returns ESP_OK.
+ * Called as a registered function from hass_create_message().
+ */
+
+static esp_err_t
+_heatsrc_set(char const * const subtopic, poolstate_get_params_t const * const params, char const * const value_str, datalink_pkt_t * const pkt)
+{
+    poolstate_t state;
+    poolstate_get(&state);
+
+    uint8_t pool_set_point = state.thermos[POOLSTATE_THERMO_TYP_POOL].set_point;
+    uint8_t pool_heat_src = state.thermos[POOLSTATE_THERMO_TYP_POOL].heat_src;
+    uint8_t spa_set_point = state.thermos[POOLSTATE_THERMO_TYP_SPA].set_point;
+    uint8_t spa_heat_src = state.thermos[POOLSTATE_THERMO_TYP_SPA].heat_src;
+
+    poolstate_thermo_typ_t const thermostat_nr = POOLSTATE_THERMO_TYP_POOL;  // 2BD: should be based on the topic
+    if (strcmp(subtopic, "set_heatsrc") == 0) {
+        int value;
+        if ((value = network_heat_src_nr(value_str)) >= 0) {
+            if (thermostat_nr == POOLSTATE_THERMO_TYP_POOL) {
+                pool_heat_src = value;
+            } else {
+                spa_heat_src = value;
+            }
+        }
+    }
+    network_msg_ctrl_heat_set_t heat_set = {
+            .poolTempSetpoint = pool_set_point,
+            .spaTempSetpoint = spa_set_point,
+            .heatSrc = (pool_heat_src & 0x03) | (spa_heat_src << 2),
+    };
+    network_msg_t msg = {
+            .typ = MSG_TYP_CTRL_HEAT_SET,
+            .u.ctrl_heat_set = &heat_set,
+    };
+    if (network_create_msg(&msg, pkt)) {
+        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+            ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
+        }
+        return ESP_OK;
+    }
+    free(pkt);
+    return ESP_FAIL;
+}
+
+/*
+ *
+ */
+
 static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_POOL } },
     { { HASS_DEV_TYP_switch,  "spa_circuit",  "Spa circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_SPA } },
@@ -311,27 +410,29 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
     { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
-    { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
-    { { HASS_DEV_TYP_sensor,  "sch1_start",   "sch1 start",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START, 0 } },
-    { { HASS_DEV_TYP_sensor,  "sch1_stop",    "sch1 stop",    NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP, 0 } },
-    { { HASS_DEV_TYP_sensor,  "sch2_circuit", "sch2 circuit", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 1 } },
-    { { HASS_DEV_TYP_sensor,  "sch2_start",   "sch2 start",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START,  1 } },
-    { { HASS_DEV_TYP_sensor,  "sch2_stop",    "sch2 stop",    NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP,   1 } },
-    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
-    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
-    { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
-    { { HASS_DEV_TYP_sensor,  "system_version","version",     NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_VERSION,0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_mode",    "pump mode",    NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_MODE,    0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_running", "pump running", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RUNNING, 0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_state",   "pump state",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_STATE,   0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_gpm",     "pump gpm",     "P/m" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_GPM,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_error",   "pump error",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_ERR,     0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_name",   "chlor name",   NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_NAME,   0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_pct",    "chlor pct",    "%"   }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_PCT,    0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_salt",   "chlor salt",   "ppm" }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_SALT,   0 } },
-    { { HASS_DEV_TYP_sensor,  "chlor_status", "chlor status", NULL  }, { _generic_init,  _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_STATUS, 0 } },
+    { { HASS_DEV_TYP_select,  "pool_htsrc",   "pool ht src",  NULL  }, { _heatsrc_init, _heatsrc_state, _heatsrc_set }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_select,  "spa_htsrc",    "spa ht src",   NULL  }, { _heatsrc_init, _heatsrc_state, _heatsrc_set }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
+    { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch1_start",   "sch1 start",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch1_stop",    "sch1 stop",    NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP, 0 } },
+    { { HASS_DEV_TYP_sensor,  "sch2_circuit", "sch2 circuit", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 1 } },
+    { { HASS_DEV_TYP_sensor,  "sch2_start",   "sch2 start",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START,  1 } },
+    { { HASS_DEV_TYP_sensor,  "sch2_stop",    "sch2 stop",    NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP,   1 } },
+    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
+    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
+    { { HASS_DEV_TYP_sensor,  "system_version","version",     NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_VERSION,0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_mode",    "pump mode",    NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_MODE,    0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_running", "pump running", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RUNNING, 0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_state",   "pump state",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_STATE,   0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_gpm",     "pump gpm",     "P/m" }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_GPM,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_error",   "pump error",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_ERR,     0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_name",   "chlor name",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_NAME,   0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_pct",    "chlor pct",    "%"   }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_PCT,    0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_salt",   "chlor salt",   "ppm" }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_SALT,   0 } },
+    { { HASS_DEV_TYP_sensor,  "chlor_status", "chlor status", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_STATUS, 0 } },
 };
 
 /*
