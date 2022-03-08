@@ -55,8 +55,8 @@ cJSON_AddTodToObject(cJSON * const obj, char const * const key, poolstate_tod_t 
     _addDateToObject(item, "date", &tod->date);
 }
 
-static void
-_addVersionToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version)
+void
+cJSON_AddVersionToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version)
 {
     cJSON_AddStringToObject(obj, key, network_version_str(version->major, version->minor));
 }
@@ -66,7 +66,7 @@ _addSystemToObject(cJSON * const obj, char const * const key, poolstate_t const 
 {
     cJSON * const item = _create_item(obj, key);
     cJSON_AddTodToObject(item, "tod", &state->system.tod);
-    _addVersionToObject(item, "firmware", &state->system.version);
+    cJSON_AddVersionToObject(item, "firmware", &state->system.version);
 }
 
 void

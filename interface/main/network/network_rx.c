@@ -57,22 +57,10 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const netw
                 network->u.ctrl_sched_resp = (network_msg_ctrl_sched_resp_t *) pkt->data;
             }
             break;
-        case NETWORK_TYP_CTRL_STATE_REQ:
-            if (pkt->data_len == 0) {
-                network->typ = MSG_TYP_CTRL_STATE_REQ;
-            }
-            break;
-        case NETWORK_TYP_CTRL_STATE:
-            if (pkt->data_len == sizeof(network_msg_ctrl_state_t)) {
-                network->typ = MSG_TYP_CTRL_STATE;
-                network->u.ctrl_state = (network_msg_ctrl_state_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_STATE_SET:
-            // unfinished
-            if (pkt->data_len == sizeof(network_msg_ctrl_state_set_t)) {
-                network->typ = MSG_TYP_CTRL_STATE_SET;
-                network->u.ctrl_state = (network_msg_ctrl_state_set_t *) pkt->data;
+        case NETWORK_TYP_CTRL_STATE_BCAST:
+            if (pkt->data_len == sizeof(network_msg_ctrl_state_bcast_t)) {
+                network->typ = MSG_TYP_CTRL_STATE_BCAST;
+                network->u.ctrl_state = (network_msg_ctrl_state_bcast_t *) pkt->data;
             }
             break;
         case NETWORK_TYP_CTRL_TIME_REQ:
@@ -332,10 +320,10 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const net
                 network->u.chlor_ping = (network_msg_chlor_ping_resp_t *) pkt->data;
             }
             break;
-        case NETWORK_TYP_CHLOR_NAME:
-            if (pkt->data_len == sizeof(network_msg_chlor_name_t)) {
-                network->typ = MSG_TYP_CHLOR_NAME;
-                network->u.chlor_name = (network_msg_chlor_name_t *) pkt->data;
+        case NETWORK_TYP_CHLOR_NAME_RESP:
+            if (pkt->data_len == sizeof(network_msg_chlor_name_resp_t)) {
+                network->typ = MSG_TYP_CHLOR_NAME_RESP;
+                network->u.chlor_name_resp = (network_msg_chlor_name_resp_t *) pkt->data;
             }
             break;
         case NETWORK_TYP_CHLOR_LEVEL_SET:
@@ -350,10 +338,10 @@ _decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const net
                 network->u.chlor_level_resp = (network_msg_chlor_level_resp_t *) pkt->data;
             }
             break;
-        case NETWORK_TYP_CHLOR_UNKN_14_REQ:
-            if (pkt->data_len == sizeof(network_msg_chlor_unkn_14_req_t)) {
-                network->typ = MSG_TYP_CHLOR_UNKN_14_REQ;
-                network->u.chlor_unkn_14_req = (network_msg_chlor_unkn_14_req_t *) pkt->data;
+        case NETWORK_TYP_CHLOR_NAME_REQ:
+            if (pkt->data_len == sizeof(network_msg_chlor_name_req_t)) {
+                network->typ = MSG_TYP_CHLOR_NAME_REQ;
+                network->u.chlor_name_req = (network_msg_chlor_name_req_t *) pkt->data;
             }
             break;
         default:
@@ -374,7 +362,7 @@ network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool
     // reset mechanism that converts various formats to string
 	name_reset_idx();
 
-#if 0
+#if 1
     // silently ignore packets that we can't decode
     datalink_addrgroup_t const dst = datalink_groupaddr(pkt->dst);
     if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst == DATALINK_ADDRGROUP_X09) ||

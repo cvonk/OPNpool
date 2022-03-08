@@ -198,9 +198,13 @@ typedef enum {
  **/
 
 #define POOLSTATE_CHLOR_STATUS_MAP(XX) \
-  XX(0, OK)       \
-  XX(1, LOW_FLOW) \
-  XX(2, OTHER)
+  XX(0, OK)         \
+  XX(1, LOW_FLOW)   \
+  XX(2, LOW_SALT)   \
+  XX(3, HIGH_SALT)  \
+  XX(4, COLD)       \
+  XX(5, CLEAN_CELL) \
+  XX(6, OTHER)
 
 typedef enum {
 #define XX(num, name) POOLSTATE_CHLOR_STATUS_##name = num,
@@ -279,6 +283,7 @@ void cJSON_AddPumpModeToObject(cJSON * const obj, char const * const key, uint8_
 void cJSON_AddPumpRunningToObject(cJSON * const obj, char const * const key, bool const running);
 void cJSON_AddPumpToObject(cJSON * const obj, char const * const key, poolstate_t const * const state);
 void cJSON_AddChlorRespToObject(cJSON * const obj, char const * const key, poolstate_chlor_t const * const chlor);
+void cJSON_AddVersionToObject(cJSON * const obj, char const * const key, poolstate_version_t const * const version);
 char const * poolstate_to_json(poolstate_t const * const state, poolstate_elem_typ_t const typ);
 
 /* poolstate_get.c */

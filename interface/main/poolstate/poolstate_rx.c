@@ -48,10 +48,10 @@ static void
 _ctrl_heat_resp(cJSON * const dbg, network_msg_ctrl_heat_resp_t const * const msg, poolstate_t * const state)
 {
     state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
-    state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolSetpoint;
     state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].temp = msg->spaTemp;
-    state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaSetpoint;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
@@ -62,9 +62,9 @@ _ctrl_heat_resp(cJSON * const dbg, network_msg_ctrl_heat_resp_t const * const ms
 static void
 _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg, poolstate_t * const state)
 {
-    state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_POOL].set_point = msg->poolSetpoint;
     state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
-    state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaTempSetpoint;
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaSetpoint;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
@@ -138,7 +138,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
 }
 
 static void
-_ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, poolstate_t * state)
+_ctrl_state(cJSON * const dbg, network_msg_ctrl_state_bcast_t const * const msg, poolstate_t * state)
 {
     // update state->circuits.active
     bool * state_active = state->circuits.active;
@@ -186,8 +186,6 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
     // update state->system (date is updated through `network_msg_ctrl_time`)
     state->system.tod.time.minute = msg->minute;
     state->system.tod.time.hour = msg->hour;
-    //state->system.version.major = msg->major;
-    //state->system.version.minor = msg->minor;
 
     // update state->temps
     state->temps[POOLSTATE_TEMP_TYP_AIR].temp = msg->airTemp;
@@ -195,6 +193,21 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_t const * const msg, pools
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddStateToObject(dbg, "state", state);
+    }
+}
+
+/**
+ * version
+ */
+
+static void
+_ctrl_version_resp(cJSON * const dbg, network_msg_ctrl_version_resp_t const * const msg, poolstate_t * state)
+{
+    state->system.version.major = msg->major;
+    state->system.version.minor = msg->minor;
+
+    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+        cJSON_AddVersionToObject(dbg, "firmware", &state->system.version);
     }
 }
 
@@ -294,19 +307,22 @@ _ctrl_set_ack(cJSON * const dbg, network_msg_ctrl_set_ack_t const * const msg)
  **/
 
 static void
-_chlor_name(cJSON * const dbg, network_msg_chlor_name_t const * const msg, poolstate_t * const state)
+_chlor_name_resp(cJSON * const dbg, network_msg_chlor_name_resp_t const * const msg, poolstate_t * const state)
 {
+    state->chlor.salt = (uint16_t)msg->salt * 50;
+
     size_t name_size = sizeof(state->chlor.name);
     strncpy(state->chlor.name, msg->name, name_size);
     state->chlor.name[name_size - 1] = '\0';
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+        cJSON_AddNumberToObject(dbg, "salt", state->chlor.salt);
         cJSON_AddStringToObject(dbg, "name", state->chlor.name);
     }
 }
 
 static void
-_chlor_set(cJSON * const dbg, network_msg_chlor_level_set_t const * const msg, poolstate_t * const state)
+_chlor_level_set(cJSON * const dbg, network_msg_chlor_level_set_t const * const msg, poolstate_t * const state)
 {
     state->chlor.pct = msg->pct;
 
@@ -316,34 +332,29 @@ _chlor_set(cJSON * const dbg, network_msg_chlor_level_set_t const * const msg, p
 }
 
 static void
-_chlor_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const msg, poolstate_t * const state)
+_chlor_level_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const msg, poolstate_t * const state)
 {
     state->chlor.salt = (uint16_t)msg->salt * 50;
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        ESP_LOGI(TAG, "%s salt=%u, status=%u", __func__, msg->salt, msg->err);
-        // status 0x80 = OK,
+        //ESP_LOGD(TAG, "%s salt=%u, status=0x%02X", __func__, msg->salt, msg->err);
     }
     if (msg->err & 0x01) {
         state->chlor.status = POOLSTATE_CHLOR_STATUS_LOW_FLOW;
+    } else if (msg->err & 0x02) {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_LOW_SALT;
+    } else if (msg->err & 0x04) {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_HIGH_SALT;
+    } else if (msg->err & 0x10) {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_CLEAN_CELL;
+    } else if (msg->err & 0x40) {
+        state->chlor.status = POOLSTATE_CHLOR_STATUS_COLD;
     } else if (msg->err & 0x80) {
         state->chlor.status = POOLSTATE_CHLOR_STATUS_OK;
     } else {
         state->chlor.status = POOLSTATE_CHLOR_STATUS_OTHER;
     }
-#if 0
-    bool const lowFlow = (msg->err & 0x01);
-    if (state->chlor.salt < 2600) {
-        state->chlor.status = POOLSTATE_CHLOR_STATUS_VERYLOW_SALT;
-    } else if (state->chlor.salt < 2800) {
-        state->chlor.status = POOLSTATE_CHLOR_STATUS_LOW_SALT;
-    } else if (state->chlor.salt > 4500) {
-        state->chlor.status = POOLSTATE_CHLOR_STATUS_HIGH_SALT;
-    } else if (lowFlow) {
-        state->chlor.status = POOLSTATE_CHLOR_STATUS_LOW_FLOW;
-    } else {
-        state->chlor.status = POOLSTATE_CHLOR_STATUS_OK;
-    }
-#endif
+    // good salt range is 2600 to 4500 ppm
+
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddChlorRespToObject(dbg, "chlor", &state->chlor);
     }
@@ -371,12 +382,8 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case MSG_TYP_CTRL_SCHED_RESP:
             _ctrl_sched_resp(dbg, msg->u.ctrl_sched_resp, state);
             break;
-        case MSG_TYP_CTRL_STATE_REQ:
-            break;
-        case MSG_TYP_CTRL_STATE:
+        case MSG_TYP_CTRL_STATE_BCAST:
             _ctrl_state(dbg, msg->u.ctrl_state, state);
-            break;
-        case MSG_TYP_CTRL_STATE_SET:
             break;
         case MSG_TYP_CTRL_TIME_REQ:
             break;
@@ -401,16 +408,16 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case MSG_TYP_CTRL_SOLARPUMP_REQ:
         case MSG_TYP_CTRL_DELAY_REQ:
         case MSG_TYP_CTRL_HEAT_SETPT_REQ:
-            break;
         case MSG_TYP_CTRL_VERSION_REQ:
+            break;
         case MSG_TYP_CTRL_SCHEDS_REQ:
         case MSG_TYP_CTRL_CIRC_NAMES_REQ:
         case MSG_TYP_CTRL_UNKN_D2_REQ:
-        case MSG_TYP_CHLOR_UNKN_14_REQ:
+        case MSG_TYP_CHLOR_NAME_REQ:
             _ctrl_hex_bytes(dbg, msg->u.bytes, state, 1);
             break;
         case MSG_TYP_CTRL_VERSION_RESP:
-            _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_version_resp_t));
+            _ctrl_version_resp(dbg, msg->u.ctrl_version_resp, state);
             break;
         case MSG_TYP_CTRL_VALVE_RESP:
             _ctrl_hex_bytes(dbg, msg->u.bytes, state, sizeof(network_msg_ctrl_valve_resp_t));
@@ -456,14 +463,14 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case MSG_TYP_CHLOR_PING_REQ:
         case MSG_TYP_CHLOR_PING_RESP:
             break;
-        case MSG_TYP_CHLOR_NAME:
-            _chlor_name(dbg, msg->u.chlor_name, state);
+        case MSG_TYP_CHLOR_NAME_RESP:
+            _chlor_name_resp(dbg, msg->u.chlor_name_resp, state);
             break;
         case MSG_TYP_CHLOR_LEVEL_SET:
-            _chlor_set(dbg, msg->u.chlor_level_set, state);
+            _chlor_level_set(dbg, msg->u.chlor_level_set, state);
             break;
         case MSG_TYP_CHLOR_LEVEL_RESP:
-            _chlor_set_resp(dbg, msg->u.chlor_level_resp, state);
+            _chlor_level_set_resp(dbg, msg->u.chlor_level_resp, state);
             break;
         case MSG_TYP_NONE:  // to please the gcc
             break;  //

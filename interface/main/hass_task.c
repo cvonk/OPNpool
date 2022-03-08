@@ -281,8 +281,8 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
         }
     }
     network_msg_ctrl_heat_set_t heat_set = {
-            .poolTempSetpoint = pool_set_point,
-            .spaTempSetpoint = spa_set_point,
+            .poolSetpoint = pool_set_point,
+            .spaSetpoint = spa_set_point,
             .heatSrc = (pool_heat_src & 0x03) | (spa_heat_src << 2),
     };
     network_msg_t msg = {
@@ -376,8 +376,8 @@ _heatsrc_set(char const * const subtopic, poolstate_get_params_t const * const p
         }
     }
     network_msg_ctrl_heat_set_t heat_set = {
-            .poolTempSetpoint = pool_set_point,
-            .spaTempSetpoint = spa_set_point,
+            .poolSetpoint = pool_set_point,
+            .spaSetpoint = spa_set_point,
             .heatSrc = (pool_heat_src & 0x03) | (spa_heat_src << 2),
     };
     network_msg_t msg = {
@@ -451,11 +451,6 @@ hass_tx_state_to_mqtt(poolstate_t const * const state, ipc_t const * const ipc)
             dispatch->fnc.state(state, &dispatch->fnc_params, &dispatch->hass, ipc);
         }
     }
-#if 0
-    char const * const json = poolstate_to_json(state, POOLSTATE_ELEM_TYP_ALL);
-    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_STATE, json, ipc);
-    free((void *)json);
-#endif
     return ESP_OK;
 }
 
