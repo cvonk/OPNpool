@@ -122,17 +122,30 @@ _forward_queued_pkt_to_rs485(rs485_handle_t const rs485, ipc_t const * const ipc
 }
 
 void
+pool_req_task(void * rs485_void) 
+{
+    rs485_handle_t const rs485 = (rs485_handle_t)rs485_void;
+
+    while (1) {
+        _queue_req(rs485, MSG_TYP_CTRL_HEAT_REQ);
+        _queue_req(rs485, MSG_TYP_CTRL_SCHED_REQ);
+        vTaskDelay((TickType_t)30 * 1000 / portTICK_PERIOD_MS);
+    }
+}
+
+void
 pool_task(void * ipc_void)
 {
  	ipc_t * const ipc = ipc_void;
     rs485_handle_t const rs485 = rs485_init();
 
-    // request information from the controller (2BD: should be repeated periodically)
-
-    _queue_req(rs485, MSG_TYP_CTRL_HEAT_REQ);
-    _queue_req(rs485, MSG_TYP_CTRL_SCHED_REQ);
+    // request some initial information from the controller
+    _queue_req(rs485, MSG_TYP_CTRL_VERSION_REQ);
     _queue_req(rs485, MSG_TYP_CTRL_TIME_REQ);
-    
+
+    // periodically request information from controller
+    xTaskCreate(&pool_req_task, "pool_req_task", 2*4096, rs485, 5, NULL);
+
     while (1) {
 
         // read from ipc->to_pool_q

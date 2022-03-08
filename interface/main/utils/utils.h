@@ -23,7 +23,7 @@
 #endif
 
 // also used to display date/time, add +50
-#define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(network_msg_ctrl_state_t) + 1) * 3 + 50)
+#define NAME_BUF_SIZE ((sizeof(datalink_hdr_t) + sizeof(network_msg_ctrl_state_bcast_t) + 1) * 3 + 50)
 
 // reusable global string
 typedef struct str_t {

@@ -22,14 +22,14 @@ network_ic_len(uint8_t const ic_typ)
             return sizeof(network_msg_chlor_ping_req_t);
         case NETWORK_TYP_CHLOR_PING_RESP:
             return sizeof(network_msg_chlor_ping_resp_t);
-        case NETWORK_TYP_CHLOR_NAME:
-            return sizeof(network_msg_chlor_name_t);
+        case NETWORK_TYP_CHLOR_NAME_RESP:
+            return sizeof(network_msg_chlor_name_resp_t);
         case NETWORK_TYP_CHLOR_LEVEL_SET:
             return sizeof(network_msg_chlor_level_set_t);
         case NETWORK_TYP_CHLOR_LEVEL_RESP:
             return sizeof(network_msg_chlor_ping_resp_t);
-        case NETWORK_TYP_CHLOR_UNKN_14_REQ:
-            return sizeof(network_msg_chlor_unkn_14_req_t);
+        case NETWORK_TYP_CHLOR_NAME_REQ:
+            return sizeof(network_msg_chlor_name_req_t);
         default:
             return 0;
     };
