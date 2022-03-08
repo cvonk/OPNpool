@@ -262,19 +262,19 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
     uint8_t spa_set_point = state.thermos[POOLSTATE_THERMO_TYP_SPA].set_point;
     uint8_t spa_heat_src = state.thermos[POOLSTATE_THERMO_TYP_SPA].heat_src;
 
-    poolstate_thermo_typ_t const thermostat_nr = POOLSTATE_THERMO_TYP_POOL;  // 2BD: should be based on the topic
-    if (strcmp(subtopic, "set_mode") == 0) {
+    uint8_t const idx = params->idx;
+    if (strcmp(subtopic, "set_mode") == 0) {  // only supports "off" and "heat"
         int value;
         if ((value = network_heat_src_nr(value_str)) >= 0) {
-            if (thermostat_nr == POOLSTATE_THERMO_TYP_POOL) {
-                pool_heat_src = value;
-            } else {
+            if (idx == POOLSTATE_THERMO_TYP_POOL) {
+                pool_heat_src = value;  // will overwrite other choices as `solar` and `solar_pref`
+            } else {                    // with `heat` or `off`
                 spa_heat_src = value;
             }
         }
     } else if (strcmp(subtopic, "set_temp") == 0) {
         uint8_t const value = atoi(value_str);
-        if (thermostat_nr == POOLSTATE_THERMO_TYP_POOL) {
+        if (idx == POOLSTATE_THERMO_TYP_POOL) {
             pool_set_point = value;
         } else {
             spa_set_point = value;
@@ -364,11 +364,11 @@ _heatsrc_set(char const * const subtopic, poolstate_get_params_t const * const p
     uint8_t spa_set_point = state.thermos[POOLSTATE_THERMO_TYP_SPA].set_point;
     uint8_t spa_heat_src = state.thermos[POOLSTATE_THERMO_TYP_SPA].heat_src;
 
-    poolstate_thermo_typ_t const thermostat_nr = POOLSTATE_THERMO_TYP_POOL;  // 2BD: should be based on the topic
+    uint8_t const idx = params->idx;
     if (strcmp(subtopic, "set_heatsrc") == 0) {
         int value;
         if ((value = network_heat_src_nr(value_str)) >= 0) {
-            if (thermostat_nr == POOLSTATE_THERMO_TYP_POOL) {
+            if (idx == POOLSTATE_THERMO_TYP_POOL) {
                 pool_heat_src = value;
             } else {
                 spa_heat_src = value;
@@ -408,8 +408,8 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "ft2_circuit",  "Ft2 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT2 } },
     { { HASS_DEV_TYP_switch,  "ft3_circuit",  "Ft3 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT3 } },
     { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
-    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
-    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "°F"  }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
+    { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "F"   }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "F"   }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_select,  "pool_htsrc",   "pool ht src",  NULL  }, { _heatsrc_init, _heatsrc_state, _heatsrc_set }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_select,  "spa_htsrc",    "spa ht src",   NULL  }, { _heatsrc_init, _heatsrc_state, _heatsrc_set }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
@@ -418,8 +418,8 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_sensor,  "sch2_circuit", "sch2 circuit", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 1 } },
     { { HASS_DEV_TYP_sensor,  "sch2_start",   "sch2 start",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START,  1 } },
     { { HASS_DEV_TYP_sensor,  "sch2_stop",    "sch2 stop",    NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP,   1 } },
-    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "°F"  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
-    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "°F"  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
+    { { HASS_DEV_TYP_sensor,  "air_temp",     "air temp",     "F"   }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_TEMP,   POOLSTATE_ELEM_TEMP_TYP_TEMP,    POOLSTATE_TEMP_TYP_AIR  } },
+    { { HASS_DEV_TYP_sensor,  "water_temp",   "water temp",   "F"   }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_THERMO, POOLSTATE_ELEM_THERMO_TYP_TEMP,  POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_sensor,  "system_time",  "time",         NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_TIME,  0 } },
     { { HASS_DEV_TYP_sensor,  "system_version","version",     NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SYSTEM, POOLSTATE_ELEM_SYSTEM_TYP_VERSION,0 } },
     { { HASS_DEV_TYP_sensor,  "pump_mode",    "pump mode",    NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_MODE,    0 } },
