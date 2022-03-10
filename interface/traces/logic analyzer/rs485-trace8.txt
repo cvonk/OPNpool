@@ -1,0 +1,56 @@
+I (27212) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (27282) poolstate_rx: {CTRL_CIRCUIT_SET: {"POOL":1}}
+
+I (27642) poolstate_rx: {CTRL_SET_ACK: {"ack":134}}
+
+I (27652) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (28212) poolstate_rx: {PUMP_STATUS_REQ: {}}
+
+I (28232) poolstate_rx: {PUMP_STATUS_RESP: {"status":{"time":"12:31","mode":"FILTER","running":false,"state":"OK","pwr":0,"rpm":0,"err":0,"timer":0}}}
+
+I (30212) poolstate_rx: {PUMP_CTRL_SET: {"ctrl":"remote"}}
+
+I (30222) poolstate_rx: {PUMP_CTRL_RESP: {"ctrl":"remote"}}
+
+I (30232) poolstate_rx: {PUMP_RUN_SET: {"running":true}}
+
+I (30582) poolstate_rx: {PUMP_RUN_RESP: {"running":true}}
+
+I (30592) poolstate_rx: {PUMP_REG_SET: {"rpm":2500}}
+
+I (30602) poolstate_rx: {PUMP_REG_RESP: {"resp":2500}}
+
+I (31422) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (33452) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (33522) poolstate_rx: {CTRL_HEAT_REQ: {}}
+
+I (33572) poolstate_rx: {CTRL_HEAT_RESP: {"thermos":{"POOL":{"temp":55,"sp":70,"src":"None"},"SPA":{"temp":55,"sp":22,"src":"None"}}}}
+
+I (33592) poolstate_rx: {CTRL_SCHED_REQ: {}}
+
+I (33642) poolstate_rx: {CTRL_SCHED_RESP: {"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}}}}
+
+I (35462) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (37482) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (39502) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (39582) poolstate_rx: {CTRL_HEAT_SET: {"thermos":{"POOL":{"sp":71,"src":"None"},"SPA":{"sp":22,"src":"None"}}}}
+
+I (39942) poolstate_rx: {CTRL_SET_ACK: {"ack":136}}
+
+I (41492) poolstate_rx: {CHLOR_LEVEL_SET: {"pct":80}}
+
+I (43552) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"None","heating":false},"SPA":{"temp":55,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+I (43632) poolstate_rx: {CTRL_HEAT_SET: {"thermos":{"POOL":{"sp":71,"src":"Heater"},"SPA":{"sp":22,"src":"None"}}}}
+
+I (43992) poolstate_rx: {CTRL_SET_ACK: {"ack":136}}
+
+I (45592) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"12:31","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":60,"SOLAR":80},"thermos":{"POOL":{"temp":55,"src":"Heater","heating":true},"SPA":{"temp":55,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
