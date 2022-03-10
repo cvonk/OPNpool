@@ -111,7 +111,7 @@ cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_th
     cJSON * const item = _create_item(obj, key);
     for (uint ii = 0; ii < POOLSTATE_THERMO_TYP_COUNT; ii++, thermos++) {
         _addThermostatToObject(item, poolstate_thermo_str(ii), thermos,
-                                    showTemp, showSp, showSrc, showHeating);
+                               showTemp, showSp, showSrc, showHeating);
     }
 }
 

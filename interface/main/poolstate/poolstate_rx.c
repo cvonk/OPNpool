@@ -52,8 +52,7 @@ _ctrl_heat_resp(cJSON * const dbg, network_msg_ctrl_heat_resp_t const * const ms
     state->thermos[POOLSTATE_THERMO_TYP_POOL].heat_src = msg->heatSrc & 0x03;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].temp = msg->spaTemp;
     state->thermos[POOLSTATE_THERMO_TYP_SPA].set_point = msg->spaSetpoint;
-    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = msg->heatSrc >> 2;
-
+    state->thermos[POOLSTATE_THERMO_TYP_SPA].heat_src = (msg->heatSrc >> 2) & 0x03;
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddThermosToObject(dbg, "thermos", state->thermos, true, true, true, false);
     }
@@ -132,7 +131,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
         }
     }
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject(dbg, "thermos", state->thermos, false, false, false, false, true);
+        cJSON_AddThermosToObject(dbg, "thermos", state->thermos, false, false, false, false, true, false);
     }
 #endif
 }

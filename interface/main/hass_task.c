@@ -107,6 +107,19 @@ _circuit_state(poolstate_t const * const state, poolstate_get_params_t const * c
                      hass_dev_typ_str(hass->dev_typ), hass->id, value ? "ON" : "OFF") >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
+
+    if (params->idx == NETWORK_CIRCUIT_POOL) {
+        assert( asprintf(&combined, "homeassistant/climate/pool/pool_heater/available\t%s",
+                        value ? "online" : "offline") >= 0 );
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+        free(combined);
+    }
+    if (params->idx == NETWORK_CIRCUIT_SPA) {
+        assert( asprintf(&combined, "homeassistant/climate/pool/spa_heater/available\t%s",
+                        value ? "online" : "offline") >= 0 );
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
+        free(combined);
+    }
     return ESP_OK;
 }
 
@@ -189,28 +202,34 @@ static void
 _thermo_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
     if (set_topics) {
-        assert( asprintf(set_topics++, "%s/%s", base, "set_mode") >= 0 );
         assert( asprintf(set_topics++, "%s/%s", base, "set_temp") >= 0 );
+        assert( asprintf(set_topics++, "%s/%s", base, "set_mode") >= 0 );
+        assert( asprintf(set_topics++, "%s/%s", base, "set_heatsrc") >= 0 );
     }
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                      "\"~\":\"%s\","
                      "\"name\":\"Pool %s\","
-                     "\"mode_cmd_t\":\"~/set_mode\","
-                     "\"temp_cmd_t\":\"~/set_temp\","
-                     "\"mode_stat_tpl\":\"{{ value_json.mode }}\","
-                     "\"mode_stat_t\":\"~/state\","
-                     "\"temp_stat_tpl\":\"{{ value_json.target_temp }}\","
-                     "\"temp_stat_t\":\"~/state\","
                      "\"curr_temp_t\":\"~/state\","
                      "\"curr_temp_tpl\":\"{{ value_json.current_temp }}\","
+                     "\"temp_cmd_t\":\"~/set_temp\","
+                     "\"temp_stat_t\":\"~/state\","
+                     "\"temp_stat_tpl\":\"{{ value_json.target_temp }}\","
+                     "\"mode_cmd_t\":\"~/set_mode\","
+                     "\"mode_stat_t\":\"~/state\","
+                     "\"mode_stat_tpl\":\"{{ value_json.mode }}\","
+                     //"\"modes\":[\"off\",\"heat\"],"  // hassio doesn't support [“solar_pref”, “solar”]
+                     "\"modes\":[\"heat\"],"  // hassio doesn't support [“solar_pref”, “solar”]
+                     "\"pr_mode_cmd_t\":\"~/set_heatsrc\","
+                     "\"pr_mode_stat_t\":\"~/state\","
+                     "\"pr_mode_val_tpl\":\"{{ value_json.heatsrc }}\","
+                     "\"pr_modes\":[\"Heater\",\"SolarPref\", \"Solar\"],"
                      "\"min_temp\":15,"
                      "\"max_temp\":110,"
                      "\"temp_step\":1,"
                      "\"temp_unit\":\"%s\","
                      "\"avty_t\":\"~/available\","
                      "\"pl_avail\":\"online\","
-                     "\"pl_not_avail\":\"offline\","
-                     "\"modes\":[\"off\",\"heat\"]}",  // hassio only supports [“auto”, “off”, “cool”, “heat”, “dry”, “fan_only”]
+                     "\"pl_not_avail\":\"offline\"}",
                      base, base, hass->name, hass->unit ? hass->unit : "") >= 0);
 }
 
@@ -231,16 +250,13 @@ _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * co
     char * combined;
     assert( asprintf(&combined, "homeassistant/%s/pool/%s/state\t{"
                      "\"mode\":\"%s\","
+                     "\"heatsrc\":\"%s\","
                      "\"target_temp\":%u,"
                      "\"current_temp\":%u}",
                      hass_dev_typ_str(hass->dev_typ), hass->id,
+                     "heat", //heat_src == NETWORK_HEAT_SRC_None ? "off" : "heat",
                      network_heat_src_str(heat_src),
                      target_temp, current_temp) >= 0 );
-    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
-    free(combined);
-    assert( asprintf(&combined, "homeassistant/%s/pool/%s/available\t"
-                     "online",
-                     hass_dev_typ_str(hass->dev_typ), hass->id) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
@@ -257,33 +273,30 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
     poolstate_t state;
     poolstate_get(&state);
 
-    uint8_t pool_set_point = state.thermos[POOLSTATE_THERMO_TYP_POOL].set_point;
-    uint8_t pool_heat_src = state.thermos[POOLSTATE_THERMO_TYP_POOL].heat_src;
-    uint8_t spa_set_point = state.thermos[POOLSTATE_THERMO_TYP_SPA].set_point;
-    uint8_t spa_heat_src = state.thermos[POOLSTATE_THERMO_TYP_SPA].heat_src;
+    poolstate_thermo_t thermos[POOLSTATE_THERMO_TYP_COUNT];
+    memcpy(thermos, state.thermos, sizeof(poolstate_thermo_t)*POOLSTATE_THERMO_TYP_COUNT);
 
     uint8_t const idx = params->idx;
     if (strcmp(subtopic, "set_mode") == 0) {  // only supports "off" and "heat"
+        //thermos[idx].enabled = strcmp(value_str, "heat") == 0;
+
+    } else if (strcmp(subtopic, "set_temp") == 0) {
+        thermos[idx].set_point = atoi(value_str);
+
+    } else if (strcmp(subtopic, "set_heatsrc") == 0) {
         int value;
         if ((value = network_heat_src_nr(value_str)) >= 0) {
-            if (idx == POOLSTATE_THERMO_TYP_POOL) {
-                pool_heat_src = value;  // will overwrite other choices as `solar` and `solar_pref`
-            } else {                    // with `heat` or `off`
-                spa_heat_src = value;
-            }
-        }
-    } else if (strcmp(subtopic, "set_temp") == 0) {
-        uint8_t const value = atoi(value_str);
-        if (idx == POOLSTATE_THERMO_TYP_POOL) {
-            pool_set_point = value;
-        } else {
-            spa_set_point = value;
+            thermos[idx].heat_src = value;
         }
     }
+
+    uint8_t spa_heat_src = thermos[POOLSTATE_THERMO_TYP_SPA].heat_src;
+    uint8_t pool_heat_src = thermos[POOLSTATE_THERMO_TYP_POOL].heat_src;
+
     network_msg_ctrl_heat_set_t heat_set = {
-            .poolSetpoint = pool_set_point,
-            .spaSetpoint = spa_set_point,
-            .heatSrc = (pool_heat_src & 0x03) | (spa_heat_src << 2),
+            .poolSetpoint = thermos[POOLSTATE_THERMO_TYP_POOL].set_point,
+            .spaSetpoint = thermos[POOLSTATE_THERMO_TYP_SPA].set_point,
+            .heatSrc = pool_heat_src | spa_heat_src << 2
     };
     network_msg_t msg = {
             .typ = MSG_TYP_CTRL_HEAT_SET,
@@ -299,6 +312,7 @@ _thermo_set(char const * const subtopic, poolstate_get_params_t const * const pa
     return ESP_FAIL;
 }
 
+#if 0
 /*
  * Creates a MQTT discovery message for a `heat source`.
  * It `set_topic` is specified, it also create a MQTT topic(s) that the device will listen to
@@ -319,7 +333,7 @@ _heatsrc_init(char const * const base, dispatch_hass_t const * const hass, char 
                      "\"avty_t\":\"~/available\","
                      "\"pl_avail\":\"online\","
                      "\"pl_not_avail\":\"offline\","
-                     "\"options\":[\"off\",\"heater\",\"solar_pref\",\"solar\"]}",
+                     "\"options\":[\"off\",\"heat\",\"solar_pref\",\"solar\"]}",
                      base, base, hass->name) >= 0);
 }
 
@@ -393,6 +407,7 @@ _heatsrc_set(char const * const subtopic, poolstate_get_params_t const * const p
     free(pkt);
     return ESP_FAIL;
 }
+#endif
 
 /*
  *
@@ -410,8 +425,6 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
     { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "F"   }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "F"   }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
-    { { HASS_DEV_TYP_select,  "pool_htsrc",   "pool ht src",  NULL  }, { _heatsrc_init, _heatsrc_state, _heatsrc_set }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
-    { { HASS_DEV_TYP_select,  "spa_htsrc",    "spa ht src",   NULL  }, { _heatsrc_init, _heatsrc_state, _heatsrc_set }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
     { { HASS_DEV_TYP_sensor,  "sch1_start",   "sch1 start",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_START, 0 } },
     { { HASS_DEV_TYP_sensor,  "sch1_stop",    "sch1 stop",    NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_STOP, 0 } },
@@ -428,7 +441,7 @@ static dispatch_t _dispatches[] = {
     { { HASS_DEV_TYP_sensor,  "pump_pwr",     "pump pwr",     "W"   }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_PWR,     0 } },
     { { HASS_DEV_TYP_sensor,  "pump_gpm",     "pump gpm",     "P/m" }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_GPM,     0 } },
     { { HASS_DEV_TYP_sensor,  "pump_speed",   "pump speed",   "rpm" }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_RPM,     0 } },
-    { { HASS_DEV_TYP_sensor,  "pump_error",   "pump error",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_ERR,     0 } },
+    { { HASS_DEV_TYP_sensor,  "pump_error",   "pump error",   NULL} ,  { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_PUMP,   POOLSTATE_ELEM_PUMP_TYP_ERR,     0 } },
     { { HASS_DEV_TYP_sensor,  "chlor_name",   "chlor name",   NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_NAME,   0 } },
     { { HASS_DEV_TYP_sensor,  "chlor_pct",    "chlor pct",    "%"   }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_PCT,    0 } },
     { { HASS_DEV_TYP_sensor,  "chlor_salt",   "chlor salt",   "ppm" }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_CHLOR,  POOLSTATE_ELEM_CHLOR_TYP_SALT,   0 } },
@@ -540,6 +553,6 @@ hass_task(void * ipc_void)
             }
         }
         mqtt_subscribe = false;
-        vTaskDelay((TickType_t)5 * 60 * 1000 / portTICK_PERIOD_MS);
+        vTaskDelay((TickType_t)2 * 60 * 1000 / portTICK_PERIOD_MS);
     }
 }

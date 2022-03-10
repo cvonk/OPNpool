@@ -62,10 +62,10 @@ typedef enum {
 } poolstate_thermo_typ_t;
 
 typedef struct poolstate_thermo_t {
-    uint8_t           temp;
-    uint8_t           set_point;
-    uint8_t           heat_src;
-    bool              heating;
+    uint8_t  temp;
+    uint8_t  set_point;
+    uint8_t  heat_src;
+    bool     heating;
 } poolstate_thermo_t;
 
 #define POOLSTATE_ELEM_THERMO_TYP_MAP(XX) \
