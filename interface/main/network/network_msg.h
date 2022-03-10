@@ -155,10 +155,10 @@ typedef enum {
 } network_pump_state_t;
 
 #define NETWORK_HEAT_SRC_MAP(XX) \
-  XX(0, off)        \
-  XX(1, heat)       \
-  XX(2, solar_pref) \
-  XX(3, solar)
+  XX(0, None)       \
+  XX(1, Heater)     \
+  XX(2, SolarPref) \
+  XX(3, Solar)
 
 typedef enum {
 #define XX(num, name) NETWORK_HEAT_SRC_##name = num,
