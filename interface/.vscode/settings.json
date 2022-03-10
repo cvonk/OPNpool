@@ -31,5 +31,6 @@
     "wifi_connect.h": "c"
   },
   "idf.portWin": "COM6",
-  "idf.adapterTargetName": "esp32"
+  "idf.adapterTargetName": "esp32",
+  "cmake.configureOnOpen": false
 }
