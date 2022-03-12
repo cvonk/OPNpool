@@ -94,7 +94,7 @@ datalink_tx_pkt_queue(rs485_handle_t const rs485, datalink_pkt_t const * const p
         size_t const dbg_size = 128;
         char dbg[dbg_size];
         (void) skb_print(TAG, skb, dbg, dbg_size);
-        ESP_LOGI(TAG, "%s: { %s}", datalink_prot_str(pkt->prot), dbg);
+        ESP_LOGI(TAG, " %s: { %s}", datalink_prot_str(pkt->prot), dbg);
     }
 
     // queue for transmission by `pool_task`
