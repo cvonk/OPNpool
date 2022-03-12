@@ -72,14 +72,20 @@ I (3185) esp_netif_handlers: sta ip: 10.1.1.118, mask: 255.255.255.0, gw: 10.1.1
 I (3185) ota_task: Checking for OTA update (http://coertvonk.com/cvonk/pool/interface.bin)
 I (3195) ota_task: Running from part "factory" (0x00010000)
 I (3195) gpio: GPIO[27]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+
 I (3215) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 fd 00 01 d5 }
+
 I (3215) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 c5 00 01 9d }
+
 I (3225) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 c8 00 01 a0 }
+
 I (3225) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 de 00 01 b6 }
+
 I (3235) coredump: No coredump in flash
 W (3285) wifi:<ba-add>idx:1 (ifx:0, d8:50:e6:45:94:12), tid:1, ssn:0, winSize:64
 W (3645) ota_task: No file on server (http://coertvonk.com/cvonk/pool/interface.bin), status=404
 I (3645) ota_task: Exiting task ..
+
 I (3975) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (3975) datalink_rx:  01 0F 10 02 1D (header)
 I (3975) datalink_rx:  0F 1B 00 00 00 00 00 00 00 00 00 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
@@ -128,6 +134,7 @@ I (6455) datalink_rx:  FF 00 FF A5 (preamble)
 I (6455) datalink_rx:  00 90 10 D2 01 (header)
 I (6455) datalink_rx:  D2 (data)
 I (6455) datalink_rx:  2EA (checksum)
+
 I (7965) datalink_rx:  10 02 (preamble)
 I (7965) datalink_rx:  50 14 (header)
 I (7965) datalink_rx:  00 (data)
@@ -149,6 +156,7 @@ I (10485) datalink_rx:  FF 00 FF A5 (preamble)
 I (10485) datalink_rx:  00 90 10 D2 01 (header)
 I (10485) datalink_rx:  D2 (data)
 I (10485) datalink_rx:  2EA (checksum)
+
 I (12035) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (12035) datalink_rx:  01 0F 10 02 1D (header)
 I (12035) datalink_rx:  0F 1B 00 00 00 00 00 00 00 00 00 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
@@ -159,11 +167,14 @@ I (12495) datalink_rx:  FF 00 FF A5 (preamble)
 I (12495) datalink_rx:  00 90 10 D2 01 (header)
 I (12495) datalink_rx:  D2 (data)
 I (12495) datalink_rx:  2EA (checksum)
+
 I (12505) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 86 02 06 01 01 67 }
+
 I (14515) datalink_rx:  FF 00 FF A5 (preamble)
 I (14515) datalink_rx:  00 90 10 D2 01 (header)
 I (14515) datalink_rx:  D2 (data)
 I (14515) datalink_rx:  2EA (checksum)
+
 I (14835) datalink_rx:  FF 00 FF A5 (preamble)
 I (14835) datalink_rx:  00 60 10 04 01 (header)
 I (14835) datalink_rx:  FF (data)
@@ -171,6 +182,7 @@ I (14835) datalink_rx:  219 (checksum)
 I (14845) poolstate_rx: {PUMP_CTRL_SET: {"ctrl":"remote"}}
 
 I (14855) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 86 02 06 01 01 67 }
+
 I (14875) datalink_rx:  FF 00 FF A5 (preamble)
 I (14875) datalink_rx:  00 10 60 04 01 (header)
 I (14875) datalink_rx:  FF (data)
@@ -196,8 +208,8 @@ I (16065) datalink_rx:  417 (checksum)
 I (16075) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":false},"SPA":{"temp":56,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
 I (16155) poolstate_rx: {CTRL_CIRCUIT_SET: {"POOL":1}}
-
 I (16505) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 86 02 06 00 01 66 }
+
 I (16505) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (16505) datalink_rx:  01 22 10 01 01 (header)
 I (16505) datalink_rx:  86 (data)
@@ -212,6 +224,8 @@ I (16555) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15
 
 I (16975) poolstate_rx: {CTRL_CIRCUIT_SET: {"POOL":1}}
 
+# 516 ms
+
 I (17005) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (17005) datalink_rx:  01 22 10 01 01 (header)
 I (17005) datalink_rx:  86 (data)
@@ -222,6 +236,7 @@ I (17545) datalink_rx:  FF 00 FF A5 (preamble)
 I (17545) datalink_rx:  00 90 10 D2 01 (header)
 I (17545) datalink_rx:  D2 (data)
 I (17545) datalink_rx:  2EA (checksum)
+
 I (17875) datalink_rx:  FF 00 FF A5 (preamble)
 I (17875) datalink_rx:  00 60 10 04 01 (header)
 I (17875) datalink_rx:  FF (data)
@@ -360,6 +375,7 @@ I (29405) datalink_rx:  417 (checksum)
 I (29415) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":false},"SPA":{"temp":56,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
 I (29485) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 86 02 06 01 01 67 }
+
 I (29855) datalink_rx:  FF 00 FF A5 (preamble)
 I (29855) datalink_rx:  00 90 10 D2 01 (header)
 I (29855) datalink_rx:  D2 (data)
@@ -370,7 +386,11 @@ I (31405) datalink_rx:  0F 1B 00 00 00 00 00 00 00 00 00 00 00 01 38 38 02 50 3F
 I (31415) datalink_rx:  417 (checksum)
 I (31425) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":false},"SPA":{"temp":56,"src":"None","heating":false}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 500 ms: FF 00 FF A5 01 10 22 86 02 06 01 01 67 (MSG 01)
+
 I (31505) poolstate_rx: {CTRL_CIRCUIT_SET: {"POOL":1}}
+
+# 516 ms (MSG 02)
 
 I (31855) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (31855) datalink_rx:  01 22 10 01 01 (header)
@@ -378,21 +398,30 @@ I (31855) datalink_rx:  86 (data)
 I (31855) datalink_rx:  160 (checksum)
 I (31865) poolstate_rx: {CTRL_SET_ACK: {"ack":134}}
 
+# 564 ms
+
 I (31885) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (31885) datalink_rx:  01 0F 10 02 1D (header)
 I (31885) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (31895) datalink_rx:  443 (checksum)
 I (31905) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 1069 ms
+
 I (32315) datalink_rx:  FF 00 FF A5 (preamble)
 I (32315) datalink_rx:  00 90 10 D2 01 (header)
 I (32315) datalink_rx:  D2 (data)
 I (32315) datalink_rx:  2EA (checksum)
+
+# 1393 ms
+
 I (32435) datalink_rx:  FF 00 FF A5 (preamble)
 I (32435) datalink_rx:  00 60 10 07 00 (header)
 I (32435) datalink_rx:  (data)
 I (32445) datalink_rx:  11C (checksum)
 I (32445) poolstate_rx: {PUMP_STATUS_REQ: {}}
+
+# 1409 ms
 
 I (32465) datalink_rx:  FF 00 FF A5 (preamble)
 I (32465) datalink_rx:  00 10 60 07 0F (header)
@@ -401,16 +430,25 @@ I (32465) datalink_rx:  159 (checksum)
 I (32475) poolstate_rx: {PUMP_STATUS_RESP: {"status":{"time":"15:27","mode":"FILTER","running":false,"state":"OK","pwr":0,"rpm":0,"err":0,"timer":0}}}
 
 I (33235) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 c8 00 01 a0 }
+
 I (33235) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 de 00 01 b6 }
+
+# 3092 ms
+
 I (34105) datalink_rx:  FF 00 FF A5 (preamble)
 I (34105) datalink_rx:  00 90 10 D2 01 (header)
 I (34105) datalink_rx:  D2 (data)
 I (34105) datalink_rx:  2EA (checksum)
+
+# 3412 ms
+
 I (34455) datalink_rx:  FF 00 FF A5 (preamble)
 I (34455) datalink_rx:  00 60 10 04 01 (header)
 I (34455) datalink_rx:  FF (data)
 I (34465) datalink_rx:  219 (checksum)
 I (34465) poolstate_rx: {PUMP_CTRL_SET: {"ctrl":"remote"}}
+
+# 3430 ms
 
 I (34485) datalink_rx:  FF 00 FF A5 (preamble)
 I (34485) datalink_rx:  00 10 60 04 01 (header)
@@ -418,11 +456,15 @@ I (34485) datalink_rx:  FF (data)
 I (34485) datalink_rx:  219 (checksum)
 I (34495) poolstate_rx: {PUMP_CTRL_RESP: {"ctrl":"remote"}}
 
+# 3446 ms
+
 I (34505) datalink_rx:  FF 00 FF A5 (preamble)
 I (34505) datalink_rx:  00 60 10 06 01 (header)
 I (34505) datalink_rx:  0A (data)
 I (34515) datalink_rx:  126 (checksum)
 I (34515) poolstate_rx: {PUMP_RUN_SET: {"running":true}}
+
+# 3470 ms
 
 I (34875) datalink_rx:  FF 00 FF A5 (preamble)
 I (34875) datalink_rx:  00 10 60 06 01 (header)
@@ -430,11 +472,15 @@ I (34875) datalink_rx:  0A (data)
 I (34875) datalink_rx:  126 (checksum)
 I (34875) poolstate_rx: {PUMP_RUN_RESP: {"running":true}}
 
+# 3486 ms
+
 I (34895) datalink_rx:  FF 00 FF A5 (preamble)
 I (34895) datalink_rx:  00 60 10 01 04 (header)
 I (34895) datalink_rx:  02 C4 09 C4 (data)
 I (34905) datalink_rx:  2AD (checksum)
 I (34905) poolstate_rx: {PUMP_REG_SET: {"rpm":2500}}
+
+# 3511 ms
 
 I (34925) datalink_rx:  FF 00 FF A5 (preamble)
 I (34925) datalink_rx:  00 10 60 01 02 (header)
@@ -442,13 +488,19 @@ I (34925) datalink_rx:  09 C4 (data)
 I (34925) datalink_rx:  1E5 (checksum)
 I (34935) poolstate_rx: {PUMP_REG_RESP: {"resp":2500}}
 
+# 4609 ms
+
 I (35655) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (35655) datalink_rx:  01 0F 10 02 1D (header)
 I (35665) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (35675) datalink_rx:  443 (checksum)
 I (35675) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 4750 ms: FF 00 FF A5 01 10 22 C8 00 01 A0
+
 I (35755) poolstate_rx: {CTRL_HEAT_REQ: {}}
+
+# 4765 ms
 
 I (35795) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (35795) datalink_rx:  01 0F 10 08 0D (header)
@@ -456,7 +508,11 @@ I (35795) datalink_rx:  38 38 3F 47 16 01 00 00 FF 00 00 00 00 (data)
 I (35805) datalink_rx:  2E6 (checksum)
 I (35815) poolstate_rx: {CTRL_HEAT_RESP: {"thermos":{"POOL":{"temp":56,"sp":71,"src":"Heater"},"SPA":{"temp":56,"sp":22,"src":"None"}}}}
 
+# 4840 ms: FF 00 FF A5 01 10 22 DE 00 01 B6
+
 I (35845) poolstate_rx: {CTRL_SCHED_REQ: {}}
+
+# 4654 ms
 
 I (35895) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (35895) datalink_rx:  01 0F 10 1E 10 (header)
@@ -464,30 +520,45 @@ I (35895) datalink_rx:  01 00 00 0F 01 00 03 84 03 93 06 01 01 E0 02 58 (data)
 I (35905) datalink_rx:  363 (checksum)
 I (35905) poolstate_rx: {CTRL_SCHED_RESP: {"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}}}}
 
+# 5112 ms
+
 I (36125) datalink_rx:  FF 00 FF A5 (preamble)
 I (36125) datalink_rx:  00 90 10 D2 01 (header)
 I (36125) datalink_rx:  D2 (data)
 I (36125) datalink_rx:  2EA (checksum)
+
+# 6620 ms
+
 I (37665) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (37665) datalink_rx:  01 0F 10 02 1D (header)
 I (37675) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (37685) datalink_rx:  443 (checksum)
 I (37685) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 7128 ms
+
 I (38145) datalink_rx:  FF 00 FF A5 (preamble)
 I (38145) datalink_rx:  00 90 10 D2 01 (header)
 I (38145) datalink_rx:  D2 (data)
 I (38145) datalink_rx:  2EA (checksum)
+
+# 8644 ms
+
 I (39695) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (39695) datalink_rx:  01 0F 10 02 1D (header)
 I (39695) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (39705) datalink_rx:  443 (checksum)
 I (39715) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 9151 ms
+
 I (40165) datalink_rx:  FF 00 FF A5 (preamble)
 I (40165) datalink_rx:  00 90 10 D2 01 (header)
 I (40165) datalink_rx:  D2 (data)
 I (40165) datalink_rx:  2EA (checksum)
+
+# 10666 ms
+
 I (41675) datalink_rx:  10 02 (preamble)
 I (41675) datalink_rx:  50 11 (header)
 I (41675) datalink_rx:  50 (data)
@@ -495,18 +566,30 @@ I (41675) datalink_rx:  C3 (checksum)
 I (41685) datalink_rx:  10 03 (postamble)
 I (41685) poolstate_rx: {CHLOR_LEVEL_SET: {"pct":80}}
 
+#
+
 I (42045) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 88 04 48 16 01 00 01 c3 }
+
+# 11171 ms
+
 I (42185) datalink_rx:  FF 00 FF A5 (preamble)
 I (42185) datalink_rx:  00 90 10 D2 01 (header)
 I (42185) datalink_rx:  D2 (data)
 I (42185) datalink_rx:  2EA (checksum)
+
+# 12674 ms
+
 I (43725) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (43725) datalink_rx:  01 0F 10 02 1D (header)
 I (43725) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (43735) datalink_rx:  443 (checksum)
 I (43745) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 12821: FF 00 FF A5 01 10 22 88 04 48 16 01 00 01 C3 (MSG 03)
+
 I (43825) poolstate_rx: {CTRL_HEAT_SET: {"thermos":{"POOL":{"sp":72,"src":"Heater"},"SPA":{"sp":22,"src":"None"}}}}
+
+# 12861 (MSG 04)
 
 I (44185) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (44185) datalink_rx:  01 22 10 01 01 (header)
@@ -514,40 +597,63 @@ I (44185) datalink_rx:  88 (data)
 I (44185) datalink_rx:  162 (checksum)
 I (44195) poolstate_rx: {CTRL_SET_ACK: {"ack":136}}
 
+# 13199 ms
+
 I (44215) datalink_rx:  FF 00 FF A5 (preamble)
 I (44215) datalink_rx:  00 90 10 D2 01 (header)
 I (44215) datalink_rx:  D2 (data)
 I (44215) datalink_rx:  2EA (checksum)
+
+# 14716 ms
+
 I (45765) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (45765) datalink_rx:  01 0F 10 02 1D (header)
 I (45765) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (45775) datalink_rx:  443 (checksum)
 I (45785) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+# 15222 ms
+
 I (46235) datalink_rx:  FF 00 FF A5 (preamble)
 I (46235) datalink_rx:  00 90 10 D2 01 (header)
 I (46235) datalink_rx:  D2 (data)
 I (46235) datalink_rx:  2EA (checksum)
+
+# 16740 ms
+
 I (47785) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (47785) datalink_rx:  01 0F 10 02 1D (header)
 I (47785) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (47805) datalink_rx:  443 (checksum)
 I (47805) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
 
+#
+
 I (47875) datalink_tx: A5_CTRL: { ff 00 ff a5 01 10 22 88 04 48 16 02 00 01 c4 }
+
+# 17246 ms
+
 I (48255) datalink_rx:  FF 00 FF A5 (preamble)
 I (48255) datalink_rx:  00 90 10 D2 01 (header)
 I (48255) datalink_rx:  D2 (data)
 I (48265) datalink_rx:  2EA (checksum)
+
+# 19258 ms
+
 I (50265) datalink_rx:  FF 00 FF A5 (preamble)
 I (50265) datalink_rx:  00 90 10 D2 01 (header)
 I (50265) datalink_rx:  D2 (data)
 I (50275) datalink_rx:  2EA (checksum)
+
+# 19578 ms
+
 I (50615) datalink_rx:  FF 00 FF A5 (preamble)
 I (50615) datalink_rx:  00 60 10 07 00 (header)
 I (50615) datalink_rx:  (data)
 I (50625) datalink_rx:  11C (checksum)
 I (50625) poolstate_rx: {PUMP_STATUS_REQ: {}}
+
+# 19594 ms
 
 I (50645) datalink_rx:  FF 00 FF A5 (preamble)
 I (50645) datalink_rx:  00 10 60 07 0F (header)
@@ -555,11 +661,15 @@ I (50645) datalink_rx:  0A 00 00 07 63 0D 7A 00 00 00 00 00 0B 0F 1B (data)
 I (50645) datalink_rx:  25B (checksum)
 I (50655) poolstate_rx: {PUMP_STATUS_RESP: {"status":{"time":"15:27","mode":"FILTER","running":true,"state":"OK","pwr":1891,"rpm":3450,"err":0,"timer":0}}}
 
+# 20773 ms
+
 I (51825) datalink_rx:  FF FF FF FF FF FF FF FF 00 FF A5 (preamble)
 I (51825) datalink_rx:  01 0F 10 02 1D (header)
 I (51825) datalink_rx:  0F 1B 20 00 00 00 00 00 00 00 0C 00 00 01 38 38 02 50 3F FF 02 D0 01 01 00 00 00 29 0B (data)
 I (51835) datalink_rx:  443 (checksum)
 I (51845) poolstate_rx: {CTRL_STATE_BCAST: {"state":{"system":{"tod":{"time":"15:27","date":"2022-03-10"},"firmware":"2.080"},"temps":{"AIR":63,"SOLAR":80},"thermos":{"POOL":{"temp":56,"src":"Heater","heating":true},"SPA":{"temp":56,"src":"None","heating":true}},"scheds":{"SPA":{"start":"15:00","stop":"15:15"},"POOL":{"start":"08:00","stop":"10:00"}},"modes":{"SERVICE":false,"X01":false,"TEMPINC":false,"FREEZEPROT":false,"TIMEOUT":false},"circuits":{"active":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":true,"FT2":false,"FT3":false,"FT4":false},"delay":{"SPA":false,"AUX1":false,"AUX2":false,"AUX3":false,"FT1":false,"POOL":false,"FT2":false,"FT3":false,"FT4":false}}}}}
+
+# LA cut off
 
 I (51935) poolstate_rx: {CTRL_HEAT_SET: {"thermos":{"POOL":{"sp":72,"src":"SolarPref"},"SPA":{"sp":22,"src":"None"}}}}
 
