@@ -545,7 +545,7 @@ hass_task(void * ipc_void)
                     dispatch->fnc.init(base, &dispatch->hass, NULL, &cfg);
                 }
 
-                // publish the MQTT discovery message (by sendint it to the MQTT task)
+                // publish the MQTT discovery message (by sending it to the MQTT task)
 
                 ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, cfg, ipc);
                 free(cfg);
