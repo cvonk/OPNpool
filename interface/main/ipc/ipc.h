@@ -33,13 +33,12 @@ typedef struct ipc_t {
     } dev;
 } ipc_t;
 
-#define IPC_TO_MQTT_TYP_MAP(XX) \
-  XX(0x00, STATE)     \
-  XX(0x01, RESTART)   \
-  XX(0x02, WHO)       \
-  XX(0x03, DBG)       \
-  XX(0x04, SUBSCRIBE) \
-  XX(0x05, PUBLISH)
+#define IPC_TO_MQTT_TYP_MAP(XX)  \
+  XX(0x00, SUBSCRIBE)            \
+  XX(0x01, PUBLISH)              \
+  XX(0x02, PUBLISH_DATA_RESTART) \
+  XX(0x03, PUBLISH_DATA_WHO)     \
+  XX(0x04, PUBLISH_DATA_DBG)
 
 typedef enum {
 #define XX(num, name) IPC_TO_MQTT_TYP_##name = num,

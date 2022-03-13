@@ -109,7 +109,7 @@ _forwardCoredump(ipc_t * ipc, esp_mqtt_client_handle_t const client)
 static void
 _dispatch_restart(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
 {
-    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_RESTART, "{ \"response\": \"restarting\" }", ipc);
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH_DATA_RESTART, "{ \"response\": \"restarting\" }", ipc);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     esp_restart();
 }
@@ -137,7 +137,7 @@ _dispatch_who(esp_mqtt_event_handle_t event, ipc_t const * const ipc)
             running_app_info.date, running_app_info.time,
             ipc->dev.count.wifiConnect, ipc->dev.ipAddr, ap_info.ssid, ap_info.rssi,
             ipc->dev.count.mqttConnect, heap_caps_get_free_size(MALLOC_CAP_8BIT) ) >= 0);
-    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_WHO, payload, ipc);
+    ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH_DATA_WHO, payload, ipc);
     free(payload);
 }
 
@@ -333,11 +333,23 @@ mqtt_task(void * ipc_void)
                     break;
                 }
 
-                    // publish using control topic combined with msg.dataType
-                case IPC_TO_MQTT_TYP_STATE:    // publish state as JSON (from `hass_task`)
-                case IPC_TO_MQTT_TYP_RESTART:  // publish response when restarting device (from `_dispatch_restart`)
-                case IPC_TO_MQTT_TYP_WHO:      // publish response with info about device (from `_dispatch_who`)
-                case IPC_TO_MQTT_TYP_DBG: {    // publish debug info (from e.g. `poolstate_rx`)
+                    // publish using topic and message from `msg.data`
+                case IPC_TO_MQTT_TYP_PUBLISH: {  // publish a message (from `hass_task`)
+                    char const * const topic = msg.data;
+                    char * message = strchr(msg.data, '\t');
+                    *message++ = '\0';
+                    if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
+                        ESP_LOGI(TAG, "tx %s: %s", topic, message);
+                    }
+                    esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
+                    free(msg.data);
+                    break;
+                }
+
+                    // publish to `/pool/data/SUB` where `SUB` is `msg.dataType` and the value is `msg.data`
+                case IPC_TO_MQTT_TYP_PUBLISH_DATA_RESTART:  // publish response when restarting device (from `_dispatch_restart`)
+                case IPC_TO_MQTT_TYP_PUBLISH_DATA_WHO:      // publish response with info about device (from `_dispatch_who`)
+                case IPC_TO_MQTT_TYP_PUBLISH_DATA_DBG: {    // publish debug info (from e.g. `poolstate_rx`)
                     char * topic;
                     char const * const subtopic = ipc_to_mqtt_typ_str(msg.dataType);
                     if (subtopic) {
@@ -347,19 +359,6 @@ mqtt_task(void * ipc_void)
                     }
                     esp_mqtt_client_publish(client, topic, msg.data, strlen(msg.data), 1, 0);
                     free(topic);
-                    free(msg.data);
-                    break;
-                }
-
-                    // publish using topic and message from msg.data
-                case IPC_TO_MQTT_TYP_PUBLISH: {  // publish a message (from `hass_task`)
-                    char const * const topic = msg.data;
-                    char * message = strchr(msg.data, '\t');
-                    *message++ = '\0';
-                    if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
-                        ESP_LOGI(TAG, "tx %s: %s", topic, message);
-                    }
-                    esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
                     free(msg.data);
                     break;
                 }

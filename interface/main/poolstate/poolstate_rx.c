@@ -479,7 +479,7 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         char * const json = malloc(json_size);
         assert( cJSON_PrintPreallocated(dbg, json, json_size, false) );
         ESP_LOGI(TAG, "{%s: %s}\n", network_msg_typ_str(msg->typ), json);
-        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_DBG, json, ipc_for_dbg);
+        ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH_DATA_DBG, json, ipc_for_dbg);
         free(json);
     }
     cJSON_Delete(dbg);
