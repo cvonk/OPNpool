@@ -21,6 +21,7 @@ static char const * const TAG = "httpd";
 static httpd_uri_t _httpd_uris[] = {
     { .uri = "/",            .method = HTTP_GET, .handler = httpd_root },  // httpd_root.c
     { .uri = "/json",        .method = HTTP_GET, .handler = httpd_json },  // httpd_json.c
+    { .uri = "/who",        . method = HTTP_GET, .handler = httpd_who  },  // httpd_who.c
     { .uri = "/favicon.ico", .method = HTTP_GET, .handler = httpd_ico  },  // httpd_ico.c
 };
 

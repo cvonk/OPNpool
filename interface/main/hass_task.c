@@ -108,13 +108,13 @@ _circuit_state(poolstate_t const * const state, poolstate_get_params_t const * c
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
 
-    if (params->idx == NETWORK_CIRCUIT_POOL) {
+    if (params->idx == NETWORK_CIRCUIT_Pool) {
         assert( asprintf(&combined, "homeassistant/climate/pool/pool_heater/available\t%s",
                         value ? "online" : "offline") >= 0 );
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
         free(combined);
     }
-    if (params->idx == NETWORK_CIRCUIT_SPA) {
+    if (params->idx == NETWORK_CIRCUIT_Spa) {
         assert( asprintf(&combined, "homeassistant/climate/pool/spa_heater/available\t%s",
                         value ? "online" : "offline") >= 0 );
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
@@ -223,6 +223,8 @@ _thermo_init(char const * const base, dispatch_hass_t const * const hass, char *
                      "\"pr_mode_stat_t\":\"~/state\","
                      "\"pr_mode_val_tpl\":\"{{ value_json.heatsrc }}\","
                      "\"pr_modes\":[\"Heater\",\"SolarPref\", \"Solar\"],"
+                     "\"act_t\":\"~/state\","
+                     "\"act_tpl\":\"{{ value_json.action }}\","
                      "\"min_temp\":15,"
                      "\"max_temp\":110,"
                      "\"temp_step\":1,"
@@ -246,17 +248,19 @@ _thermo_state(poolstate_t const * const state, poolstate_get_params_t const * co
     uint8_t const current_temp = thermostat->temp;
     uint8_t const target_temp = thermostat->set_point;
     uint8_t const heat_src = thermostat->heat_src;
-    //bool const heating = thermostat->heating;
+    char const * const action = (thermostat->heat_src == NETWORK_HEAT_SRC_None) ? "off" :
+                                thermostat->heating ? "heating" : "idle";
     char * combined;
     assert( asprintf(&combined, "homeassistant/%s/pool/%s/state\t{"
                      "\"mode\":\"%s\","
                      "\"heatsrc\":\"%s\","
                      "\"target_temp\":%u,"
-                     "\"current_temp\":%u}",
+                     "\"current_temp\":%u,"
+                     "\"action\":\"%s\"}",
                      hass_dev_typ_str(hass->dev_typ), hass->id,
                      "heat", //heat_src == NETWORK_HEAT_SRC_None ? "off" : "heat",
                      network_heat_src_str(heat_src),
-                     target_temp, current_temp) >= 0 );
+                     target_temp, current_temp, action) >= 0 );
     ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
     free(combined);
     return ESP_OK;
@@ -414,15 +418,15 @@ _heatsrc_set(char const * const subtopic, poolstate_get_params_t const * const p
  */
 
 static dispatch_t _dispatches[] = {
-    { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_POOL } },
-    { { HASS_DEV_TYP_switch,  "spa_circuit",  "Spa circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_SPA } },
-    { { HASS_DEV_TYP_switch,  "aux1_circuit", "AUX1 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_AUX1 } },
-    { { HASS_DEV_TYP_switch,  "aux2_circuit", "AUX2 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_AUX2 } },
-    { { HASS_DEV_TYP_switch,  "aux3_circuit", "AUX3 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_AUX3 } },
-    { { HASS_DEV_TYP_switch,  "ft1_circuit",  "Ft1 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT1 } },
-    { { HASS_DEV_TYP_switch,  "ft2_circuit",  "Ft2 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT2 } },
-    { { HASS_DEV_TYP_switch,  "ft3_circuit",  "Ft3 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT3 } },
-    { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_FT4 } },
+    { { HASS_DEV_TYP_switch,  "pool_circuit", "Pool circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Pool } },
+    { { HASS_DEV_TYP_switch,  "spa_circuit",  "Spa circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Spa } },
+    { { HASS_DEV_TYP_switch,  "aux1_circuit", "AUX1 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Aux1 } },
+    { { HASS_DEV_TYP_switch,  "aux2_circuit", "AUX2 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Aux2 } },
+    { { HASS_DEV_TYP_switch,  "aux3_circuit", "AUX3 circuit", NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Aux3 } },
+    { { HASS_DEV_TYP_switch,  "ft1_circuit",  "Ft1 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Ft1 } },
+    { { HASS_DEV_TYP_switch,  "ft2_circuit",  "Ft2 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Ft2 } },
+    { { HASS_DEV_TYP_switch,  "ft3_circuit",  "Ft3 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Ft3 } },
+    { { HASS_DEV_TYP_switch,  "ft4_circuit",  "Ft4 circuit",  NULL  }, { _circuit_init, _circuit_state, _circuit_set }, { 0,                         0,                               NETWORK_CIRCUIT_Ft4 } },
     { { HASS_DEV_TYP_climate, "pool_heater",  "pool heater",  "F"   }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_POOL } },
     { { HASS_DEV_TYP_climate, "spa_heater",   "spa heater",   "F"   }, { _thermo_init,  _thermo_state,  _thermo_set  }, { 0,                         0,                               POOLSTATE_THERMO_TYP_SPA } },
     { { HASS_DEV_TYP_sensor,  "sch1_circuit", "sch1 circuit", NULL  }, { _generic_init, _generic_state,  NULL       }, { POOLSTATE_ELEM_TYP_SCHED,  POOLSTATE_ELEM_SCHED_TYP_CIRCUIT, 0 } },
