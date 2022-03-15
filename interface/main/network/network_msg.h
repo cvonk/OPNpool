@@ -103,15 +103,15 @@ typedef enum {
 
 // MUST add 1 for network messages (1-based)
 #define NETWORK_CIRCUIT_MAP(XX) \
-  XX( 0, SPA)  \
-  XX( 1, AUX1) \
-  XX( 2, AUX2) \
-  XX( 3, AUX3) \
-  XX( 4, FT1)  \
-  XX( 5, POOL) \
-  XX( 6, FT2)  \
-  XX( 7, FT3)  \
-  XX( 8, FT4)  \
+  XX( 0, Spa)  \
+  XX( 1, Aux1) \
+  XX( 2, Aux2) \
+  XX( 3, Aux3) \
+  XX( 4, Ft1)  \
+  XX( 5, Pool) \
+  XX( 6, Ft2)  \
+  XX( 7, Ft3)  \
+  XX( 8, Ft4)  \
   XX( 9, COUNT)
 
 typedef enum {

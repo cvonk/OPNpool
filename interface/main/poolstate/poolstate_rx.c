@@ -122,10 +122,10 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
         uint16_t const start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
         uint16_t const stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
 
-        if (msg_sched->circuit == NETWORK_CIRCUIT_POOL + 1) {
+        if (msg_sched->circuit == NETWORK_CIRCUIT_Pool + 1) {
             state->thermos[POOLSTATE_THERMO_TYP_POOL].sched.start = start;
             state->thermos[POOLSTATE_THERMO_TYP_POOL].sched.stop = stop;
-        } else if (msg_sched->circuit == NETWORK_CIRCUIT_SPA + 1) {
+        } else if (msg_sched->circuit == NETWORK_CIRCUIT_Spa + 1) {
             state->thermos[POOLSTATE_THERMO_TYP_SPA].sched.start = start;
             state->thermos[POOLSTATE_THERMO_TYP_SPA].sched.stop = stop;
         }
@@ -148,8 +148,8 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_bcast_t const * const msg,
         msg_mask <<= 1;
     }
     // if both SPA and POOL bits are set, only SPA runs
-    if (state->circuits.active[NETWORK_CIRCUIT_SPA]) {
-        state->circuits.active[NETWORK_CIRCUIT_POOL] = false;
+    if (state->circuits.active[NETWORK_CIRCUIT_Spa]) {
+        state->circuits.active[NETWORK_CIRCUIT_Pool] = false;
     }
 
     // update state->circuits.delay
@@ -161,10 +161,10 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_bcast_t const * const msg,
     }
 
     // update state->circuits.thermos (only update when the pump is running)
-    if (state->circuits.active[NETWORK_CIRCUIT_SPA]) {
+    if (state->circuits.active[NETWORK_CIRCUIT_Spa]) {
         state->thermos[POOLSTATE_THERMO_TYP_SPA].temp = msg->poolTemp;
     }
-    if (state->circuits.active[NETWORK_CIRCUIT_POOL]) {
+    if (state->circuits.active[NETWORK_CIRCUIT_Pool]) {
         state->thermos[POOLSTATE_THERMO_TYP_POOL].temp = msg->poolTemp;
     }
 
