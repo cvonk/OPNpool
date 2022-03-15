@@ -1,4 +1,13 @@
-﻿#colborders .ui-collapsible-heading .ui-btn {
+body {
+    background: #333;
+}
+
+.ui-header {
+    color: white;
+    background-color: #256590;
+    border-bottom: 0;
+}
+#colborders .ui-collapsible-heading .ui-btn {
     border-top-width: 1px !important;
 }
 

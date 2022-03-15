@@ -1,10 +1,10 @@
-﻿// to develop: use vsCode with Live Server plugin
+// to develop: use vsCode with Live Server plugin
 
 (function() {
     "use strict";
 
     let ipName;
-    const ipName_default =  "http://esp32-wrover-1.iot.vonk"; // "http://pool.iot.vonk"; //
+    const ipName_default =  ""; //"http://esp32-wrover-1.iot.vonk"; // "http://pool.iot.vonk"; //
     let message_pending = false;
     let first_status_req = true;
     let delay_cnt = 0;
@@ -180,7 +180,7 @@
     {
         Object.keys(_ui.circuits).forEach( function(key) {
             const val = json_circuits.active[key.toUpperCase()];
-            this[key].obj.attr('checked', val).checkboxradio('refresh');
+            this[key].obj.attr('checked', val).trigger('create').checkboxradio('refresh');
         }, _ui.circuits);
     }
 
@@ -209,9 +209,9 @@
     function update_readwrite(json_thermos)
     {
         Object.keys(_ui.readwrite.thermo).forEach( function(key) {
-            ['off', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
+            ['none', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
                 const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
-                const val = src == json_thermos[key.toUpperCase()].src;
+                const val = src == json_thermos[key.toUpperCase()].src.toLowerCase();
                 $(sel).attr("checked", val).checkboxradio("refresh");
             });
             const json_thermostat = json_thermos[key.toUpperCase()];
@@ -219,6 +219,18 @@
             this[key].obj_lbl.text((json_thermostat.heating ? 'heating' : 'idle'));
 
         }, _ui.readwrite.thermo);
+    }
+
+    function update_schedules(scheds)
+    {
+        if ("POOL" in scheds) {
+            $("#poolStart").val(scheds.POOL.start);
+            $("#poolStop").val(scheds.POOL.stop);
+        }
+        if ("SPA" in scheds) {
+            $("#spaStart").val(scheds.SPA.start);
+            $("#spaStop").val(scheds.SPA.stop);
+        }
     }
 
     function update_system(system)
@@ -239,12 +251,15 @@
             update_circuits(jsonData.circuits);
             update_readonly(jsonData.temps, jsonData.thermos, jsonData.chlor, jsonData.pump);
             update_readwrite(jsonData.thermos);
+            update_schedules(jsonData.scheds);
             update_system(jsonData.system);
         }
     }
 
     function initialize()
     {
+        console.log("index.js: ready event, updating");
+
         Object.keys(_ui.circuits).forEach( function(key) {
             this[key].obj = $('#circuit_' + key);
         }, _ui.circuits);
@@ -315,7 +330,7 @@
                     change: function(args) {
                         update_round_slider(_ui.readwrite[major_key][minor_key], args.value);
                         let pair = {};
-                        const key1 = '?homeassistant/climate/pool/' + minor_key + '/set_temp';
+                        const key1 = 'homeassistant/climate/pool/' + minor_key + '_heater/set_temp';
                         pair[key1] = args.value
                         send_message(pair);
                     },
@@ -348,7 +363,7 @@
         });
         $(".heat_src").on("change", function(event) {
             let pair = {};
-            pair["?homeassistant/climate/pool/" + event.target.name + "/set_mode"] = event.target.value;
+            pair["homeassistant/climate/pool/" + event.target.name + "/set_mode"] = event.target.value;
             send_message(pair);
         });
 
@@ -367,5 +382,7 @@
             setInterval(every_sec_cb, 1000);
         }
     }
+
+    // call `initialize`, once the page DOM is ready for JavaScript code
     $(document).ready(initialize);
 })();
