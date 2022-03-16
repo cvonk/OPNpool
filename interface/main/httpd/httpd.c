@@ -40,6 +40,14 @@ httpd_register_handlers(httpd_handle_t const httpd_handle, esp_ip4_addr_t const 
             ESP_LOGI(TAG, "Listening at http://" IPSTR "%s", IP2STR(ip), http_uri->uri);
         }
     }
+
+	// mDNS
+
+	ESP_ERROR_CHECK(mdns_init());
+    ESP_ERROR_CHECK(mdns_hostname_set("pool"));
+    ESP_ERROR_CHECK(mdns_instance_name_set("Pool interface"));
+    ESP_ERROR_CHECK(mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0));
+    ESP_ERROR_CHECK(mdns_service_instance_name_set("_http", "_tcp", "Pool Web UI"));
 }
 
 /*
