@@ -14,5 +14,8 @@ esp_err_t httpd_root(httpd_req_t * const req);
 /* httpd_json.c */
 esp_err_t httpd_json(httpd_req_t * const req);
 
+/* httpd_who.c */
+esp_err_t httpd_who(httpd_req_t * const req);
+
 /* httpd_ico.c */
 esp_err_t httpd_ico(httpd_req_t * const req);
