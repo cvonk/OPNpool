@@ -12,6 +12,7 @@
 #include <esp_log.h>
 #include <esp_wifi.h>
 #include <esp_http_server.h>
+#include <mdns.h>
 
 #include "httpd.h"
 #include "../ipc/ipc.h"
