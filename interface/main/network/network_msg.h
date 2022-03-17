@@ -187,7 +187,7 @@ typedef struct network_msg_ctrl_sched_req_t {
 } network_msg_ctrl_sched_req_t;
 
 typedef struct network_msg_ctrl_sched_resp_sub_t {
-    uint8_t circuit;            // 0
+    uint8_t circuit;            // 0  (0 = schedule not active)
     uint8_t UNKNOWN_1;          // 1
     uint8_t prgStartHi;         // 2 [min]
     uint8_t prgStartLo;         // 3 [min]
@@ -326,14 +326,31 @@ typedef struct network_msg_ctrl_scheds_req_t {
     uint8_t schedId;  // 0x01 (1 - 12)
 } network_msg_ctrl_scheds_req_t;
 
-typedef struct network_msg_ctrl_scheds_resp_t {  // 01 01 00 00 00 00 3F
+// With POOL 1/1 from 08:00 to 10:00, and
+//      SPA  1/1 from 11:00 to 12:00
+// sending [0] => no response
+// sending [1] => 01 01 08 00 00 00 3F
+// sending [2] => 02 01 0C 30 15 14 3F
+// sending [3] => 03 00 2E 38 08 25 3F
+//
+// With no POOL, no SPA, no ..
+// sending [1] => 01 00 00 00 00 00 3F
+// sending [2] => 02 01 0C 30 15 14 3F
+// sending [3] => 03 00 2E 38 08 25 3F
+//
+// With only POOL 1/1 from 08:00 to 10:00
+// sending [1] => 01 06 00 00 00 00 3F
+// sending [2] => 02 01 0C 30 15 14 3F
+// sending [3] => 03 00 2E 38 08 25 3F
+//
+typedef struct network_msg_ctrl_scheds_resp_t {
     uint8_t schedId;  // 0 
     uint8_t circuit;  // 1
     uint8_t startHr;  // 2
     uint8_t startMin; // 3
     uint8_t stopHr;   // 4
     uint8_t stopMin;  // 5
-    uint8_t dayOfWk;  // 6 bitmask Mon (0x02), Tue (0x04), Wed (0x08), Thu(0x10), Fri (0x20), Sat (0x40), Sun(0x80)
+    uint8_t dayOfWk;  // 6 bitmask Mon (0x01), Tue (0x02), Wed (0x04), Thu(0x08), Fri (0x10), Sat (0x20), Sun(0x40)
 } network_msg_ctrl_scheds_resp_t;
 
 // HEAT

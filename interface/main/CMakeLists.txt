@@ -16,7 +16,6 @@ idf_component_register( SRCS
                             "../components/factory_reset_task/include"
                             "../components/ota_update_task/include"
                             "../components/wifi_connect/include"
-                            #"../components/esp-arduinojson/ArduinoJson-5.x/"
                         PRIV_REQUIRES
                             esp_http_server 
                             esp_http_client
@@ -25,6 +24,7 @@ idf_component_register( SRCS
                             app_update 
                             json
                             mqtt
+                            mdns
                             espcoredump
                         EMBED_TXTFILES 
                             httpd/favicon.ico)

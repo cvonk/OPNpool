@@ -96,6 +96,7 @@ typedef enum {
 } poolstate_elem_sched_typ_t;
 
 typedef struct poolstate_sched_t {
+    bool              active;
     network_circuit_t circuit;
     uint16_t          start;
     uint16_t          stop;

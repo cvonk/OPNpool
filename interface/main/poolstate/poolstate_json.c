@@ -123,10 +123,12 @@ cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_th
 static void
 _addScheduleToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * const sched, bool const showSched)
 {
-    cJSON * const item = _create_item(obj, key);
-    if (showSched) {
-        cJSON_AddStringToObject(item, "start", network_time_str(sched->start / 60, sched->start % 60));
-        cJSON_AddStringToObject(item, "stop", network_time_str(sched->stop / 60, sched->stop % 60));
+    if (sched->active) {
+        cJSON * const item = _create_item(obj, key);
+        if (showSched) {
+            cJSON_AddStringToObject(item, "start", network_time_str(sched->start / 60, sched->start % 60));
+            cJSON_AddStringToObject(item, "stop", network_time_str(sched->stop / 60, sched->stop % 60));
+        }
     }
 }
 

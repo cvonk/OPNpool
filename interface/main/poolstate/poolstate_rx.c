@@ -99,41 +99,20 @@ _ctrl_circuit_set(cJSON * const dbg, network_msg_ctrl_circuit_set_t const * cons
 static void
 _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const msg, poolstate_t * const state)
 {
-#if 1
     network_msg_ctrl_sched_resp_sub_t const * msg_sched = msg->scheds;
     poolstate_sched_t * state_sched = state->scheds;
 
     for (uint ii = 0; ii < POOLSTATE_SCHED_TYP_COUNT; ii++, msg_sched++, state_sched++) {
-        state_sched->circuit = msg_sched->circuit - 1;
-        state_sched->start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
-        state_sched->stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
+        state_sched->active = msg_sched->circuit != 0; 
+        if (state_sched->active) {
+            state_sched->circuit = msg_sched->circuit - 1;
+            state_sched->start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
+            state_sched->stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
+        }
     }
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddSchedsToObject(dbg, "scheds", state->scheds, true);
     }
-#else    
-    network_msg_ctrl_sched_resp_sub_t const * msg_sched = msg->scheds;
-
-    for (uint ii = 0; ii < POOLSTATE_THERMO_TYP_COUNT; ii++, msg_sched++) {
-
-        if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-            ESP_LOGI(TAG, "%s[%u], circuit=%s", __FUNCTION__, ii, network_circuit_str(msg_sched->circuit));
-        }
-        uint16_t const start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
-        uint16_t const stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
-
-        if (msg_sched->circuit == NETWORK_CIRCUIT_Pool + 1) {
-            state->thermos[POOLSTATE_THERMO_TYP_POOL].sched.start = start;
-            state->thermos[POOLSTATE_THERMO_TYP_POOL].sched.stop = stop;
-        } else if (msg_sched->circuit == NETWORK_CIRCUIT_Spa + 1) {
-            state->thermos[POOLSTATE_THERMO_TYP_SPA].sched.start = start;
-            state->thermos[POOLSTATE_THERMO_TYP_SPA].sched.stop = stop;
-        }
-    }
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
-        cJSON_AddThermosToObject(dbg, "thermos", state->thermos, false, false, false, false, true, false);
-    }
-#endif
 }
 
 static void
