@@ -88,11 +88,11 @@ typedef enum {
  **/
 
 #define NETWORK_MODE_MAP(XX) \
-  XX( 0, SERVICE) \
-  XX( 1, X01) \
-  XX( 2, TEMPINC) \
-  XX( 3, FREEZEPROT) \
-  XX( 4, TIMEOUT) \
+  XX( 0, service) \
+  XX( 1, UNKOWN_01) \
+  XX( 2, tempInc) \
+  XX( 3, freezeProt) \
+  XX( 4, timeout) \
   XX( 5, COUNT)
 
 typedef enum {
@@ -103,15 +103,15 @@ typedef enum {
 
 // MUST add 1 for network messages (1-based)
 #define NETWORK_CIRCUIT_MAP(XX) \
-  XX( 0, Spa)  \
-  XX( 1, Aux1) \
-  XX( 2, Aux2) \
-  XX( 3, Aux3) \
-  XX( 4, Ft1)  \
-  XX( 5, Pool) \
-  XX( 6, Ft2)  \
-  XX( 7, Ft3)  \
-  XX( 8, Ft4)  \
+  XX( 0, spa)  \
+  XX( 1, aux1) \
+  XX( 2, aux2) \
+  XX( 3, aux3) \
+  XX( 4, ft1)  \
+  XX( 5, pool) \
+  XX( 6, ft2)  \
+  XX( 7, ft3)  \
+  XX( 8, ft4)  \
   XX( 9, COUNT)
 
 typedef enum {
@@ -212,7 +212,7 @@ typedef struct network_msg_ctrl_state_bcast_t {
     uint8_t activeHi;           // 3
     uint8_t UNKNOWN_4to6[3];    // 4..6 more `active` circuits on fancy controllers
     uint8_t UNKNOWN_7to8[2];    // 7..8
-    uint8_t mode;               // 9
+    uint8_t modes;               // 9
     uint8_t heatStatus;         // 10
     uint8_t UNKNOWN_11;         // 11
     uint8_t delay;              // 12
@@ -465,7 +465,7 @@ typedef struct network_msg_chlor_ping_resp_t {
 typedef char network_msg_chlor_name_str_t[16];
 
 typedef struct network_msg_chlor_name_req_t {
-    uint8_t UNKNOWN;  // 0x02 and 0x00 both get a response
+    uint8_t UNKNOWN;  // Sending 0x00 or 0x02 gets a response
 } PACK8 network_msg_chlor_name_req_t;
 
 typedef struct network_msg_chlor_name_resp_t {

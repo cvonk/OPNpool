@@ -33,8 +33,9 @@ _alloc_uint(char * * const value, uint16_t const num)
 static void
 _alloc_bool(char * * const value, bool const num)
 {
-    assert( asprintf(value, "%s", num ? "true" : "false") >= 0);
+    assert( asprintf(value, "%s", num ? "ON" : "OFF") >= 0);
 }
+
 static esp_err_t
 _system(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * value)
 {
@@ -182,6 +183,35 @@ _chlor(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, po
 
 
 /**
+ * modes
+ **/
+
+static esp_err_t
+_modes(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * const value)
+{
+    poolstate_modes_t const * const modes = &state->modes;
+    switch (typ) {
+        case POOLSTATE_ELEM_MODES_TYP_SERVICE:
+            _alloc_bool(value, modes->set[NETWORK_MODE_service]);
+            break;
+        case POOLSTATE_ELEM_MODES_TYP_TEMP_INC:
+            _alloc_bool(value, modes->set[NETWORK_MODE_tempInc]);
+            break;
+        case POOLSTATE_ELEM_MODES_TYP_FREEZE_PROT:
+            _alloc_bool(value, modes->set[NETWORK_MODE_freezeProt]);
+            break;
+        case POOLSTATE_ELEM_MODES_TYP_TIMEOUT:
+            _alloc_bool(value, modes->set[NETWORK_MODE_timeout]);
+            break;
+        default:
+            ESP_LOGW(TAG, "%s unknown sub_typ(%u)", __func__, typ);
+            return ESP_FAIL;
+    }
+    return ESP_OK;
+}
+
+
+/**
  * all together now
  **/
 
@@ -199,6 +229,7 @@ static dispatch_t const _dispatches[] = {
     { POOLSTATE_ELEM_TYP_SCHED,  _schedule},
     { POOLSTATE_ELEM_TYP_PUMP,   _pump},
     { POOLSTATE_ELEM_TYP_CHLOR,  _chlor},
+    { POOLSTATE_ELEM_TYP_MODES,  _modes},
 };
 
 esp_err_t

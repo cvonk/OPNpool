@@ -51,8 +51,8 @@ typedef enum {
  **/
 
 #define POOLSTATE_THERMO_TYP_MAP(XX) \
-  XX(0, POOL) \
-  XX(1, SPA)  \
+  XX(0, pool) \
+  XX(1, spa)  \
   XX(2, COUNT)
 
 typedef enum {
@@ -109,8 +109,8 @@ typedef struct poolstate_sched_t {
  **/
 
 #define POOLSTATE_TEMP_TYP_MAP(XX) \
-  XX(0, AIR) \
-  XX(1, SOLAR)  \
+  XX(0, air) \
+  XX(1, solar)  \
   XX(2, COUNT)
 
 typedef enum {
@@ -133,12 +133,24 @@ typedef enum {
 } poolstate_elem_temp_typ_t;
 
 /**
- * poolstate_mode_t
+ * poolstate_modes_t
  **/
 
 typedef struct poolstate_modes_t {
     bool     set[NETWORK_MODE_COUNT];
 } poolstate_modes_t;
+
+#define POOLSTATE_ELEM_MODES_TYP_MAP(XX) \
+  XX(0, SERVICE) \
+  XX(1, TEMP_INC) \
+  XX(2, FREEZE_PROT) \
+  XX(3, TIMEOUT)
+
+typedef enum {
+#define XX(num, name) POOLSTATE_ELEM_MODES_TYP_##name = num,
+  POOLSTATE_ELEM_MODES_TYP_MAP(XX)
+#undef XX
+} poolstate_elem_modes_typ_t;
 
 /**
  * poolstate_circuits_t

@@ -75,10 +75,10 @@ heatpoolstate_t
 poolstate_get_heat(void)
 {
 	heatpoolstate_t current;
-	current.pool.setPoint = _protected.state->thermos[POOLSTATE_THERMO_TYP_POOL].setPoint;
-	current.pool.heatSrc = _protected.state->thermos[POOLSTATE_THERMO_TYP_POOL].heatSrc;
-	current.spa.setPoint = _protected.state->thermos[POOLSTATE_THERMO_TYP_SPA].setPoint;
-	current.spa.heatSrc = _protected.state->thermos[POOLSTATE_THERMO_TYP_SPA].heatSrc;
+	current.pool.setPoint = _protected.state->thermos[POOLSTATE_THERMO_TYP_pool].setPoint;
+	current.pool.heatSrc = _protected.state->thermos[POOLSTATE_THERMO_TYP_pool].heatSrc;
+	current.spa.setPoint = _protected.state->thermos[POOLSTATE_THERMO_TYP_spa].setPoint;
+	current.spa.heatSrc = _protected.state->thermos[POOLSTATE_THERMO_TYP_spa].heatSrc;
 	return current;
 }
 
@@ -98,10 +98,10 @@ uint8_t
 poolstate_get_heat_sp(char const * const key)
 {
 	if (strcmp(key, "pool") == 0) {
-		return _protected.state->thermos[POOLSTATE_THERMO_TYP_POOL].setPoint;
+		return _protected.state->thermos[POOLSTATE_THERMO_TYP_pool].setPoint;
 	}
 	if (strcmp(key, "spa") == 0) {
-		return _protected.state->thermos[POOLSTATE_THERMO_TYP_SPA].setPoint;
+		return _protected.state->thermos[POOLSTATE_THERMO_TYP_spa].setPoint;
 	}
 	return 0;
 }

@@ -8,7 +8,8 @@
   XX(0, switch) \
   XX(1, sensor) \
   XX(2, climate) \
-  XX(3, select)
+  XX(3, select) \
+  XX(4, binary_sensor)
 
 typedef enum {
 #define XX(num, name) HASS_DEV_TYP_##name = num,
