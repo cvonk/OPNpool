@@ -340,11 +340,11 @@ static poolstate_json_dispatch_t _dispatches[] = {
     { POOLSTATE_ELEM_TYP_SYSTEM,   "system",   _addSystemToObject   },
     { POOLSTATE_ELEM_TYP_TEMP,     "temps",    _addTempsToObject    },
     { POOLSTATE_ELEM_TYP_THERMO,   "thermos",  _addThermosToObject  },
-    { POOLSTATE_ELEM_TYP_SCHED,    "scheds",   _addSchedsToObject   },
-    { POOLSTATE_ELEM_TYP_CIRCUITS, "circuits", _addCircuitsToObject },
-    { POOLSTATE_ELEM_TYP_MODES,    "modes",    _addModesToObject    },
     { POOLSTATE_ELEM_TYP_PUMP,     "pump",     _addPumpToObject     },
     { POOLSTATE_ELEM_TYP_CHLOR,    "chlor",    _addChlorToObject    },
+    { POOLSTATE_ELEM_TYP_CIRCUITS, "circuits", _addCircuitsToObject },
+    { POOLSTATE_ELEM_TYP_SCHED,    "scheds",   _addSchedsToObject   },
+    { POOLSTATE_ELEM_TYP_MODES,    "modes",    _addModesToObject    },
 };
 
 char const *
