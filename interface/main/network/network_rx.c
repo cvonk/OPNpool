@@ -287,7 +287,7 @@ _decode_msg_a5_pump(datalink_pkt_t const * const pkt, network_msg_t * const netw
                 }
             }
             break;
-        case NETWORK_TYP_PUMP_0xFF:
+        case NETWORK_TYP_PUMP_FF:
             // silently ignore
             break;
         default:

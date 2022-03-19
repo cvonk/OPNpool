@@ -56,7 +56,7 @@ typedef enum {
   XX(0x05, MODE) \
   XX(0x06, RUN) \
   XX(0x07, STATUS) \
-  XX(0xff, 0xFF)
+  XX(0xff, FF)
 
 typedef enum {
 #define XX(num, name) NETWORK_TYP_PUMP_##name = num,
