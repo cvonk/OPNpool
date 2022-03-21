@@ -58,17 +58,18 @@ network_time_str(uint8_t const hours, uint8_t const minutes)
 char const *
 network_version_str(uint8_t const major, uint8_t const minor)
 {
-	uint const nrdigits = 5;  // 2.080
+	uint const nrdigits = 6;  // v2.080
 
 	if (name_str.idx + nrdigits + 1U >= ARRAY_SIZE(name_str.str)) {
 		return name_str.noMem;  // increase size of str.str[]
 	}
 	char * s = name_str.str + name_str.idx;
-	s[0] = name_str.digits[major % 10];
-	s[1] = '.';
-	s[2] = '0';
-	s[3] = name_str.digits[minor / 10];
-	s[4] = name_str.digits[minor % 10];
+	s[0] = 'v';
+	s[1] = name_str.digits[major % 10];
+	s[2] = '.';
+	s[3] = '0';
+	s[4] = name_str.digits[minor / 10];
+	s[5] = name_str.digits[minor % 10];
 	s[nrdigits] = '\0';
 	name_str.idx += nrdigits + 1U;
 	return s;
