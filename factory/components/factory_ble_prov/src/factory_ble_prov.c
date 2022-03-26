@@ -77,10 +77,11 @@ static void prov_event_handler(void* arg, esp_event_base_t event_base, int32_t e
             break;
         }
         case WIFI_PROV_CRED_SUCCESS:
-            ESP_LOGI(TAG, "Provisioning successful");
+            ESP_LOGI(TAG, "Wi-Fi provisioning successful");
             break;
 
         case WIFI_PROV_END:
+            ESP_LOGI(TAG, "Wi-Fi Provisioning ended");
             wifi_prov_mgr_deinit();  // release resources once provisioning is finished
             xEventGroupSetBits(_prov_event_group, WIFI_PROV_END_EVENT);
             break;
@@ -98,29 +99,11 @@ static void _get_device_service_name(char *service_name, size_t max)
              ssid_prefix, eth_mac[3], eth_mac[4], eth_mac[5]);
 }
 
-/*
- * Parses a topic string, splitting it at each '\t' delimiter
- */
-
-static uint
-_parse_mqtt_setup(char * data, char * args[], uint const args_len) {
-
-    uint ii = 0;
-    char const * const delim = "\t";
-    char * save;
-    char * p = strtok_r(data, delim, &save);
-    while (p && ii < args_len) {
-        ESP_LOGI(TAG, "%s args[%u] = \"%s\"", __func__, ii, p);
-        args[ii++] = p;
-        p = strtok_r(NULL, delim, &save);
-    }
-    return ii;
-}
-
-    /* Handler for the optional provisioning endpoint registered by the application.
+   /* Handlers for the optional provisioning endpoint registered by the application.
     * The data format can be chosen by applications. Here, we are using plain ascii text.
     * Applications can choose to use other formats like protobuf, JSON, XML, etc.
     */
+
 esp_err_t _mqtt_config_handler(uint32_t session_id, const uint8_t *inbuf, ssize_t inlen,
                                     uint8_t **outbuf, ssize_t *outlen, void *priv_data)
 {
@@ -130,7 +113,7 @@ esp_err_t _mqtt_config_handler(uint32_t session_id, const uint8_t *inbuf, ssize_
         // store values in non volatile storage (flash)
         char * str = strndup((const char * const)inbuf, inlen);
         {
-            ESP_LOGI(TAG, "Received data: \"%s\"", str);
+            ESP_LOGI(TAG, "%s Received MQTT_URL: (%s)", __FUNCTION__, str);
             nvs_handle_t nvs_handle;
             ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &nvs_handle));
             ESP_ERROR_CHECK(nvs_set_str(nvs_handle, "mqtt_url", str));
@@ -151,6 +134,40 @@ esp_err_t _mqtt_config_handler(uint32_t session_id, const uint8_t *inbuf, ssize_
     return ESP_OK;
 }
 
+#if 0
+esp_err_t _mqtt_status_handler(uint32_t session_id, const uint8_t *inbuf, ssize_t inlen,
+                               uint8_t **outbuf, ssize_t *outlen, void *priv_data)
+{
+    ESP_LOGI(TAG, "%s called", __FUNCTION__);
+
+    char response[] = "SUCCESS";
+    *outbuf = (uint8_t *)strdup(response);
+    if (*outbuf == NULL) {
+        ESP_LOGE(TAG, "System out of memory");
+        return ESP_ERR_NO_MEM;
+    }
+    *outlen = strlen(response) + 1; /* +1 for NULL terminating byte */
+
+    return ESP_OK;
+}
+
+esp_err_t _ota_status_handler(uint32_t session_id, const uint8_t *inbuf, ssize_t inlen,
+                              uint8_t **outbuf, ssize_t *outlen, void *priv_data)
+{
+    ESP_LOGI(TAG, "%s called", __FUNCTION__);
+
+    char response[] = "SUCCESS";
+    *outbuf = (uint8_t *)strdup(response);
+    if (*outbuf == NULL) {
+        ESP_LOGE(TAG, "System out of memory");
+        return ESP_ERR_NO_MEM;
+    }
+    *outlen = strlen(response) + 1; /* +1 for NULL terminating byte */
+
+    return ESP_OK;
+}
+#endif
+
 esp_err_t
 ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, char const * const pop)
 {
@@ -159,10 +176,13 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
 
     wifi_prov_mgr_config_t config = {
         .scheme = wifi_prov_scheme_ble,
-//        .scheme_event_handler = WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM  // app doesn't require BT/BLE
-        .scheme_event_handler = WIFI_PROV_EVENT_HANDLER_NONE  // test
+        .scheme_event_handler = WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM  // app doesn't require BT/BLE
+        //.scheme_event_handler = WIFI_PROV_EVENT_HANDLER_NONE  // test
     };
     ESP_ERROR_CHECK(wifi_prov_mgr_init(config));
+#if 0    
+    ESP_ERROR_CHECK(wifi_prov_mgr_disable_auto_stop(100));  //  the provisioning service will only be stopped after an explicit call to wifi_prov_mgr_stop_provisioning()
+#endif
 
     bool provisioned;
     ESP_ERROR_CHECK(wifi_prov_mgr_is_provisioned(&provisioned));
@@ -170,7 +190,7 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
     if (!provisioned) {
         ESP_LOGI(TAG, "Starting provisioning");
         _prov_event_group = xEventGroupCreate();
-
+    
         // find the Device Service Name that we want (the `device name`)
         char service_name[12];
         _get_device_service_name(service_name, sizeof(service_name));
@@ -190,15 +210,23 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
 
         wifi_prov_scheme_ble_set_service_uuid(custom_service_uuid);
 
-        // endpoint for additional custom data, in our case MQTT settings
-        wifi_prov_mgr_endpoint_create("mqtt-config");  // must be called before starting the prov
+        // endpoints for additional custom data
+        wifi_prov_mgr_endpoint_create("mqtt-config");
+#if 0        
+        wifi_prov_mgr_endpoint_create("mqtt-status");
+        wifi_prov_mgr_endpoint_create("ota-status");
+#endif
 
         // start provisioning service
         // (de-init is trigged by the default event loop handler)
         ESP_LOGW(TAG, "Calling wifi_prov_mgr_start_provisioning() ..");
         ESP_ERROR_CHECK(wifi_prov_mgr_start_provisioning(security, pop, service_name, service_key));
 
-        wifi_prov_mgr_endpoint_register("mqtt-config", _mqtt_config_handler, NULL);  // must be called after starting the prov
+        wifi_prov_mgr_endpoint_register("mqtt-config", _mqtt_config_handler, NULL);
+#if 0        
+        wifi_prov_mgr_endpoint_register("mqtt-status", _mqtt_status_handler, NULL);
+        wifi_prov_mgr_endpoint_register("ota-status", _ota_status_handler, NULL);
+#endif
 
         // wait until provisioning is completed
         xEventGroupWaitBits(_prov_event_group, WIFI_PROV_END_EVENT, false, true, portMAX_DELAY);
