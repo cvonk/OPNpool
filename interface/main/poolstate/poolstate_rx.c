@@ -95,21 +95,22 @@ _ctrl_circuit_set(cJSON * const dbg, network_msg_ctrl_circuit_set_t const * cons
     }
 }
 
-// 2B: sched should be its own entity instead of part of thermos
 static void
 _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const msg, poolstate_t * const state)
 {
-    network_msg_ctrl_sched_resp_sub_t const * msg_sched = msg->scheds;
-    poolstate_sched_t * state_sched = state->scheds;
+    poolstate_sched_t * state_scheds = state->scheds;    
+    memset(state_scheds, 0, sizeof(poolstate_sched_t) * NETWORK_CIRCUIT_COUNT );
 
-    for (uint ii = 0; ii < POOLSTATE_SCHED_TYP_COUNT; ii++, msg_sched++, state_sched++) {
-        state_sched->active = msg_sched->circuit != 0; 
-        if (state_sched->active) {
-            state_sched->circuit = msg_sched->circuit - 1;
-            state_sched->start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo;
-            state_sched->stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo;
-        }
+    network_msg_ctrl_sched_resp_sub_t const * msg_sched = msg->scheds;
+
+    for (uint ii = 0; ii < NETWORK_MSG_CTRL_SCHED_COUNT; ii++, msg_sched++) {
+        state_scheds[msg_sched->circuit -1] = (poolstate_sched_t) {
+            .active = true,
+            .start = (uint16_t)msg_sched->prgStartHi << 8 | msg_sched->prgStartLo,
+            .stop = (uint16_t)msg_sched->prgStopHi << 8 | msg_sched->prgStopLo
+        };
     }
+
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddSchedsToObject(dbg, "scheds", state->scheds, true);
     }
@@ -213,7 +214,6 @@ _pump_reg_set_resp(cJSON * const dbg, network_msg_pump_reg_resp_t const * const 
         cJSON_AddPumpPrgToObject(dbg, "resp", value);
     }
 }
-
 
 static void
 _pump_ctrl(cJSON * const dbg, network_msg_pump_ctrl_t const * const msg)

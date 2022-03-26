@@ -10,6 +10,8 @@
 #include <string.h>
 #include <esp_system.h>
 #include <esp_log.h>
+#include <esp_ota_ops.h>
+#include <esp_flash.h>
 #include <cJSON.h>
 
 #include "../utils/utils.h"
@@ -22,6 +24,12 @@ static void
 _alloc_str(char * * const value, char const * const str)
 {
     assert( asprintf(value, "%s", str) >= 0);
+}
+
+static void
+_alloc_strs(char * * const value, char const * const str1, char const * const str2)
+{
+    assert( asprintf(value, "%s - %s", str1, str2) >= 0);
 }
 
 static void
@@ -41,9 +49,16 @@ _system(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, p
 {
     poolstate_system_t const * const system = &state->system;
     switch (typ) {
-        case POOLSTATE_ELEM_SYSTEM_TYP_VERSION:
+        case POOLSTATE_ELEM_SYSTEM_TYP_CTRL_VERSION:
             _alloc_str(value, network_version_str(system->version.major, system->version.minor));
             break;
+        case POOLSTATE_ELEM_SYSTEM_TYP_IF_VERSION: {
+            esp_partition_t const * const running_part = esp_ota_get_running_partition();
+            esp_app_desc_t running_app_info;
+            ESP_ERROR_CHECK(esp_ota_get_partition_description(running_part, &running_app_info));
+            _alloc_str(value, running_app_info.version);
+            break;
+        }
         case POOLSTATE_ELEM_SYSTEM_TYP_TIME:
             _alloc_str(value, network_time_str(system->tod.time.hour, system->tod.time.minute));
             break;
@@ -94,22 +109,18 @@ _thermostat(poolstate_t const * const state, uint8_t const typ, uint8_t const id
 }
 
 static esp_err_t
-_schedule(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * const value)
+_schedule(poolstate_t const * const state, uint8_t const typ_dummy, uint8_t const idx, poolstate_get_value_t * const value)
 {
-    poolstate_sched_t const * const sched = &state->scheds[idx];
-    switch (typ) {
-        case POOLSTATE_ELEM_SCHED_TYP_CIRCUIT:
-            _alloc_str(value, network_circuit_str(sched->circuit));
-            break;
-        case POOLSTATE_ELEM_SCHED_TYP_START:
-            _alloc_str(value, network_time_str(sched->start / 60, sched->start % 60));
-            break;
-        case POOLSTATE_ELEM_SCHED_TYP_STOP:
-            _alloc_str(value, network_time_str(sched->stop / 60, sched->stop % 60));
-            break;
-        default:
-            ESP_LOGW(TAG, "%s unknown sub_typ(%u)", __func__, typ);
-            return ESP_FAIL;
+    (void)typ_dummy;
+    network_circuit_t const circuit = (network_circuit_t)idx;
+    poolstate_sched_t const * const sched = &state->scheds[circuit];
+
+    if (sched->active) {
+        _alloc_strs(value, 
+                    network_time_str(sched->start / 60, sched->start % 60),
+                    network_time_str(sched->stop / 60, sched->stop % 60));
+    } else {
+        _alloc_str(value, "no sched");
     }
     return ESP_OK;
 }
