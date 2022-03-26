@@ -19,7 +19,9 @@
 #include <mqtt_client.h>
 #include <esp_ota_ops.h>
 #include <esp_core_dump.h>
-#include <esp_flash.h>
+//#include <esp_flash.h>
+#include <nvs_flash.h>
+#include <nvs.h>
 //#include <esp_heap_trace.h>
 
 #include "ipc/ipc.h"
@@ -263,19 +265,31 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
 static esp_mqtt_client_handle_t
 _connect2broker(ipc_t const * const ipc) {
 
+    ESP_LOGW("TAG", "reading mqtt_url from nvram");
+    nvs_handle_t nvs_handle;
+    size_t len;
+
+    ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &nvs_handle));
+    ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", NULL, &len));
+
+    char * const mqtt_url = (char *) malloc(len);
+    ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", mqtt_url, &len));
+    ESP_LOGW("TAG", "read mqtt_url (%s)", mqtt_url);
+
     esp_mqtt_client_handle_t client;
     xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
     {
         const esp_mqtt_client_config_t mqtt_cfg = {
             .event_handle = _mqtt_event_cb,
-            .user_context = (void *)ipc,
-            .uri = CONFIG_POOL_MQTT_URL,
+            .user_context = (void *) ipc,
+            .uri = mqtt_url,
         };
         client = esp_mqtt_client_init(&mqtt_cfg);
         //ESP_ERROR_CHECK(esp_mqtt_client_set_uri(client, CONFIG_POOL_MQTT_URL));
         ESP_ERROR_CHECK(esp_mqtt_client_start(client));
     }
 	assert(xEventGroupWaitBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT, pdFALSE, pdFALSE, portMAX_DELAY));
+    free(mqtt_url);
     return client;
 }
 

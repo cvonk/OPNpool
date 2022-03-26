@@ -36,13 +36,6 @@ menu "Pool Interface"
         help
             Maximum time to wait for a byte on RS485
 
-    config POOL_MQTT_URL
-        string "MQTT broker uri"
-        default "mqtt://mqtt:GjRqHdcZM5UnxJ38@mqtt.vonk:1883"
-        help
-            URL of the MQTT broker.  For authentication include the username
-            and password.
-
     config POOL_MQTT_DATA_TOPIC
         string "MQTT broker uri"
         default "pool/data"
