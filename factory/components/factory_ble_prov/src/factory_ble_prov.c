@@ -176,8 +176,8 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
 
     wifi_prov_mgr_config_t config = {
         .scheme = wifi_prov_scheme_ble,
-        .scheme_event_handler = WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM  // app doesn't require BT/BLE
-        //.scheme_event_handler = WIFI_PROV_EVENT_HANDLER_NONE  // test
+        //.scheme_event_handler = WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM  // app doesn't require BT/BLE
+        .scheme_event_handler = WIFI_PROV_EVENT_HANDLER_NONE  // test
     };
     ESP_ERROR_CHECK(wifi_prov_mgr_init(config));
 #if 0    

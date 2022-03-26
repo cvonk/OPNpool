@@ -73,8 +73,11 @@ static esp_err_t
 _temp(poolstate_t const * const state, uint8_t const typ, uint8_t const idx, poolstate_get_value_t * const value)
 {
     poolstate_temp_t const * const temp = &state->temps[idx];
+    if (temp->temp == 0) {
+        return ESP_FAIL;
+    }
     switch (typ) {
-        case POOLSTATE_ELEM_TEMP_TYP_TEMP:
+        case POOLSTATE_ELEM_TEMP_TYP_TEMP:            
             _alloc_uint(value, temp->temp);
             break;
         default:
