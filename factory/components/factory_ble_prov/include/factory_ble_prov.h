@@ -81,7 +81,7 @@ esp_err_t ble_prov_configure_sta(wifi_config_t * const wifi_cfg);
  *  - ESP_OK      : Provisioning started successfully
  *  - ESP_FAIL    : Failed to start
  */
-esp_err_t ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, const protocomm_security_pop_t *pop);
+esp_err_t ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, char const * const pop);
 
 #ifdef __cplusplus
 }
