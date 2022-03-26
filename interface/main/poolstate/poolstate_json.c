@@ -121,14 +121,12 @@ cJSON_AddThermosToObject(cJSON * const obj, char const * const key, poolstate_th
  **/
 
 static void
-_addScheduleToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * const sched, bool const showSched)
+_addScheduleToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * const sched)
 {
     if (sched->active) {
         cJSON * const item = _create_item(obj, key);
-        if (showSched) {
-            cJSON_AddStringToObject(item, "start", network_time_str(sched->start / 60, sched->start % 60));
-            cJSON_AddStringToObject(item, "stop", network_time_str(sched->stop / 60, sched->stop % 60));
-        }
+        cJSON_AddStringToObject(item, "start", network_time_str(sched->start / 60, sched->start % 60));
+        cJSON_AddStringToObject(item, "stop", network_time_str(sched->stop / 60, sched->stop % 60));
     }
 }
 
@@ -141,9 +139,11 @@ _addSchedsToObject(cJSON * const obj, char const * const key, poolstate_t const 
 void
 cJSON_AddSchedsToObject(cJSON * const obj, char const * const key, poolstate_sched_t const * scheds, bool const showSched)
 {
-    cJSON * const item = _create_item(obj, key);
-    for (uint ii = 0; ii < POOLSTATE_SCHED_TYP_COUNT; ii++, scheds++) {
-        _addScheduleToObject(item, network_circuit_str(scheds->circuit), scheds, showSched);
+    if (showSched) {
+        cJSON * const item = _create_item(obj, key);
+        for (uint ii = 0; ii < NETWORK_CIRCUIT_COUNT; ii++, scheds++) {
+            _addScheduleToObject(item, network_circuit_str(ii), scheds);
+        }
     }
 }
 

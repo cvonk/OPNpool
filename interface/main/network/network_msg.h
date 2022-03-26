@@ -195,9 +195,11 @@ typedef struct network_msg_ctrl_sched_resp_sub_t {
     uint8_t prgStopLo;          // 5 [min]
 } PACK8 network_msg_ctrl_sched_resp_sub_t;
 
+#define NETWORK_MSG_CTRL_SCHED_COUNT (2)
+
 typedef struct network_msg_ctrl_sched_resp_t {
     uint8_t                           UNKNOWN_0to3[4];  // 0,1,2,3
-    network_msg_ctrl_sched_resp_sub_t scheds[2];        // 4,5,6,7,8,9, 10,11,12,13,14,15
+    network_msg_ctrl_sched_resp_sub_t scheds[NETWORK_MSG_CTRL_SCHED_COUNT]; // 4,5,6,7,8,9, 10,11,12,13,14,15
 } PACK8 network_msg_ctrl_sched_resp_t;
 
 #if 0

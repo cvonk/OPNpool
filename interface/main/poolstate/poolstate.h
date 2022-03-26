@@ -38,7 +38,8 @@ typedef struct poolstate_system_t {
 
 #define POOLSTATE_ELEM_SYSTEM_TYP_MAP(XX) \
   XX(0, TIME) \
-  XX(1, VERSION)
+  XX(1, CTRL_VERSION) \
+  XX(2, IF_VERSION) \
 
 typedef enum {
 #define XX(num, name) POOLSTATE_ELEM_SYSTEM_TYP_##name = num,
@@ -85,9 +86,8 @@ typedef enum {
  */
 
 #define POOLSTATE_ELEM_SCHED_TYP_MAP(XX) \
-  XX(0, CIRCUIT) \
-  XX(1, START) \
-  XX(2, STOP)
+  XX(0, START) \
+  XX(1, STOP)
 
 typedef enum {
 #define XX(num, name) POOLSTATE_ELEM_SCHED_TYP_##name = num,
@@ -97,12 +97,12 @@ typedef enum {
 
 typedef struct poolstate_sched_t {
     bool              active;
-    network_circuit_t circuit;
+    //network_circuit_t circuit;
     uint16_t          start;
     uint16_t          stop;
 } poolstate_sched_t;
 
-#define POOLSTATE_SCHED_TYP_COUNT (2)
+// #define POOLSTATE_SCHED_TYP_COUNT (2)
 
 /**
  * poolstate_temp_t
@@ -252,7 +252,7 @@ typedef struct poolstate_t {
     poolstate_system_t    system;
     poolstate_temp_t      temps[POOLSTATE_TEMP_TYP_COUNT];
     poolstate_thermo_t    thermos[POOLSTATE_THERMO_TYP_COUNT];
-    poolstate_sched_t     scheds[POOLSTATE_SCHED_TYP_COUNT];
+    poolstate_sched_t     scheds[NETWORK_CIRCUIT_COUNT];
     poolstate_modes_t     modes;
     poolstate_circuits_t  circuits;
     poolstate_pump_t      pump;
