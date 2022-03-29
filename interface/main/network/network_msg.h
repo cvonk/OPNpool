@@ -320,9 +320,9 @@ typedef struct network_msg_ctrl_circ_names_resp_t {
 
 // UNKN_D2_REQ
 
-typedef struct network_msg_ctrl_unkn_d2_req_t {
+typedef struct network_msg_ctrl_chem_req_t {
     uint8_t UNKNOWN;  // 0xD2
-} network_msg_ctrl_unkn_d2_req_t;
+} network_msg_ctrl_chem_req_t;
 
 // SCHEDS
 
@@ -526,7 +526,7 @@ typedef union network_msg_data_a5_t {
     network_msg_ctrl_heat_setpt_resp_t ctrl_heat_setpt_resp;
     network_msg_ctrl_circ_names_req_t ctrl_circ_names_req;
     network_msg_ctrl_circ_names_resp_t ctrl_circ_names_resp;
-    network_msg_ctrl_unkn_d2_req_t ctrl_unkn_d2_req;
+    network_msg_ctrl_chem_req_t ctrl_chem_req;
     network_msg_ctrl_scheds_req_t ctrl_scheds_req;
     network_msg_ctrl_scheds_resp_t ctrl_scheds_resp;
 } PACK8 network_msg_data_a5_t;
@@ -592,7 +592,7 @@ typedef union network_msg_data_t {
   XX(42, CTRL_CIRC_NAMES_RESP, network_msg_ctrl_circ_names_resp_t, DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CIRC_NAMES_RESP) \
   XX(43, CTRL_SCHEDS_REQ,      network_msg_ctrl_scheds_req_t,      DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHEDS_REQ)      \
   XX(44, CTRL_SCHEDS_RESP,     network_msg_ctrl_scheds_resp_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_SCHEDS_RESP)     \
-  XX(45, CTRL_UNKN_D2_REQ,     network_msg_ctrl_unkn_d2_req_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_UNKN_D2_REQ)
+  XX(45, CTRL_CHEM_REQ,        network_msg_ctrl_chem_req_t,     DATALINK_PROT_A5_CTRL, NETWORK_TYP_CTRL_CHEM_REQ)
   
 typedef enum {
 #define XX(num, name, typ, proto, prot_typ) MSG_TYP_##name = num,
@@ -631,7 +631,7 @@ typedef struct network_msg_t {
         network_msg_ctrl_heat_setpt_resp_t * ctrl_heat_set_resp;
         network_msg_ctrl_circ_names_req_t * ctrl_circ_names_req;
         network_msg_ctrl_circ_names_resp_t * ctrl_circ_names_resp;
-        network_msg_ctrl_unkn_d2_req_t * ctrl_unkn_d2_req;
+        network_msg_ctrl_chem_req_t * ctrl_chem_req;
         network_msg_ctrl_scheds_req_t * ctrl_scheds_req;
         network_msg_ctrl_scheds_resp_t * ctrl_scheds_resp;
         network_msg_chlor_ping_req_t * chlor_ping_req;
