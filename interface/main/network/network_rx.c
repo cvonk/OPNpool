@@ -198,10 +198,10 @@ _decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const netw
                 network->u.ctrl_circ_names_resp = (network_msg_ctrl_circ_names_resp_t *) pkt->data;
             }
             break;
-        case NETWORK_TYP_CTRL_UNKN_D2_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_unkn_d2_req_t)) {
-                network->typ = MSG_TYP_CTRL_UNKN_D2_REQ;
-                network->u.ctrl_unkn_d2_req = (network_msg_ctrl_unkn_d2_req_t *) pkt->data;
+        case NETWORK_TYP_CTRL_CHEM_REQ:
+            if (pkt->data_len == sizeof(network_msg_ctrl_chem_req_t)) {
+                network->typ = MSG_TYP_CTRL_CHEM_REQ;
+                network->u.ctrl_chem_req = (network_msg_ctrl_chem_req_t *) pkt->data;
             }
             break;
         default:
