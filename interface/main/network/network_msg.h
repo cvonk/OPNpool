@@ -419,7 +419,7 @@ typedef struct network_msg_pump_reg_resp_t {
 // PUMP CTRL
 
 typedef struct network_msg_pump_ctrl_t {
-    uint8_t ctrl;     // 0
+    uint8_t ctrl;        // 0
 } PACK8 network_msg_pump_ctrl_t;
 
 // 0x00 = manual, 0x01 = egg timer, 0x02 = schedule, 0x03 = disabled
@@ -430,7 +430,7 @@ typedef struct network_msg_pump_mode_t {
 // PUMP RUN
 
 typedef struct network_msg_pump_run_t {
-    uint8_t running;       // 0
+    uint8_t running;     // 0
 } PACK8 network_msg_pump_run_t;
 
 // PUMP STATUS
