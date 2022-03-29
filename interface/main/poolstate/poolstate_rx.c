@@ -263,9 +263,9 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_resp_t const * const msg
     state->pump.gpm = msg->gpm;
     state->pump.pct = msg->pct;
     state->pump.err = msg->err;
-    state->pump.timer = msg->timer;
-    state->pump.time.hour = msg->hour;
-    state->pump.time.minute = msg->minute;
+    state->pump.timer = msg->remainingMin;
+    state->pump.time.hour = msg->clockHr;
+    state->pump.time.minute = msg->clockMin;
 
     if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
        cJSON_AddPumpToObject(dbg, "status", state);
@@ -390,7 +390,7 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
             break;
         case MSG_TYP_CTRL_SCHEDS_REQ:
         case MSG_TYP_CTRL_CIRC_NAMES_REQ:
-        case MSG_TYP_CTRL_UNKN_D2_REQ:
+        case MSG_TYP_CTRL_CHEM_REQ:
         case MSG_TYP_CHLOR_NAME_REQ:
             _ctrl_hex_bytes(dbg, msg->u.bytes, state, 1);
             break;
