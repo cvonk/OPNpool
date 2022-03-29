@@ -21,14 +21,16 @@
 #define NETWORK_TYP_CTRL_MAP(XX) \
   XX(0x01, SET_ACK)              \
   XX(0x02, STATE_BCAST)          \
-  XX(0x05, TIME_RESP)       XX(0x85, TIME_SET)     XX(0xC5, TIME_REQ)    \
-  XX(0x06, CIRCUIT_RESP)    XX(0x86, CIRCUIT_SET)  XX(0xC6, CIRCUIT_REQ) \
-  XX(0x08, HEAT_RESP)       XX(0x88, HEAT_SET)     XX(0xC8, HEAT_REQ)    \
-  XX(0x1E, SCHED_RESP)      XX(0x9E, SCHED_SET)    XX(0xDE, SCHED_REQ)   \
-  XX(0x21, LAYOUT_RESP)     XX(0xA1, LAYOUT_SET)   XX(0xE1, LAYOUT_REQ)  \
+  XX(0x03, CANCEL_DELAY)         \
+  XX(0x05, TIME_RESP)       XX(0x85, TIME_SET)      XX(0xC5, TIME_REQ)      \
+  XX(0x06, CIRCUIT_RESP)    XX(0x86, CIRCUIT_SET)   XX(0xC6, CIRCUIT_REQ)   \
+  XX(0x08, HEAT_RESP)       XX(0x88, HEAT_SET)      XX(0xC8, HEAT_REQ)      \
+  XX(0x10, HEAT_PUMP_RESP)  XX(0x90, HEAT_PUMP_SET) XX(0xD0, HEAT_PUMP_REQ) \
+  XX(0x1E, SCHED_RESP)      XX(0x9E, SCHED_SET)     XX(0xDE, SCHED_REQ)     \
+  XX(0x21, LAYOUT_RESP)     XX(0xA1, LAYOUT_SET)    XX(0xE1, LAYOUT_REQ)    \
   XX(0x0B, CIRC_NAMES_RESP) XX(0xCB, CIRC_NAMES_REQ) \
   XX(0x11, SCHEDS_RESP)     XX(0xD1, SCHEDS_REQ)     \
-  XX(0x12, UNKN_D2_RESP)    XX(0xD2, UNKN_D2_REQ)    \
+  XX(0x12, CHEM_RESP)       XX(0xD2, CHEM_REQ)       \
   XX(0x1D, VALVE_RESP)      XX(0xDD, VALVE_REQ)      \
   XX(0x22, SOLARPUMP_RESP)  XX(0xE2, SOLARPUMP_REQ)  \
   XX(0x23, DELAY_RESP)      XX(0xE3, DELAY_REQ)      \
@@ -394,6 +396,12 @@ typedef struct network_msg_ctrl_layout_resp_t {
 
 typedef network_msg_ctrl_layout_resp_t network_msg_ctrl_layout_set_t;
 
+/*
+ * A5 messages, use to communicate with Pump
+ */
+
+// there might be more info under `SETTING` at https://github.com/cilynx/pypentair/blob/master/pypentair/__init__.py
+
 // PUMP_REG
 
 typedef struct network_msg_pump_reg_set_t {
@@ -414,6 +422,7 @@ typedef struct network_msg_pump_ctrl_t {
     uint8_t ctrl;     // 0
 } PACK8 network_msg_pump_ctrl_t;
 
+// 0x00 = manual, 0x01 = egg timer, 0x02 = schedule, 0x03 = disabled
 typedef struct network_msg_pump_mode_t {
     uint8_t mode;        // 0
 } PACK8 network_msg_pump_mode_t;
@@ -430,26 +439,26 @@ typedef struct network_msg_pump_status_req_t {
 } network_msg_pump_status_req_t;
 
 typedef struct network_msg_pump_status_resp_t {
-    uint8_t running;     // 0
-    uint8_t mode;        // 1
-    uint8_t state;       // 2
-    uint8_t powerHi;     // 3
-    uint8_t powerLo;     // 4 [Watt]
-    uint8_t rpmHi;       // 5
-    uint8_t rpmLo;       // 6 [rpm]
-    uint8_t gpm;         // 7 [G/min]
-    uint8_t pct;         // 8 [%]
-    uint8_t UNKNOWN_9;   // 9
-    uint8_t err;         // 10
-    uint8_t UNKNOWN_11;  // 11
-    uint8_t timer;       // 12 [min]
-    uint8_t hour;        // 13
-    uint8_t minute;      // 14
+    uint8_t running;      // 0
+    uint8_t mode;         // 1
+    uint8_t state;        // 2
+    uint8_t powerHi;      // 3
+    uint8_t powerLo;      // 4 [Watt]
+    uint8_t rpmHi;        // 5
+    uint8_t rpmLo;        // 6 [rpm]
+    uint8_t gpm;          // 7 [G/min]
+    uint8_t pct;          // 8 [%]
+    uint8_t UNKNOWN_9;    // 9
+    uint8_t err;          // 10
+    uint8_t remainingHr;  // 11
+    uint8_t remainingMin; // 12
+    uint8_t clockHr;      // 13
+    uint8_t clockMin;     // 14
 } PACK8 network_msg_pump_status_resp_t;
 
 /*
-* IC messages, use to communicate with IntelliChlor
-*/
+ * IC messages, use to communicate with IntelliChlor
+ */
 
 // CHLOR PING
 
