@@ -13,6 +13,14 @@
 # define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 #endif
 
+// 0x10 = suntouch ctrl system
+// 0x20 = easytouch
+// 0x21 = remote
+// 0x22 = wireless remote
+// 0x48 = quicktouch remote
+// 0x60 .. 0x6F = intelliflow pump 0 .. 15
+// 
+// `addrgroup` is the high nibble of the address
 #define DATALINK_ADDRGROUP_MAP(XX) \
   XX(0x00, ALL)  \
   XX(0x01, CTRL) \
