@@ -82,6 +82,7 @@ static void prov_event_handler(void* arg, esp_event_base_t event_base, int32_t e
 
         case WIFI_PROV_END:
             ESP_LOGI(TAG, "Wi-Fi Provisioning ended");
+            wifi_prov_mgr_stop_provisioning();
             wifi_prov_mgr_deinit();  // release resources once provisioning is finished
             xEventGroupSetBits(_prov_event_group, WIFI_PROV_END_EVENT);
             break;
@@ -134,7 +135,6 @@ esp_err_t _mqtt_config_handler(uint32_t session_id, const uint8_t *inbuf, ssize_
     return ESP_OK;
 }
 
-#if 0
 esp_err_t _mqtt_status_handler(uint32_t session_id, const uint8_t *inbuf, ssize_t inlen,
                                uint8_t **outbuf, ssize_t *outlen, void *priv_data)
 {
@@ -166,7 +166,6 @@ esp_err_t _ota_status_handler(uint32_t session_id, const uint8_t *inbuf, ssize_t
 
     return ESP_OK;
 }
-#endif
 
 esp_err_t
 ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, char const * const pop)
@@ -180,7 +179,7 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
         .scheme_event_handler = WIFI_PROV_EVENT_HANDLER_NONE  // test
     };
     ESP_ERROR_CHECK(wifi_prov_mgr_init(config));
-#if 0    
+#if 1    
     ESP_ERROR_CHECK(wifi_prov_mgr_disable_auto_stop(100));  //  the provisioning service will only be stopped after an explicit call to wifi_prov_mgr_stop_provisioning()
 #endif
 
@@ -212,10 +211,8 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
 
         // endpoints for additional custom data
         wifi_prov_mgr_endpoint_create("mqtt-config");
-#if 0        
         wifi_prov_mgr_endpoint_create("mqtt-status");
         wifi_prov_mgr_endpoint_create("ota-status");
-#endif
 
         // start provisioning service
         // (de-init is trigged by the default event loop handler)
@@ -223,10 +220,8 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
         ESP_ERROR_CHECK(wifi_prov_mgr_start_provisioning(security, pop, service_name, service_key));
 
         wifi_prov_mgr_endpoint_register("mqtt-config", _mqtt_config_handler, NULL);
-#if 0        
         wifi_prov_mgr_endpoint_register("mqtt-status", _mqtt_status_handler, NULL);
         wifi_prov_mgr_endpoint_register("ota-status", _ota_status_handler, NULL);
-#endif
 
         // wait until provisioning is completed
         xEventGroupWaitBits(_prov_event_group, WIFI_PROV_END_EVENT, false, true, portMAX_DELAY);
