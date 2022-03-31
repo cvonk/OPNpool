@@ -30,6 +30,7 @@
 #include "wifi_connect.h"
 #include "factory_ble_prov.h"
 #include "ota_update_task.h"
+#include "factory_reset_task.h"
 
 #if 0
 #define FACTORY_BLE_PROV_RECONN_ATTEMPTS (3)
@@ -122,6 +123,8 @@ _wifi_disconnect_cb(void * const priv_void, bool const auth_err)
 void app_main(void)
 {
     _init_nvs();
+    xTaskCreate(&factory_reset_task, "factory_reset_task", 4096, NULL, 5, NULL);
+
     _wifi_event_group = xEventGroupCreate();
 
     wifi_connect_config_t wifi_connect_config = {

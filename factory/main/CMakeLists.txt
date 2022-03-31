@@ -1,1 +1,9 @@
-idf_component_register(SRCS "main.c")
+idf_component_register(SRCS 
+                           main.c
+                       INCLUDE_DIRS
+                            "."
+                            "../components/factory_ble_prov/include"
+                            "../../interface/components/factory_reset_task/include"
+                            "../../interface/components/ota_update_task/include"
+                            "../../interface/components/wifi_connect/include"
+)

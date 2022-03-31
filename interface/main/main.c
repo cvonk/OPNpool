@@ -27,9 +27,9 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 
-#include <ota_update_task.h>
-#include <wifi_connect.h>
-#include <factory_reset_task.h>
+#include "ota_update_task.h"
+#include "wifi_connect.h"
+#include "factory_reset_task.h"
 
 #include "datalink/datalink.h"
 #include "network/network.h"
