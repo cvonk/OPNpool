@@ -2,7 +2,7 @@ menu "Pool Interface"
 
     config OTA_UPDATE_FIRMWARE_URL
         string "Firmware upgrade url endpoint"
-        default "http://coertvonk.com/cvonk/pool/interface.bin"
+        default "http://coertvonk.com/cvonk/opnpool/interface.bin"
         help
             URL of server which hosts the firmware image. (make sure it matches Kconfig in factory dir)
 
@@ -38,13 +38,13 @@ menu "Pool Interface"
 
     config POOL_MQTT_DATA_TOPIC
         string "MQTT broker uri"
-        default "pool/data"
+        default "opnpool/data"
         help
             MQTT topic for data from the Pool Interface
 
     config POOL_MQTT_CTRL_TOPIC
         string "MQTT broker uri"
-        default "pool/ctrl"
+        default "opnpool/ctrl"
         help
             MQTT topic for control messages to the Pool Interface
 
