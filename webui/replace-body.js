@@ -223,6 +223,6 @@ $(document).ready(function()
     document.body.appendChild(script);    
 
     script = document.createElement('script');
-    script.src = 'https://coertvonk.com/cvonk/pool/index.js';
+    script.src = 'https://coertvonk.com/cvonk/opnpool/index.js';
     document.body.appendChild(script);    
 });
