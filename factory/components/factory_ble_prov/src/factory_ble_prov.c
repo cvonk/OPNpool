@@ -179,7 +179,7 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
         .scheme_event_handler = WIFI_PROV_EVENT_HANDLER_NONE  // test
     };
     ESP_ERROR_CHECK(wifi_prov_mgr_init(config));
-#if 1    
+#if 0    
     ESP_ERROR_CHECK(wifi_prov_mgr_disable_auto_stop(100));  //  the provisioning service will only be stopped after an explicit call to wifi_prov_mgr_stop_provisioning()
 #endif
 
