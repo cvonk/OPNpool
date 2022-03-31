@@ -196,7 +196,7 @@
         Object.keys(_ui.readwrite.thermo).forEach( function(key) {
             ['None', 'Heat', 'SolarPref', 'Solar'].forEach( function(src) {
                 const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
-                const val = src == json_thermos[key.toLowerCase()].src.toLowerCase();
+                const val = src == json_thermos[key.toLowerCase()].src;
                 $(sel).attr("checked", val).checkboxradio("refresh");
             });
             const json_thermostat = json_thermos[key.toLowerCase()];
