@@ -1,8 +1,5 @@
     const bodyContent = `
     <div data-role="page" data-theme="b" data-content-theme="b">
-    <div data-role="header" data-theme="a" data-content-theme="b">
-        <h1>Pool</h1>
-    </div>
     <div data-role="content">
         <div id="colborders" data-role="collapsibleset" data-iconpos="right">
             <div id="circuits_collapsible" data-role="collapsible">
@@ -48,7 +45,7 @@
                 </div>
             </div>
             <!--
-            <div data-role="collapsible">
+            <div id="temp_solar_collapsible" data-role="collapsible">
                 <h3>Solar temp.</h3>
                 <label id="temp_solar_lbl"></label>
                 <div class="ui-grid-a ui-responsive">

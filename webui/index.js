@@ -124,21 +124,6 @@
             });
     }
 
-/*
-    function degrees_f_to_c(f)
-    {
-        return Math.round(((f - 32) * 5) / 9);
-    }
-
-    function capitalize_1st_letter(str)
-    {
-        if (typeof str !== 'string') {
-            return str;
-        }
-        return str.charAt(0).toUpperCase() + str.toLowerCase().slice(1);
-    }
-*/
-
     // https://en.wikipedia.org/wiki/HSL_and_HSV
     function hsv_2o_rgb(h, s, v)
     {
@@ -179,21 +164,21 @@
     function update_circuits(json_circuits)
     {
         Object.keys(_ui.circuits).forEach( function(key) {
-            const val = json_circuits.active[key.toUpperCase()];
+            const val = json_circuits.active[key.toLowerCase()];
             this[key].obj.attr('checked', val).trigger('create').checkboxradio('refresh');
         }, _ui.circuits);
     }
 
     function update_readonly(json_temps, json_thermos, json_chlor, json_pump)
     {
-        update_round_slider(_ui.readonly.temp.air, json_temps.AIR);
-        update_round_slider(_ui.readonly.temp.solar, json_temps.SOLAR);
-        update_round_slider(_ui.readonly.temp.water, json_thermos['POOL'].temp);
+        update_round_slider(_ui.readonly.temp.air, json_temps.air);
+        update_round_slider(_ui.readonly.temp.solar, json_temps.solar);
+        update_round_slider(_ui.readonly.temp.water, json_thermos.pool.temp);
 
         _ui.readonly.pump.rpm.obj_lbl.text((json_pump.running ? 'Running' : 'Idle' ) + ' in ' + json_pump.mode + ' mode');
         _ui.readonly.pump.pwr.obj_lbl.text((json_pump.running ? 'Running' : 'Idle' ) + ' with status ' + json_pump.status);
         update_round_slider(_ui.readonly.pump.rpm, json_pump.rpm);
-        update_round_slider(_ui.readonly.pump.pwr, json_pump.pwr);
+        update_round_slider(_ui.readonly.pump.pwr, json_pump.power);
 
         //if (!jQuery.isEmptyObject(json_chlor)) {
         const salt_status = json_chlor.salt == 0   ? "Sensor malfunction"
@@ -209,12 +194,12 @@
     function update_readwrite(json_thermos)
     {
         Object.keys(_ui.readwrite.thermo).forEach( function(key) {
-            ['none', 'heat', 'solar_pref', 'solar'].forEach( function(src) {
+            ['None', 'Heat', 'SolarPref', 'Solar'].forEach( function(src) {
                 const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
-                const val = src == json_thermos[key.toUpperCase()].src.toLowerCase();
+                const val = src == json_thermos[key.toLowerCase()].src;
                 $(sel).attr("checked", val).checkboxradio("refresh");
             });
-            const json_thermostat = json_thermos[key.toUpperCase()];
+            const json_thermostat = json_thermos[key.toLowerCase()];
             update_round_slider(this[key], json_thermostat.sp);
             this[key].obj_lbl.text((json_thermostat.heating ? 'heating' : 'idle'));
 
@@ -223,13 +208,13 @@
 
     function update_schedules(scheds)
     {
-        if ("POOL" in scheds) {
-            $("#poolStart").val(scheds.POOL.start);
-            $("#poolStop").val(scheds.POOL.stop);
+        if ("pool" in scheds) {
+            $("#poolStart").val(scheds.pool.start);
+            $("#poolStop").val(scheds.pool.stop);
         }
-        if ("SPA" in scheds) {
-            $("#spaStart").val(scheds.SPA.start);
-            $("#spaStop").val(scheds.SPA.stop);
+        if ("spa" in scheds) {
+            $("#spaStart").val(scheds.spa.start);
+            $("#spaStop").val(scheds.spa.stop);
         }
     }
 
@@ -237,6 +222,21 @@
     {
         $("#date").val(system.tod.date);
         $("#time").val(system.tod.time);
+    }
+
+    function change_visibility(active, pump)
+    {
+        const pumpVisibility = pump.running ? "block" : "none";
+        $("#chlor_salt_collapsible").css("display", pumpVisibility);
+        $("#chlor_pct_collapsible").css("display", pumpVisibility);
+        $("#pump_pwr_collapsible").css("display", pumpVisibility);
+        $("#pump_rpm_collapsible").css("display", pumpVisibility);
+
+        const poolVisibility = active.pool ? "block" : "none";
+        $("#thermo_pool_collapsible").css("display", poolVisibility);
+
+        const spaVisibility = active.spa ? "block" : "none";
+        $("#thermo_spa_collapsible").css("display", spaVisibility);
     }
 
     function update(jsonData)
@@ -253,6 +253,7 @@
             update_readwrite(jsonData.thermos);
             update_schedules(jsonData.scheds);
             update_system(jsonData.system);
+            change_visibility(jsonData.circuits.active, jsonData.pump)
         }
     }
 
