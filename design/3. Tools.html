@@ -211,20 +211,18 @@
 </head>
 
 <body><div class="entry-content" style="margin: 40px">
-
+<h1>Tools</h1>
 <p>
-    Describes the development environment for the pool interface as described in <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode-starters ESP32</a>, and consists of 
+    Describes the development environment for the OPNpool interface as described in <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode-starters ESP32</a>, consisting of 
     <ul>        
         <li>GNU toolchain</li>
-        <li>Espressif Internet Development Framework (ESP-IDF)</li>
+        <li>Espressif IoT Development Framework (ESP-IDF)</li>
         <li>Microsoft Visual Code Studio IDE</li>
         <li>Git version control</li>
     </ul>
 
     <div class="flex-container tight">
-        <a href="https://coertvonk.com/wp-content/uploads/VSCode-Wemos-LOLIN-D32.jpg">
-            <img src="https://coertvonk.com/wp-content/uploads/VSCode-Wemos-LOLIN-D32.jpg" alt="" width="500" height="274" class="alignnone size-full wp-image-31833" />
-        </a>
+        <a href="https://coertvonk.com/wp-content/uploads/opnpool-tools-vscode.jpg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-tools-vscode.jpg" alt="" width="500" class="alignnone size-full wp-image-32121" /></a>
     </div>
 </p>
 
@@ -232,19 +230,23 @@
     Setup ESP-IDF 4.4
 </h2>
 <p>
-    Make sure you can call <a href="https://git-scm.com/download/win">Git</a> (globally) and <a href="https://www.python.org/downloads/windows/">Python x64</a> from the command line.
+    These instructions are for Windows, but will be similar for other operating systems.
 </p>
 <p>
-    Install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a>, and add the following extensions:
+    Before you start, make sure you can call <a href="https://git-scm.com/">Git</a> and <a href="https://www.python.org/">Python x64</a> from the command line.
+    If you haven't already, install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a> (VScode).
+</p>
+<p>
+    From within VScode:
     <ol>
         <li>
             Add the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">Microsoft's C/C++ extension</a>
         </li>
         <li>
-            Add the <a href="https://github.com/espressif/vscode-esp-idf-extension/releases/tag/v1.2.0">Espressif IDF 1.2 extension as .vsix</a>. Reload Visual Studio when asked.
+            Add the <a href="https://github.com/espressif/vscode-esp-idf-extension/releases/tag/v1.2.0">Espressif IDF 1.2 extension as .vsix</a>. Reload Visual Studio when asked. (We had problems with the bleading edge version.)
             <ul>
                 <li>
-                    <cspan class="hp41-key">F1</cspan> "ISP-IDF: Configure ESP-IDF". This will install the ESP-IDF tools and configure the extension.
+                    <cspan class="hp41-key">F1</cspan> &raquo; "ISP-IDF: Configure ESP-IDF"<br />This will install the ESP-IDF tools and configure the extension.
                     <ul>
                         <li>
                             Select Advanced mode
@@ -268,7 +270,7 @@
     </ol>
 </p>
 <p>        
-    If you also want to use a beta version or the master branch, refer to <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode starter for ESP32</a>.
+    If you prefer to use a ESP-IDF beta version or the master branch, refer to <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode starter for ESP32</a>.
 </p>
 
 <h3>
@@ -381,7 +383,7 @@
     Version control
 </h2>
 <p>
-    We use git with a repository on our local file server called <code>nas</code>.
+    We use <code>git</code> with a repository on <a href="https://github.com/cvonk/ESP32_Pool-Interface">GitHub</a>.
 </p>
 <p>
     <ol>
