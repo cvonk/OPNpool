@@ -227,14 +227,34 @@
 </p>
 
 <h2>
-    Setup ESP-IDF 4.4
+    Git
+</h2>
+<p>
+    We use <code>git</code> with a repository hosted on <a href="https://github.com/cvonk/ESP32_Pool-Interface">GitHub</a>.
+</p>
+<p>
+    <ol>
+        <li>
+            Make sure that you can <code>ssh</code> to github.com.  On Windows you may have to install its <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
+        </li>
+        <li>
+            Clone the repository and its submodules to a local directory.  Note the <b>important</b> <code>--recursive</code> flag.
+
+            [code toolbar="false" language="bash"]git clone --recursive git@github.com:cvonk/ESP32_Pool-Interface.git[/code]
+        </li>
+    </ol>
+</p>
+
+
+<h2>
+    ESP Tool Chain
 </h2>
 <p>
     These instructions are for Windows, but will be similar for other operating systems.
 </p>
 <p>
     Before you start, make sure you can call <a href="https://git-scm.com/">Git</a> and <a href="https://www.python.org/">Python x64</a> from the command line.
-    If you haven't already, install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a> (VScode).
+    If you haven't already, install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a> (VScode).  (Python might now be included in the ESP-IDF 4.4.)
 </p>
 <p>
     From within VScode:
@@ -265,7 +285,7 @@
             </ul>
         </li>
         <li>
-            To speed up compile times, disable Windows Defender's real-time scanning of <code>C:/espressif</code>. If you get "You'll need a new app to open this windowsdefender link", then issue "Get-AppxPackage Microsoft.SecHealthUI -AllUsers | Reset-AppxPackage" from an elevated powershell.
+            To speed up compile times, disable Windows Defender's real-time scanning of <code>C:/espressif</code>. If you get hit with "You'll need a new app to open this windowsdefender link", then issue <code>Get-AppxPackage Microsoft.SecHealthUI -AllUsers | Reset-AppxPackage</code> from an elevated PowerShell terminal.
         </li>
     </ol>
 </p>
@@ -379,37 +399,15 @@
     </div>
 </p>
 
-<h2>
-    Version control
-</h2>
-<p>
-    We use <code>git</code> with a repository on <a href="https://github.com/cvonk/ESP32_Pool-Interface">GitHub</a>.
-</p>
-<p>
-    <ol>
-        <li>
-            On Windows install the <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
-        </li>
-        <li>
-            Make sure that you can <code>ssh</code> to github.com.
-        </li>
-        <li>
-            Clone the repository and its submodules to a local directory
-
-            [code toolbar="false" language="bash"]git clone --recursive git@github.com:cvonk/ESP32_Pool-Interface.git[/code]
-        </li>
-    </ol>
-</p>
-
-<h2>
+<h3>
     Compiling
-</h2>
+</h3>
 <p>
-    You should now be able to compile and link the "interface" application.
+    You should now be able to compile and link e.g. the "factory" application.
 </p>
 <p>
 
-    Start Visual Studio Code (vscode), in the directory <code>ESP32-SDK_Pool-interface\interface</code>.
+    Start Visual Studio Code (vscode), in the directory <code>OPNpool\factory</code>.
 
     <ol>
         <li>
@@ -438,6 +436,26 @@
         </li>
     </ol>
 </p>
+
+<h2>
+    Android Studio
+</h2>
+<p>
+    The OPNpool provisioning application is available on the Play Store. More details in the Deploying chapter of this document.
+</p>
+<p>
+    If you prefer to build it yourself, download and install <a href="https://developer.android.com/studio/">Google Android Studio</a> and its SDK.  Make sure you can build one of the example projects.
+</p>
+
+<h3>
+    Build
+</h3>
+<p>
+    Open Android Studio in the <code>android</code> directory and start the <code>build</code> process. Enable the Developer mode on you phone, and enable Wireless Debugging.  Your phone should now show up as a test device.  Click the button to run the app on your phone.
+</p>
+<p>
+    Note that the app targets API 30 (Android 11), but builds with API 31.  This is so that we can request <code>BLUETOOTH_SCAN</code> and <code>BLUETOOTH_CONNECT</code> permissions for Android 12 devices. For details refer to the <a href="https://developer.android.com/about/versions/12/behavior-changes-all">Android 12 Behavior Changes document</a>
+</p>
 <p>
     <div class="continue-container no-print">
         <div class="continue-content">
@@ -446,5 +464,5 @@
         </div>
     </div>    
 </p>
-        
+
 </div></body>
