@@ -217,7 +217,7 @@
     Describes the protocol that the pool controller uses on the RS-485 bus to communicate with its attached devices.
 </p>
 <p>
-    The Pool Controller communicates with the pump, chlorinator and other devices using a RS-485 bus.  Key characteristics of this bus are:
+    The Pool Controller communicates with the pump, chlorinator and other devices using a RS-485 bus. Key characteristics of this bus are:
     <ul>
         <li>
             A master initiates a query addressed to a specific device. The device will respond by performing an action and then respond back to the master.
@@ -228,7 +228,7 @@
     </ul>
 </p>
 <p>
-    Our interface sniffs this RS-485 bus to gather state information, that the user can access through a web interface.  The user can also change select parameters. Furthermore, the interface can share its data with Google Cloud, enabling graphing and automated cloud actions.
+    Our interface sniffs this RS-485 bus to gather state information, that the user can access through a web interface. The user can also change select parameters. Furthermore, the interface can share its data with Google Cloud, enabling graphing and automated cloud actions.
 </p>
 <p>
     The pool controller communicates with the pump and chlorinator over the RS-485 bus using a proprietary protocol. This protocol has been reverse engineered and documented in bits and pieces found on-line by people such as shown in the table below
@@ -275,7 +275,7 @@
             "<b>A5</b>" messages are used to communicate with devices such as pumps. The first bytes are always <code>0x00, 0xFF, 0xA5</code>
         </li>
         <li>
-            "<b>IC</b>" messages are used to communicate with the chlorinator.  The first bytes are always <code>0x10, 0x02</code>
+            "<b>IC</b>" messages are used to communicate with the chlorinator. The first bytes are always <code>0x10, 0x02</code>
         </li>
     </ul>
 </p>
@@ -284,7 +284,7 @@
     A5 messages
 </h2>
 <p>
-    The messages consist of a header, data and a 16-bit checksum.  The length of the data block is specified in the header.  The checksum is calculated starting at the last byte of the header (0xA5) up to the last data byte.  Checksum is transmitted most significant byte first.
+    The messages consist of a header, data and a 16-bit checksum. The length of the data block is specified in the header. The checksum is calculated starting at the last byte of the header (0xA5) up to the last data byte. Checksum is transmitted most significant byte first.
 
     [code toolbar="false" language="cpp"]#define PACK8  __attribute__((aligned( __align__( uint8_t ) ), packed ))
 typedef struct {
@@ -296,7 +296,7 @@ typedef struct {
 } PACK8 mHdr_a5_t;[/code]
 </p>
 <p>
-    The most significant 4 bits of source and destination address form the address group.  The least significant 4 bits are the device number.
+    The most significant 4 bits of source and destination address form the address group. The least significant 4 bits are the device number.
 
     [code toolbar="false" language="cpp"]typedef enum {
     ADDRGROUP_all = 0x00,
@@ -307,7 +307,7 @@ typedef struct {
 } addrGroup_t;[/code]
 </p>
 <p>
-    We further distinguish between messages to/from a pump and control messages.  Examples of control messages are time, state, head and scheduling requests. 
+    We further distinguish between messages to/from a pump and control messages. Examples of control messages are time, state, head and scheduling requests. 
 </p>
 
 <h3>
@@ -608,7 +608,7 @@ typedef struct {
     IC messages
 </h2>
 <p>
-    The IC messages consist of a header, data and a tail containing a 8-bit checksum and a 2 byte postamble.  The length of the data block depends on the message type specified in the header.  The checksum is calculated starting at the beginning of the header up to the last data byte.
+    The IC messages consist of a header, data and a tail containing a 8-bit checksum and a 2 byte postamble. The length of the data block depends on the message type specified in the header. The checksum is calculated starting at the beginning of the header up to the last data byte.
 
     [code toolbar="false" language="cpp"]#define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
 typedef struct {

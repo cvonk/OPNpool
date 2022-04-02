@@ -214,7 +214,7 @@
 <body><div class="entry-content" style="margin: 40px">
 
 <p>
-    Describes the pool interface software that monitors and controls the pool controller.  It provides web, MQTT and Home Assistant interfaces.
+    Describes the pool interface software that monitors and controls the pool controller. It provides web, MQTT and Home Assistant interfaces.
 </p>
 <p>
     The Interface application makes the device a "Pool Interface". Besides monitoring the pool controller and providing access to a web interface, it provides automatic updates, network discovery and supports post mortem debugging.
@@ -264,7 +264,7 @@
     factory_reset_task
 </h2>
 <p>
-    A factory reset erases the Wifi credentials and returns to the <code>factory</code> app.  This allows the device to be provisioned from scratch. To perform a Factory Reset, hold the <code>boot</code> button for five seconds while the <code>interface</code> app is running (not during boot).
+    A factory reset erases the Wifi credentials and returns to the <code>factory</code> app. This allows the device to be provisioned from scratch. To perform a Factory Reset, hold the <code>boot</code> button for five seconds while the <code>interface</code> app is running (not during boot).
 
     <div class="flex-container tight">
         <figure>
@@ -288,7 +288,7 @@
     pool_task
 </h2>
 <p>
-    The <code>pool_task</code> forms the heart of the interface.  It handles data received from the pool controller, and can send requests to the pool controller.
+    The <code>pool_task</code> forms the heart of the interface. It handles data received from the pool controller, and can send requests to the pool controller.
 </p>
 <p>
     Its responsibilities are:
@@ -337,12 +337,12 @@
             Provides functions to read and write bytes.
         </li>
         <li>
-            Bytes to be transmitted are queued as as <code>rs485_q_msg</code> in <code>rs485->tx_q</code>.  When a transmit opportunity arrises, the <code>pool_task</code> dequeues from <code>rs485->tx_q</code>, relies on the driver to transmits the bytes.
+            Bytes to be transmitted are queued as as <code>rs485_q_msg</code> in <code>rs485->tx_q</code>. When a transmit opportunity arrises, the <code>pool_task</code> dequeues from <code>rs485->tx_q</code>, relies on the driver to transmits the bytes.
         </li>
     </ul>    
 </p>
 <p>
-    Transmitting on the RS-485 is a bit tricky because it operates in half-duplex and has multiple nodes on the same single twisted pair.  In practice, the pool controller appears to only accept messages after it broadcasts its periodic status message, and before it communicates with the chlorinator.  Therefore, outgoing bytes are queued, until the moment arrives where they can be transmitted
+    Transmitting on the RS-485 is a bit tricky because it operates in half-duplex and has multiple nodes on the same single twisted pair. In practice, the pool controller appears to only accept messages after it broadcasts its periodic status message, and before it communicates with the chlorinator. Therefore, outgoing bytes are queued, until the moment arrives where they can be transmitted
 </p>
 <p>
     It communicates with the datalink layer using the <code>rs485_handle_t</code> device handle.
@@ -462,13 +462,13 @@
     This is the same git submodule that we used for <a href="#ota">Factory application</a> earlier.
 </p>
 <p>
-    Each time the device powers up, it checks to see if an new <code>interface</code> app is available.  If so, it will download the image and switches to the new version. [<a href="https://github.com/espressif/esp-idf/tree/master/examples/system/ota">doc</a>]  To trigger an OTA update, power cycle the device, or press the <code>EN</code> button.
+    Each time the device powers up, it checks to see if an new <code>interface</code> app is available. If so, it will download the image and switches to the new version. [<a href="https://github.com/espressif/esp-idf/tree/master/examples/system/ota">doc</a>]  To trigger an OTA update, power cycle the device, or press the <code>EN</code> button.
 </p>
 <p>
-    When the new <code>interface</code> app has critical errors, a rollback mechanism keep the device working by automatically rolling back to the previous working application.  
+    When the new <code>interface</code> app has critical errors, a rollback mechanism keep the device working by automatically rolling back to the previous working application. 
 </p>
 <p>
-    After the app is downloaded using OTA, it is marked as <code>pending_verify</code>. Once the application determines that it is working well, it marks it as <code>valid</code>.  On the other hand, when the application marks it as <code>invalid</code> or the device resets, the bootloader will boot the previous working application. [<a href="https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/ota.html">doc</a>]
+    After the app is downloaded using OTA, it is marked as <code>pending_verify</code>. Once the application determines that it is working well, it marks it as <code>valid</code>. On the other hand, when the application marks it as <code>invalid</code> or the device resets, the bootloader will boot the previous working application. [<a href="https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/ota.html">doc</a>]
 </p>
 
 <h3>
@@ -502,13 +502,13 @@
     httpd_root()
 </h3>
 <p>
-    To save memory space on the ESP32, the device returns a minimum HTML page.  The body part is replaced by the <code>replace_body.js</code> script.
+    To save memory space on the ESP32, the device returns a minimum HTML page. The body part is replaced by the <code>replace_body.js</code> script.
 </p>
 <h3>
     httpd_ico()
 </h3>
 <p>
-    The browser places the favicon next to the page's title on the tab.  This function simply sends an HTTP response containing the favicon.
+    The browser places the favicon next to the page's title on the tab. This function simply sends an HTTP response containing the favicon.
 </p>
 
 <h3>
@@ -517,7 +517,7 @@
 <p>
     The Arduino replies to <em>any</em> command with the pool state information formatted as JSON. See illustration further down.
 <p>
-    If query variables were passed, they will be send to the <code>ipc->to_pool_q</code>.  The <code>pool_task</code> will create a corresponding message and send it to the pool controller.
+    If query variables were passed, they will be send to the <code>ipc->to_pool_q</code>. The <code>pool_task</code> will create a corresponding message and send it to the pool controller.
 </p>
 <p>
     The following query variables are supported:
@@ -539,7 +539,7 @@
     [/code]
 </p>
 <p>
-    For the switches, it supports the values <code>ON</code> and <code>OFF</code>.  For a thermostat (climate) mode, it supports the values <code>off</code>, <code>heat</code>, <code>solar_pref</code> and <code>solar</code>.  For the thermostat temperature it accept a value in Fahrenheit.
+    For the switches, it supports the values <code>ON</code> and <code>OFF</code>. For a thermostat (climate) mode, it supports the values <code>off</code>, <code>heat</code>, <code>solar_pref</code> and <code>solar</code>. For the thermostat temperature it accept a value in Fahrenheit.
 </p>
 <p>
     Example
@@ -570,7 +570,7 @@
     mqtt_task    
 </h3>
 <p>
-    IBM's MQ telemetry transport (MQTT) is a lightweight, publish-subscribe network protocol that transports messages between devices.  The keyword is telemetry, or remote monitoring.
+    IBM's MQ telemetry transport (MQTT) is a lightweight, publish-subscribe network protocol that transports messages between devices. The keyword is telemetry, or remote monitoring.
 </p>
 <p>    
     MQTT is rapidly becoming the prevailed protocols to connect large numbers of devices. The <code>mqtt_task</code> implements an MQTT client.
@@ -598,7 +598,7 @@
     Connect to MQTT broker
 </h3>
 <p>
-    The code calls <code>esp_mqtt_client_init</code> and waits until the MQTT connection with the broker is established.  It learns about a successful connection when it the callback function receives a <code>MQTT_EVENT_CONNECTED</code>.
+    The code calls <code>esp_mqtt_client_init</code> and waits until the MQTT connection with the broker is established. It learns about a successful connection when it the callback function receives a <code>MQTT_EVENT_CONNECTED</code>.
 </p>
 <p>
     If the connection were to be broken, the ESP IDF SDK will automatically reconnect to the broker.
@@ -608,7 +608,7 @@
     Coredump to MQTT
 </h3>
 <p>
-    As the devices that are deployed in the field, they have no serial monitor connected.  Instead, we configure the <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/core_dump.html">ESP-IDF</a> so the coredump is written to flash memory.  Next time the ESP32 boots up, and it finds a coredump in flash, it uses the git submodule <a href="https://github.com/cvonk/ESP32_coredump-to-server"><code>ESP32_coredump-to-server</code></a> to publish the coredump to MQTT under the topic <code>pool/data/coredump/ID</code>.
+    As the devices that are deployed in the field, they have no serial monitor connected. Instead, we configure the <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/core_dump.html">ESP-IDF</a> so the coredump is written to flash memory. Next time the ESP32 boots up, and it finds a coredump in flash, it uses the git submodule <a href="https://github.com/cvonk/ESP32_coredump-to-server"><code>ESP32_coredump-to-server</code></a> to publish the coredump to MQTT under the topic <code>pool/data/coredump/ID</code>.
 </p>
 
 <h3>
@@ -616,7 +616,7 @@
 </h3>
 <p>
 <p>
-    Initially, the device asks MQTT task to subscribe to the topics listed below.  Here <code>ID</code> is an unique device identifier.
+    Initially, the device asks MQTT task to subscribe to the topics listed below. Here <code>ID</code> is an unique device identifier.
 
     [code toolbar="false" language="bash"]
         pool/ctrl
@@ -624,7 +624,7 @@
     [/code]
 </p>
 <p>
-    When another devices publishes a message on these topics, the MQTT task will handle the message.  It supports the following values:
+    When another devices publishes a message on these topics, the MQTT task will handle the message. It supports the following values:
     <ul>
         <li><code>who</code>, request device info such as device id, firmware version, WiFi details, MQTT details and heap</li>
         <li><code>restart</code>, restarts the device</li>
@@ -660,7 +660,7 @@
     Subscribe/publish on behalf of others
 </h3>
 <p>
-    The <code>hass_task</code> queues a message to <code>ipc->to_mqtt_q</code> in order to subscribe or publish on a topic.  The <code>mqtt_task</code> forwards this request to the ESP-IDF SDK.
+    The <code>hass_task</code> queues a message to <code>ipc->to_mqtt_q</code> in order to subscribe or publish on a topic. The <code>mqtt_task</code> forwards this request to the ESP-IDF SDK.
 </p>
 <p>
     When subscribing, the topic is also added to the <code>_subscribers</code> list, in case the connection with the broker needs to get re-established.
@@ -675,7 +675,7 @@
     hass_task
 </h2>
 <p>
-    Home Assistant is an open source home automation that puts local control and privacy first.  
+    Home Assistant is an open source home automation that puts local control and privacy first. 
 </p>
 <p>
     The hass_task's duties are
@@ -715,10 +715,10 @@
     [/code]
 </p>
 <p>
-    When another devices publishes a message on these topics, the MQTT task will forward forward it as a network message to the Pool task.  The latter will call <code>hass_tx_pair</code> to handle the message.
+    When another devices publishes a message on these topics, the MQTT task will forward forward it as a network message to the Pool task. The latter will call <code>hass_tx_pair</code> to handle the message.
 </p>
 <p>
-    For the switches, it supports the values <code>ON</code> and <code>OFF</code>.  For a thermostat (climate) mode, it supports the values <code>off</code>, <code>heat</code>, <code>solar_pref</code> and <code>solar</code>.  For the thermostat temperature it accept a value in Fahrenheit.
+    For the switches, it supports the values <code>ON</code> and <code>OFF</code>. For a thermostat (climate) mode, it supports the values <code>off</code>, <code>heat</code>, <code>solar_pref</code> and <code>solar</code>. For the thermostat temperature it accept a value in Fahrenheit.
 </p>
 
 <h3>
