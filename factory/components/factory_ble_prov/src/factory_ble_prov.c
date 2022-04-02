@@ -140,13 +140,16 @@ esp_err_t _mqtt_status_handler(uint32_t session_id, const uint8_t *inbuf, ssize_
 {
     ESP_LOGI(TAG, "%s called", __FUNCTION__);
 
+    if (inbuf) {
+        ESP_LOGI(TAG, "%s Received data: %.*s", __FUNCTION__, inlen, (char *)inbuf);
+    }
     char response[] = "SUCCESS";
     *outbuf = (uint8_t *)strdup(response);
     if (*outbuf == NULL) {
         ESP_LOGE(TAG, "System out of memory");
         return ESP_ERR_NO_MEM;
     }
-    *outlen = strlen(response) + 1; /* +1 for NULL terminating byte */
+    *outlen = strlen(response) + 1; // +1 for NULL terminating byte
 
     return ESP_OK;
 }
@@ -156,6 +159,9 @@ esp_err_t _ota_status_handler(uint32_t session_id, const uint8_t *inbuf, ssize_t
 {
     ESP_LOGI(TAG, "%s called", __FUNCTION__);
 
+    if (inbuf) {
+        ESP_LOGI(TAG, "%s Received data: %.*s", __FUNCTION__, inlen, (char *)inbuf);
+    }
     char response[] = "SUCCESS";
     *outbuf = (uint8_t *)strdup(response);
     if (*outbuf == NULL) {
@@ -210,6 +216,7 @@ ble_prov_start_provisioning(const char *ble_device_name_prefix, int security, ch
         wifi_prov_scheme_ble_set_service_uuid(custom_service_uuid);
 
         // endpoints for additional custom data
+        // see: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/provisioning/provisioning.html
         wifi_prov_mgr_endpoint_create("mqtt-config");
         wifi_prov_mgr_endpoint_create("mqtt-status");
         wifi_prov_mgr_endpoint_create("ota-status");

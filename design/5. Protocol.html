@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' id='parent-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-fonts-css'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        media='all' />
+    <link rel='stylesheet' id='twentyseventeen-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-block-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/assets/css/blocks.css' media='all' />
+    <link rel='stylesheet' id='fancybox-css'
+        href='https://coertvonk.com/wp-content/plugins/easy-fancybox/css/jquery.fancybox.min.css' media='screen' />
+    <style id='fancybox-inline-css'>
+        #fancybox-content {
+            border-color: #fff;
+        }
+    </style>
+    <style>
+        div.flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        div.flex-container>* {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+
+        div.flex-container.math>* {
+            max-width: 100%;
+        }
+
+        div.flex-container.tight>* {
+            flex-grow: unset;
+            max-width: unset;
+        }
+
+        .mathtbl>tbody>tr>td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .mathtbl>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml>tbody>tr>td {
+            text-align: center !important;
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        .mathtblsml>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml {
+            font-size: 0.8em;
+            margin: auto;
+            border-spacing: 0px;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+        }
+
+        .hp41-key {
+            font-family: Verdana, Arial, "Times new roman";
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 0px 2px;
+            color: #000000;
+            border: #000000 1px solid;
+            border-radius: 3px;
+            background-color: #f8f8f8;
+        }        
+        table.error,
+        table.decoded,
+        table.partition {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.error tr > th,
+        table.error tr > td,
+        table.decoded tr > th,
+        table.decoded tr > td,
+        table.partition tr > th,
+        table.partition th > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: wrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.error tr > th,
+        table.decoded tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.error tr > *:nth-last-child(2),
+        table.decoded tr > *:nth-last-child(2),
+        table.partition tr > *:first-child {
+            border-right: 1px solid black;
+        }
+
+        table.connections,
+        table.partition {
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        table.bom {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.connections tr > th,
+        table.connections tr > td,
+        table.bom tr > th,
+        table.bom tr > td,
+        table.partition tr > th,
+        table.partition tr > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.connections tr > td {
+            text-align: center;
+        }
+        table.partition tr > td {
+            text-align: left;
+        }
+        table.connections tr > th,
+        table.bom tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.connections tr > .borderright,
+        table.connections tr > *:nth-last-child(4),
+        table.connections tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(3) {
+            border-right: 1px solid black;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css" integrity="sha512-q9B+BRcW0p2dRy94K1it1sy2Dv9UkAqIYoAUcWQY7Pis6fcQSAe5lohmJiymUL5glkr+Gu8fEVW6UjNKz6qm3A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shThemeEclipse.min.css" integrity="sha512-6CCQXim9WcRaWD9mGmchu6MVeR2hDl9loMnjzOP0ooiUuQQwa6u8FQL4v3socSg61fctsCqEiYIqXyHU/7A7ew==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shThemeDefault.min.css" integrity="sha512-lbsxQPIivlFg4R1HzWzroF+nQRivTblPWXEVKbbCbCeT+w9XJoC4B9cCpZQvcXxd0s8Nooe4YjbB7rYq5RoUkg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js" integrity="sha512-Z5dAQyvO8EyY1cHQcqYTYL8z6PDjM0URql6AioNodsSxxTJS5Fqfujr+o/4ye2dLp0he1qAVTiZABTunv6oLow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushCpp.min.js" integrity="sha512-rNtioul8Z7QMqn3HnQYDsdivIjCiS+J4dWlTzIA/hhJ7n3hWY3Zcpc5gPRvTLWVUVX2Og36JXELoWmU353t9Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js" integrity="sha512-1sgIP38qm/y/33QFXdgSgBinVscLgnICy//6P5vVGaT/NyK2zZfsbLtrz/pPnix5CbEImM88s4HHxDFEHBcINg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPhp.min.js" integrity="sha512-K28WfzDb5L7eD+qiTCY0LAKXcPEeYEYdvxuKz1Yn2XNm28aXBxck3wbfYsM/EJDcXl62Aq68ZoN7zcYrbrRcpA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shAutoloader.min.js" integrity="sha512-fgB2B2iNPSMDR0e4sUBX9rVPhScqSJlamsQBhe+1CI+TbvoBL0N7hmlpOGwmO4gr5T0ho+JN0EP8J6JjzHuq/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPowerShell.min.js" integrity="sha512-Nz643z7l3IUBhaSUHTgkBLxiU+GaIRMiqgUxDy2FjH0DIXEXb2u6QAV8OCZflMfROu+pg6ePw0Uvsemavsf3Ag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        SyntaxHighlighter.all(); 
+    </script>
+    <style></style>
+    <!-- MathJax 3.2 config -->
+    <script>
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/cancel', '[tex]/physics']
+            },
+            tex: {
+                packages: {
+                    '[+]': ['cancel',]
+                },
+                macros: {
+                    shaded: ["{\\bbox[5pt,background-color:##F7F7D2]{#1}}", 1],
+                },
+                tags: 'all',
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body><div class="entry-content" style="margin: 40px">
+
+<p>
+    Describes the protocol that the pool controller uses on the RS-485 bus to communicate with its attached devices.
+</p>
+<p>
+    The Pool Controller communicates with the pump, chlorinator and other devices using a RS-485 bus.  Key characteristics of this bus are:
+    <ul>
+        <li>
+            A master initiates a query addressed to a specific device. The device will respond by performing an action and then respond back to the master.
+        </li>
+        <li>
+            Only one system can transmit at the time. The master will send a query and wait for a response, or times out when the device does not respond within a predefined period.
+        </li>
+    </ul>
+</p>
+<p>
+    Our interface sniffs this RS-485 bus to gather state information, that the user can access through a web interface.  The user can also change select parameters. Furthermore, the interface can share its data with Google Cloud, enabling graphing and automated cloud actions.
+</p>
+<p>
+    The pool controller communicates with the pump and chlorinator over the RS-485 bus using a proprietary protocol. This protocol has been reverse engineered and documented in bits and pieces found on-line by people such as shown in the table below
+
+    <div class="flex-container">
+        <table class="connections">
+            <tr>
+                <th>
+                    Pioneers
+                </th>
+                <th>
+                    Contributors
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <a href="https://docs.google.com/document/d/1M0KMfXfvbszKeqzu6MUF_7yM6KDHk8cZ5nrH1_OUcAc/edit">Joshua Bloch</a>
+                </td>
+                <td>
+                    <a href="https://github.com/tagyoureit/nodejs-poolController/wiki">Russ Goldin</a> (prot; controller).
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="http://cocoontech.com/forums/files/file/173-pab014sharezip/">Michael Russe</a>
+                </td>
+                <td>
+                    <a href="https://www.hackster.io/user3424878278/pool-fill-control-119ab7">Richard Sears</a> (monitor)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="http://cocoontech.com/forums/topic/27864-download-pitzip/">George Saw</a>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    The controller uses two different protocols to communicate with its devices:
+    <ul>
+        <li>
+            "<b>A5</b>" messages are used to communicate with devices such as pumps. The first bytes are always <code>0x00, 0xFF, 0xA5</code>
+        </li>
+        <li>
+            "<b>IC</b>" messages are used to communicate with the chlorinator.  The first bytes are always <code>0x10, 0x02</code>
+        </li>
+    </ul>
+</p>
+
+<h2>
+    A5 messages
+</h2>
+<p>
+    The messages consist of a header, data and a 16-bit checksum.  The length of the data block is specified in the header.  The checksum is calculated starting at the last byte of the header (0xA5) up to the last data byte.  Checksum is transmitted most significant byte first.
+
+    [code toolbar="false" language="cpp"]#define PACK8  __attribute__((aligned( __align__( uint8_t ) ), packed ))
+typedef struct {
+    uint8_t pro;  // protocol version
+    uint8_t dst;  // destination
+    uint8_t src;  // source
+    uint8_t typ;  // message type
+    uint8_t len;  // # of data bytes following
+} PACK8 mHdr_a5_t;[/code]
+</p>
+<p>
+    The most significant 4 bits of source and destination address form the address group.  The least significant 4 bits are the device number.
+
+    [code toolbar="false" language="cpp"]typedef enum {
+    ADDRGROUP_all = 0x00,
+    ADDRGROUP_ctrl = 0x01,
+    ADDRGROUP_remote = 0x02,
+    ADDRGROUP_chlor = 0x05,
+    ADDRGROUP_pump = 0x06
+} addrGroup_t;[/code]
+</p>
+<p>
+    We further distinguish between messages to/from a pump and control messages.  Examples of control messages are time, state, head and scheduling requests. 
+</p>
+
+<h3>
+    Periodic state message from controller
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg11.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg11-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31881" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x0F,  // DATALINK_ADDRGROUP_ALL
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x02,  // NETWORK_TYP_CTRL_STATE_BCAST
+    .len = 0x1D
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_state_bcast = {
+    .hour       = 0x12,  // "18:26"
+    .minute     = 0x1A,  //
+    .activeLo   = 0x20,  // NETWORK_CIRCUIT_POOL | ..
+    .activeHi   = 0x00   //
+    .U04to06[3] = {0x00, 0x00, 0x00} // opt. more `active` circuits
+    .U07to08[2] = {0x00, 0x00};
+    .mode       = 0x00,
+    .heatStatus = 0x00,  // false, false
+    .U11        = 0x00,
+    .delay      = 0x00,  // 0
+    .U13        = 0x01,
+    .poolTemp   = 0x34,  // 52 F
+    .spaTemp    = 0x34,  // 52 F
+    .U16        = 0x02,
+    .solarTemp  = 0x50,  //
+    .airTemp    = 0x37,  // 55 F
+    .solarTemp2 = 0xFF,  // no-sensor
+    .U20to21[2] = {0x02, 0xD0},
+    .heatSrc    = 0x00,  // NETWORK_HEAT_SRC_OFF, NETWORK_HEAT_SRC_OFF 
+    .U23to28[6] = {0x01, 0x00, 0x00, 0x00, 0x29 0x0B}
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x04, 0x28}  // 0x428
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Controller requests status from pump
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg09.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg09-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31879" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x00,
+    .dst = 0x60,  // DATALINK_ADDRGROUP_PUMP
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x07,  // NETWORK_TYP_PUMP_STATUS
+    .len = 0x00
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_pump_status_req = {};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x1C};  // 0x11C
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    Pump replies with the message
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg10.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg10-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31880" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x00,
+    .dst = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .src = 0x60,  // DATALINK_ADDRGROUP_PUMP
+    .typ = 0x07,  // NETWORK_TYP_PUMP_STATUS
+    .len = 0x0F
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_pump_status_resp = {
+    .running = 0x0A,  // true
+    .mode    = 0x00,  // NETWORK_PUMP_MODE_FILTER
+    .status  = 0x00,  // ok
+    .powerHi = 0x02,  // 748 W
+    .powerLo = 0xEC,  //
+    .rpmHi   = 0x09,  // 2500 rpm
+    .rpmLo   = 0xC4,  //
+    .gpm     = 0x00,  // unknown G/m
+    .pct     = 0x00,  // 0 %
+    .U09     = 0x00,
+    .err     = 0x00,  // no-error
+    .U11     = 0x00,
+    .timer   = 0x01,  // 1
+    .hour    = 0x12,  // 18:26
+    .minute  = 0x1A   //
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x03, 0x1D}  // 0x31D
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>   
+
+<h3>
+    Unknown message
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg04.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg04-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31874" />
+        </a>
+    </div>
+
+    The interface parses it, but doesn't decode
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x00,
+    .dst = 0x90,  // DATALINK_ADDRGROUP_X09
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0xD2,  // NETWORK_TYP_CTRL_??
+    .len = 0x01
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]unknown = {
+    .U00 = 0xD2
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x02, 0xEA}  // 0x2EA
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h2>
+    IC messages
+</h2>
+<p>
+    The IC messages consist of a header, data and a tail containing a 8-bit checksum and a 2 byte postamble.  The length of the data block depends on the message type specified in the header.  The checksum is calculated starting at the beginning of the header up to the last data byte.
+
+    [code toolbar="false" language="cpp"]#define PACK8  __attribute__((aligned( __alignof__( uint8_t ) ), packed ))
+typedef struct {
+    uint8_t dst;  // destination
+    uint8_t typ;  // message type
+} PACK8 mHdr_ic_t;[/code]
+</p>
+
+<h3>
+    Controller asks chlorinator to set percentage
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg19.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg19-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31889" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0x10, 0x02};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_ic = {
+    .dst = 0x50, // DATALINK_ADDRGROUP_CHLOR
+    .typ = 0x11  // NETWORK_TYP_CHLOR_LEVEL_SET
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_chlor_level_set {
+    .pct = 0x50  // 80%
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_ic = {
+    .crc[1]  = {0xC3},
+    .post[2] = {0x10, 0x03}
+}[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    The chlorinator replies with
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg20.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg20-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31890" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0x10, 0x02};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_ic = {
+    .dst = 0x00,  // DATALINK_ADDRGROUP_ALL
+    .typ = 0x12   // NETWORK_TYP_CHLOR_LEVEL_RESP
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_chlor_level_resp {
+    .salt = 0x00,   // 0 ppm
+    .err  = 0xC0    // POOLSTATE_CHLOR_STATUS_OK
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_ic = {
+    .crc[1]  = {0xE4},
+    .post[2] = {0x10, 0x03}
+}[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Controller asks chlorinator for model number
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-7-msg01.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-7-msg01-400x81.png" alt="" width="600" class="alignnone size-medium wp-image-31904" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0x10, 0x02};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_ic = {
+    .dst = 0x50,  // DATALINK_ADDRGROUP_CHLOR
+    .typ = 0x14   // NETWORK_TYP_CHLOR_X14
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]unknown = {
+    .U00 = 0x00
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_ic = {
+    .crc[1]  = {},
+    .post[2] = {0x10, 0x03}
+}[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    The chlorinator replies
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-7-msg02.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-7-msg02-400x80.png" alt="" width="600" class="alignnone size-medium wp-image-31903" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0x10, 0x02};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_ic = {
+    .dst = 0x00,  // DATALINK_ADDRGROUP_ALL
+    .typ = 0x03   // NETWORK_TYP_CHLOR_NAME
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_chlor_name = {
+    .U00 = 0x00,
+    .name[16] = {0x49, 0x6E, 0x74, 0x65,  // Intellichlor--40
+                    0x6C, 0x6C, 0x69, 0x63,
+                    0x68, 0x6C, 0x6F, 0x72,
+                    0x2D, 0x2D, 0x34, 0x30}
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_ic = {
+    .crc[1]  = {0xBC},
+    .post[2] = {0x10, 0x03}
+}[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Controller pings the chlorinator
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-5-msg01.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-5-msg01-400x80.png" alt="" width="600" class="alignnone size-medium wp-image-31902" />
+        </a>
+    </div>
+</p>
+<p>
+    Decoded message
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0x10, 0x02};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_ic = {
+    .dst = 0x50,  // DATALINK_ADDRGROUP_CHLOR
+    .typ = 0x00   // NETWORK_TYP_CHLOR_PING_REQ
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_chlor_ping_req = {
+    .U00 = 0x00
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_ic = {
+    .crc[1]  = {0x62},
+    .post[2] = {0x10, 0x03}
+}[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h2>
+    A5 information requests
+</h2>
+
+<h3>
+    Request heat settings    
+</h3>
+<p>
+    Messages on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg01.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg01-400x80.png" alt="" width="600" class="alignnone size-medium wp-image-31871" />
+        </a>
+    </div>
+
+    Remote requests
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .src = 0x20,  // DATALINK_ADDRGROUP_REMOTE
+    .typ = 0xC8,  // NETWORK_TYP_CTRL_HEAT_REQ
+    .len = 0x00
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_heat_req = {}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x9E}  // 0x19E
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    Controller replies with
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x0F,  // DATALINK_ADDRGROUP_ALL
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x08,  // NETWORK_TYP_CTRL_HEAT
+    .len = 0x0D
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_heat = {
+    .poolTemp         = 0x34,  // 52 F
+    .spaTemp          = 0x34,  // 52 F
+    .airTemp          = 0x37,  // 55 F
+    .poolTempSetpoint = 0x04,  // 4 F
+    .spaTempSetpoint  = 0x00,  // 0 F
+    .heatSrc          = 0x00,  // NETWORK_HEAT_SRC_OFF
+    .U06to12[7]       = {0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x02, 0x7C}  // 0x27C
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Request schedule
+</h3>
+<p>
+    Messages on the RS-485 bus
+    
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg02.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg02-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31872" />
+        </a>
+    </div>
+</p>
+<p>
+    Remote requests
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .src = 0x20,  // DATALINK_ADDRGROUP_REMOTE
+    .typ = 0xDE,  // NETWORK_TYP_CTRL_SCHED_REQ
+    .len = 0x00
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_sched_req = {}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0xB4}  // 0x1B4
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    Controller replies with
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x10,
+    .dst = 0x0F,  // DATALINK_ADDRGROUP_ALL
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x1E,  // NETWORK_TYP_CTRL_SCHED
+    .len = 0x10
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_sched_resp {
+    .U00to03[4] = {0x01, 0x00, 0x00, 0x0F},
+    .sched[2] = {{
+        .circuit    = 0x00,  // NETWORK_CIRCUIT_SPA
+        .U05        = 0x00,
+        .prgStartHi = 0x00,
+        .prgStartLo = 0x00,
+        .prgStopHi  = 0x00,
+        .prgStopLo  = 0x00,
+    },{
+        .circuit    = 0x06,  // NETWORK_CIRCUIT_POOL
+        .U05        = 0x01,
+        .prgStartHi = 0x01,  // 08:00
+        .prgStartLo = 0xE0,
+        .prgStopHi  = 0x02,  // 10:00
+        .prgStopLo  = 0x58,
+    }
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x02, 0x45}  // 0x245
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Request current time
+</h3>
+<p>
+    Messages on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/msg03.png">
+            <img src="https://coertvonk.com/wp-content/uploads/msg03-400x79.png" alt="" width="600" class="alignnone size-medium wp-image-31873" />
+        </a>
+    </div>
+</p>
+<p>
+    Remote requests
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .src = 0x20,  // DATALINK_ADDRGROUP_REMOTE
+    .typ = 0xC5,  // NETWORK_TYP_CTRL_TIME_REQ
+    .len = 0x00
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_time_req = {}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x9B}  // 0x19B
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    Controller replies with
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x0F,  // DATALINK_ADDRGROUP_ALL
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x05,  // NETWORK_TYP_CTRL_TIME
+    .len = 0x08
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_time {
+    .hour     = 0x12,  // 19:26
+    .minute   = 0x1A,
+    .U02      = 0x10,
+    .day      = 0x18,  // 2022-02-24
+    .month    = 0x02,
+    .year     = 0x16,
+    .clkSpeed = 0x00,
+    .daylightSavings = 0x00
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x3E}  // 0x13E
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h2>
+    A5 set requests
+</h2>
+
+<h3>
+    Set circuit
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg01-1.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg01-1-1024x387.png" alt="" width="525" height="198" class="alignnone size-large wp-image-32080" />
+        </a>
+    </div>
+
+    Remote set requests
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .src = 0x22,  // DATALINK_ADDRGROUP_REMOTE (wireless_remote)
+    .typ = 0x86,  // NETWORK_TYP_CTRL_CIRCUIT_SET
+    .len = 0x02
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_circuit_set = {
+    .circuit = 0x06,  // 1-based circuit
+    .value = 0x01
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x67}  // 0x167
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    Controller replies with
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg02-1.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg02-1-1024x379.png" alt="" width="525" height="194" class="alignnone size-large wp-image-32083" />
+        </a>
+    </div>
+
+    Decoded
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x22,  // DATALINK_ADDRGROUP_REMOTE (wireless_remote)
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x01,  // NETWORK_TYP_CTRL_SET_ACK
+    .len = 0x01
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_set_ack = {
+    .typ = 0x86;  // NETWORK_TYP_CTRL_CIRCUIT_SET
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x60}  // 0x160
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Set heat
+</h3>
+<p>
+    Message on the RS-485 bus
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg03-1.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg03-1-1024x377.png" alt="" width="525" height="193" class="alignnone size-large wp-image-32082" />
+        </a>
+    </div>
+
+    Remote set requests
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .src = 0x22,  // DATALINK_ADDRGROUP_REMOTE (wireless_remote)
+    .typ = 0x88,  // NETWORK_TYP_CTRL_HEAT_SET
+    .len = 0x04
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]struct network_msg_ctrl_heat_set_t {
+    .poolSetpoint = 0x48,  // 0
+    .spaSetpoint  = 0x16,  // 1
+    .heatSrc      = 0x01,  // 2
+    .UNKNOWN_3    = 0x00   // 3
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0xC3}  // 0x1C3
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    Controller replies with
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg04-1.png">
+            <img src="https://coertvonk.com/wp-content/uploads/rs485-trace-8-msg04-1-1024x377.png" alt="" width="525" height="193" class="alignnone size-large wp-image-32081" />
+        </a>
+    </div>
+
+    Decoded
+
+    <div class="flex-container">
+        <table class="decoded">
+            <tr>
+                <th>Part</th>
+                <th>Decoded</th>
+            </tr>
+            <tr>
+                <td>
+                    Preamble
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_pre = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0x00, 0xFF, 0xA5};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Header
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_hdr_a5 = {
+    .ver = 0x01,
+    .dst = 0x22,  // DATALINK_ADDRGROUP_REMOTE (wireless_remote)
+    .src = 0x10,  // DATALINK_ADDRGROUP_CTRL
+    .typ = 0x01,  // NETWORK_TYP_CTRL_SET_ACK
+    .len = 0x01
+};[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Data
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_ctrl_set_ack = {
+    .typ = 0x88;  // NETWORK_TYP_CTRL_HEAT_SET
+}[/code]
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tail
+                </td>
+                <td>
+                    [code gutter="false" toolbar="off" tab-size="4" language="c"]datalink_tail_a5 = {
+    .crc[2] = {0x01, 0x62}  // 0x162
+};[/code]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+<p>
+    <div class="continue-container no-print">
+        <div class="continue-content">
+            <div class="continue-text">
+                Continue reading to learn about <a href="https://coertvonk.com/sw/pool-interface/in-the-field-31984">Deploying the device in the field</a>.
+            </div>
+        </div>
+    </div>    
+</p>
+
+</div></body>

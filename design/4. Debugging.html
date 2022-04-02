@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' id='parent-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-fonts-css'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        media='all' />
+    <link rel='stylesheet' id='twentyseventeen-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-block-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/assets/css/blocks.css' media='all' />
+    <link rel='stylesheet' id='fancybox-css'
+        href='https://coertvonk.com/wp-content/plugins/easy-fancybox/css/jquery.fancybox.min.css' media='screen' />
+    <style id='fancybox-inline-css'>
+        #fancybox-content {
+            border-color: #fff;
+        }
+    </style>
+    <!-- MathJax 3.2 config -->
+    <script>
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/cancel', '[tex]/physics']
+            },
+            tex: {
+                packages: {
+                    '[+]': ['cancel',]
+                },
+                macros: {
+                    shaded: ["{\\bbox[5pt,background-color:##F7F7D2]{#1}}", 1],
+                },
+                tags: 'all',
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        document.querySelectorAll("ul.nav-menu").forEach(
+            ulist => {
+                if (ulist.querySelectorAll("li").length == 0) {
+                    ulist.style.display = "none";
+
+                }
+            }
+        );
+        /* ]]> */
+    </script>
+    <style>
+        div.flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        div.flex-container>* {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+
+        div.flex-container.math>* {
+            max-width: 100%;
+        }
+
+        div.flex-container.tight>* {
+            flex-grow: unset;
+            max-width: unset;
+        }
+
+        .mathtbl>tbody>tr>td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .mathtbl>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml>tbody>tr>td {
+            text-align: center !important;
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        .mathtblsml>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml {
+            font-size: 0.8em;
+            margin: auto;
+            border-spacing: 0px;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+        }
+
+        .hp41-key {
+            font-family: Verdana, Arial, "Times new roman";
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 0px 2px;
+            color: #000000;
+            border: #000000 1px solid;
+            border-radius: 3px;
+            background-color: #f8f8f8;
+        }        
+        table.error,
+        table.decoded,
+        table.partition {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.error tr > th,
+        table.error tr > td,
+        table.decoded tr > th,
+        table.decoded tr > td,
+        table.partition tr > th,
+        table.partition th > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: wrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.error tr > th,
+        table.decoded tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.error tr > *:nth-last-child(2),
+        table.decoded tr > *:nth-last-child(2),
+        table.partition tr > *:first-child {
+            border-right: 1px solid black;
+        }
+
+        table.connections,
+        table.partition {
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        table.bom {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.connections tr > th,
+        table.connections tr > td,
+        table.bom tr > th,
+        table.bom tr > td,
+        table.partition tr > th,
+        table.partition tr > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.connections tr > td {
+            text-align: center;
+        }
+        table.partition tr > td {
+            text-align: left;
+        }
+        table.connections tr > th,
+        table.bom tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.connections tr > .borderright,
+        table.connections tr > *:nth-last-child(4),
+        table.connections tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(3) {
+            border-right: 1px solid black;
+        }
+
+    </style>
+</head>
+
+<body><div class="entry-content" style="margin: 40px">
+
+<p>
+    Describes methods for debugging the pool interface.  Includes JTAG debugging and post-mortem coredump analysis.
+</p>
+
+<h2>
+    Post mortem
+</h2>
+<p>
+    The device includes support to generate core dumps on unrecoverable errors.  This allows post-mortem analysis of the software state at the moment of failure.  So it is possible to find what task, at what instruction and what call stack of that task lead to the crash. The core dump is written to the <code>coredump</code> partition in flash.
+</p>
+<p>
+    As we will see <a href="#coredump">later</a>, the software will read this coredump from flash and send it over MQTT.  
+</p>
+
+<h2>
+    GDB over JTAG
+</h2>
+<p>
+    The ESP32 supports the <a href="http://openocd.org/">Open On-Chip Debugger</a>.  Say goodbye to <code>printf</code>, and explore the world that was once the exclusive domain of in-circuit emulators. Using special pins on the ESP32, your computer can set break points, inspect variables and single step instructions.
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/VSCode-ESP-WROVER-KIT.jpg">
+            <img src="https://coertvonk.com/wp-content/uploads/VSCode-ESP-WROVER-KIT.jpg" alt="" width="500" height="283" class="alignnone size-full wp-image-31834" />
+        </a>
+    </div>
+</p>
+
+<h3>
+    ESP32 board and JTAG adapter
+</h3>
+<p>
+    The JTAG interface hooks directly to the CPU.  That allows it do stop the CPU, set breakpoints and have access the CPU has access to.
+</p>
+<p>
+    To use this JTAG interface, we need exclusive access to specific pins on the ESP32.  Two different approaches:
+    <ul>
+        <li>
+            Some development boards (e.g. ESP-WROVER-KIT) have a USB interface with two channels.  The first is used for JTAG while the other is used for a serial port.  With the ESP-WROVER-KIT, make sure to connect the JTAG jumpers on JP2 to prevent <code>Error: libusb_open() failed with LIBUSB_ERROR_NOT_SUPPORTED</code>.
+        </li>
+        <li>
+            Other boards bring out the raw JTAG interface using a 10 pin header that should be connected to a JTAG/USB interface, such as the ESP-PROG.  With the interface, make sure to set the <code>JTAG PWR SEL</code> jumper for 3.3V.  Also try to keep the connection short (<10 cm)
+        </li>
+    </ul>
+</p>
+<p>
+    If the board has neither, and GPIO12-15 are left you can connect them yourself to a JTAG/USB interface as follows:
+    <div class="flex-container tight">
+        <table class="connections">
+            <tr>
+                <th>ESP2</th>
+                <th>JTAG/USB</th>
+            </tr>
+            <tr>
+                <td>RESET/RS</td>
+                <td>TRST_N</td>
+            </tr>
+            <tr>
+                <td>GPIO15</td>
+                <td>TDO</td>
+            </tr>
+            <tr>
+                <td>GPIO12</td>
+                <td>TDI</td>
+            </tr>
+            <tr>
+                <td>GPIO13</td>
+                <td>TCK</td>
+            </tr>
+            <tr>
+                <td>GPIO14</td>
+                <td>TMS</td>
+            </tr>
+            <tr>
+                <td>GND</td>
+                <td>GND</td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h4>
+    Fix for Python path
+</h4>
+<p>
+    Fix <code>esp-idf-master/tools/cmake/build.cmake</code>
+    
+    [code gutter="true" toolbar="off" tab-size="4" language="python"]function(__build_write_properties output_file)
+    idf_build_get_property(build_properties __BUILD_PROPERTIES)
+    foreach(property ${build_properties})
+        idf_build_get_property(val ${property})
+        if(property STREQUAL "PYTHON")
+            string(REGEX REPLACE "\\\\" "/" val ${val})
+        endif()
+        set(build_properties_text "${build_properties_text}\nset(${property} ${val})")
+    endforeach()
+    file(WRITE ${output_file} "${build_properties_text}")
+endfunction()[/code]
+</p>
+
+<h3>
+    OpenOCD and driver
+</h3>
+<p>    
+    Under Windows, install the 64-bit [FTDI D2xx Driver](https://www.ftdichip.com/Drivers/D2XX.htm) setup executable;
+    <ol>
+        <li>
+            Connect the ESP32 using both JTAG/USB and UART/USB interfaces to the computer.
+        </li>
+        <li>
+            Use <a href="https://zadig.akeo.ie/">Zadig</a> » Options » List All Devices » `Dual RS232-HS (Interface 0)` = `WinUSB v6`; press "Replace Driver"
+        </li>
+        <li>
+            Windows Device Manager should reveal:
+            <ul>
+                <li>the name of the UART (COM) port.</li>
+                <li>the JTAG will not show up, because WinUSB is a user-space driver</li>
+            </ul>
+        </li>
+    </ol>
+</p>
+
+<h3>
+    Compile and debug
+</h3>
+<p>    
+    Add configuration information for OpenOCD in <code>.vscode\settings.json</code>.
+
+    [code gutter="true" toolbar="off" tab-size="4" language="javascript"]"idf.openOcdConfigs": [
+    "interface/ftdi/esp32_devkitj_v1.cfg",
+    "board/esp32-wrover.cfg"   // update "board/esp32-wrover.cfg" or "board/esp-wroom-32.cfg"
+],[/code]
+</p>
+<p>
+    <ul>
+        <li>
+            For WROVER modules use <code>board/esp32-wrover.cfg</code>, has 1.8V SPI flash (because of PSRAM limitations)
+        </li>
+        <li>
+            For WROOM modules use <code>board/esp-wroom-32.cfg</code>, has 3.3V SPI flash. This flash voltage is important, because GPIO12 is <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html#why-to-set-spi-flash-voltage-in-openocd-configuration">shared with SPI flash</a>. Selecting the wrong voltage may cause flash uploads to fail.
+        </li>
+    </ul>
+</p>
+<p>
+    Debugging requires symbolic data and gets easier when the code is not optimized for runtime or size.  Use `<cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool` to specify the `Debug (-Og)` compiler optimalization level.
+</p>
+<p>
+    Press <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan> to build, upload and monitor over the serial port.  Note that you can also upload the binary over JTAG (<code>program_esp filename.bin 0x10000 verify</code>).  Note2: If the "search documentation" keyboard shortcut is also assigned to `ctrl-e`, then remove that binding.
+</p>
+<p>
+    From the VSCode debug side bar (`ctrl-shift-d`), click on the green arrow at the top and select `GDB/JTAG` to connect to the target
+</p>
+
+<h4>
+    Notes
+</h4>
+<p>
+    <ul>
+        <li>
+            There are only two hardware breakpoints
+        </li>
+        <li>
+            After hitting a break point, you may still have to select the corresponding task
+        </li>
+        <li>
+            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table.  When using OTA updates, this will be the `factory` image instead of the OTA downloaded application.  To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>
+        </li>
+        <li>
+            You may only want to debug the 1st core (<code>set ESP32_ONLYCPU 1</code>)
+        </li>
+        <li>
+            More info in <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/index.html">Espressif JTAG Debugging</a>
+        </li>
+        <li>
+            Use the compiler flag `-Og` (`make menuconfig`) for minimal optimalizations and symbolic data.
+        </li>
+        <li>
+            From the debug side bar (ctrl-shift-d), click on the green arrow at the top and select `GDB/JTAG` to connect to the target
+        </li>
+    </ul>
+</p>
+<p>
+    <div class="continue-container no-print">
+        <div class="continue-content">
+            <div class="continue-text">
+                Continue reading to learn about the <a href="https://coertvonk.com/sw/pool-interface/protocol-31965">communication protocol</a>.
+        </div>
+    </div>    
+</p>
+        
+</div></body>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' id='parent-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-fonts-css'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        media='all' />
+    <link rel='stylesheet' id='twentyseventeen-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-block-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/assets/css/blocks.css' media='all' />
+    <link rel='stylesheet' id='fancybox-css'
+        href='https://coertvonk.com/wp-content/plugins/easy-fancybox/css/jquery.fancybox.min.css' media='screen' />
+    <style id='fancybox-inline-css'>
+        #fancybox-content {
+            border-color: #fff;
+        }
+    </style>
+    <!-- MathJax 3.2 config -->
+    <script>
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/cancel', '[tex]/physics']
+            },
+            tex: {
+                packages: {
+                    '[+]': ['cancel',]
+                },
+                macros: {
+                    shaded: ["{\\bbox[5pt,background-color:##F7F7D2]{#1}}", 1],
+                },
+                tags: 'all',
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        document.querySelectorAll("ul.nav-menu").forEach(
+            ulist => {
+                if (ulist.querySelectorAll("li").length == 0) {
+                    ulist.style.display = "none";
+
+                }
+            }
+        );
+        /* ]]> */
+    </script>
+    <style>
+        div.flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        div.flex-container>* {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+
+        div.flex-container.math>* {
+            max-width: 100%;
+        }
+
+        div.flex-container.tight>* {
+            flex-grow: unset;
+            max-width: unset;
+        }
+
+        .mathtbl>tbody>tr>td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .mathtbl>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml>tbody>tr>td {
+            text-align: center !important;
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        .mathtblsml>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml {
+            font-size: 0.8em;
+            margin: auto;
+            border-spacing: 0px;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+        }
+
+        .hp41-key {
+            font-family: Verdana, Arial, "Times new roman";
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 0px 2px;
+            color: #000000;
+            border: #000000 1px solid;
+            border-radius: 3px;
+            background-color: #f8f8f8;
+        }        
+        table.error,
+        table.decoded,
+        table.partition {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.error tr > th,
+        table.error tr > td,
+        table.decoded tr > th,
+        table.decoded tr > td,
+        table.partition tr > th,
+        table.partition th > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: wrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.error tr > th,
+        table.decoded tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.error tr > *:nth-last-child(2),
+        table.decoded tr > *:nth-last-child(2),
+        table.partition tr > *:first-child {
+            border-right: 1px solid black;
+        }
+
+        table.connections,
+        table.partition {
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        table.bom {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.connections tr > th,
+        table.connections tr > td,
+        table.bom tr > th,
+        table.bom tr > td,
+        table.partition tr > th,
+        table.partition tr > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.connections tr > td {
+            text-align: center;
+        }
+        table.partition tr > td {
+            text-align: left;
+        }
+        table.connections tr > th,
+        table.bom tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.connections tr > .borderright,
+        table.connections tr > *:nth-last-child(4),
+        table.connections tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(3) {
+            border-right: 1px solid black;
+        }
+
+    </style>
+</head>
+
+<body><div class="entry-content" style="margin: 40px">
+
+<p>
+    Describes the development environment for the pool interface as described in <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode-starters ESP32</a>, and consists of 
+    <ul>        
+        <li>GNU toolchain</li>
+        <li>Espressif Internet Development Framework (ESP-IDF)</li>
+        <li>Microsoft Visual Code Studio IDE</li>
+        <li>Git version control</li>
+    </ul>
+
+    <div class="flex-container tight">
+        <a href="https://coertvonk.com/wp-content/uploads/VSCode-Wemos-LOLIN-D32.jpg">
+            <img src="https://coertvonk.com/wp-content/uploads/VSCode-Wemos-LOLIN-D32.jpg" alt="" width="500" height="274" class="alignnone size-full wp-image-31833" />
+        </a>
+    </div>
+</p>
+
+<h2>
+    Setup ESP-IDF 4.4
+</h2>
+<p>
+    Make sure you can call <a href="https://git-scm.com/download/win">Git</a> (globally) and <a href="https://www.python.org/downloads/windows/">Python x64</a> from the command line.
+</p>
+<p>
+    Install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a>, and add the following extensions:
+    <ol>
+        <li>
+            Add the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">Microsoft's C/C++ extension</a>
+        </li>
+        <li>
+            Add the <a href="https://github.com/espressif/vscode-esp-idf-extension/releases/tag/v1.2.0">Espressif IDF 1.2 extension as .vsix</a>. Reload Visual Studio when asked.
+            <ul>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> "ISP-IDF: Configure ESP-IDF". This will install the ESP-IDF tools and configure the extension.
+                    <ul>
+                        <li>
+                            Select Advanced mode
+                        </li>
+                        <li>
+                            ESP-IDF 4.4 in <code>C:/espressif</code> (goes to subdir <code>esp-idf</code>)
+                        </li>
+                        <li>
+                            GNU Tools in <code>C:/espressif/bin</code>
+                        </li>
+                        <li>
+                            Choose "Download ESP-IDF Tools"
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            To speed up compile times, disable Windows Defender's real-time scanning of <code>C:/espressif</code>.  If you get "You'll need a new app to open this windowsdefender link", then issue "Get-AppxPackage Microsoft.SecHealthUI -AllUsers | Reset-AppxPackage" from an elevated powershell.
+        </li>
+    </ol>
+</p>
+<p>        
+    If you also want to use a beta version or the master branch, refer to <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode starter for ESP32</a>.
+</p>
+
+<h3>
+    Start humble
+</h3>
+<p>
+    <ol>
+        <li>
+            From Visual Studio Code, change to an empty folder and copy a simple example project such as <code>blink</code>.
+            <ul>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> » ESP-IDF: Show ESP-IDF Example Projects
+                    <ul>
+                        <li>
+                            Get-started » Blink
+                        </li>
+                        <li>
+                            Click on "Create project using example blink".
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            Connect an ESP32 board to your computer.  It will show up as a Serial Port in Windows device manager.
+        </li>
+        <li>
+            Select the serial port in Visual Studio Code
+            <ul>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> » ESP-IDF: Device configuration
+                    <ul>
+                        <li>Device Target = ESP32</li>
+                        <li>Device Port = COM4</li>
+                        <li>Baud Rate = 115200</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            Start a compile-flash-monitor cycle
+            <ol>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> » ESP-IDF: Build, flash and monitor, or use <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan>. 
+                </li>
+                <li>
+                    Flash using the "UART".
+                </li>
+            </ol>
+        </li>
+    </ol>
+</p>
+<p>
+    In case you encounter warnings or errors, refer to the table below.
+
+    <div class="flex-container">
+        <table class="error">
+            <tr>
+                <th>
+                    Message
+                </th>
+                <th>
+                    Explanation
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>esptool.py failed with exit code 2</code>
+                </td>
+                <td>
+                    Hints that the baud rate is to high.  Try a different/shorter cable.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>no such option: -b</code>
+                </td>
+                <td>
+                    Change <code>idf.py monitor</code> line in <code>.vscode\tasks.json</code> so that the command Monitor" is behind the options.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>CMake Error: Unable to open check cache file for write.</code> 
+                </td>
+                <td>
+                    The directory for the cache file doesn't exist.  Create it by hand.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>IDF_PATH environment variable is different from inferred IDF_PATH.</code>.
+                </td>
+                <td>
+                    Likely because <code>$IDF_PATH</code> is not set in Windows' system/user environment.  Ignore.
+                </td>
+            <tr>
+                <td>
+                    <code>Could NOT find Git (missing: GIT_EXECUTABLE)</code>
+                </td>
+                <td>
+                    Odd because <code>${env:PATH}</code> does include <code>C:\Program Files\Git\cmd</code> [<a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html">build system</a>]
+                </td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h2>
+    Version control
+</h2>
+<p>
+    We use git with a repository on our local file server called <code>nas</code>.
+</p>
+<p>
+    <ol>
+        <li>
+            On Windows install the <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
+        </li>
+        <li>
+            Make sure that you can <code>ssh</code> to github.com.
+        </li>
+        <li>
+            Clone the repository and its submodules to a local directory
+
+            [code toolbar="false" language="bash"]git clone --recursive git@github.com:cvonk/ESP32_Pool-Interface.git[/code]
+        </li>
+    </ol>
+</p>
+
+<h2>
+    Compiling
+</h2>
+<p>
+    You should now be able to compile and link the "interface" application.
+</p>
+<p>
+
+    Start Visual Studio Code (vscode), in the directory <code>ESP32-SDK_Pool-interface\interface</code>.
+
+    <ol>
+        <li>
+            Connect an ESP32 board to your computer.  In Device Manager, the UART (COM) will show up under the Serial Ports.  Select this port in Visual Studio Code:
+            <ul>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> » ESP-IDF: Device configuration
+                    <ul>
+                        <li>Device Target = ESP32</li>
+                        <li>Device Port = COM6</li>
+                        <li>Baud Rate = 115200</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            Start a compile-flash-monitor cycle
+            <ol>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> » ESP-IDF: Build, flash and monitor, or using <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan>. 
+                </li>
+                <li>
+                    Flash using the "UART".
+                </li>
+            </ol>
+        </li>
+    </ol>
+</p>
+<p>
+    <div class="continue-container no-print">
+        <div class="continue-content">
+            <div class="continue-text">
+                Continue reading to learn about the <a href="https://coertvonk.com/sw/pool-interface/debugging-31963">debugging methods</a>.
+        </div>
+    </div>    
+</p>
+        
+</div></body>
