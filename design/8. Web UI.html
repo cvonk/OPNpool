@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' id='parent-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-fonts-css'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        media='all' />
+    <link rel='stylesheet' id='twentyseventeen-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-block-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/assets/css/blocks.css' media='all' />
+    <link rel='stylesheet' id='fancybox-css'
+        href='https://coertvonk.com/wp-content/plugins/easy-fancybox/css/jquery.fancybox.min.css' media='screen' />
+    <style id='fancybox-inline-css'>
+        #fancybox-content {
+            border-color: #fff;
+        }
+    </style>
+    <!-- MathJax 3.2 config -->
+    <script>
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/cancel', '[tex]/physics']
+            },
+            tex: {
+                packages: {
+                    '[+]': ['cancel',]
+                },
+                macros: {
+                    shaded: ["{\\bbox[5pt,background-color:##F7F7D2]{#1}}", 1],
+                },
+                tags: 'all',
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        document.querySelectorAll("ul.nav-menu").forEach(
+            ulist => {
+                if (ulist.querySelectorAll("li").length == 0) {
+                    ulist.style.display = "none";
+
+                }
+            }
+        );
+        /* ]]> */
+    </script>
+    <style>
+        div.flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        div.flex-container>* {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+
+        div.flex-container.math>* {
+            max-width: 100%;
+        }
+
+        div.flex-container.tight>* {
+            flex-grow: unset;
+            max-width: unset;
+        }
+
+        .mathtbl>tbody>tr>td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .mathtbl>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml>tbody>tr>td {
+            text-align: center !important;
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        .mathtblsml>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml {
+            font-size: 0.8em;
+            margin: auto;
+            border-spacing: 0px;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+        }
+
+        .hp41-key {
+            font-family: Verdana, Arial, "Times new roman";
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 0px 2px;
+            color: #000000;
+            border: #000000 1px solid;
+            border-radius: 3px;
+            background-color: #f8f8f8;
+        }        
+        table.error,
+        table.decoded,
+        table.partition {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.error tr > th,
+        table.error tr > td,
+        table.decoded tr > th,
+        table.decoded tr > td,
+        table.partition tr > th,
+        table.partition th > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: wrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.error tr > th,
+        table.decoded tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.error tr > *:nth-last-child(2),
+        table.decoded tr > *:nth-last-child(2),
+        table.partition tr > *:first-child {
+            border-right: 1px solid black;
+        }
+
+        table.connections,
+        table.partition {
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        table.bom {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.connections tr > th,
+        table.connections tr > td,
+        table.bom tr > th,
+        table.bom tr > td,
+        table.partition tr > th,
+        table.partition tr > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.connections tr > td {
+            text-align: center;
+        }
+        table.partition tr > td {
+            text-align: left;
+        }
+        table.connections tr > th,
+        table.bom tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.connections tr > .borderright,
+        table.connections tr > *:nth-last-child(4),
+        table.connections tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(3) {
+            border-right: 1px solid black;
+        }
+
+    </style>
+</head>
+
+<body><div class="entry-content" style="margin: 40px">
+
+<p>
+    Describes the Web UI for the pool interface, allowing the user to monitor the state of the pool controller, pump and chlorinator.
+</p>
+
+<h2>
+    Writing the Web App
+</h2>
+<p>
+    The device can be accessed from a web browser as <code>http://pool.local</code>. Most hosts include support the underlying mDNS protocol, except for Android.  On Android phones, you can use an mDNS discovery app to find the IP address of the device.
+</p>
+
+<p>
+    The UI is inspired by the O<a href="https://opensprinkler.com/">penSprinkler</a> project.  To see how they did it, connect to its <a href="https://ui.opensprinkler.com/#start">UI</a> and save the files on your computer (from Chrome » Ctrl-S).  Open index.htm, it behaves just like the web app (with some small differences).
+</p>
+<p style="padding-left: 30px;">
+    jsFiddle based development as described in my earlier article <a href="/technology/embedded/arduino-webserver-using-jquerymobile-and-jsfiddle-11803">Web browser accessing Arduino data</a>.  The data is retrieved from the Arduino using the JSON-P technique of calling back a function, which allows us to make cross-domain requests. the returned payload is a JavaScript expression.
+</p>
+<p style="padding-left: 30px;">
+    Speed up development using the <a href="http://getbootstrap.com/">Bootstrap</a> mock up tool.
+</p>
+<p>
+    The following widgets seem interesting
+    <ul>
+        <li>
+            Gauges as shown in <a href="http://startingelectronics.org/projects/arduino-projects/web-server-two-temperature-gauges/">this tutorial</a>. The Gauges are HTML5 components written by Mykhailo Stadnyk's (<a href="https://github.com/Mikhus/canv-gauge">src</a>, <a href="http://www.wwvalue.com/web-design/jquery/pure-javascript-and-html5-canvas-gauge-canvgauge.html">API</a>).
+        </li>
+        <li>
+            <a href="http://blog.concord.org/streaming-arduino-data-to-a-browser">Temperature graph</a> in jsFiddle.  The graphs are creating using <a href="http://mbostock.github.com/d3/">D3.js</a>, and make use of the <a href="https://raw.github.com/stepheneb/netlogo-gcc/master/lib/simple-graph.js">simple-graph</a> library created by Stephen Bannasch.
+        </li>
+        <li>
+            <a href="https://www.sdyoung.com/home/how-i-control-the-pool/">Jason Young pool status</a> (<a href="http://www.sdyoung.com/home/pool-status/how-i-control-the-pool/">decoding</a>) (<a href="http://www.sdyoung.com/home/pool-status/how-i-control-the-pool/">using Google Gauges</a>)
+        </li>
+    </ul>
+</p>
+<p>
+    <div class="continue-container no-print">
+        <div class="continue-content">
+            <div class="continue-text">
+                Continue reading to learn about adding <a href="https://coertvonk.com/sw/pool-interface/home-assistant-ui-32008">Home Assistant UI</a>.
+        </div>
+    </div>    
+</p>
+        
+</div></body>

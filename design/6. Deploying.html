@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' id='parent-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-fonts-css'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        media='all' />
+    <link rel='stylesheet' id='twentyseventeen-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-block-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/assets/css/blocks.css' media='all' />
+    <link rel='stylesheet' id='fancybox-css'
+        href='https://coertvonk.com/wp-content/plugins/easy-fancybox/css/jquery.fancybox.min.css' media='screen' />
+    <style id='fancybox-inline-css'>
+        #fancybox-content {
+            border-color: #fff;
+        }
+    </style>
+    <style>
+        div.flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        div.flex-container>* {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+
+        div.flex-container.math>* {
+            max-width: 100%;
+        }
+
+        div.flex-container.tight>* {
+            flex-grow: unset;
+            max-width: unset;
+        }
+
+        .mathtbl>tbody>tr>td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .mathtbl>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml>tbody>tr>td {
+            text-align: center !important;
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        .mathtblsml>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml {
+            font-size: 0.8em;
+            margin: auto;
+            border-spacing: 0px;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+        }
+
+        .hp41-key {
+            font-family: Verdana, Arial, "Times new roman";
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 0px 2px;
+            color: #000000;
+            border: #000000 1px solid;
+            border-radius: 3px;
+            background-color: #f8f8f8;
+        }        
+        table.error,
+        table.decoded,
+        table.partition {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.error tr > th,
+        table.error tr > td,
+        table.decoded tr > th,
+        table.decoded tr > td,
+        table.partition tr > th,
+        table.partition th > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: wrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.error tr > th,
+        table.decoded tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.error tr > *:nth-last-child(2),
+        table.decoded tr > *:nth-last-child(2),
+        table.partition tr > *:first-child {
+            border-right: 1px solid black;
+        }
+
+        table.connections,
+        table.partition {
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        table.bom {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.connections tr > th,
+        table.connections tr > td,
+        table.bom tr > th,
+        table.bom tr > td,
+        table.partition tr > th,
+        table.partition tr > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.connections tr > td {
+            text-align: center;
+        }
+        table.partition tr > td {
+            text-align: left;
+        }
+        table.connections tr > th,
+        table.bom tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.connections tr > .borderright,
+        table.connections tr > *:nth-last-child(4),
+        table.connections tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(3) {
+            border-right: 1px solid black;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css" integrity="sha512-q9B+BRcW0p2dRy94K1it1sy2Dv9UkAqIYoAUcWQY7Pis6fcQSAe5lohmJiymUL5glkr+Gu8fEVW6UjNKz6qm3A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shThemeEclipse.min.css" integrity="sha512-6CCQXim9WcRaWD9mGmchu6MVeR2hDl9loMnjzOP0ooiUuQQwa6u8FQL4v3socSg61fctsCqEiYIqXyHU/7A7ew==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shThemeDefault.min.css" integrity="sha512-lbsxQPIivlFg4R1HzWzroF+nQRivTblPWXEVKbbCbCeT+w9XJoC4B9cCpZQvcXxd0s8Nooe4YjbB7rYq5RoUkg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js" integrity="sha512-Z5dAQyvO8EyY1cHQcqYTYL8z6PDjM0URql6AioNodsSxxTJS5Fqfujr+o/4ye2dLp0he1qAVTiZABTunv6oLow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushCpp.min.js" integrity="sha512-rNtioul8Z7QMqn3HnQYDsdivIjCiS+J4dWlTzIA/hhJ7n3hWY3Zcpc5gPRvTLWVUVX2Og36JXELoWmU353t9Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js" integrity="sha512-1sgIP38qm/y/33QFXdgSgBinVscLgnICy//6P5vVGaT/NyK2zZfsbLtrz/pPnix5CbEImM88s4HHxDFEHBcINg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPhp.min.js" integrity="sha512-K28WfzDb5L7eD+qiTCY0LAKXcPEeYEYdvxuKz1Yn2XNm28aXBxck3wbfYsM/EJDcXl62Aq68ZoN7zcYrbrRcpA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shAutoloader.min.js" integrity="sha512-fgB2B2iNPSMDR0e4sUBX9rVPhScqSJlamsQBhe+1CI+TbvoBL0N7hmlpOGwmO4gr5T0ho+JN0EP8J6JjzHuq/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPowerShell.min.js" integrity="sha512-Nz643z7l3IUBhaSUHTgkBLxiU+GaIRMiqgUxDy2FjH0DIXEXb2u6QAV8OCZflMfROu+pg6ePw0Uvsemavsf3Ag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        SyntaxHighlighter.all(); 
+    </script>
+    <style></style>
+    <!-- MathJax 3.2 config -->
+    <script>
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/cancel', '[tex]/physics']
+            },
+            tex: {
+                packages: {
+                    '[+]': ['cancel',]
+                },
+                macros: {
+                    shaded: ["{\\bbox[5pt,background-color:##F7F7D2]{#1}}", 1],
+                },
+                tags: 'all',
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body><div class="entry-content" style="margin: 40px">
+
+<p>
+    Describes measures needed to roll out the pool interface in the field, such as provisioning and over-the-air updates.
+</p>
+<p>
+    Rolling out a device to multiple sites introduces challenges. For instance, the WiFi credentials can no longer be part of the source code; applying firmware updates or accessing crash information over USB becomes cumbersome; and even simply finding the IP address of the device on the LAN may create a challenge.
+</p>
+<p>
+    To address such challenges we use a two tiered approach, in which the Bootloader decides what application to boot.
+    <ol>
+        <li>the Factory application takes care of provisioning WiFi credentials, downloading the Interface application and switching to the Interface app</li>
+        <li>the Interface application provides the core of the functionality, including updating itself.</li>
+    </ol>
+</p>
+<p>
+    The following sections describes the process in further detail.  A <a href="/sw/pool-interface/interface-software-31967">special page</a> is dedicated to the interface application, which provides the core functionality of the pool interface.
+</p>
+
+<h2>
+    Bootloader
+</h2>
+<p>
+    The partition table is shown in the table below. The bootloader does some minimum configuration of internal modules, and select the application partition to boot, based on the partition table and <code>ota_data</code> (if any).
+
+    <div class="flex-container tight">
+        <figure>
+            <table class="partition">
+                <tr>
+                    <th>start</th>
+                    <th>name</th>
+                    <th>type</th>
+                    <th>subtype</th>
+                </tr>
+                <tr>
+                    <td>0x001000</td>
+                    <td>bootloader</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>0x009000</td>
+                    <td>nvs</td>
+                    <td>data</td>
+                    <td>nvs</td>
+                </tr>
+                <tr>
+                    <td>0x00d000</td>
+                    <td>otadata</td>
+                    <td>data</td>
+                    <td>ota</td>
+                </tr>
+                <tr>
+                    <td>0x00f000</td>
+                    <td>phy_init</td>
+                    <td>data</td>
+                    <td>phy</td>
+                </tr>
+                <tr>
+                    <td>0x010000</td>
+                    <td>factory</td>
+                    <td>app</td>
+                    <td>factory</td>
+                </tr>
+                <tr>
+                    <td>0x160000</td>
+                    <td>interface_0</td>
+                    <td>app</td>
+                    <td>ota_0</td>
+                </tr>
+                <tr>
+                    <td>0x260000</td>
+                    <td>interface_1</td>
+                    <td>app</td>
+                    <td>ota_1</td>
+                </tr>
+                </tbody>
+                <tr>
+                    <td>0x360000</td>
+                    <td>coredump</td>
+                    <td>data</td>
+                    <td>coredump</td>
+                </tr>
+            </table>  
+            <figcaption>
+                Partition table
+            </figcaption>
+        </figure>
+    </div>
+</p> 
+<p>
+    The bootloader in a nutshell:
+    <ul>
+        <li>
+            If app data is erased, it boots the <code>factory</code> application (assuming it is present).
+        </li>
+        <li>
+            After the first OTA update, the <code>ota_data</code> partition is updated to specify which OTA app slot partition should be booted next. If the application works fine, it marks itself as ESP_OTA_IMG_VALID in the <code>ota_data</code>.  Otherwise, it marks itself ESP_OTA_IMG_INVALID. 
+        </li>
+        <li>
+            It support application rollback to keep the device working after the update. It automatically rolls back to the previous version, if the application doesn't pass its self test.
+        </li>
+    </ul> 
+</p>
+
+<h2>
+    Factory application
+</h2>
+<p>
+    The Factory application, handles the provisioning and triggers an over-the-air (OTA) download of the <code>interface</code> app.  It then switches to the new app.
+</p>
+<p>
+    The Factory application takes are of:
+
+    <ul>
+        <li>
+            Provisioning WiFi credentials.
+        </li>
+        <li>
+            Connecting to the WiFi network.
+        </li>
+        <li>
+            Download the Interface application (and pass control to it).
+        </li>
+    </ul>
+</p>
+<p>
+    Each of these are described in detail in the following section
+</p>
+
+<h3>
+    Provisioning WiFi credentials
+</h3>
+<p>
+    For testing purposes, <code>WIFI_CONNECT_SSID</code> and <code>WIFI_CONNECT_PASSWORD</code> can also be provisioned using `Kconfig`.  If empty, the device will use credentials from flash memory.
+</p>
+<p>
+    A phone is used to connect to the <code>factory</code> app using Bluetooth Low Energy (BLE).  The Factory application will advertise itself to the phone app. Using this phone the user specifies the WiFi credentials.  During the process the phone remains in contact with the ESP while the WiFi is set up and connects to an access point.  The WiFi SSID and password are stored in the <code>nvs</code> partition of flash memory.
+</p>
+<p>
+    You can find the source code of this app in the <code>android</code> directory. 
+
+    <quote>
+        If you have an iOS phone, or you have problems compiling the Android app, you can use the Espressif BLE Provisioning app that is available from the <a href="https://play.google.com/store/apps/details?id=com.espressif.provble">Android</a> and <a href="https://apps.apple.com/in/app/esp-ble-provisioning/id1473590141">iOS</a> app stores.  However .. you need to change the <code>_ble_device_name_prefix</code> to <code>PROV_</code> in <code>factory/main/main.c</code>, and change the <code>config.service_uuid</code> in <code>factory/components/factory_ble_prov/src/factory_ble_prov.c</code>.
+    </quote>
+</p>
+<p>
+    The figures below give an impression of the provisioning process
+
+    <div class="flex-container tight">
+        <figure>
+            [code toolbar="false" language="plain"]I (907) factory: Starting BLE provisioning
+I (1338) ble_prov: advertising as "POOL_CC4504"
+I (99768) ble_prov_handler: Received WiFi credentials:
+        ssid Guest Barn
+        password xxxxxxxxxx
+I (100098) ble_prov_handler: WiFi Credentials Applied
+I (100288) ble_prov_handler: Connecting ..
+I (104328) factory: IP addr 10.1.1.118
+I (104328) ble_prov: STA Got IP
+I (104328) ota_task: Checking for OTA update (http://coertvonk.com/cvonk/pool/interface.bin)
+I (104338) ota_task: Running from part "factory" (0x00010000)
+I (104548) ota_task: Writing part ota_0 at offset 0x160000
+I (104548) ota_task: Firmware on server: interface.f6d8367-dirty (Mar  2 2022 10:26:42)
+I (104548) ota_task: Firmware running:   factory.6bc4c65-dirty (Mar  2 2022 14:52:42)
+W (104558) ota_task: Downloading OTA update ..
+I (105848) ble_prov_handler: Connected state
+I (109668) ota_task: Wrote 5% of 1280 kB
+:[/code]
+            <figcaption>
+                Device debug
+            </figcaption>            
+        </figure>
+        <figure>
+            <div class="video-container">
+                <video src="https://coertvonk.com/wp-content/uploads/Provisioning.mp4" preload="auto" width="360" height="720"></video> 
+            </div>
+            <figcaption>
+                Pool provisioning credentials
+            </figcaption>
+        </figure>
+    </div>
+</p>
+<p>
+    The code base uses the git submodule <a href="https://github.com/cvonk/ESP32_factory-ble-prov">ESP32_factory-ble-prov</a>.
+</p>
+
+<h3>
+    Connecting to the WiFi network
+</h3>
+<p>
+    To establish the WiFi connection, the code base uses the git submodule <a href="https://github.com/cvonk/ESP32_wifi-connect">ESP32_wifi-connect</a>. This component makes this API available as a reusable component. It connects to a WiFi Access Point, and automatically reconnects when the connection drops.
+</p>
+<p>
+    More information on this component can be found at <a href="https://github.com/cvonk/ESP32_wifi-connect">Github</a>.    
+</p>
+
+<h3 id="ota">
+    Download the Interface application
+</h3>
+<p>
+    The <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html">ESP-IDF API</a> provides a update mechanism that allows a device to update itself based on data received while the normal firmware is running. Our code base uses the git submodule <a href="https://github.com/cvonk/ESP32_ota-update-task">ESP32_ota-update-task</a> that makes the API available as a component.
+</p>
+<p>
+    The location of the Factory application on the internet is specified by <code>OTA_UPDATE_FIRMWARE_URL</code> in <code>Kconfig</code>.  Note that for HTTPS connections, you will need to add the server's public certificate to <code>components/ota_update_task/CMakelists.txt</code>, and uncomment some lines in <code>ota_update_task.c</code> with <code>server_cert_pem</code>.
+</p>
+<p>
+    It checks for an OTA update on a network server specified using <code>Kconfig</code>.  If has a different binary it applies the update.  Upon completion, the device resets to activate the downloaded code. Note that we use the term "update" loosely, because it can also be used to downgrade the firmware.
+</p>
+<p>
+    To determine if the currently running code is different as the code on the server, it compares the project name, version, date and time.  Note that these are not always updated by the SDK.  The best way to make sure they are updated is by committing your code to Git and building the project from scratch.
+</p>
+<p>
+    An example of the update process is shown in the figure below.
+
+    <div class="flex-container">
+        <figure>
+            [code toolbar="false" language="plain"]I (3222) ota_task: Checking for OTA update (http://coertvonk.com/cvonk/pool/interface.bin)
+    I (3232) ota_task: Running from part "factory" (0x00010000)
+    I (3412) ota_task: Writing part ota_0 at offset 0x160000
+I (3422) ota_task: Firmware on server: interface.f6d8367-dirty (Mar  2 2022 10:26:42)
+I (3422) ota_task: Firmware running:   interface.6bc4c65 (Mar  2 2022 10:29:53)
+W (3432) ota_task: Downloading OTA update ..
+I (8142) ota_task: Wrote 5% of 1280 kB
+:
+I (23602) ota_task: Connection closed
+I (24322) ota_task: Prepare to restart system![/code]
+            <figcaption>
+                OTA debug trace
+            </figcaption>
+        </figure>
+    </div>
+</p>
+<p>
+    More details of this component can be found at <a href="https://github.com/cvonk/ESP32_wifi-connect">Github</a>.    
+</p>
+<p>
+    <div class="continue-container no-print">
+        <div class="continue-content">
+            <div class="continue-text">
+                Continue reading to learn about the <a href="https://coertvonk.com/sw/embedded/pool-interface/interface-software-31967">interface software</a>.
+            </div>
+        </div>
+    </div>    
+</p>
+
+</div></body>

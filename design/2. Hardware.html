@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js no-svg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' id='parent-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-fonts-css'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        media='all' />
+    <link rel='stylesheet' id='twentyseventeen-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
+    <link rel='stylesheet' id='twentyseventeen-block-style-css'
+        href='https://coertvonk.com/wp-content/themes/twentyseventeen/assets/css/blocks.css' media='all' />
+    <link rel='stylesheet' id='fancybox-css'
+        href='https://coertvonk.com/wp-content/plugins/easy-fancybox/css/jquery.fancybox.min.css' media='screen' />
+    <style id='fancybox-inline-css'>
+        #fancybox-content {
+            border-color: #fff;
+        }
+    </style>
+    <!-- MathJax 3.2 config -->
+    <script>
+        window.MathJax = {
+            loader: {
+                load: ['[tex]/cancel', '[tex]/physics']
+            },
+            tex: {
+                packages: {
+                    '[+]': ['cancel',]
+                },
+                macros: {
+                    shaded: ["{\\bbox[5pt,background-color:##F7F7D2]{#1}}", 1],
+                },
+                tags: 'all',
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        document.querySelectorAll("ul.nav-menu").forEach(
+            ulist => {
+                if (ulist.querySelectorAll("li").length == 0) {
+                    ulist.style.display = "none";
+
+                }
+            }
+        );
+        /* ]]> */
+    </script>
+    <style>
+        div.flex-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        div.flex-container>* {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+
+        div.flex-container.math>* {
+            max-width: 100%;
+        }
+
+        div.flex-container.tight>* {
+            flex-grow: unset;
+            max-width: unset;
+        }
+
+        .mathtbl>tbody>tr>td {
+            border-collapse: collapse;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .mathtbl>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml>tbody>tr>td {
+            text-align: center !important;
+            border-collapse: collapse;
+            border: 1px solid black;
+            padding: 0px;
+        }
+
+        .mathtblsml>tbody>tr>th {
+            border-collapse: collapse;
+            border: 1px solid black;
+            background-color: rgb(245, 245, 255);
+            color: black;
+            text-align: center;
+        }
+
+        .mathtblsml {
+            font-size: 0.8em;
+            margin: auto;
+            border-spacing: 0px;
+        }
+
+        @media print {
+
+            .no-print,
+            .no-print * {
+                display: none !important;
+            }
+        }
+
+        .hp41-key {
+            font-family: Verdana, Arial, "Times new roman";
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            padding: 0px 2px;
+            color: #000000;
+            border: #000000 1px solid;
+            border-radius: 3px;
+            background-color: #f8f8f8;
+        }        
+        table.error,
+        table.decoded,
+        table.partition {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.error tr > th,
+        table.error tr > td,
+        table.decoded tr > th,
+        table.decoded tr > td,
+        table.partition tr > th,
+        table.partition th > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: wrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.error tr > th,
+        table.decoded tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.error tr > *:nth-last-child(2),
+        table.decoded tr > *:nth-last-child(2),
+        table.partition tr > *:first-child {
+            border-right: 1px solid black;
+        }
+
+        table.connections,
+        table.partition {
+            margin: 0 auto;
+            margin-top: 1em;
+        }
+        table.bom {
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 1em;
+        }
+        table.connections tr > th,
+        table.connections tr > td,
+        table.bom tr > th,
+        table.bom tr > td,
+        table.partition tr > th,
+        table.partition tr > td {
+            font-size: 0.8em;
+            border: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+            white-space: nowrap;
+            padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+        }
+        table.connections tr > td {
+            text-align: center;
+        }
+        table.partition tr > td {
+            text-align: left;
+        }
+        table.connections tr > th,
+        table.bom tr > th,
+        table.partition tr > th {
+            font-style: italic;
+            border-collapse: collapse;
+            text-align: center;
+            border-bottom: 1px solid black;
+        }
+        table.connections tr > .borderright,
+        table.connections tr > *:nth-last-child(4),
+        table.connections tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(2),
+        table.bom tr > *:nth-last-child(3) {
+            border-right: 1px solid black;
+        }
+
+    </style>
+</head>
+
+<body><div class="entry-content" style="margin: 40px">
+
+<p>
+    The pool interface hardware design is based around a RS-485 Transceiver and an ESP32 System on a Chip (SoC).  .  The transceiver converts between the RS-485 differential signals and the transmit/receive signals used by the UART in the SoC.
+</p>
+
+<h2>
+    Early prototypes
+</h2>
+<p>
+    We started with a single threaded task on a Espressif ESP8266 SoC. It was cheap and offers build-in WiFi.  Over time we migrated to the newer ESP32.  Still cheap, and it offers Bluetooth and runs FreeRTOS what helped in separating the software components.
+
+    <div class="flex-container tight">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/ESP8266-Breadboard-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP8266-Breadboard-1024x683.jpg" alt="" width="300" height="350" class="alignnone size-large wp-image-31856" /></a>
+            <figcaption>
+                1st prototype based on ESP8266
+            </figcaption>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/ESP8266-Proto-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP8266-Proto-1024x683.jpg" alt="" width="300" class="alignnone size-large wp-image-31857" /></a>
+            <figcaption>
+                2nd prototype based on ESP8266
+            </figcaption>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/ESP32-with-RS485-with-logic-and-scope-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP32-with-RS485-with-logic-and-scope-1024x1024.jpg" alt="" width="250" class="alignnone size-large wp-image-31854" /></a>
+            <figcaption>
+                3rd prototype based on ESP32
+            </figcaption>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/ESP32-Wrover.png"><img src="https://coertvonk.com/wp-content/uploads/ESP32-Wrover-400x277.png" alt="" width="400" height="277" class="alignnone size-medium wp-image-31925" /></a>
+            <figcaption>
+                Debug board for ESP32
+            </figcaption>
+        </figure>
+    </div>
+</p>
+
+<h3>
+    ESP32 SoC
+</h3>
+<p>
+    The ESP32 SoC combines two 32-bit 340 MHz microcontrollers, one LPU microcontroller, various peripherals such as WiFi, Bluetooth with 4 MByte Flash and 512 MByte SRAM.  A luxury compared to the ESP8266 with 32+80 kByte SRAM that I used initially.
+</p>
+<p>
+    The SoC is mounted on a LOLIN D32 daughterboard that adds reset logic and an USB bridge for <code>prints</code> statements during initial debugging and initial code uploads.  For the final product we do not need the USB bridge.
+</p>
+
+<h3>
+    Schematic
+</h3>
+<p>
+    Use <a href="https://www.autodesk.com/education/free-software/eagle">Autodesk EAGLE</a> to document the hardware schematic.  Can also be used to layout the printed circuit board. In Windows, specify an <code>EAGLE_HOME</code> environment variable to point to <code>\\nas\Coert Vonk\Projects</code>.  Inside EAGLE it is known as <code>$HOME</code> and used in Control Panel » Options » Directories.  It has a library with parts such as the LOLIN-D32, DC/DC converter, various RS-485 connectors.
+</p>
+<p>
+    <a href="https://www.autodesk.com/products/eagle/blog/what-are-decoupling-capacitors/">Decoupling</a><br />
+    SCHEMATIC: 
+
+    <div class="flex-container tight">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/Pool-Interface-1.svg">
+                <img src="https://coertvonk.com/wp-content/uploads/Pool-Interface-1.svg" alt="" width="600" height="392" class="alignnone size-large wp-image-32026" />
+            </a>
+            <figcaption>
+                Schematic
+            </figcaption>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/Pool-Interface_brd.svg">
+                <img src="https://coertvonk.com/wp-content/uploads/Pool-Interface_brd.svg" alt="" width="300" class="alignnone size-large wp-image-32025" />
+            </a>
+            <figcaption>
+                Board layout
+            </figcaption>
+        </figure>
+    </div>
+</p>
+
+<h3>
+    Bill of Materials
+</h3>
+<p>
+    <div class="flex-container">
+        <table class="bom">
+            <tr>
+                <th width="15%">Name</th>
+                <th>Description</th>
+                <th>Paid</th>
+            </tr>
+            <tr>
+            <td>LOLIN D32</td>
+                <td><a href="https://wiki.wemos.cc/products:d32:d32">Wemos LOLIN D32, based on ESP-WROOM-32 4MB</a></td>
+                <td><a href="https://www.aliexpress.com/item/WEMOS-LOLIN32-V1-0-0-wifi-bluetooth-board-based-ESP-32-4MB-FLASH/32808551116.html">$6.50</a></td>
+            </tr>
+            <tr>
+                <td>MAX3485-PCB</td>
+                <td>RS-485/UART interface, 5V breakout. Replaced the MAX485</td>
+                <td><a href="https://www.dx.com/s/163849">$2.58</a></td>
+            </tr>
+            <tr>
+                <td>MAX3485CSA+</td>
+                <td>Maxim MAX3485CSA+, RS-485/UART interface IC 3.3V</td>
+                <td><a href="http://www.mouser.com/ProductDetail/Maxim-Integrated/MAX3485CSA+/">$2.89</a></td>
+            </tr>
+            <tr>
+                <td>DC1</td>
+                <td>DC/DC Converter R-78E5.0-0.5, 5V, 0.5A</td>
+                <td><a href="http://www.mouser.com/ProductDetail/RECOM-Power/R-78E50-05/">$2.70</a></td>
+            </tr>
+            <tr>
+                <td>D1, D2</td>
+                <td>Rectron Schottky Diode, 1N5818 (or MBRS130 1A 0.3V SMB)</td>
+                <td><a href="https://www.mouser.com/ProductDetail/ON-Semiconductor-Fairchild/SS12?qs=sGAEpiMZZMtQ8nqTKtFS%2fCJFZUIIOyzjPvyQ9XGXm7g%3d">$0.14</a></td>
+            </tr>
+            <tr>
+                <td>D3</td>
+                <td>LED, orange, 0805</td>
+                <td><a href="https://www.mouser.com/ProductDetail/Lite-On/LTST-C170KFKT?qs=sGAEpiMZZMseGfSY3csMkdj4F3JVf9Jg0Kpa4vuxvaM%3d">$0.28</a></td>
+            </tr>
+            <tr>
+                <td>C1, C2</td>
+                <td>Capacitor, 10 µF, 25 V, multi-layer ceramic, 0805</td>
+                <td><a href="https://www.mouser.com/ProductDetail/TDK/C2012X5R1E106K125AB?qs=sGAEpiMZZMvsSlwiRhF8qglhG%252bcX4lmRxAOPZah%2fTLI%3d">$0.34</a></td>
+            </tr>
+            <tr>
+                <td>R1</td>
+                <td>Resistor, 10 kΩ, 1/8 W, 0805</td>
+                <td><a href="https://www.mouser.com/ProductDetail/Vishay/CRCW080510K0FKEA?qs=sGAEpiMZZMtlubZbdhIBIKpw3Cj3Rl3MvACFJKfN%2fFs%3d">$0.10</a></td>
+            </tr>
+            <tr>
+                <td>R1</td>
+                <td>Resistor, 270 Ω, 1/8 W, 0805</td>
+                <td><a href="https://www.mouser.com/ProductDetail/Vishay/CRCW0805270RFKEAC?qs=sGAEpiMZZMu61qfTUdNhG9bvwnXh9sSr48bbMfXKI4mbFBzfOAQ5%252bw%3d%3d">$0.10</a></td>
+            </tr>
+            <tr>
+                <td>RS485-TERM-5MM</td>
+                <td>Fixed terminal block, 4-pin, screwless, 5 mm pitch</td>
+                <td><a href="https://www.mouser.com/ProductDetail/Phoenix-Contact/1864451?qs=sGAEpiMZZMvZTcaMAxB2AP4Dk8QYXkaBbsNZvSICxbcWrNHnP7KRJQ%3d%3d">$1.75</a></td>
+            </tr>
+            <tr>
+                <td>RS485_CONN</td>
+                <td>Plug and socket, 5-pin, SD16-5, IP68 waterproof</td>
+                <td><a href="https://www.aliexpress.com/item/SD16-16mm-5-Pin-Flange-Waterproof-Aviation-Connector-Plug-Socket-Straight-IP68/32401149735.html">$3.29</td>
+            </tr>
+            <tr>
+                <td>PBC</td>
+                <td>Printed circuit board</td>
+                <td><a href="https://oshpark.com/home">$9.43</td>
+            </tr>
+            <tr>
+                <td>Enclosure</td>
+                <td>150x85x35mm Clear Waterproof Project Enclosure</td>
+                <td><a href="https://www.dx.com/s/492680">$6.99</a></td>
+            </tr>
+        </table>
+    </div>
+</p>
+
+<h3>
+    Assembly
+</h3>
+<p>
+    <div class="video-container">
+        <video src="https://coertvonk.com/wp-content/uploads/Pool-PCB-700-1.mp4" preload="auto" width="700" height="394"></video> 
+    </div>
+</p>
+<p>
+    <div class="continue-container no-print">
+        <div class="continue-content">
+            <div class="continue-text">
+                Continue reading to learn about the <a href="https://coertvonk.com/sw/embedded/pool-interface/tools-31961">software development tools</a>.
+        </div>
+    </div>    
+</p>
+
+
+</div></body>
+
