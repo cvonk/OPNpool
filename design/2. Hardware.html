@@ -213,38 +213,38 @@
 <body><div class="entry-content" style="margin: 40px">
 
 <p>
-    The pool interface hardware design is based around a RS-485 Transceiver and an ESP32 System on a Chip (SoC).  .  The transceiver converts between the RS-485 differential signals and the transmit/receive signals used by the UART in the SoC.
+    The OPNpool hardware design is based around a RS-485 Transceiver and an ESP32 System on a Chip (SoC). The transceiver converts between the RS-485 differential signals and the transmit/receive signals used by the UART in the SoC. The ESP32 is supported by the well documented Espressif IoT Development Framework (ESP-IDF).
 </p>
 
 <h2>
     Early prototypes
 </h2>
 <p>
-    We started with a single threaded task on a Espressif ESP8266 SoC. It was cheap and offers build-in WiFi.  Over time we migrated to the newer ESP32.  Still cheap, and it offers Bluetooth and runs FreeRTOS what helped in separating the software components.
+    We started with a single threaded task on a Espressif ESP8266 SoC. It was cheap and offered build-in WiFi. Over time, we migrated to the newer ESP32. Still very affordable, and it offers Bluetooth LE and runs FreeRTOS what helped in separating the software components.
 
     <div class="flex-container tight">
         <figure>
             <a href="https://coertvonk.com/wp-content/uploads/ESP8266-Breadboard-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP8266-Breadboard-1024x683.jpg" alt="" width="300" height="350" class="alignnone size-large wp-image-31856" /></a>
             <figcaption>
-                1st prototype based on ESP8266
+                1st prototype based on ESP8266,<br />with two RS-232 and a RS485 transceiver.
             </figcaption>
         </figure>
         <figure>
             <a href="https://coertvonk.com/wp-content/uploads/ESP8266-Proto-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP8266-Proto-1024x683.jpg" alt="" width="300" class="alignnone size-large wp-image-31857" /></a>
             <figcaption>
-                2nd prototype based on ESP8266
+                2nd prototype based on ESP8266,<br />with RS-232 and RS-485 transceivers.
             </figcaption>
         </figure>
         <figure>
-            <a href="https://coertvonk.com/wp-content/uploads/ESP32-with-RS485-with-logic-and-scope-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP32-with-RS485-with-logic-and-scope-1024x1024.jpg" alt="" width="250" class="alignnone size-large wp-image-31854" /></a>
+            <a href="https://coertvonk.com/wp-content/uploads/ESP32-with-RS485-with-logic-and-scope-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/ESP32-with-RS485-with-logic-and-scope-1024x1024.jpg" alt="" width="220" class="alignnone size-large wp-image-31854" /></a>
             <figcaption>
-                3rd prototype based on ESP32
+                3rd prototype based on ESP32<br />with RS-485 transceiver.
             </figcaption>
         </figure>
         <figure>
             <a href="https://coertvonk.com/wp-content/uploads/ESP32-Wrover.png"><img src="https://coertvonk.com/wp-content/uploads/ESP32-Wrover-400x277.png" alt="" width="400" height="277" class="alignnone size-medium wp-image-31925" /></a>
             <figcaption>
-                Debug board for ESP32
+                4th prototype based on ESP32 development board<br />with RS-485 transceiver.
             </figcaption>
         </figure>
     </div>
@@ -254,17 +254,20 @@
     ESP32 SoC
 </h3>
 <p>
-    The ESP32 SoC combines two 32-bit 340 MHz microcontrollers, one LPU microcontroller, various peripherals such as WiFi, Bluetooth with 4 MByte Flash and 512 MByte SRAM.  A luxury compared to the ESP8266 with 32+80 kByte SRAM that I used initially.
+    The ESP32 SoC combines two 32-bit 340 MHz microcontrollers, one LPU microcontroller, various peripherals such as WiFi, Bluetooth LE with 4 MByte Flash and 512 MByte SRAM.
 </p>
 <p>
-    The SoC is mounted on a LOLIN D32 daughterboard that adds reset logic and an USB bridge for <code>prints</code> statements during initial debugging and initial code uploads.  For the final product we do not need the USB bridge.
+    The SoC is mounted on a LOLIN D32 daughterboard that adds reset logic and an USB bridge for <code>prints</code> statements during initial debugging and initial code uploads. For the final product we do not need the USB bridge.
 </p>
 
 <h3>
     Schematic
 </h3>
 <p>
-    Use <a href="https://www.autodesk.com/education/free-software/eagle">Autodesk EAGLE</a> to document the hardware schematic.  Can also be used to layout the printed circuit board. In Windows, specify an <code>EAGLE_HOME</code> environment variable to point to <code>\\nas\Coert Vonk\Projects</code>.  Inside EAGLE it is known as <code>$HOME</code> and used in Control Panel » Options » Directories.  It has a library with parts such as the LOLIN-D32, DC/DC converter, various RS-485 connectors.
+    I used <a href="https://www.autodesk.com/education/free-software/eagle">Autodesk EAGLE</a> to document the schematic and layout the printed circuit board.
+</p>
+<p>
+    Under Windows, specify an <code>EAGLE_HOME</code> environment variable that points to the hardware directory. Inside EAGLE it is known as <code>$HOME</code> and used in Control Panel » Options » Directories. I added parts such as the LOLIN-D32, DC/DC converter, various RS-485 connectors to the library.
 </p>
 <p>
     <a href="https://www.autodesk.com/products/eagle/blog/what-are-decoupling-capacitors/">Decoupling</a><br />
