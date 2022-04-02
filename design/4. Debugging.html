@@ -213,24 +213,24 @@
 <body><div class="entry-content" style="margin: 40px">
 
 <p>
-    Describes methods for debugging the pool interface.  Includes JTAG debugging and post-mortem coredump analysis.
+    Describes methods for debugging the pool interface. Includes JTAG debugging and post-mortem coredump analysis.
 </p>
 
 <h2>
     Post mortem
 </h2>
 <p>
-    The device includes support to generate core dumps on unrecoverable errors.  This allows post-mortem analysis of the software state at the moment of failure.  So it is possible to find what task, at what instruction and what call stack of that task lead to the crash. The core dump is written to the <code>coredump</code> partition in flash.
+    The device includes support to generate core dumps on unrecoverable errors. This allows post-mortem analysis of the software state at the moment of failure. So it is possible to find what task, at what instruction and what call stack of that task lead to the crash. The core dump is written to the <code>coredump</code> partition in flash.
 </p>
 <p>
-    As we will see <a href="#coredump">later</a>, the software will read this coredump from flash and send it over MQTT.  
+    As we will see <a href="#coredump">later</a>, the software will read this coredump from flash and send it over MQTT. 
 </p>
 
 <h2>
     GDB over JTAG
 </h2>
 <p>
-    The ESP32 supports the <a href="http://openocd.org/">Open On-Chip Debugger</a>.  Say goodbye to <code>printf</code>, and explore the world that was once the exclusive domain of in-circuit emulators. Using special pins on the ESP32, your computer can set break points, inspect variables and single step instructions.
+    The ESP32 supports the <a href="http://openocd.org/">Open On-Chip Debugger</a>. Say goodbye to <code>printf</code>, and explore the world that was once the exclusive domain of in-circuit emulators. Using special pins on the ESP32, your computer can set break points, inspect variables and single step instructions.
 
     <div class="flex-container tight">
         <a href="https://coertvonk.com/wp-content/uploads/VSCode-ESP-WROVER-KIT.jpg">
@@ -243,16 +243,16 @@
     ESP32 board and JTAG adapter
 </h3>
 <p>
-    The JTAG interface hooks directly to the CPU.  That allows it do stop the CPU, set breakpoints and have access the CPU has access to.
+    The JTAG interface hooks directly to the CPU. That allows it do stop the CPU, set breakpoints and have access the CPU has access to.
 </p>
 <p>
-    To use this JTAG interface, we need exclusive access to specific pins on the ESP32.  Two different approaches:
+    To use this JTAG interface, we need exclusive access to specific pins on the ESP32. Two different approaches:
     <ul>
         <li>
-            Some development boards (e.g. ESP-WROVER-KIT) have a USB interface with two channels.  The first is used for JTAG while the other is used for a serial port.  With the ESP-WROVER-KIT, make sure to connect the JTAG jumpers on JP2 to prevent <code>Error: libusb_open() failed with LIBUSB_ERROR_NOT_SUPPORTED</code>.
+            Some development boards (e.g. ESP-WROVER-KIT) have a USB interface with two channels. The first is used for JTAG while the other is used for a serial port. With the ESP-WROVER-KIT, make sure to connect the JTAG jumpers on JP2 to prevent <code>Error: libusb_open() failed with LIBUSB_ERROR_NOT_SUPPORTED</code>.
         </li>
         <li>
-            Other boards bring out the raw JTAG interface using a 10 pin header that should be connected to a JTAG/USB interface, such as the ESP-PROG.  With the interface, make sure to set the <code>JTAG PWR SEL</code> jumper for 3.3V.  Also try to keep the connection short (<10 cm)
+            Other boards bring out the raw JTAG interface using a 10 pin header that should be connected to a JTAG/USB interface, such as the ESP-PROG. With the interface, make sure to set the <code>JTAG PWR SEL</code> jumper for 3.3V. Also try to keep the connection short (<10 cm)
         </li>
     </ul>
 </p>
@@ -355,10 +355,10 @@ endfunction()[/code]
     </ul>
 </p>
 <p>
-    Debugging requires symbolic data and gets easier when the code is not optimized for runtime or size.  Use `<cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool` to specify the `Debug (-Og)` compiler optimalization level.
+    Debugging requires symbolic data and gets easier when the code is not optimized for runtime or size. Use `<cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool` to specify the `Debug (-Og)` compiler optimalization level.
 </p>
 <p>
-    Press <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan> to build, upload and monitor over the serial port.  Note that you can also upload the binary over JTAG (<code>program_esp filename.bin 0x10000 verify</code>).  Note2: If the "search documentation" keyboard shortcut is also assigned to `ctrl-e`, then remove that binding.
+    Press <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan> to build, upload and monitor over the serial port. Note that you can also upload the binary over JTAG (<code>program_esp filename.bin 0x10000 verify</code>). Note2: If the "search documentation" keyboard shortcut is also assigned to `ctrl-e`, then remove that binding.
 </p>
 <p>
     From the VSCode debug side bar (`ctrl-shift-d`), click on the green arrow at the top and select `GDB/JTAG` to connect to the target
@@ -376,7 +376,7 @@ endfunction()[/code]
             After hitting a break point, you may still have to select the corresponding task
         </li>
         <li>
-            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table.  When using OTA updates, this will be the `factory` image instead of the OTA downloaded application.  To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>
+            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table. When using OTA updates, this will be the `factory` image instead of the OTA downloaded application. To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>
         </li>
         <li>
             You may only want to debug the 1st core (<code>set ESP32_ONLYCPU 1</code>)

@@ -227,7 +227,7 @@
     </ol>
 </p>
 <p>
-    The following sections describes the process in further detail.  A <a href="/sw/pool-interface/interface-software-31967">special page</a> is dedicated to the interface application, which provides the core functionality of the pool interface.
+    The following sections describes the process in further detail. A <a href="/sw/pool-interface/interface-software-31967">special page</a> is dedicated to the interface application, which provides the core functionality of the pool interface.
 </p>
 
 <h2>
@@ -308,7 +308,7 @@
             If app data is erased, it boots the <code>factory</code> application (assuming it is present).
         </li>
         <li>
-            After the first OTA update, the <code>ota_data</code> partition is updated to specify which OTA app slot partition should be booted next. If the application works fine, it marks itself as ESP_OTA_IMG_VALID in the <code>ota_data</code>.  Otherwise, it marks itself ESP_OTA_IMG_INVALID. 
+            After the first OTA update, the <code>ota_data</code> partition is updated to specify which OTA app slot partition should be booted next. If the application works fine, it marks itself as ESP_OTA_IMG_VALID in the <code>ota_data</code>. Otherwise, it marks itself ESP_OTA_IMG_INVALID. 
         </li>
         <li>
             It support application rollback to keep the device working after the update. It automatically rolls back to the previous version, if the application doesn't pass its self test.
@@ -320,7 +320,7 @@
     Factory application
 </h2>
 <p>
-    The Factory application, handles the provisioning and triggers an over-the-air (OTA) download of the <code>interface</code> app.  It then switches to the new app.
+    The Factory application, handles the provisioning and triggers an over-the-air (OTA) download of the <code>interface</code> app. It then switches to the new app.
 </p>
 <p>
     The Factory application takes are of:
@@ -345,16 +345,16 @@
     Provisioning WiFi credentials
 </h3>
 <p>
-    For testing purposes, <code>WIFI_CONNECT_SSID</code> and <code>WIFI_CONNECT_PASSWORD</code> can also be provisioned using `Kconfig`.  If empty, the device will use credentials from flash memory.
+    For testing purposes, <code>WIFI_CONNECT_SSID</code> and <code>WIFI_CONNECT_PASSWORD</code> can also be provisioned using `Kconfig`. If empty, the device will use credentials from flash memory.
 </p>
 <p>
-    A phone is used to connect to the <code>factory</code> app using Bluetooth Low Energy (BLE).  The Factory application will advertise itself to the phone app. Using this phone the user specifies the WiFi credentials.  During the process the phone remains in contact with the ESP while the WiFi is set up and connects to an access point.  The WiFi SSID and password are stored in the <code>nvs</code> partition of flash memory.
+    A phone is used to connect to the <code>factory</code> app using Bluetooth Low Energy (BLE). The Factory application will advertise itself to the phone app. Using this phone the user specifies the WiFi credentials. During the process the phone remains in contact with the ESP while the WiFi is set up and connects to an access point. The WiFi SSID and password are stored in the <code>nvs</code> partition of flash memory.
 </p>
 <p>
     You can find the source code of this app in the <code>android</code> directory. 
 
     <quote>
-        If you have an iOS phone, or you have problems compiling the Android app, you can use the Espressif BLE Provisioning app that is available from the <a href="https://play.google.com/store/apps/details?id=com.espressif.provble">Android</a> and <a href="https://apps.apple.com/in/app/esp-ble-provisioning/id1473590141">iOS</a> app stores.  However .. you need to change the <code>_ble_device_name_prefix</code> to <code>PROV_</code> in <code>factory/main/main.c</code>, and change the <code>config.service_uuid</code> in <code>factory/components/factory_ble_prov/src/factory_ble_prov.c</code>.
+        If you have an iOS phone, or you have problems compiling the Android app, you can use the Espressif BLE Provisioning app that is available from the <a href="https://play.google.com/store/apps/details?id=com.espressif.provble">Android</a> and <a href="https://apps.apple.com/in/app/esp-ble-provisioning/id1473590141">iOS</a> app stores. However .. you need to change the <code>_ble_device_name_prefix</code> to <code>PROV_</code> in <code>factory/main/main.c</code>, and change the <code>config.service_uuid</code> in <code>factory/components/factory_ble_prov/src/factory_ble_prov.c</code>.
     </quote>
 </p>
 <p>
@@ -405,7 +405,7 @@ I (109668) ota_task: Wrote 5% of 1280 kB
     To establish the WiFi connection, the code base uses the git submodule <a href="https://github.com/cvonk/ESP32_wifi-connect">ESP32_wifi-connect</a>. This component makes this API available as a reusable component. It connects to a WiFi Access Point, and automatically reconnects when the connection drops.
 </p>
 <p>
-    More information on this component can be found at <a href="https://github.com/cvonk/ESP32_wifi-connect">Github</a>.    
+    More information on this component can be found at <a href="https://github.com/cvonk/ESP32_wifi-connect">Github</a>.   
 </p>
 
 <h3 id="ota">
@@ -415,13 +415,13 @@ I (109668) ota_task: Wrote 5% of 1280 kB
     The <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html">ESP-IDF API</a> provides a update mechanism that allows a device to update itself based on data received while the normal firmware is running. Our code base uses the git submodule <a href="https://github.com/cvonk/ESP32_ota-update-task">ESP32_ota-update-task</a> that makes the API available as a component.
 </p>
 <p>
-    The location of the Factory application on the internet is specified by <code>OTA_UPDATE_FIRMWARE_URL</code> in <code>Kconfig</code>.  Note that for HTTPS connections, you will need to add the server's public certificate to <code>components/ota_update_task/CMakelists.txt</code>, and uncomment some lines in <code>ota_update_task.c</code> with <code>server_cert_pem</code>.
+    The location of the Factory application on the internet is specified by <code>OTA_UPDATE_FIRMWARE_URL</code> in <code>Kconfig</code>. Note that for HTTPS connections, you will need to add the server's public certificate to <code>components/ota_update_task/CMakelists.txt</code>, and uncomment some lines in <code>ota_update_task.c</code> with <code>server_cert_pem</code>.
 </p>
 <p>
-    It checks for an OTA update on a network server specified using <code>Kconfig</code>.  If has a different binary it applies the update.  Upon completion, the device resets to activate the downloaded code. Note that we use the term "update" loosely, because it can also be used to downgrade the firmware.
+    It checks for an OTA update on a network server specified using <code>Kconfig</code>. If has a different binary it applies the update. Upon completion, the device resets to activate the downloaded code. Note that we use the term "update" loosely, because it can also be used to downgrade the firmware.
 </p>
 <p>
-    To determine if the currently running code is different as the code on the server, it compares the project name, version, date and time.  Note that these are not always updated by the SDK.  The best way to make sure they are updated is by committing your code to Git and building the project from scratch.
+    To determine if the currently running code is different as the code on the server, it compares the project name, version, date and time. Note that these are not always updated by the SDK. The best way to make sure they are updated is by committing your code to Git and building the project from scratch.
 </p>
 <p>
     An example of the update process is shown in the figure below.
@@ -445,7 +445,7 @@ I (24322) ota_task: Prepare to restart system![/code]
     </div>
 </p>
 <p>
-    More details of this component can be found at <a href="https://github.com/cvonk/ESP32_wifi-connect">Github</a>.    
+    More details of this component can be found at <a href="https://github.com/cvonk/ESP32_wifi-connect">Github</a>.   
 </p>
 <p>
     <div class="continue-container no-print">
