@@ -251,9 +251,9 @@
     </div>
 </p>
 
-<h3>
+<h2>
     ESP32 SoC
-</h3>
+</h2>
 <p>
     The ESP32 SoC combines two 32-bit 340 MHz microcontrollers, one LPU microcontroller, various peripherals such as WiFi, Bluetooth LE with 4 MByte Flash and 512 MByte SRAM.
 </p>
@@ -261,36 +261,37 @@
     Instead of doing the reset logic and adding an USB bridge ourselves, we chose to use a SoC mounted on a Wemos LOLIN D32 daughterboard.
 </p>
 
-<h3>
+<h2>
     Schematic
-</h3>
-<p>
-    We used <a href="https://www.autodesk.com/education/free-software/eagle">Autodesk EAGLE</a> to document the schematic and layout the printed circuit board.  To gain access to the library with parts such as the Wemos LOLIN-D32, DC/DC converter, RS-485:
-    <blockquote>
-        Under Windows, specify an <code>EAGLE_HOME</code> environment variable that points to the hardware directory. Inside EAGLE it is known as <code>$HOME</code> and used in Control Panel » Options » Directories. 
-    </blockquote>
-</p>
-<p>
-    <a href="https://www.autodesk.com/products/eagle/blog/what-are-decoupling-capacitors/">Decoupling</a><br />
-    SCHEMATIC: 
+</h2>
+<p>    
+    The schematic is pretty straightforward.  We take the power from the pool controller and convert it to 3.3 V.
 
     <div class="flex-container tight">
         <figure>
-            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hardware-schematic.svg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hardware-schematic.svg" alt="" width="600" class="alignnone size-large wp-image-32120" /></a>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hardware-schematic-power.svg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hardware-schematic-power.svg" alt="" width="540" class="alignnone size-large wp-image-32123" /></a>
             </a>
             <figcaption>
-                Schematic
-            </figcaption>
-        </figure>
-        <figure>
-            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hardware-layout.svg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hardware-layout.svg" alt="" width="300" class="alignnone size-large wp-image-32115" /></a>
-            <figcaption>
-                Board layout
+                Schematic power
             </figcaption>
         </figure>
     </div>
 </p>
+<p>
+    The data path is between the RS-485 connector and the ESP32 on the LOLIN D32 daughterboard.  There is an optional terminator resistor to prevent reflections on the bus. The JTAG header is for debugging as detailed in the Debugging chapter.
 
+    <div class="flex-container tight">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hardware-schematic-logic.svg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hardware-schematic-logic.svg" alt="" width="700" class="alignnone size-large wp-image-32122" /></a>
+            <figcaption>
+                Schematic logic
+            </figcaption>
+        </figure>
+    </div>
+</p>
+<p>
+    Note to self: when respinning the board, add LEDs for <code>RX</code> and <code>TX</code> to simplify setup.  I would also add a push button that pulls <code>GPIO#0</code> to ground for factory reset.
+</p>
 <h3>
     Bill of Materials
 </h3>
@@ -354,12 +355,36 @@
             </tr>
             <tr>
                 <td>Enclosure</td>
-                <td>150x85x35mm Clear Waterproof Project Enclosure</td>
+                <td>150x85x35mm clear waterproof project enclosure</td>
                 <td><a href="https://www.dx.com/s/492680">$6.99</a></td>
             </tr>
         </table>
     </div>
 </p>
+
+<h2>
+    Layout
+</h2>
+<p>
+    The schematic fits easily on a two layer PCB. Note the cut out for the RF antenna.
+    
+    <div class="flex-container tight">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hardware-layout.svg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hardware-layout.svg" alt="" width="300" class="alignnone size-large wp-image-32115" /></a>
+            <figcaption>
+                Board layout
+            </figcaption>
+        </figure>
+    </div>
+</p>
+
+
+<h3>
+    Order the PCB
+</h3>
+<p>
+    You can use the board file to order the printed circuit board. To simplify the process, you can replicate my order from OSH Park using <a href="https://oshpark.com/shared_projects/CFBihnoN">this link</a>.
+</p>    
 
 <h3>
     Assembly

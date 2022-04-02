@@ -235,26 +235,43 @@
 <p>
     <ol>
         <li>
-            Make sure that you can <code>ssh</code> to github.com.  On Windows you may have to install its <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
+            Make sure that you can <code>ssh</code> to github.com.  On Windows, you may have to install the Wndows <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
         </li>
         <li>
-            Clone the repository and its submodules to a local directory.  Note the <b>important</b> <code>--recursive</code> flag.
+            Clone the repository and its submodules to a local directory.  Note the <b><code>--recursive</code></b> flag.
 
             [code toolbar="false" language="bash"]git clone --recursive git@github.com:cvonk/ESP32_Pool-Interface.git[/code]
         </li>
     </ol>
 </p>
 
+<h2>
+    EAGLE
+</h2>
+<p>
+    The schematics and layout of the printed circuit board are created using <a href="https://www.autodesk.com/education/free-software/eagle">Autodesk EAGLE</a>.  If you wish to edit them, you need to install this software.
+</p>
+<p>
+    Remember
+    <blockquote>
+        Under Windows, specify the <code>EAGLE_HOME</code> environment variable that points to the your <code>EAGLE</code> directory. Inside EAGLE it is known as <code>$HOME</code> and is used in Control Panel » Options » Directories. 
+    </blockquote>
+</p>
+<p>
+    The schematic and board layout are available in the <code>hardware</code> directory. Custom parts such as the Wemos LOLIN-D32, DC/DC converter, JTAG, RS-485 connector can be found in the library at <code>hardware/libraries/OPNpool.lbr</code>.
+</p>
 
 <h2>
     ESP Tool Chain
 </h2>
 <p>
-    These instructions are for Windows, but will be similar for other operating systems.
+    These instructions are for Windows, the paths will be slightly different on other operating systems.
 </p>
 <p>
-    Before you start, make sure you can call <a href="https://git-scm.com/">Git</a> and <a href="https://www.python.org/">Python x64</a> from the command line.
-    If you haven't already, install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a> (VScode).  (Python might now be included in the ESP-IDF 4.4.)
+    Before you start, make sure <a href="https://git-scm.com/">Git</a> and <a href="https://www.python.org/">Python x64</a> are installed and that you can call <code>git</code> and <code>python</code> from the command line. (Python might now be included in the ESP-IDF 4.4.)
+</p>
+<p>
+    If you haven't already, install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a> (VScode).
 </p>
 <p>
     From within VScode:
@@ -441,10 +458,10 @@
     Android Studio
 </h2>
 <p>
-    The OPNpool provisioning application is available on the Play Store. More details in the Deploying chapter of this document.
+    The OPNpool provisioning application is available on the Play Store. The Deploying chapter of this document describes the process in more detail.
 </p>
 <p>
-    If you prefer to build it yourself, download and install <a href="https://developer.android.com/studio/">Google Android Studio</a> and its SDK.  Make sure you can build one of the example projects.
+    If you prefer to build it yourself, download and install <a href="https://developer.android.com/studio/">Google Android Studio</a> and its SDK. Try to build one of the example projects before you embark on building the OPNpool provisioning app.
 </p>
 
 <h3>
