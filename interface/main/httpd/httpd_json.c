@@ -43,7 +43,7 @@ _jsonProcessQueryVars(httpd_req_t * req, char * const buf, ipc_t const * const i
                 assert( callback );
             } else if (strcmp(key, "_") != 0) {
                 char const * const key_dec = httpd_urldecode(key);
-                if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
+                if (CONFIG_OPNPOOL_DBGLVL_HTTPD > 1) {
                     ESP_LOGI(TAG, "rx query var => queueing (\"%s\": \"%s\")", key_dec, value);
                 }
                 ipc_send_to_pool(IPC_TO_POOL_TYP_SET, key_dec, strlen(key_dec), value, strlen(value), ipc);
@@ -90,7 +90,7 @@ httpd_json(httpd_req_t * const req)
         } else {
             assert( asprintf( &resp, "%s", json) >= 0 );
         }
-        if (CONFIG_POOL_DBGLVL_HTTPD > 1) {
+        if (CONFIG_OPNPOOL_DBGLVL_HTTPD > 1) {
             ESP_LOGI(TAG, "tx \"%s\"\n", resp);
         }
         free((void *)json);

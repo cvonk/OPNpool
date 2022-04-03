@@ -212,12 +212,10 @@
 </head>
 
 <body><div class="entry-content" style="margin: 40px">
+<h1>Interface</h1>
 
 <p>
-    Describes the pool interface software that monitors and controls the pool controller. It provides web, MQTT and Home Assistant interfaces.
-</p>
-<p>
-    The Interface application makes the device a "Pool Interface". Besides monitoring the pool controller and providing access to a web interface, it provides automatic updates, network discovery and supports post mortem debugging.
+    The <code>interface</code> image makes the device a "OPNpool Interface". Besides monitoring the pool controller and providing access to a web interface, it provides automatic updates, network discovery and supports post mortem debugging.
 </p>
 <p>
     <div class="flex-container tight">
@@ -264,7 +262,7 @@
     factory_reset_task
 </h2>
 <p>
-    A factory reset erases the Wifi credentials and returns to the <code>factory</code> app. This allows the device to be provisioned from scratch. To perform a Factory Reset, hold the <code>boot</code> button for five seconds while the <code>interface</code> app is running (not during boot).
+    A factory reset erases the Wifi credentials and returns to the <code>factory</code> app. This allows the device to be provisioned from scratch. To perform a Factory Reset, pull <code>GPIO#0</code> low for five seconds, while the <code>interface</code> app is running (not during boot up). The development board, has a <code>boot</code> button) that services the same function.  I
 
     <div class="flex-container tight">
         <figure>
@@ -288,7 +286,7 @@
     pool_task
 </h2>
 <p>
-    The <code>pool_task</code> forms the heart of the interface. It handles data received from the pool controller, and can send requests to the pool controller.
+    The <code>pool_task</code> forms the heart of OPNpool. It handles data received from the pool controller, and can send requests to the pool controller.
 </p>
 <p>
     Its responsibilities are:
@@ -309,7 +307,7 @@
     <div class="flex-container tight">
         <figure>
             <a href="https://coertvonk.com/wp-content/uploads/pool_task-copy.svg">
-                <img src="https://coertvonk.com/wp-content/uploads/pool_task-copy.svg" alt="" width="525" height="525" class="alignnone size-large wp-image-32093" />
+                <img src="https://coertvonk.com/wp-content/uploads/pool_task-copy.svg" alt="" width="300" class="alignnone size-large wp-image-32093" />
             </a>
             <figcaption>
                 Pool task layers
@@ -778,7 +776,7 @@
     </div>
 </p>
 <p>
-    For details on Home Assistant integration, refer to the <a href="https://coertvonk.com/sw/pool-interface/home-assistant-ui-32008">corresponding section</a>.
+    For details on Home Assistant integration, refer to the <a href="https://coertvonk.com/sw/pool-interface/home-assistant-ui-32008">corresponding chapter</a>.
 </p>
 <p>
     From there the device publishes the data as e.g.

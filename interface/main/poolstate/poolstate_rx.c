@@ -39,7 +39,7 @@ _ctrl_time(cJSON * const dbg, network_msg_ctrl_time_t const * const msg, poolsta
     state->system.tod.date.month = msg->month;
     state->system.tod.date.year = msg->year;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddTodToObject(dbg, "tod", &state->system.tod);
     }
 }
@@ -53,7 +53,7 @@ _ctrl_heat_resp(cJSON * const dbg, network_msg_ctrl_heat_resp_t const * const ms
     state->thermos[POOLSTATE_THERMO_TYP_spa].temp = msg->spaTemp;
     state->thermos[POOLSTATE_THERMO_TYP_spa].set_point = msg->spaSetpoint;
     state->thermos[POOLSTATE_THERMO_TYP_spa].heat_src = (msg->heatSrc >> 2) & 0x03;
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddThermosToObject(dbg, "thermos", state->thermos, true, true, true, false);
     }
 }
@@ -66,7 +66,7 @@ _ctrl_heat_set(cJSON * const dbg, network_msg_ctrl_heat_set_t const * const msg,
     state->thermos[POOLSTATE_THERMO_TYP_spa].set_point = msg->spaSetpoint;
     state->thermos[POOLSTATE_THERMO_TYP_spa].heat_src = msg->heatSrc >> 2;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddThermosToObject(dbg, "thermos", state->thermos, false, true, true, false);
     }
 }
@@ -79,7 +79,7 @@ _ctrl_hex_bytes(cJSON * const dbg, uint8_t const * const bytes, poolstate_t * co
     for (uint8_t ii = 0; ii < nrBytes; ii++) {
         str[ii] = hex8_str(bytes[ii]);
     }
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON * const array = cJSON_CreateStringArray(str, nrBytes);
         cJSON_AddItemToObject(dbg, "raw", array);
     }
@@ -90,7 +90,7 @@ _ctrl_circuit_set(cJSON * const dbg, network_msg_ctrl_circuit_set_t const * cons
 {
     state->circuits.active[msg->circuit -1] = msg->value;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddNumberToObject(dbg, network_circuit_str(msg->circuit -1), msg->value);
     }
 }
@@ -111,7 +111,7 @@ _ctrl_sched_resp(cJSON * const dbg, network_msg_ctrl_sched_resp_t const * const 
         };
     }
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddSchedsToObject(dbg, "scheds", state->scheds, true);
     }
 }
@@ -170,7 +170,7 @@ _ctrl_state(cJSON * const dbg, network_msg_ctrl_state_bcast_t const * const msg,
     state->temps[POOLSTATE_TEMP_TYP_air].temp = msg->airTemp;
     state->temps[POOLSTATE_TEMP_TYP_solar].temp = msg->solarTemp;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddStateToObject(dbg, "state", state);
     }
 }
@@ -185,7 +185,7 @@ _ctrl_version_resp(cJSON * const dbg, network_msg_ctrl_version_resp_t const * co
     state->system.version.major = msg->major;
     state->system.version.minor = msg->minor;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddVersionToObject(dbg, "firmware", &state->system.version);
     }
 }
@@ -200,7 +200,7 @@ _pump_reg_set(cJSON * const dbg, network_msg_pump_reg_set_t const * const msg)
     uint const address = (msg->addressHi << 8) | msg->addressLo;
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddPumpPrgToObject(dbg, network_pump_prg_str(address), value);
     }
 }
@@ -210,7 +210,7 @@ _pump_reg_set_resp(cJSON * const dbg, network_msg_pump_reg_resp_t const * const 
 {
     uint const value = (msg->valueHi << 8) | msg->valueLo;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddPumpPrgToObject(dbg, "resp", value);
     }
 }
@@ -218,7 +218,7 @@ _pump_reg_set_resp(cJSON * const dbg, network_msg_pump_reg_resp_t const * const 
 static void
 _pump_ctrl(cJSON * const dbg, network_msg_pump_ctrl_t const * const msg)
 {
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
        cJSON_AddPumpCtrlToObject(dbg, "ctrl", msg->ctrl);
     }
 }
@@ -228,7 +228,7 @@ _pump_mode(cJSON * const dbg, network_msg_pump_mode_t const * const msg, poolsta
 {
     state->pump.mode = msg->mode;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddPumpModeToObject(dbg, "mode", msg->mode);
     }
 }
@@ -242,7 +242,7 @@ _pump_run(cJSON * const dbg, network_msg_pump_run_t const * const msg, poolstate
         return;
     }
     state->pump.running = running;
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddPumpRunningToObject(dbg, "running", state->pump.running);
     }
 }
@@ -267,7 +267,7 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_resp_t const * const msg
     state->pump.time.hour = msg->clockHr;
     state->pump.time.minute = msg->clockMin;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
        cJSON_AddPumpToObject(dbg, "status", state);
     }
 }
@@ -275,7 +275,7 @@ _pump_status(cJSON * const dbg, network_msg_pump_status_resp_t const * const msg
 static void
 _ctrl_set_ack(cJSON * const dbg, network_msg_ctrl_set_ack_t const * const msg)
 {
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddNumberToObject(dbg, "ack", msg->typ);
     }
 }
@@ -293,7 +293,7 @@ _chlor_name_resp(cJSON * const dbg, network_msg_chlor_name_resp_t const * const 
     strncpy(state->chlor.name, msg->name, name_size);
     state->chlor.name[name_size - 1] = '\0';
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddNumberToObject(dbg, "salt", state->chlor.salt);
         cJSON_AddStringToObject(dbg, "name", state->chlor.name);
     }
@@ -304,7 +304,7 @@ _chlor_level_set(cJSON * const dbg, network_msg_chlor_level_set_t const * const 
 {
     state->chlor.pct = msg->pct;
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddNumberToObject(dbg, "pct", state->chlor.pct);
     }
 }
@@ -313,7 +313,7 @@ static void
 _chlor_level_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * const msg, poolstate_t * const state)
 {
     state->chlor.salt = (uint16_t)msg->salt * 50;
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         //ESP_LOGD(TAG, "%s salt=%u, status=0x%02X", __func__, msg->salt, msg->err);
     }
     if (msg->err & 0x01) {
@@ -333,7 +333,7 @@ _chlor_level_set_resp(cJSON * const dbg, network_msg_chlor_level_resp_t const * 
     }
     // good salt range is 2600 to 4500 ppm
 
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         cJSON_AddChlorRespToObject(dbg, "chlor", &state->chlor);
     }
 }
@@ -453,7 +453,7 @@ poolstate_rx_update(network_msg_t const * const msg, poolstate_t * const state, 
         case MSG_TYP_NONE:  // to please the gcc
             break;  //
     }
-    if (CONFIG_POOL_DBGLVL_POOLSTATE > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_POOLSTATE > 1) {
         size_t const json_size = 1024;
         char * const json = malloc(json_size);
         assert( cJSON_PrintPreallocated(dbg, json, json_size, false) );

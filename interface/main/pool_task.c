@@ -77,12 +77,12 @@ _queue_req(rs485_handle_t const rs485, network_msg_typ_t const typ)
     datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
 
     if (network_create_msg(&msg, pkt)) {
-        if (CONFIG_POOL_DBGLVL_POOLTASK > 1) {
+        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 1) {
             ESP_LOGW(TAG, "%s typ=%u", __func__, typ);
         }
         datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
     } else {
-        if (CONFIG_POOL_DBGLVL_POOLTASK > 0) {
+        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 0) {
             ESP_LOGE(TAG, "%s network_tx_typ failed", __func__);
         }
         free(pkt);
@@ -100,12 +100,12 @@ _queue_req1(rs485_handle_t const rs485, network_msg_typ_t const typ, uint8_t sch
     datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
 
     if (network_create_msg(&msg, pkt)) {
-        if (CONFIG_POOL_DBGLVL_POOLTASK > 1) {
+        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 1) {
             ESP_LOGW(TAG, "%s typ=%u", __func__, typ);
         }
         datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
     } else {
-        if (CONFIG_POOL_DBGLVL_POOLTASK > 0) {
+        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 0) {
             ESP_LOGE(TAG, "%s network_tx_typ failed", __func__);
         }
         free(pkt);
@@ -118,12 +118,12 @@ _forward_queued_pkt_to_rs485(rs485_handle_t const rs485, ipc_t const * const ipc
 {
     datalink_pkt_t const * const pkt = rs485->dequeue(rs485);
     if (pkt) {
-        if (CONFIG_POOL_DBGLVL_POOLTASK >1) {
+        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK >1) {
             size_t const dbg_size = 128;
             char dbg[dbg_size];
             assert(pkt->skb);
             (void) skb_print(TAG, pkt->skb, dbg, dbg_size);
-            if (CONFIG_POOL_DBGLVL_POOLTASK > 1) {
+            if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 1) {
                 ESP_LOGI(TAG, "tx { %s}", dbg);
             }
         }
