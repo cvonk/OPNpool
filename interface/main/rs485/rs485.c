@@ -95,11 +95,11 @@ _tx_mode(bool const tx_enable)
     //  - choose a GPIO that doesn't mind being pulled down during reset
 
     if (tx_enable) {
-        gpio_set_level(CONFIG_POOL_RS485_RTSPIN, 1);  // enable RS485 transmit DE=1 and RE*=1 (DE=driver enable, RE*=inverted receive enable)
+        gpio_set_level(CONFIG_OPNPOOL_RS485_RTSPIN, 1);  // enable RS485 transmit DE=1 and RE*=1 (DE=driver enable, RE*=inverted receive enable)
     } else {
         _flush();  // wait until last byte starts transmitting
         ets_delay_us(1500);  // wait until last byte is transmitted (10 bits / 9600 baud =~ 1042 ms)
-        gpio_set_level(CONFIG_POOL_RS485_RTSPIN, 0);  // enable RS485 receive
+        gpio_set_level(CONFIG_OPNPOOL_RS485_RTSPIN, 0);  // enable RS485 receive
      }
 }
 
@@ -118,17 +118,17 @@ rs485_init(void)
         .use_ref_tick = false,
     };
     gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << CONFIG_POOL_RS485_RTSPIN),
+        .pin_bit_mask = (1ULL << CONFIG_OPNPOOL_RS485_RTSPIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
         .intr_type = GPIO_INTR_DISABLE,
     };
     ESP_ERROR_CHECK( gpio_config(&io_conf) );
-    gpio_set_level((gpio_num_t)CONFIG_POOL_RS485_RTSPIN, 0);
+    gpio_set_level((gpio_num_t)CONFIG_OPNPOOL_RS485_RTSPIN, 0);
 
     uart_param_config(_uart_port, &uart_config);
-    uart_set_pin(_uart_port, CONFIG_POOL_RS485_TXPIN, CONFIG_POOL_RS485_RXPIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_set_pin(_uart_port, CONFIG_OPNPOOL_RS485_TXPIN, CONFIG_OPNPOOL_RS485_RXPIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
     uart_driver_install(_uart_port, _rxBufSize * 2, 0, 0, NULL, 0);  // no tx buffer
     uart_set_mode(_uart_port, UART_MODE_RS485_HALF_DUPLEX);
 

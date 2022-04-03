@@ -233,9 +233,12 @@
     The ESP32 supports the <a href="http://openocd.org/">Open On-Chip Debugger</a>. Say goodbye to <code>ESP_LOG</code>, and explore the world that was once the exclusive domain of in-circuit emulators. Using special pins on the ESP32, your computer can set break points, inspect variables and single step instructions.
 
     <div class="flex-container tight">
-        <a href="https://coertvonk.com/wp-content/uploads/VSCode-ESP-WROVER-KIT.jpg">
-            <img src="https://coertvonk.com/wp-content/uploads/VSCode-ESP-WROVER-KIT.jpg" alt="" width="500" height="283" class="alignnone size-full wp-image-31834" />
-        </a>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-debug-openocd-scaled.jpg"><img src="https://coertvonk.com/wp-content/uploads/opnpool-debug-openocd-1024x683.jpg" alt="" width="525" height="350" class="alignnone size-large wp-image-32127" /></a>
+            <figcaption>
+                OPNpool with ESP-PROG and computer
+            </figcaption>
+        </figure>
     </div>
 </p>
 
@@ -249,26 +252,6 @@
     The JTAG header is available on the OPNpool board.  This 10 pin header should be connected to a JTAG/USB interface, such as the ESP-PROG. With the interface, make sure to set the <code>JTAG PWR SEL</code> jumper for 3.3V. Also try to keep the connection short (&lt;10 cm).
 </p>
 <p>
-
-    https://docs.espressif.com/projects/espressif-esp-iot-solution/en/latest/hw-reference/ESP-Prog_guide.html#step-by-step-instruction
-
-    The red LED lights up when the system is connected to the 3.3V power;
-
-The green LED lights up when ESP-Prog is downloading data to ESP32;
-
-The blue LED lights up when ESP-Prog is receiving data from ESP32.
-
-Connect the ESP-Prog board and the PC USB port via a USB cable.
-
-Install the FT2232HL chip driver on your PC. The PC then detects the two ports of ESP-Prog, indicating that the driver has been installed successfully.
-
-Select the output power voltage for the Program / JTAG interfaces, using pin headers.
-
-Connect the ESP-Prog and ESP user boards with the gray flat cables provided by Espressif.
-
-Start automatic downloading or JTAG debugging, using the official software tools or scripts provided by Espressif.
-
-
     <details>
         <summary>
             Another option is to use the ESP-WROVER-KIT development board.
@@ -332,7 +315,7 @@ Start automatic downloading or JTAG debugging, using the official software tools
     Compile and debug
 </h3>
 <p>
-    Set up the OpenOCD Board Configuration
+    Set up the OpenOCD configuration
     <ol>
         <li>
             <code><cspan class="hp41-key">F1</cspan> » Select OpenOCD Board Configuration</code>.
@@ -351,7 +334,7 @@ Start automatic downloading or JTAG debugging, using the official software tools
     </ol>
 </p>
 <p>
-    Start OpenOCD
+    See if OpenOCD starts
     <ol>
         <li>
             <code><cspan class="hp41-key">F1</cspan> » ESP-IDF: OpenOCD Manager</code>.
@@ -362,13 +345,30 @@ Start automatic downloading or JTAG debugging, using the official software tools
     </ol>
 </p>
 <p>
-    Debugging requires symbolic data and gets easier when the code is not optimized for runtime or size. Use <code><cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool</code> to specify the `Debug (-Og)` compiler optimalization level.
+    Build the code with symbols and without optimalizations.
+
+    <ol>
+        <li>
+            <code><cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool</code>
+        </li>
+        <li>
+            Specify the <code>Debug (-Og)</code> compiler optimalization level.
+        </li>
+        <li>
+            Press <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan> to build, upload and monitor over the serial port. 
+            <ul>
+                <li>
+                    If the "search documentation" keyboard shortcut is also assigned to <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan>, then first remove that binding.
+                </li>
+                <li>
+                    Note that you can also upload the binary over JTAG (<code>program_esp filename.bin 0x10000 verify</code>).
+                </li>
+            </ul>
+        </li>
+    </ol>
 </p>
 <p>
-    Press <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan> to build, upload and monitor over the serial port. Note that you can also upload the binary over JTAG (<code>program_esp filename.bin 0x10000 verify</code>). Note2: If the "search documentation" keyboard shortcut is also assigned to `ctrl-e`, then remove that binding.
-</p>
-<p>
-    From the VSCode debug side bar (`ctrl-shift-d`), click on the green arrow at the top and select `GDB/JTAG` to connect to the target
+    From the VSCode debug side bar (<cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan>), click on the green arrow at the top and select <code>Launch</code> to connect to the OPNpool device.
 </p>
 
 <h4>
@@ -383,19 +383,13 @@ Start automatic downloading or JTAG debugging, using the official software tools
             After hitting a break point, you may still have to select the corresponding task
         </li>
         <li>
-            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table. When using OTA updates, this will be the `factory` image instead of the OTA downloaded application. To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>).
+            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table. When using OTA updates, this will be the <code>factory</code> image instead of the OTA downloaded application. To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>).
         </li>
         <li>
             You may only want to debug the 1st core (<code>set ESP32_ONLYCPU 1</code>)
         </li>
         <li>
-            More info in <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/index.html">Espressif JTAG Debugging</a>
-        </li>
-        <li>
-            Use the compiler flag <code>-Og</code> (`cmake menuconfig`) for minimal optimalizations and symbolic data.
-        </li>
-        <li>
-            From the debug side bar (ctrl-shift-d), click on the green arrow at the top and select `GDB/JTAG` to connect to the target
+            Espressif has more info in <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/index.html">Espressif JTAG Debugging</a>
         </li>
     </ul>
 </p>

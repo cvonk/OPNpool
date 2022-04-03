@@ -98,14 +98,14 @@ _find_preamble(rs485_handle_t const rs485, local_data_t * const local, datalink_
 
     uint8_t byt;
     while (rs485->read_bytes(&byt, 1) == 1) {
-		if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+		if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
             len += snprintf(dbg + len, buf_size - len, " %02X", byt);
 		}
 		bool part_of_preamble = false;
         proto_info_t * info = _proto_descr;
 		for (uint ii = 0; !part_of_preamble && ii < ARRAY_SIZE(_proto_descr); ii++, info++) {
 			if (_preamble_complete(info, byt, &part_of_preamble)) {
-				if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+				if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
                     ESP_LOGI(TAG, "%s (preamble)", dbg);
 				}
 				pkt->prot = info->prot;
@@ -158,7 +158,7 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 		case DATALINK_PROT_A5_PUMP: {
             datalink_hdr_a5_t * const hdr = &local->head->a5.hdr;
 			if (rs485->read_bytes((uint8_t *) hdr, sizeof(datalink_hdr_a5_t)) == sizeof(datalink_hdr_a5_t)) {
-				if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+				if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
 					ESP_LOGI(TAG, " %02X %02X %02X %02X %02X (header)", hdr->ver, hdr->dst, hdr->src, hdr->typ, hdr->len);
 				}
 				if (hdr->len > DATALINK_MAX_DATA_SIZE) {
@@ -181,7 +181,7 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 		case DATALINK_PROT_IC: {
             datalink_hdr_ic_t * const hdr = &local->head->ic.hdr;
 			if (rs485->read_bytes((uint8_t *) hdr, sizeof(datalink_hdr_ic_t)) == sizeof(datalink_hdr_ic_t)) {
-				if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+				if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
 					ESP_LOGI(TAG, " %02X %02X (header)", hdr->dst, hdr->typ);
 				}
                 pkt->prot_typ = hdr->typ;
@@ -192,7 +192,7 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 			}
         }
 	}
-    if (CONFIG_POOL_DBGLVL_DATALINK >0) {
+    if (CONFIG_OPNPOOL_DBGLVL_DATALINK >0) {
         ESP_LOGW(TAG, "unsupported pkt->prot 0x%02X", pkt->prot);
     }
 	return ESP_FAIL;
@@ -212,7 +212,7 @@ _read_data(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
     char buf[buf_size]; *buf = '\0';
 
 	if (rs485->read_bytes((uint8_t *) pkt->data, pkt->data_len) == pkt->data_len) {
-		if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+		if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
 			for (uint ii = 0; ii < pkt->data_len; ii++) {
                 len += snprintf(buf + len, buf_size - len, " %02X", pkt->data[ii]);
 			}
@@ -237,7 +237,7 @@ _read_tail(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 		case DATALINK_PROT_A5_PUMP: {
             uint8_t * const crc = local->tail->a5.crc;
         	if (rs485->read_bytes(crc, sizeof(datalink_tail_a5_t)) == sizeof(datalink_tail_a5_t)) {
-				if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+				if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
 					ESP_LOGI(TAG, " %03X (checksum)", (uint16_t)crc[0] << 8 | crc[1]);
 				}
 				return ESP_OK;
@@ -248,7 +248,7 @@ _read_tail(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
             uint8_t * const crc = local->tail->ic.crc;
             uint8_t * const postamble = local->tail->ic.postamble;
         	if (rs485->read_bytes(crc, sizeof(datalink_tail_ic_t)) == sizeof(datalink_tail_ic_t)) {
-				if (CONFIG_POOL_DBGLVL_DATALINK >1) {
+				if (CONFIG_OPNPOOL_DBGLVL_DATALINK >1) {
 					ESP_LOGI(TAG, " %02X (checksum)", crc[0]);
 					ESP_LOGI(TAG, " %02X %02X (postamble)", postamble[0], postamble[1]);
 				}
@@ -257,7 +257,7 @@ _read_tail(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
 			break;
         }
 	}
-    if (CONFIG_POOL_DBGLVL_DATALINK >0) {
+    if (CONFIG_OPNPOOL_DBGLVL_DATALINK >0) {
         ESP_LOGW(TAG, "unsupported pkt->prot 0x%02X !", pkt->prot);
     }
 	return ESP_FAIL;
@@ -288,7 +288,7 @@ _check_crc(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
     if (local->crc_ok) {
         return ESP_OK;
     }
-    if (CONFIG_POOL_DBGLVL_DATALINK >0) {
+    if (CONFIG_OPNPOOL_DBGLVL_DATALINK >0) {
         ESP_LOGW(TAG, "crc err (rx=0x%03x calc=0x%03x)", crc.rx, crc.calc);
     }
     return ESP_FAIL;

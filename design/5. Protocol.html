@@ -212,23 +212,24 @@
 </head>
 
 <body><div class="entry-content" style="margin: 40px">
+<h1>Protocol</h1>
 
 <p>
     Describes the protocol that the pool controller uses on the RS-485 bus to communicate with its attached devices.
 </p>
 <p>
-    The Pool Controller communicates with the pump, chlorinator and other devices using a RS-485 bus. Key characteristics of this bus are:
+    Key characteristics of this bus are:
     <ul>
         <li>
-            A master initiates a query addressed to a specific device. The device will respond by performing an action and then respond back to the master.
+            A pool controller initiates a query addressed to a specific device. The device will respond by performing an action and then respond back to the controller.
         </li>
         <li>
-            Only one system can transmit at the time. The master will send a query and wait for a response, or times out when the device does not respond within a predefined period.
+            It is an half-duplex connection, so only one system can transmit at the time. The controller will send a query and wait for a response, or times out when the device does not respond within a predefined period.
         </li>
     </ul>
 </p>
 <p>
-    Our interface sniffs this RS-485 bus to gather state information, that the user can access through a web interface. The user can also change select parameters. Furthermore, the interface can share its data with Google Cloud, enabling graphing and automated cloud actions.
+    The OPNpool device sniffs this RS-485 bus to gather state information, and presents it to the user. The user can also change select parameters such as the thermostats or start e.g. the pool circuit.
 </p>
 <p>
     The pool controller communicates with the pump and chlorinator over the RS-485 bus using a proprietary protocol. This protocol has been reverse engineered and documented in bits and pieces found on-line by people such as shown in the table below
@@ -507,21 +508,21 @@ typedef struct {
                 </td>
                 <td>
                     [code gutter="false" toolbar="off" tab-size="4" language="c"]network_msg_pump_status_resp = {
-    .running = 0x0A,  // true
-    .mode    = 0x00,  // NETWORK_PUMP_MODE_FILTER
-    .status  = 0x00,  // ok
-    .powerHi = 0x02,  // 748 W
-    .powerLo = 0xEC,  //
-    .rpmHi   = 0x09,  // 2500 rpm
-    .rpmLo   = 0xC4,  //
-    .gpm     = 0x00,  // unknown G/m
-    .pct     = 0x00,  // 0 %
-    .U09     = 0x00,
-    .err     = 0x00,  // no-error
-    .U11     = 0x00,
-    .timer   = 0x01,  // 1
-    .hour    = 0x12,  // 18:26
-    .minute  = 0x1A   //
+    .running  = 0x0A,  // true
+    .mode     = 0x00,  // NETWORK_PUMP_MODE_FILTER
+    .status   = 0x00,  // ok
+    .powerHi  = 0x02,  // 748 W
+    .powerLo  = 0xEC,  //
+    .rpmHi    = 0x09,  // 2500 rpm
+    .rpmLo    = 0xC4,  //
+    .gpm      = 0x00,  // unknown G/m
+    .pct      = 0x00,  // 0 %
+    .U09      = 0x00,
+    .err      = 0x00,  // no-error
+    .remHr    = 0x00,
+    .remMin   = 0x01,  // 1
+    .clockHr  = 0x12,  // 18:26
+    .clockMin = 0x1A   //
 }[/code]
                 </td>
             </tr>
@@ -540,7 +541,7 @@ typedef struct {
 </p>   
 
 <h3>
-    Unknown message
+    Controller requests status from chemical
 </h3>
 <p>
     Message on the RS-485 bus

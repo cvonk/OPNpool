@@ -62,7 +62,7 @@ _parse_topic(char * data, char * args[], uint const args_len) {
     char * save;
     char * p = strtok_r(data, delim, &save);
     while (p && ii < args_len) {
-        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+        if (CONFIG_OPNPOOL_DBGLVL_HASSTASK > 1) {
             ESP_LOGI(TAG, "%s args[%u] = \"%s\"", __func__, ii, p);
         }
         args[ii++] = p;
@@ -85,7 +85,7 @@ _switch_init(char const * const base, dispatch_hass_t const * const hass, char *
     }
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                     "\"~\":\"%s\","
-                    "\"name\":\"Pool %s\","
+                    "\"name\":\"OPNpool %s\","
                     "\"cmd_t\":\"~/set\","
                     "\"stat_t\":\"~/state\"}",
                     base, base, hass->name) >= 0 );
@@ -101,7 +101,7 @@ _switch_state(poolstate_t const * const state, poolstate_get_params_t const * co
 {
     uint8_t const value = state->circuits.active[params->idx];
     char * combined;
-    assert( asprintf(&combined, "homeassistant/%s/pool/%s/state"
+    assert( asprintf(&combined, "homeassistant/%s/opnpool/%s/state"
                      "\t"
                      "%s",
                      hass_dev_typ_str(hass->dev_typ), hass->id, value ? "ON" : "OFF") >= 0 );
@@ -109,13 +109,13 @@ _switch_state(poolstate_t const * const state, poolstate_get_params_t const * co
     free(combined);
 
     if (params->idx == NETWORK_CIRCUIT_pool) {
-        assert( asprintf(&combined, "homeassistant/climate/pool/pool_heater/available\t%s",
+        assert( asprintf(&combined, "homeassistant/climate/opnpool/pool_heater/available\t%s",
                         value ? "online" : "offline") >= 0 );
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
         free(combined);
     }
     if (params->idx == NETWORK_CIRCUIT_spa) {
-        assert( asprintf(&combined, "homeassistant/climate/pool/spa_heater/available\t%s",
+        assert( asprintf(&combined, "homeassistant/climate/opnpool/spa_heater/available\t%s",
                         value ? "online" : "offline") >= 0 );
         ipc_send_to_mqtt(IPC_TO_MQTT_TYP_PUBLISH, combined, ipc);
         free(combined);
@@ -143,7 +143,7 @@ _switch_set(char const * const subtopic, poolstate_get_params_t const * const pa
         .u.ctrl_circuit_set = &circuit_set,
     };
     if (network_create_msg(&msg, pkt)) {
-        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+        if (CONFIG_OPNPOOL_DBGLVL_HASSTASK > 1) {
             ESP_LOGW(TAG, "%s: circuit=%u, value=%u, pkt=%p", __func__, circuit_min_1, value, pkt);
         }
         return ESP_OK;
@@ -163,7 +163,7 @@ _sensor_init(char const * const base, dispatch_hass_t const * const hass, char *
 {
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                      "\"~\":\"%s\","
-                     "\"name\":\"Pool %s\","
+                     "\"name\":\"OPNpool %s\","
                      "\"stat_t\":\"~/state\","
                      "\"unit_of_meas\":\"%s\"}",
                      base, base, hass->name, hass->unit ? hass->unit : "") >= 0 );
@@ -180,7 +180,7 @@ _sensor_state(poolstate_t const * const state, poolstate_get_params_t const * co
     poolstate_get_value_t value;
     if (poolstate_get_value(state, params, &value) == ESP_OK) {
         char * combined;
-        assert( asprintf(&combined, "homeassistant/%s/pool/%s/state"
+        assert( asprintf(&combined, "homeassistant/%s/opnpool/%s/state"
                         "\t"
                         "%s",
                         hass_dev_typ_str(hass->dev_typ), hass->id, value) >= 0 );
@@ -216,7 +216,7 @@ _sched_state(poolstate_t const * const state, poolstate_get_params_t const * con
     poolstate_get_value_t value;
     if (poolstate_get_value(state, params, &value) == ESP_OK) {        
         char * combined;
-        assert( asprintf(&combined, "homeassistant/%s/pool/%s/state"
+        assert( asprintf(&combined, "homeassistant/%s/opnpool/%s/state"
                         "\t"
                         "%s",
                         hass_dev_typ_str(hass->dev_typ), hass->id, value) >= 0 );
@@ -252,7 +252,7 @@ _binary_state(poolstate_t const * const state, poolstate_get_params_t const * co
     poolstate_get_value_t value;
     if (poolstate_get_value(state, params, &value) == ESP_OK) {        
         char * combined;
-        assert( asprintf(&combined, "homeassistant/%s/pool/%s/state"
+        assert( asprintf(&combined, "homeassistant/%s/opnpool/%s/state"
                         "\t"
                         "%s",
                         hass_dev_typ_str(hass->dev_typ), hass->id, value) >= 0 );
@@ -280,7 +280,7 @@ _climate_init(char const * const base, dispatch_hass_t const * const hass, char 
     }
     assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
                      "\"~\":\"%s\","
-                     "\"name\":\"Pool %s\","
+                     "\"name\":\"OPNpool %s\","
                      "\"curr_temp_t\":\"~/state\","
                      "\"curr_temp_tpl\":\"{{ value_json.current_temp }}\","
                      "\"temp_cmd_t\":\"~/set_temp\","
@@ -323,7 +323,7 @@ _climate_state(poolstate_t const * const state, poolstate_get_params_t const * c
     char const * const action = (thermostat->heat_src == NETWORK_HEAT_SRC_None) ? "off" :
                                 thermostat->heating ? "heating" : "idle";
     char * combined;
-    assert( asprintf(&combined, "homeassistant/%s/pool/%s/state\t{"
+    assert( asprintf(&combined, "homeassistant/%s/opnpool/%s/state\t{"
                      "\"mode\":\"%s\","
                      "\"heatsrc\":\"%s\","
                      "\"target_temp\":%u,"
@@ -379,7 +379,7 @@ _climate_set(char const * const subtopic, poolstate_get_params_t const * const p
             .u.ctrl_heat_set = &heat_set,
     };
     if (network_create_msg(&msg, pkt)) {
-        if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+        if (CONFIG_OPNPOOL_DBGLVL_HASSTASK > 1) {
             ESP_LOGW(TAG, "%s pkt=%p", __func__, pkt);
         }
         return ESP_OK;
@@ -456,7 +456,7 @@ hass_tx_state_to_mqtt(poolstate_t const * const state, ipc_t const * const ipc)
 esp_err_t
 hass_create_message(char * const topic, char const * const value_str, datalink_pkt_t * const pkt)
 {
-    if (CONFIG_POOL_DBGLVL_HASSTASK > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_HASSTASK > 1) {
         ESP_LOGI(TAG, "topic = \"%s\", value = \"%s\"", topic, value_str);
     }
     char * args[5];
@@ -501,7 +501,7 @@ hass_task(void * ipc_void)
 
             if (dispatch->fnc.init) {
                 char * base;
-                assert( asprintf(&base, "homeassistant/%s/pool/%s", hass_dev_typ_str(dispatch->hass.dev_typ), dispatch->hass.id) >= 0 );
+                assert( asprintf(&base, "homeassistant/%s/opnpool/%s", hass_dev_typ_str(dispatch->hass.dev_typ), dispatch->hass.id) >= 0 );
 
                 char * cfg;
                 if (mqtt_subscribe) {

@@ -65,7 +65,7 @@ network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
             return true;
         }
     }
-    if (CONFIG_POOL_DBGLVL_NETWORK > 1) {
+    if (CONFIG_OPNPOOL_DBGLVL_NETWORK > 1) {
         ESP_LOGE(TAG, "unknown msg typ (%u)", msg->typ);
     }
     return false;

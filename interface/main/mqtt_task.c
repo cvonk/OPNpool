@@ -92,7 +92,7 @@ _forwardCoredump(ipc_t * ipc, esp_mqtt_client_handle_t const client)
     coredump_priv_t priv = {
         .client = client,
     };
-    assert( asprintf(&priv.topic, "%s/coredump/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name) >=0 );
+    assert( asprintf(&priv.topic, "%s/coredump/%s", CONFIG_OPNPOOL_MQTT_DATA_TOPIC, ipc->dev.name) >=0 );
     coredump_to_server_config_t coredump_cfg = {
         .start = NULL,
         .end = NULL,
@@ -203,7 +203,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
         case MQTT_EVENT_DISCONNECTED:  // indicates that we got disconnected from the MQTT broker
 
             xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
-            if (CONFIG_POOL_DBGLVL_MQTTTASK > 0) {
+            if (CONFIG_OPNPOOL_DBGLVL_MQTTTASK > 0) {
                 ESP_LOGW(TAG, "Broker disconnected");
             }
         	// reconnect is part of the SDK
@@ -217,7 +217,7 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
             // subscribe to the registered control topics
             for (mqtt_subscriber_t const * subscriber = _subscribers; subscriber; subscriber = subscriber->next) {
                 esp_mqtt_client_subscribe(event->client, subscriber->topic, 1);
-                if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
+                if (CONFIG_OPNPOOL_DBGLVL_MQTTTASK > 1) {
                     ESP_LOGI(TAG, "Broker connected, subscribed to \"%s\"", subscriber->topic);
                 }
             }
@@ -265,16 +265,22 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
 static esp_mqtt_client_handle_t
 _connect2broker(ipc_t const * const ipc) {
 
-    ESP_LOGW("TAG", "reading mqtt_url from nvram");
+    char * mqtt_url;
+
+#ifdef CONFIG_OPNPOOL_USE_HARDCODED_MQTT_URL
+    ESP_LOGW(TAG, "Using mqtt_url from Kconfig");
+    mqtt_url = strdup(CONFIG_OPNPOOL_MQTT_URL)
+#else
+    ESP_LOGW(TAG, "Using mqtt_url from nvram");
     nvs_handle_t nvs_handle;
     size_t len;
-
-    ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &nvs_handle));
+    ESP_ERROR_CHECK(nvs_open("storage", NVS_READONLY, &nvs_handle));
     ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", NULL, &len));
-
-    char * const mqtt_url = (char *) malloc(len);
+    mqtt_url = (char *) malloc(len);
     ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", mqtt_url, &len));
-    ESP_LOGW("TAG", "read mqtt_url (%s)", mqtt_url);
+#endif
+
+    ESP_LOGW(TAG, "read mqtt_url (%s)", mqtt_url);
 
     esp_mqtt_client_handle_t client;
     xEventGroupClearBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT);
@@ -282,7 +288,7 @@ _connect2broker(ipc_t const * const ipc) {
         const esp_mqtt_client_config_t mqtt_cfg = {
             .event_handle = _mqtt_event_cb,
             .user_context = (void *) ipc,
-            .uri = mqtt_url,
+            .uri = mqtt_url
         };
         client = esp_mqtt_client_init(&mqtt_cfg);
         //ESP_ERROR_CHECK(esp_mqtt_client_set_uri(client, CONFIG_POOL_MQTT_URL));
@@ -311,10 +317,10 @@ mqtt_task(void * ipc_void)
  	ipc_t * ipc = ipc_void;
     {
         char * topic;
-        assert( asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_CTRL_TOPIC, ipc->dev.name) >= 0 );
+        assert( asprintf(&topic, "%s/%s", CONFIG_OPNPOOL_MQTT_CTRL_TOPIC, ipc->dev.name) >= 0 );
         _add_subscriber(topic, true);
         // don't free(topic) stays in subscribers linked list
-        assert( asprintf(&topic, "%s", CONFIG_POOL_MQTT_CTRL_TOPIC) >= 0 );
+        assert( asprintf(&topic, "%s", CONFIG_OPNPOOL_MQTT_CTRL_TOPIC) >= 0 );
         _add_subscriber(topic, true);
         // don't free(topic) stays in subscribers linked list
     }
@@ -340,7 +346,7 @@ mqtt_task(void * ipc_void)
                 case IPC_TO_MQTT_TYP_SUBSCRIBE: {  
                     _add_subscriber(msg.data, false);  // used when we have to reconnect to broker
                     esp_mqtt_client_subscribe(client, msg.data, 1);
-                    if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
+                    if (CONFIG_OPNPOOL_DBGLVL_MQTTTASK > 1) {
                         ESP_LOGI(TAG, "Temp subscribed to \"%s\"", msg.data);
                     }
                     // don't free(msg.data), stays in _subscribers linked list
@@ -352,7 +358,7 @@ mqtt_task(void * ipc_void)
                     char const * const topic = msg.data;
                     char * message = strchr(msg.data, '\t');
                     *message++ = '\0';
-                    if (CONFIG_POOL_DBGLVL_MQTTTASK > 1) {
+                    if (CONFIG_OPNPOOL_DBGLVL_MQTTTASK > 1) {
                         ESP_LOGI(TAG, "tx %s: %s", topic, message);
                     }
                     esp_mqtt_client_publish(client, topic, message, strlen(message), 1, 0);
@@ -367,9 +373,9 @@ mqtt_task(void * ipc_void)
                     char * topic;
                     char const * const subtopic = ipc_to_mqtt_typ_str(msg.dataType);
                     if (subtopic) {
-                        assert( asprintf(&topic, "%s/%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, subtopic, ipc->dev.name) >= 0);
+                        assert( asprintf(&topic, "%s/%s/%s", CONFIG_OPNPOOL_MQTT_DATA_TOPIC, subtopic, ipc->dev.name) >= 0);
                     } else {
-                        assert( asprintf(&topic, "%s/%s", CONFIG_POOL_MQTT_DATA_TOPIC, ipc->dev.name) >= 0);
+                        assert( asprintf(&topic, "%s/%s", CONFIG_OPNPOOL_MQTT_DATA_TOPIC, ipc->dev.name) >= 0);
                     }
                     esp_mqtt_client_publish(client, topic, msg.data, strlen(msg.data), 1, 0);
                     free(topic);
