@@ -268,13 +268,47 @@
     These instructions are for Windows, the paths will be slightly different on other operating systems.
 </p>
 <p>
-    Before you start, make sure <a href="https://git-scm.com/">Git</a> and <a href="https://www.python.org/">Python x64</a> are installed and that you can call <code>git</code> and <code>python</code> from the command line. (Python might now be included in the ESP-IDF 4.4.)
+    Before you start, make sure that <a href="https://git-scm.com/">Git</a> is installed and that you can call <code>git</code> from the command line.
 </p>
 <p>
     If you haven't already, install <a href="https://code.visualstudio.com/">Microsoft Visual Studio Code</a> (VScode).
 </p>
 <p>
     From within VScode:
+    <ol>
+        <li>
+            Add the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">Microsoft's C/C++ extension</a>
+        </li>
+        <li>
+            Add the Espressif IDF 1.4.0 extension.
+        </li>
+        <li>
+            Install the tools and configure the Espressif IDF extension.
+            <ul>
+                <li>
+                    <cspan class="hp41-key">F1</cspan> &raquo; <code>ISP-IDF: Configure ESP-IDF</code>
+                </li>
+                <li>
+                    Select Advanced mode
+                </li>
+                <li>
+                    ESP-IDF 4.4 in <code>C:/espressif</code> (goes to subdir <code>esp-idf</code>)
+                </li>
+                <li>
+                    GNU Tools in <code>C:/espressif/bin</code>
+                </li>
+                <li>
+                    Choose "Download ESP-IDF Tools"
+                </li>
+            </ul>
+        </li>
+        <li>
+            To speed up compile times, disable Windows Defender's real-time scanning of <code>C:/espressif</code>. If you get hit with "You'll need a new app to open this windowsdefender link", then issue <code>Get-AppxPackage Microsoft.SecHealthUI -AllUsers | Reset-AppxPackage</code> from an elevated PowerShell terminal.
+        </li>
+    </ol>
+</p>
+<p>
+    From within VScode:  (OLD)
     <ol>
         <li>
             Add the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">Microsoft's C/C++ extension</a>

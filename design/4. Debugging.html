@@ -220,17 +220,17 @@
     Post mortem
 </h2>
 <p>
-    The device includes support to generate core dumps on unrecoverable errors. This allows post-mortem analysis of the software state at the moment of failure. So it is possible to find what task, at what instruction and what call stack of that task lead to the crash. The core dump is written to the <code>coredump</code> partition in flash.
+    The device includes support to generate core dumps on unrecoverable errors. This allows post-mortem analysis of the software state at the moment of failure. This way you can find what task, the instruction and what call stack lead to the crash. The core dump is written to the <code>coredump</code> partition in flash. 
 </p>
 <p>
-    As we will see <a href="#coredump">later</a>, the software will read this coredump from flash and send it over MQTT. 
+    As we will see in the Interface chapter, the <code>mqtt_task</code> will read this coredump from flash and forward it over MQTT. 
 </p>
 
 <h2>
     GDB over JTAG
 </h2>
 <p>
-    The ESP32 supports the <a href="http://openocd.org/">Open On-Chip Debugger</a>. Say goodbye to <code>printf</code>, and explore the world that was once the exclusive domain of in-circuit emulators. Using special pins on the ESP32, your computer can set break points, inspect variables and single step instructions.
+    The ESP32 supports the <a href="http://openocd.org/">Open On-Chip Debugger</a>. Say goodbye to <code>ESP_LOG</code>, and explore the world that was once the exclusive domain of in-circuit emulators. Using special pins on the ESP32, your computer can set break points, inspect variables and single step instructions.
 
     <div class="flex-container tight">
         <a href="https://coertvonk.com/wp-content/uploads/VSCode-ESP-WROVER-KIT.jpg">
@@ -243,119 +243,126 @@
     ESP32 board and JTAG adapter
 </h3>
 <p>
-    The JTAG interface hooks directly to the CPU. That allows it do stop the CPU, set breakpoints and have access the CPU has access to.
+    The JTAG interface hooks directly to the CPU. That allows it do stop the CPU, set breakpoints and have access to whatever the CPU has access to.
 </p>
 <p>
-    To use this JTAG interface, we need exclusive access to specific pins on the ESP32. Two different approaches:
-    <ul>
-        <li>
-            Some development boards (e.g. ESP-WROVER-KIT) have a USB interface with two channels. The first is used for JTAG while the other is used for a serial port. With the ESP-WROVER-KIT, make sure to connect the JTAG jumpers on JP2 to prevent <code>Error: libusb_open() failed with LIBUSB_ERROR_NOT_SUPPORTED</code>.
-        </li>
-        <li>
-            Other boards bring out the raw JTAG interface using a 10 pin header that should be connected to a JTAG/USB interface, such as the ESP-PROG. With the interface, make sure to set the <code>JTAG PWR SEL</code> jumper for 3.3V. Also try to keep the connection short (<10 cm)
-        </li>
-    </ul>
+    The JTAG header is available on the OPNpool board.  This 10 pin header should be connected to a JTAG/USB interface, such as the ESP-PROG. With the interface, make sure to set the <code>JTAG PWR SEL</code> jumper for 3.3V. Also try to keep the connection short (&lt;10 cm).
 </p>
 <p>
-    If the board has neither, and GPIO12-15 are left you can connect them yourself to a JTAG/USB interface as follows:
-    <div class="flex-container tight">
-        <table class="connections">
-            <tr>
-                <th>ESP2</th>
-                <th>JTAG/USB</th>
-            </tr>
-            <tr>
-                <td>RESET/RS</td>
-                <td>TRST_N</td>
-            </tr>
-            <tr>
-                <td>GPIO15</td>
-                <td>TDO</td>
-            </tr>
-            <tr>
-                <td>GPIO12</td>
-                <td>TDI</td>
-            </tr>
-            <tr>
-                <td>GPIO13</td>
-                <td>TCK</td>
-            </tr>
-            <tr>
-                <td>GPIO14</td>
-                <td>TMS</td>
-            </tr>
-            <tr>
-                <td>GND</td>
-                <td>GND</td>
-            </tr>
-        </table>
-    </div>
-</p>
 
-<h4>
-    Fix for Python path
-</h4>
-<p>
-    Fix <code>esp-idf-master/tools/cmake/build.cmake</code>
-    
-    [code gutter="true" toolbar="off" tab-size="4" language="python"]function(__build_write_properties output_file)
-    idf_build_get_property(build_properties __BUILD_PROPERTIES)
-    foreach(property ${build_properties})
-        idf_build_get_property(val ${property})
-        if(property STREQUAL "PYTHON")
-            string(REGEX REPLACE "\\\\" "/" val ${val})
-        endif()
-        set(build_properties_text "${build_properties_text}\nset(${property} ${val})")
-    endforeach()
-    file(WRITE ${output_file} "${build_properties_text}")
-endfunction()[/code]
+    https://docs.espressif.com/projects/espressif-esp-iot-solution/en/latest/hw-reference/ESP-Prog_guide.html#step-by-step-instruction
+
+    The red LED lights up when the system is connected to the 3.3V power;
+
+The green LED lights up when ESP-Prog is downloading data to ESP32;
+
+The blue LED lights up when ESP-Prog is receiving data from ESP32.
+
+Connect the ESP-Prog board and the PC USB port via a USB cable.
+
+Install the FT2232HL chip driver on your PC. The PC then detects the two ports of ESP-Prog, indicating that the driver has been installed successfully.
+
+Select the output power voltage for the Program / JTAG interfaces, using pin headers.
+
+Connect the ESP-Prog and ESP user boards with the gray flat cables provided by Espressif.
+
+Start automatic downloading or JTAG debugging, using the official software tools or scripts provided by Espressif.
+
+
+    <details>
+        <summary>
+            Another option is to use the ESP-WROVER-KIT development board.
+        </summary>
+        <div style="margin-left: 2em; color: grey;">
+            The ESP-WROVER-KIT has an integrated JTAG/USB interface what is available over the first of two USB channels. (The second channel is for the serial port.)  If you go this route, make sure to connect the JTAG jumpers on JP2 to prevent <code>Error: libusb_open() failed with LIBUSB_ERROR_NOT_SUPPORTED</code>.
+        </div>
+    </details>
 </p>
 
 <h3>
     OpenOCD and driver
 </h3>
 <p>    
-    Under Windows, install the 64-bit [FTDI D2xx Driver](https://www.ftdichip.com/Drivers/D2XX.htm) setup executable;
+    Under Windows, install the 64-bit <a href="https://www.ftdichip.com/Drivers/D2XX.htm">FTDI D2xx Driver</a> setup executable;
     <ol>
         <li>
-            Connect the ESP32 using both JTAG/USB and UART/USB interfaces to the computer.
+            Using micro-USB cables, connect JTAG adapter and the serial port on the OPNpool board to the computer. 
         </li>
         <li>
-            Use <a href="https://zadig.akeo.ie/">Zadig</a> » Options » List All Devices » `Dual RS232-HS (Interface 0)` = `WinUSB v6`; press "Replace Driver"
+            Wait until USB ports are recognized by Windows and drivers are installed. If they do not install automatically, then do so manually using the driver setup from <a href="https://www.ftdichip.com/Drivers/D2XX.htm">FTDI</a>.
         </li>
         <li>
-            Windows Device Manager should reveal:
+            Install and run the <a href="https://zadig.akeo.ie/">Zadig tool</a> (&ge; v2.7).
             <ul>
-                <li>the name of the UART (COM) port.</li>
-                <li>the JTAG will not show up, because WinUSB is a user-space driver</li>
+                <li>
+                    <code>Options » List All Devices</code>
+                </li>
+                <li>
+                    The list of devices should contain two ESP-PROG specific USB entries with driver name "FTDIBUS (vxxxx)":
+                    <ul>
+                        <li>
+                            <code>Dual RS232-HS (Interface 0)</code>, connected to the JTAG port
+                        </li>
+                        <li>
+                            <code>Dual RS232-HS (Interface 1)</code>, connected to the UART port
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Select <code>Dual RS232-HS (Interface 0)</code>, and reinstall attached driver to the “WinUSB (v6xxxxx)”, see the picture below.
+                </li>
             </ul>
         </li>
+        <li>
+            Windows Device Manager should no longer show the JTAG port, because <code>WinUSB</code> is a user-space driver.
+        </li>
     </ol>
+
+    <div class="flex-container tight">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-debug-zadig.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-debug-zadig.png" alt="" width="500" class="alignnone size-full wp-image-32125" /></a>    
+            <figcaption>
+                Zadig to configure WinUSB driver.
+            </figcaption>
+        </figure>
+    </div>
 </p>
 
 <h3>
     Compile and debug
 </h3>
-<p>    
-    Add configuration information for OpenOCD in <code>.vscode\settings.json</code>.
-
-    [code gutter="true" toolbar="off" tab-size="4" language="javascript"]"idf.openOcdConfigs": [
-    "interface/ftdi/esp32_devkitj_v1.cfg",
-    "board/esp32-wrover.cfg"   // update "board/esp32-wrover.cfg" or "board/esp-wroom-32.cfg"
-],[/code]
-</p>
 <p>
-    <ul>
+    Set up the OpenOCD Board Configuration
+    <ol>
         <li>
-            For WROVER modules use <code>board/esp32-wrover.cfg</code>, has 1.8V SPI flash (because of PSRAM limitations)
+            <code><cspan class="hp41-key">F1</cspan> » Select OpenOCD Board Configuration</code>.
         </li>
         <li>
-            For WROOM modules use <code>board/esp-wroom-32.cfg</code>, has 3.3V SPI flash. This flash voltage is important, because GPIO12 is <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html#why-to-set-spi-flash-voltage-in-openocd-configuration">shared with SPI flash</a>. Selecting the wrong voltage may cause flash uploads to fail.
+            Choose the <code>ESP32 chip (via ESP-PROG)</code>.  (Unless you use the ESP-WROVER-KIT of course.)
+            <ul>
+                <li>
+                    Note that WROVER modules use a 1.8 SPI flash because of PSRAM limitations.
+                </li>
+                <li>
+                    Others such as WROOM modules use 3.3V SPI flash.  This flash voltage is important, because <code>GPIO12</code> is shared with SPI flash.  Selecting the wrong voltage may cause flash uploads to fail.
+                </li>
+            </ul>  
         </li>
-    </ul>
+    </ol>
 </p>
 <p>
-    Debugging requires symbolic data and gets easier when the code is not optimized for runtime or size. Use `<cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool` to specify the `Debug (-Og)` compiler optimalization level.
+    Start OpenOCD
+    <ol>
+        <li>
+            <code><cspan class="hp41-key">F1</cspan> » ESP-IDF: OpenOCD Manager</code>.
+        </li>
+        <li>
+            Choose <code>Start OpenOCD</code>.
+        </li>
+    </ol>
+</p>
+<p>
+    Debugging requires symbolic data and gets easier when the code is not optimized for runtime or size. Use <code><cspan class="hp41-key">F1</cspan> » ESP-IDF: Launch GUI configuration tool</code> to specify the `Debug (-Og)` compiler optimalization level.
 </p>
 <p>
     Press <cspan class="hp41-key">^e</cspan> <cspan class="hp41-key">d</cspan> to build, upload and monitor over the serial port. Note that you can also upload the binary over JTAG (<code>program_esp filename.bin 0x10000 verify</code>). Note2: If the "search documentation" keyboard shortcut is also assigned to `ctrl-e`, then remove that binding.
@@ -376,7 +383,7 @@ endfunction()[/code]
             After hitting a break point, you may still have to select the corresponding task
         </li>
         <li>
-            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table. When using OTA updates, this will be the `factory` image instead of the OTA downloaded application. To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>
+            To determine the image location in flash, OpenOCD uses the address of the first `app` in the partition table. When using OTA updates, this will be the `factory` image instead of the OTA downloaded application. To work around this, specify <code>esp32 appimage_offset <offset></code> (see <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/tips-and-quirks.html">docs.espressif.com</a>).
         </li>
         <li>
             You may only want to debug the 1st core (<code>set ESP32_ONLYCPU 1</code>)
@@ -385,7 +392,7 @@ endfunction()[/code]
             More info in <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/jtag-debugging/index.html">Espressif JTAG Debugging</a>
         </li>
         <li>
-            Use the compiler flag `-Og` (`make menuconfig`) for minimal optimalizations and symbolic data.
+            Use the compiler flag <code>-Og</code> (`cmake menuconfig`) for minimal optimalizations and symbolic data.
         </li>
         <li>
             From the debug side bar (ctrl-shift-d), click on the green arrow at the top and select `GDB/JTAG` to connect to the target
