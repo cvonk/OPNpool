@@ -28,7 +28,8 @@ body {
 }
 
 .rs-control .rs-bg-color {
-    background-color: #2b2b2b;
+    /*background-color: #2b2b2b;*/
+    background-color: white;
 }
 
 .rs-tooltip {

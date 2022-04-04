@@ -1,5 +1,5 @@
     const bodyContent = `
-    <div data-role="page" data-theme="b" data-content-theme="b">
+    <div data-role="page" data-theme="a" data-content-theme="a">
     <div data-role="content">
         <div id="colborders" data-role="collapsibleset" data-iconpos="right">
             <div id="circuits_collapsible" data-role="collapsible">
