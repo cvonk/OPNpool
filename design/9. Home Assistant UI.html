@@ -7,7 +7,7 @@
     <link rel='stylesheet' id='parent-style-css'
         href='https://coertvonk.com/wp-content/themes/twentyseventeen/style.css' media='all' />
     <link rel='stylesheet' id='twentyseventeen-fonts-css'
-        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300%2C300i%2C400%2C400i%2C600%2C600i%2C800%2C800i&#038;subset=latin%2Clatin-ext&#038;display=fallback'
+        href='https://fonts.googleapis.com/css?family=Libre+Franklin%3A300 300i 400 400i 600 600i 800 800i&#038;subset=latin latin-ext&#038;display=fallback'
         media='all' />
     <link rel='stylesheet' id='twentyseventeen-style-css'
         href='https://coertvonk.com/wp-content/themes/twentyseventeen-child-cvonk/style.css' media='all' />
@@ -72,6 +72,33 @@
             flex-grow: unset;
             max-width: unset;
         }
+        .admonition {
+            clear: both;
+            padding: 12px;
+            line-height: 24px;
+            margin-bottom: 24px;
+            background: #e7f2fa;
+        }
+        .admonition-title:before {
+            content: url("data:image/svg+xml,<%3fxml version='1.0' encoding='utf-8'%3f%3e <svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 155.2 138.9' style='enable-background:new 0 0 155.2 138.9;' xml:space='preserve'%3e<style type='text/css'>.st0{fill:%236ab0de;}.st1{fill:white;}</style%3e<g%3e<path class='st1' d='M77.4 138.9c-9.2 0-18.3 0.1-27.5 0c-7.7-0.1-13.5-3.8-17.5-10.3C22.8 113 13.3 97.3 3.7 81.7c-4.9-8-5-16-0.2-24 C12.9 42.3 22.3 27 31.6 11.6C36.4 3.7 43.4 0 52.5 0C69.2 0 86 0 102.7 0c9.8 0 17 4.2 22 12.8c8.7 14.8 17.8 29.5 26.7 44.2 c5.2 8.5 5.1 16.8-0.1 25.3c-9.1 14.9-18.1 29.8-27.1 44.7c-4.5 7.5-10.8 11.8-19.7 11.9C95.5 138.9 86.4 138.9 77.4 138.9 C77.4 138.9 77.4 138.9 77.4 138.9z M85.2 54.9c0-5.7 0-11.3 0-17c0-5.2-3.2-8.4-8.1-8.3c-4.3 0.1-7.5 3.5-7.6 8.3 c-0.1 11.2-0.1 22.5 0 33.7c0 4.9 3.1 8.1 7.7 8.1c4.9 0 8-3.1 8-8C85.3 66 85.2 60.4 85.2 54.9z M87.7 99.6 c0-6.3-4.1-10.4-10.4-10.3c-5.5 0.1-10 4.6-10.1 10.1c-0.1 5.5 4.7 10.4 10.1 10.4C83.3 109.8 87.7 105.5 87.7 99.6z'/%3e<path class='st0' d='M85.2 54.9c0 5.6 0 11.1 0 16.7c0 5-3.1 8-8 8c-4.5 0-7.6-3.2-7.7-8.1c-0.1-11.2-0.1-22.5 0-33.7 c0-4.8 3.3-8.3 7.6-8.3c4.9-0.1 8.1 3.2 8.1 8.3C85.3 43.5 85.2 49.2 85.2 54.9z'/%3e<path class='st0' d='M87.7 99.6c0 6-4.4 10.2-10.4 10.2c-5.5-0.1-10.2-4.9-10.1-10.4c0.1-5.5 4.6-10 10.1-10.1 C83.6 89.2 87.7 93.3 87.7 99.6z'/%3e</g%3e</svg%3e");
+            margin-right: 4px;
+            display: inline-block;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 1;
+            text-decoration: inherit;
+            height: 1em;
+            width: 1em;
+            color: green;
+        }
+        .admonition-title {
+            font-weight: 700;
+            display: block;
+            color: #fff;
+            padding: 6px 12px;
+            margin: -12px -12px 12px;
+            background: #6ab0de;
+        }
 
         .mathtbl>tbody>tr>td {
             border-collapse: collapse;
@@ -109,7 +136,6 @@
         }
 
         @media print {
-
             .no-print,
             .no-print * {
                 display: none !important;
@@ -214,12 +240,27 @@
 <h1>Home Assistant UI</h1>
 
 <p>
-    Describes the Home Assistant UI for the pool interface, allowing the user to monitor the state of the pool controller, pump and chlorinator.
+    <div class="admonition note">
+        <p class="admonition-title">Note</p>
+        <p>Before dive into the details, let me emphesize, that the key mechanism is MQTT. Other home automation systems likely support MQTT ass well.</p>
+    </div>
+
+
+    
+</p>
 <p>
+    Home Assistant has an install base of over 100,000 user
+    <blockquote>        
+        An open source home automation that puts local control and privacy first. Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.
+    </blockquote>
+</p>
 
 <h2>
-    Unfinished
+    MQTT
 </h2>
+<p>
+    We auto populate the Home Assistant entities using MQTT Discovery. This enables us to use MQTT devices with only minimal configuration effort on the side of Home Assistant. A few of these messages are shown in the section MQTT device discovery of chapter Interface.
+</p>
 <p>
     Home Assistant supports will use the messages and automatically populate the entities shown below.
     
