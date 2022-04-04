@@ -165,7 +165,8 @@
     {
         Object.keys(_ui.circuits).forEach( function(key) {
             const val = json_circuits.active[key.toLowerCase()];
-            this[key].obj.attr('checked', val).trigger('create').checkboxradio('refresh');
+            //this[key].obj.attr('checked', val).trigger('create').checkboxradio('refresh');
+            this[key].obj.prop('checked', val).trigger('create').checkboxradio('refresh');;
         }, _ui.circuits);
     }
 
@@ -197,7 +198,9 @@
             ['None', 'Heat', 'SolarPref', 'Solar'].forEach( function(src) {
                 const sel = '#' + key.toLowerCase() + '_heater_' + src.toLowerCase(src);
                 const val = src == json_thermos[key.toLowerCase()].src;
-                $(sel).attr("checked", val).checkboxradio("refresh");
+                //$(sel).attr("checked", val).checkboxradio("refresh");
+                $(sel).prop('checked', val).trigger('create').checkboxradio('refresh');;
+
             });
             const json_thermostat = json_thermos[key.toLowerCase()];
             update_round_slider(this[key], json_thermostat.sp);
@@ -279,7 +282,7 @@
                     max: this[minor_key].max,
                     //radius: 120, // determines width & height
                     //width: 35,
-                    svgMode: false,
+                    svgMode: true,
                     tooltipFormat: function(args) {
                         return args.value + " " + _ui.readonly[major_key][minor_key].unit;
                     },
