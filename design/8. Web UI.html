@@ -233,6 +233,26 @@
     To conserve memory, the OPNpool device only contains the minimum HTML code that refers to an external site for the Stylesheet and the replacement <code>&lt;BODY&gt;</code> element that refers to the JavaScript.
 </p>
 <p>
+    <details>
+        <summary>
+            Notes on going dark
+        </summary>
+        <div style="margin-left: 2em; color: grey;">
+            To switch to a dark theme:
+            <ul>
+                <li>
+                    Change <code>data-theme="a" data-content-theme="a"</code> to <code>data-theme="b" data-content-theme="b"</code> in <code>replace-body.js</code>, and
+                </li>
+                <li>
+                    Change <code>.rs-bg-color</code> from <code>white</code> to <code>#2b2b2b</code> in <code>index.css</code>.
+                </li>
+            </ul>
+            
+            
+            <code>data-theme</code> in the HTML <code>&lt;BODY&gt;</code>, and 
+    </details>
+</p>
+<p>
     Some examples of the UI are shown below
 
     <div class="flex-container tight">
@@ -406,7 +426,7 @@
     <div class="continue-container no-print">
         <div class="continue-content">
             <div class="continue-text">
-                Continue reading to learn about adding <a href="https://coertvonk.com/sw/pool-interface/home-assistant-ui-32008">Home Assistant UI</a>.
+                Continue reading to learn about the <a href="https://coertvonk.com/sw/pool-interface/home-assistant-ui-32008">Home Assistant UI</a>.
         </div>
     </div>    
 </p>
