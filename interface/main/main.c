@@ -167,7 +167,7 @@ app_main()
 
     // from here the tasks take over
 
-    xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
+    xTaskCreate(&ota_update_task, "ota_update_task", 4096, "interface", 5, NULL);
     xTaskCreate(&mqtt_task, "mqtt_task", 2*4096, &ipc, 5, NULL);
     xTaskCreate(&pool_task, "pool_task", 2*4096, &ipc, 5, NULL);
     xTaskCreate(&hass_task, "hass_task", 2*4096, &ipc, 5, NULL);
