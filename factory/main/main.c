@@ -160,7 +160,7 @@ void app_main(void)
     // wait for WiFi connection
     xEventGroupWaitBits(_wifi_event_group, WIFI_CONNECTED_EVENT, false, true, portMAX_DELAY);
 
-    xTaskCreate(&ota_update_task, "ota_update_task", 8192, NULL, 5, NULL);
+    xTaskCreate(&ota_update_task, "ota_update_task", 8192, "factory", 5, NULL);
 
     while (1) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);

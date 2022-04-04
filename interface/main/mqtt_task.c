@@ -83,7 +83,7 @@ _coredump_to_server_write_cb(void * priv_void, char const * const str)
 
 /*
  * If there is a coredump in flash memory, then publish it to MQTT 
- * under topic `pool/data/coredump/ID` using base64 encoding.
+ * under topic `opnpool/data/coredump/ID` using base64 encoding.
  */
 
 static void
@@ -310,7 +310,7 @@ _connect2broker(ipc_t const * const ipc) {
 void
 mqtt_task(void * ipc_void)
 {
-    // register control topics `pool/ctrl` and `pool/ctrl/ID`, where `ID` is the device name.
+    // register control topics `opnpool/ctrl` and `opnpool/ctrl/ID`, where `ID` is the device name.
     // these control topics allows other devices clients issue diagnistic commands.
     // once connected to the broker, we'll subscribe to the topics.
 
@@ -366,7 +366,7 @@ mqtt_task(void * ipc_void)
                     break;
                 }
 
-                    // publish to `/pool/data/SUB` where `SUB` is `msg.dataType` and the value is `msg.data`
+                    // publish to `/opnpool/data/SUB` where `SUB` is `msg.dataType` and the value is `msg.data`
                 case IPC_TO_MQTT_TYP_PUBLISH_DATA_RESTART:  // publish response when restarting device (from `_dispatch_restart`)
                 case IPC_TO_MQTT_TYP_PUBLISH_DATA_WHO:      // publish response with info about device (from `_dispatch_who`)
                 case IPC_TO_MQTT_TYP_PUBLISH_DATA_DBG: {    // publish debug info (from e.g. `poolstate_rx`)

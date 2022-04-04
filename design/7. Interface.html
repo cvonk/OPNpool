@@ -215,7 +215,7 @@
 <h1>Interface</h1>
 
 <p>
-    The <code>interface</code> image makes the device a "OPNpool Interface". Besides monitoring the pool controller and providing access to a web interface, it provides automatic updates, network discovery and supports post mortem debugging.
+    The <code>interface</code> image makes the device an "OPNpool Interface". Besides monitoring the pool controller and providing access to a web interface, it provides automatic updates, network discovery and supports post mortem debugging.
 </p>
 <p>
     <div class="flex-container tight">
@@ -521,19 +521,19 @@
     The following query variables are supported:
 
     [code toolbar="false" language="bash"]
-        homeassistant/switch/pool/pool_circuit/set
-        homeassistant/switch/pool/spa_circuit/set
-        homeassistant/switch/pool/aux1_circuit/set
-        homeassistant/switch/pool/aux2_circuit/set
-        homeassistant/switch/pool/aux3_circuit/set
-        homeassistant/switch/pool/ft1_circuit/set
-        homeassistant/switch/pool/ft2_circuit/set
-        homeassistant/switch/pool/ft3_circuit/set
-        homeassistant/switch/pool/ft4_circuit/set
-        homeassistant/climate/pool/pool_heater/set_mode
-        homeassistant/climate/pool/pool_heater/set_tmp
-        homeassistant/climate/pool/spa_heater/set_mode
-        homeassistant/climate/pool/spa_heater/set_tmp
+        homeassistant/switch/opnpool/pool_circuit/set
+        homeassistant/switch/opnpool/spa_circuit/set
+        homeassistant/switch/opnpool/aux1_circuit/set
+        homeassistant/switch/opnpool/aux2_circuit/set
+        homeassistant/switch/opnpool/aux3_circuit/set
+        homeassistant/switch/opnpool/ft1_circuit/set
+        homeassistant/switch/opnpool/ft2_circuit/set
+        homeassistant/switch/opnpool/ft3_circuit/set
+        homeassistant/switch/opnpool/ft4_circuit/set
+        homeassistant/climate/opnpool/pool_heater/set_mode
+        homeassistant/climate/opnpool/pool_heater/set_tmp
+        homeassistant/climate/opnpool/spa_heater/set_mode
+        homeassistant/climate/opnpool/spa_heater/set_tmp
     [/code]
 </p>
 <p>
@@ -606,7 +606,7 @@
     Coredump to MQTT
 </h3>
 <p>
-    As the devices that are deployed in the field, they have no serial monitor connected. Instead, we configure the <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/core_dump.html">ESP-IDF</a> so the coredump is written to flash memory. Next time the ESP32 boots up, and it finds a coredump in flash, it uses the git submodule <a href="https://github.com/cvonk/ESP32_coredump-to-server"><code>ESP32_coredump-to-server</code></a> to publish the coredump to MQTT under the topic <code>pool/data/coredump/ID</code>.
+    As the devices that are deployed in the field, they have no serial monitor connected. Instead, we configure the <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/core_dump.html">ESP-IDF</a> so the coredump is written to flash memory. Next time the ESP32 boots up, and it finds a coredump in flash, it uses the git submodule <a href="https://github.com/cvonk/ESP32_coredump-to-server"><code>ESP32_coredump-to-server</code></a> to publish the coredump to MQTT under the topic <code>opnpool/data/coredump/ID</code>.
 </p>
 
 <h3>
@@ -617,8 +617,8 @@
     Initially, the device asks MQTT task to subscribe to the topics listed below. Here <code>ID</code> is an unique device identifier.
 
     [code toolbar="false" language="bash"]
-        pool/ctrl
-        pool/ctrl/ID
+        opnpool/ctrl
+        opnpool/ctrl/ID
     [/code]
 </p>
 <p>
@@ -626,8 +626,8 @@
     <ul>
         <li><code>who</code>, request device info such as device id, firmware version, WiFi details, MQTT details and heap</li>
         <li><code>restart</code>, restarts the device</li>
-        <li><code>htstart</code>, starts heap trace</li>
-        <li><code>htstop</code>, stops heap trace</li>
+        <li><code>htstart</code>, starts heap trace (when enabled)</li>
+        <li><code>htstop</code>, stops heap trace (when enabled)</li>
     </ul>
 </p>
 <p>
@@ -639,7 +639,7 @@
                 <img src="https://coertvonk.com/wp-content/uploads/mqtt-who-publish.png" alt="" width="300" height="510" class="alignnone size-full wp-image-31944" />
             </a>
             <figcaption>
-                Example publish "who" to "pool/ctrl"
+                Publish "who" to "opnpool/ctrl"
             </figcaption>
         </figure>
         <figure>
@@ -647,7 +647,7 @@
                 <img src="https://coertvonk.com/wp-content/uploads/mqtt-who-sub.png" alt="" width="300" height="233" class="alignnone size-large wp-image-31945" />
             </a>
             <figcaption>
-                Response of publishing "who" to "pool/ctrl"
+                Response of publishing "who" to "opnpool/ctrl"
             </figcaption>
         </figure>
     </div>
@@ -697,19 +697,19 @@
     It subscribes to the topics listed below.
 
     [code toolbar="false" language="bash"]
-        homeassistant/switch/pool/pool_circuit/set
-        homeassistant/switch/pool/spa_circuit/set
-        homeassistant/switch/pool/aux1_circuit/set
-        homeassistant/switch/pool/aux2_circuit/set
-        homeassistant/switch/pool/aux3_circuit/set
-        homeassistant/switch/pool/ft1_circuit/set
-        homeassistant/switch/pool/ft2_circuit/set
-        homeassistant/switch/pool/ft3_circuit/set
-        homeassistant/switch/pool/ft4_circuit/set
-        homeassistant/climate/pool/pool_heater/set_mode
-        homeassistant/climate/pool/pool_heater/set_tmp
-        homeassistant/climate/pool/spa_heater/set_mode
-        homeassistant/climate/pool/spa_heater/set_tmp
+        homeassistant/switch/opnpool/pool_circuit/set
+        homeassistant/switch/opnpool/spa_circuit/set
+        homeassistant/switch/opnpool/aux1_circuit/set
+        homeassistant/switch/opnpool/aux2_circuit/set
+        homeassistant/switch/opnpool/aux3_circuit/set
+        homeassistant/switch/opnpool/ft1_circuit/set
+        homeassistant/switch/opnpool/ft2_circuit/set
+        homeassistant/switch/opnpool/ft3_circuit/set
+        homeassistant/switch/opnpool/ft4_circuit/set
+        homeassistant/climate/opnpool/pool_heater/set_mode
+        homeassistant/climate/opnpool/pool_heater/set_tmp
+        homeassistant/climate/opnpool/spa_heater/set_mode
+        homeassistant/climate/opnpool/spa_heater/set_tmp
     [/code]
 </p>
 <p>
@@ -734,9 +734,9 @@
     <div class="flex-container">
         <figure>
             [code toolbar="false" language="JavaScript"]
-                topic = homeassistant/sensor/pool/air_temp/config;
+                topic = homeassistant/sensor/opnpool/air_temp/config;
                 value = {
-                    "~": "homeassistant/sensor/pool/air_temp",
+                    "~": "homeassistant/sensor/opnpool/air_temp",
                     "name": "Pool air temp",
                     "stat_t": "~/state",
                     "unit_of_meas": "°F"
@@ -747,9 +747,9 @@
         </figcaption>
     <figure>
         [code toolbar="false" language="JavaScript"]
-            topic = homeassistant/climate/pool/pool_heater/config;
+            topic = homeassistant/climate/opnpool/pool_heater/config;
             value = {
-                "~": "homeassistant/climate/pool/pool_heater",
+                "~": "homeassistant/climate/opnpool/pool_heater",
                 "name": "Pool pool heater",
                 "mode_cmd_t": "~/set_mode",
                 "temp_cmd_t": "~/set_temp",
@@ -781,9 +781,9 @@
 <p>
     From there the device publishes the data as e.g.
 
-    [code toolbar="false" language="bash"]homeassistant/sensor/pool/air_temp/state 55
-homeassistant/climate/pool/pool_heater/state {"mode":"off","target_temp":0,"current_temp":0}
-homeassistant/climate/pool/pool_heater/available online[/code]
+    [code toolbar="false" language="bash"]homeassistant/sensor/opnpool/air_temp/state 55
+homeassistant/climate/opnpool/pool_heater/state {"mode":"off","target_temp":0,"current_temp":0}
+homeassistant/climate/opnpool/pool_heater/available online[/code]
 </p>
 <p>
     <div class="continue-container no-print">

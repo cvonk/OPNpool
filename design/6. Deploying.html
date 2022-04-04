@@ -379,7 +379,7 @@ I (109668) ota_task: Wrote 5% of 1280 kB
         </figure>
         <figure>
             <div class="video-container">
-                <video src="https://coertvonk.com/wp-content/uploads/Provisioning.mp4" preload="auto" width="360" height="720"></video> 
+                <video src="https://coertvonk.com/wp-content/uploads/OPNpool-provisioning.mp4" preload="auto" width="360" height="720"></video> 
             </div>
             <figcaption>
                 Pool provisioning credentials
@@ -416,7 +416,10 @@ I (109668) ota_task: Wrote 5% of 1280 kB
     The code checks for an OTA update on a network server. If the image is different, it will download it. Upon completion, the device resets to activate the downloaded code. Note that we use the term "update" loosely, because it can also be used to downgrade the firmware.
 </p>
 <p>
-    To determine if the currently running code is different as the code on the server, it compares the project name, version, date and time. Note that these are not always updated by the SDK. The best way to make sure they are updated is by committing your code to Git and building the project from scratch.
+    To determine if the currently running code is different as the code on the server, it compares the project name, version, date and time. Note that these are not always updated by the SDK. The best way to make sure they are updated is by committing your code to Git and building the project from scratch (by removing the <code>build</code> directory).
+</p>
+<p>
+    During debugging, you may want to flash the <code>image</code> image directy as part of the "IDF-SDK: Build, flash and start monitor your device" cycle. To prevent that image from being overwritten by an OTA update, the update mechanism is disabled when the <code>interface</code> image is loaded in the factory partition.
 </p>
 <p>
     An example of the update process is shown in the figure below.

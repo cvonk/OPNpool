@@ -214,39 +214,162 @@
 <h1>Web UI</h1>
 
 <p>
-    Describes the Web UI for the pool interface, allowing the user to monitor the state of the pool controller, pump and chlorinator.
+    When the OPNpool device connects to the WiFi access point, it will be assigned an IP address. Only the access point and the device know this address. Other hosts can access the device by its mDNS name <code>opnpool.local</code>. 
+</p>
+<p>
+    This relies on service auto-discovery using the Multicast DNS (mDNS) protocol. Note that mDNS's use of multicast packets is designed to work within a single IP subnet. That implies that in general your computer/phone need to be on the same subnet as the OPNpool device for the mDNS protocol to work.
 </p>
 
 <h2>
-    Writing the Web App
+    HTML
 </h2>
 <p>
-    The device can be accessed from a web browser as <code>http://pool.local</code>. Most hosts include support the underlying mDNS protocol, except for Android. On Android phones, you can use an mDNS discovery app to find the IP address of the device.
+    As you may have seem in the video in the Deploying chapter, the OPNpool device can be controlled through a simple HTML UI. This allows the user to monitor the state of the pool controller, pump and chlorinator.
+</p>
+<p>
+    This UI is accessed through the URL <code>http://opnpool.local/</code>. The unsecure connection implies that security solently relies on your WiFi credentials. If you want to access the device from the public internet, I urge you by tunneling into your LAN instead of simply opening a port on your router.
+</p>
+<p>
+    Some examples of the UI are shown below
+
+    <div class="flex-container tight">
+        <figure>            
+
+            <figcaption>
+                <code>http://opnpool.local/</code>
+            </figcaption>
+        </figure>
+    </div>    
+    
+</p>
+<h2>
+    JSON
+</h2>
+<p>
+    The raw state of the pool controller is accessible through <code>http://opnpool.local/json</code>. The HTML page uses this internally, but you can also poll this state from home automation systems. However, if your home automation supports MQTT, I suggest using MQTT as described in the Home Assistant chapter.
+
+    <div class="flex-container tight">
+        <figure>            
+            [code toolbar="false" language="json"]{
+                    "system":{
+                        "tod":{
+                            "time":"09:56",
+                            "date":"2022-04-04"
+                        },
+                        "firmware":"v2.080"
+                    },
+                    "temps":{
+                        "air":66,
+                        "solar":80
+                    },
+                    "thermos":{
+                        "pool":{
+                            "temp":66,
+                            "sp":70,
+                            "src":"None",
+                            "heating":false
+                        },
+                        "spa":{
+                            "temp":66,
+                            "sp":0,
+                            "src":"None",
+                            "heating":false
+                        }
+                    },
+                    "pump":{
+                        "time":"09:55",
+                        "mode":"FILTER",
+                        "running":true,
+                        "state":"OK",
+                        "pwr":604,
+                        "rpm":2250,
+                        "err":0,
+                        "timer":0
+                    },
+                    "chlor":{
+                        "name":"Intellichlor--40",
+                        "pct":25,
+                        "salt":3800,
+                        "status":"OK"
+                    },
+                    "circuits":{
+                        "active":{
+                            "spa":false,
+                            "aux1":false,
+                            "aux2":false,
+                            "aux3":false,
+                            "ft1":false,
+                            "pool":true,
+                            "ft2":false,
+                            "ft3":false,
+                            "ft4":false
+                        },
+                        "delay":{
+                            "spa":false,
+                            "aux1":false,
+                            "aux2":false,
+                            "aux3":false,
+                            "ft1":false,
+                            "pool":false,
+                            "ft2":false,
+                            "ft3":false,
+                            "ft4":false
+                        }
+                    },
+                    "scheds":{
+                        "pool":{
+                            "start":"08:00",
+                            "stop":"10:00"
+                        }
+                    },
+                    "modes":{
+                        "service":false,
+                        "UNKOWN_01":false,
+                        "tempInc":false,
+                        "freezeProt":false,
+                        "timeout":false
+                    }
+                }[/code]
+            <figcaption>
+                Formatted output of <code>http://opnpool.local/json</code>
+            </figcaption>
+        </figure>
+    </div>
+</p>
+<h2>
+    Who
+</h2>
+<p>
+    The IP address of the OPNpool device can be found using the <code>http://opnpool.local/who</code> page. An example is shown in illustration below.
+
+    <div class="flex-container tight">
+        <figure>            
+            [code toolbar="false" language="json"]{
+                "name":"opnpool",
+                "firmware":{
+                    "version":"interface.v1.2.3",
+                    "date":"Apr  3 2022 14:51:15"
+                },
+                "wifi":{
+                    "connect":1,
+                    "address":"10.1.1.24",
+                    "SSID":"Guest Barn",
+                    "RSSI":-30
+                },
+                "mqtt":{
+                    "connect":1
+                },
+                "mem":{
+                    "heap":151084
+                }
+            }[/code]
+            <figcaption>
+                Formatted output of <code>http://opnpool.local/who</code>
+            </figcaption>
+        </figure>
+    </div>    
 </p>
 
-<p>
-    The UI is inspired by the O<a href="https://opensprinkler.com/">penSprinkler</a> project. To see how they did it, connect to its <a href="https://ui.opensprinkler.com/#start">UI</a> and save the files on your computer (from Chrome » Ctrl-S). Open index.htm, it behaves just like the web app (with some small differences).
-</p>
-<p style="padding-left: 30px;">
-    jsFiddle based development as described in my earlier article <a href="/technology/embedded/arduino-webserver-using-jquerymobile-and-jsfiddle-11803">Web browser accessing Arduino data</a>. The data is retrieved from the Arduino using the JSON-P technique of calling back a function, which allows us to make cross-domain requests. the returned payload is a JavaScript expression.
-</p>
-<p style="padding-left: 30px;">
-    Speed up development using the <a href="http://getbootstrap.com/">Bootstrap</a> mock up tool.
-</p>
-<p>
-    The following widgets seem interesting
-    <ul>
-        <li>
-            Gauges as shown in <a href="http://startingelectronics.org/projects/arduino-projects/web-server-two-temperature-gauges/">this tutorial</a>. The Gauges are HTML5 components written by Mykhailo Stadnyk's (<a href="https://github.com/Mikhus/canv-gauge">src</a>, <a href="http://www.wwvalue.com/web-design/jquery/pure-javascript-and-html5-canvas-gauge-canvgauge.html">API</a>).
-        </li>
-        <li>
-            <a href="http://blog.concord.org/streaming-arduino-data-to-a-browser">Temperature graph</a> in jsFiddle. The graphs are creating using <a href="http://mbostock.github.com/d3/">D3.js</a>, and make use of the <a href="https://raw.github.com/stepheneb/netlogo-gcc/master/lib/simple-graph.js">simple-graph</a> library created by Stephen Bannasch.
-        </li>
-        <li>
-            <a href="https://www.sdyoung.com/home/how-i-control-the-pool/">Jason Young pool status</a> (<a href="http://www.sdyoung.com/home/pool-status/how-i-control-the-pool/">decoding</a>) (<a href="http://www.sdyoung.com/home/pool-status/how-i-control-the-pool/">using Google Gauges</a>)
-        </li>
-    </ul>
-</p>
 <p>
     <div class="continue-container no-print">
         <div class="continue-content">
@@ -255,5 +378,5 @@
         </div>
     </div>    
 </p>
-        
+
 </div></body>

@@ -63,7 +63,7 @@ _parse_topic(char * data, char * args[], uint const args_len) {
     char * p = strtok_r(data, delim, &save);
     while (p && ii < args_len) {
         if (CONFIG_OPNPOOL_DBGLVL_HASSTASK > 1) {
-            ESP_LOGI(TAG, "%s args[%u] = \"%s\"", __func__, ii, p);
+            // ESP_LOGI(TAG, "%s args[%u] = \"%s\"", __func__, ii, p);
         }
         args[ii++] = p;
         p = strtok_r(NULL, delim, &save);
