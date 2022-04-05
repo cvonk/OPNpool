@@ -1,0 +1,24 @@
+type: conditional
+conditions:
+  - entity: switch.opnpool_pool_circuit
+    state: 'on'
+card:
+  type: custom:simple-thermostat
+  entity: climate.opnpool_pool_heater
+  header:
+    name: Pool thermostat
+    icon: false
+  decimals: 0
+  step_size: 1
+  control:
+    _headings: false
+    preset:
+      name: heatsrc
+      none:
+        icon: mdi:power-standby
+      Heater:
+        icon: mdi:fire
+      Solar:
+        icon: mdi:weather-sunny
+      SolarPref:
+        icon: mdi:refresh-auto
