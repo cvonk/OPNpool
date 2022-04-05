@@ -215,7 +215,7 @@
 <h1>Deploying</h1>
 
 <p>
-    Rolling out a device to multiple sites introduces challenges.  The WiFi credentials can no longer be part of the source code. Applying firmware updates or accessing crash information over USB becomes cumbersome. Even simply finding the IP address of the device on the LAN may be challenging.
+    Rolling out a device to multiple sites introduces challenges. The WiFi credentials can no longer be part of the source code. Applying firmware updates or accessing crash information over USB becomes cumbersome. Even simply finding the IP address of the device on the LAN may be challenging.
 </p>
 <p>
     To address such challenges we use a three tiered approach, in which the <code>factory</code> image decides what image to boot.
@@ -419,7 +419,7 @@ I (109668) ota_task: Wrote 5% of 1280 kB
     To determine if the currently running code is different as the code on the server, it compares the project name, version, date and time. Note that these are not always updated by the SDK. The best way to make sure they are updated is by committing your code to Git and building the project from scratch (by removing the <code>build</code> directory).
 </p>
 <p>
-    During debugging, you may want to flash the <code>image</code> image directy as part of the "IDF-SDK: Build, flash and start monitor your device" cycle. To prevent that image from being overwritten by an OTA update, the update mechanism is disabled when the <code>interface</code> image is loaded in the factory partition.
+    During debugging, you may want to flash the <code>image</code> image directly as part of the "IDF-SDK: Build, flash and start monitor your device" cycle. To prevent that image from being overwritten by an OTA update, the update mechanism is disabled when the <code>interface</code> image is loaded in the factory partition.
 </p>
 <p>
     An example of the update process is shown in the figure below.
