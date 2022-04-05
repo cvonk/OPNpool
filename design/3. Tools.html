@@ -212,6 +212,7 @@
 
 <body><div class="entry-content" style="margin: 40px">
 <h1>Tools</h1>
+
 <p>
     Describes the development environment for the OPNpool interface as described in <a href="https://github.com/cvonk/vscode-starters/tree/master/ESP32">VSCode-starters ESP32</a>, consisting of 
     <ul>        
@@ -235,7 +236,7 @@
 <p>
     <ol>
         <li>
-            Make sure that you can <code>ssh</code> to github.com.  On Windows, you may have to install the Wndows <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
+            Make sure that you can <code>ssh</code> to github.com.  On Windows, you may have to install the Windows <a href="https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">OpenSSH Client</a>.
         </li>
         <li>
             Clone the repository and its submodules to a local directory.  Note the <b><code>--recursive</code></b> flag.
@@ -299,39 +300,6 @@
                 </li>
                 <li>
                     Choose "Download ESP-IDF Tools"
-                </li>
-            </ul>
-        </li>
-        <li>
-            To speed up compile times, disable Windows Defender's real-time scanning of <code>C:/espressif</code>. If you get hit with "You'll need a new app to open this windowsdefender link", then issue <code>Get-AppxPackage Microsoft.SecHealthUI -AllUsers | Reset-AppxPackage</code> from an elevated PowerShell terminal.
-        </li>
-    </ol>
-</p>
-<p>
-    From within VScode:  (OLD)
-    <ol>
-        <li>
-            Add the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools">Microsoft's C/C++ extension</a>
-        </li>
-        <li>
-            Add the <a href="https://github.com/espressif/vscode-esp-idf-extension/releases/tag/v1.2.0">Espressif IDF 1.2 extension as .vsix</a>. Reload Visual Studio when asked. (We had problems with the bleading edge version.)
-            <ul>
-                <li>
-                    <cspan class="hp41-key">F1</cspan> &raquo; "ISP-IDF: Configure ESP-IDF"<br />This will install the ESP-IDF tools and configure the extension.
-                    <ul>
-                        <li>
-                            Select Advanced mode
-                        </li>
-                        <li>
-                            ESP-IDF 4.4 in <code>C:/espressif</code> (goes to subdir <code>esp-idf</code>)
-                        </li>
-                        <li>
-                            GNU Tools in <code>C:/espressif/bin</code>
-                        </li>
-                        <li>
-                            Choose "Download ESP-IDF Tools"
-                        </li>
-                    </ul>
                 </li>
             </ul>
         </li>

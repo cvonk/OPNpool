@@ -237,26 +237,23 @@
 </head>
 
 <body><div class="entry-content" style="margin: 40px">
-<h1>Home Assistant UI</h1>
+<h1>Home Automation</h1>
 
 <p>
     <div class="admonition note">
         <p class="admonition-title">Note</p>
-        <p>Before dive into the details, let me emphesize, that the key mechanism is MQTT. Other home automation systems likely support MQTT ass well.</p>
+        <p>Before diving into the details, let me emphasize, that the key mechanism is MQTT. Most home automation systems support MQTT. Details about configuring MQTT for other systems than Home Assistant are given later in this chapter.</p>
     </div>
-
-
-    
 </p>
 <p>
-    Home Assistant has an install base of over 100,000 user
+    We will focus on Home Assistant with an install base of over 100,000 user
     <blockquote>        
         An open source home automation that puts local control and privacy first. Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.
     </blockquote>
 </p>
 
 <h2>
-    MQTT
+    Home Assistant
 </h2>
 <p>
     We auto populate the Home Assistant entities using MQTT Discovery. This enables us to use MQTT devices with only minimal configuration effort on the side of Home Assistant. A few of these messages are shown in the section MQTT device discovery of chapter Interface.
@@ -264,15 +261,15 @@
 <p>
     Home Assistant supports will use the messages and automatically populate the entities shown below.
     
-    <div class="flex-container tight">
+    <div class="flex-container tight shadow">
         <figure>
-            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-1-5.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-1-5-473x1024.png" alt="" width="300" class="alignnone size-large wp-image-32156" style="filter: drop-shadow(0 0 0.1rem #54BBE0);" /></a>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-1-5.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-1-5-473x1024.png" alt="" width="300" class="alignnone size-large wp-image-32156" /></a>
             <figcaption>
                 Device entities on Home Assistant
             </figcaption>
         </figure>
         <figure>
-            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-2.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-2-511x1024.png" alt="" width="300" class="alignnone size-large wp-image-32157" style="filter: drop-shadow(0 0 0.1rem #54BBE0);" /></a>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-2.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-2-511x1024.png" alt="" width="300" class="alignnone size-large wp-image-32157" /></a>
             <figcaption>
                 Device entities on Home Assistant cont'd
             </figcaption>
@@ -289,24 +286,125 @@
 <p>
     The Lovelace dashboard tab includes several cards as shown below. The YAML code can be found in <code>hassio/lovelace</code>.
 </p>
-<div class="flex-container tight">
-    <figure>
 
-    </figure>
-    <figure>
-        <figcaption>
-            Lovelace 
-        </figcaption>
-    </figure>
-</div>
+<h3>
+    Idle
+</h3>
+<p>
+    When the pump is not running, the cards shown below wil be visible.
+    <div class="flex-container tight shadow" style="align-items: flex-start; gap: 10px 10px;">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-circuits-off.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-circuits-off.png" alt="" width="220" class="alignnone size-large wp-image-32163" /></a>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-system.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-system.png" alt="" width="220" class="alignnone size-full wp-image-32159" /></a>
+        </figure>
+        <figure style="align-self: flex-start;">
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-water-temperature.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-water-temperature.png" alt="" width="220" class="alignnone size-large wp-image-32161" /></a>
+        </figure>
+    </div>
+</p>
+<p>
+    When for instance the pool circuit is activated, additional cards show up.
+    <div class="flex-container tight shadow" style="align-items: flex-start; gap: 10px 10px;">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-circuits-pool-on.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-circuits-pool-on.png" alt="" width="220" class="alignnone size-large wp-image-32164" /></a>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-chlorinator.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-chlorinator.png" alt="" width="220" class="alignnone size-large wp-image-32162" /></a>
+        </figure>
+    </div>
+    <div class="flex-container tight shadow" style="align-items: flex-start; gap: 10px 10px;">
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-pool-thermostat.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-pool-thermostat.png" alt="" width="220" class="alignnone size-large wp-image-32165" /></a>
+        </figure>
+        <figure>
+            <a href="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-pump.png"><img src="https://coertvonk.com/wp-content/uploads/opnpool-hassio-lovelace-pump.png" alt="" width="220" class="alignnone size-large wp-image-32166" /></a>
+        </figure>
+    </div>
 </p>
 
+<h2>
+    Other home automation systems
+</h2>
+<p>
+    The OPNpool device publishes state transitions using MQTT. You find an overview of the topics in the table below.
 
+    <table class="partition">
+        <tr>
+            <th>
+                Topic
+            </th>
+            <th>
+                Example value
+            </th>
+        </tr>
+        <tr><td>homeassistant/switch/opnpool/pool_circuit/state</td>     <td>ON</td></tr>
+        <tr><td>homeassistant/switch/opnpool/spa_circuit/state</td>      <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/aux1_circuit/state</td>     <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/aux2_circuit/state</td>     <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/aux3_circuit/state</td>     <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/ft1_circuit/state</td>      <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/ft2_circuit/state</td>      <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/ft3_circuit/state</td>      <td>OFF</td></tr>
+        <tr><td>homeassistant/switch/opnpool/ft4_circuit/state</td>      <td>OFF</td></tr>
+        <tr><td>homeassistant/climate/opnpool/pool_heater/available</td> <td>online</td></tr>
+        <tr><td>homeassistant/climate/opnpool/pool_heater/state</td>
+            <td>
+                [code gutter="false" toolbar="off" tab-size="4" language="javascript"]{
+    "mode": "heat",
+    "heatsrc": "None", // None/Heater/SolarPref/Solar
+    "target_temp": 70,
+    "current_temp": 67,
+    "action": "off"  // off/heating/idle
+}[/code]
+            </td>
+        </tr>
+        <tr><td>homeassistant/climate/opnpool/spa_heater/available</td>  <td>offline</td></tr>
+        <tr><td>homeassistant/climate/opnpool/spa_heater/state</td>
+            <td>
+                [code gutter="false" toolbar="off" tab-size="4" language="javascript"]{
+    "mode": "heat",
+    "heatsrc": "None", // None/Heater/SolarPref/Solar
+    "target_temp": 0,
+    "current_temp": 67,
+    "action": "off"  // off/heating/idle
+}[/code]
+            </td>
+        </tr>
+        <tr><td>homeassistant/sensor/opnpool/pool_sched/state</td>       <td>08:00 - 10:00</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/spa_sched/state</td>        <td>no sched</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/aux1_sched/state</td>       <td>no sched</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/aux2_sched/state</td>       <td>no sched</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/air_temp/state</td>         <td>69</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/water_temp/state</td>       <td>67</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/system_time/state</td>      <td>11:28</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/ctrl_version/state</td>     <td>v2.080</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/if_version/state</td>       <td>v1.2.4</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/pump_mode/state</td>        <td>FILTER</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/pump_status/state</td>      <td>OK</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/pump_power/state</td>       <td>606</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/pump_gpm/state</td>         <td>0</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/pump_speed/state</td>       <td>2250</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/pump_error/state</td>       <td>0</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/chlor_name/state</td>       <td>Intellichlor--40</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/chlor_pct/state</td>        <td>25</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/chlor_salt/state</td>       <td>3650</td></tr>
+        <tr><td>homeassistant/sensor/opnpool/chlor_status/state</td>     <td>OK</td></tr>
+        <tr><td>homeassistant/binary_sensor/opnpool/pump_running/state</td>       <td>ON</td></tr>
+        <tr><td>homeassistant/binary_sensor/opnpool/mode_service/state</td>       <td>OFF</td></tr>
+        <tr><td>homeassistant/binary_sensor/opnpool/mode_temp_inc/state</td> <td>OFF</td></tr>
+        <tr><td>homeassistant/binary_sensor/opnpool/mode_freeze_prot/state</td>   <td>OFF</td></tr>
+        <tr><td>homeassistant/binary_sensor/opnpool/mode_timeout/state</td>       <td>OFF</td></tr>
+        <tr><td></td>  <td></td></tr>
+        <tr><td></td>  <td></td></tr>
+    </table>
+</p>
 <p>
     <div class="continue-container no-print">
         <div class="continue-content">
             <div class="continue-text">
-                Continue reading to learn about adding <a href="https://coertvonk.com/sw/embedded/pool-interface/graphs-unfinished-31969">historical graphs</a>.
+                Continue reading to learn about other <a href="https://coertvonk.com/category/sw/embedded">Embbedded C projects</a>.
         </div>
     </div>    
 </p>
