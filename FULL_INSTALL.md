@@ -72,6 +72,8 @@ At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You c
 
 The open software is hosted on GitHub.
 
+> We proudly acklowledge the work of reverse engineering pioneers [Joshua Bloch](https://docs.google.com/document/d/1M0KMfXfvbszKeqzu6MUF_7yM6KDHk8cZ5nrH1_OUcAc/edit), [Michael Russe](http://cocoontech.com/forums/files/file/173-pab014sharezip/), and [George Saw](http://cocoontech.com/forums/topic/27864-download-pitzip/). (Drop me a line if if I forgot you.)
+
 ### Git
 
 Clone the repository and its submodules to a local directory. The `--recursive` flag automatically initializes and updates the submodules in the repository.  Start with a fresh clone:
@@ -105,7 +107,7 @@ As usual, the `bootloader` image does some minimum initializations. If it finds 
 
 ### The `interface` image
 
-To host your own `interface` image, you will need to place it on your LAN or on the Web. If you're fine using mine, you can skip this section.
+To host your own `interface` image, you will need to place it on your LAN or on the Web. If you're fine using my logiciel du jour, you can skip this section.
 
 > To use HTTPS, you will need to add the server's public certificate to `interface/components/ota_update_task/CMakelists.txt`, and uncomment some lines in `ota_update_task.c` with `server_cert_pem`.
 
@@ -134,7 +136,7 @@ From VScode:
 
 Using an Android phone:
 
-  * Install and run the OPNpool app from the Play Store.
+  * Install and run the OPNpool app from the [Play Store](https://play.google.com/store/apps/details?id=com.coertvonk.opnpool).
   * Using the overflow menu, select "Provision device".
   * Click on the "Provision" button and grant it access [^1].
   * Click on the name of the OPNpool device one it is detected (`POOL*`).
