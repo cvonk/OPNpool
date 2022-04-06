@@ -2,7 +2,7 @@ menu "OPNpool"
 
     config OTA_UPDATE_FIRMWARE_URL
         string "Firmware upgrade url endpoint"
-        default "http://nas.vonk:84/embedded/interface.bin"
+        default "http://host.domain/path/interface.bin"
         help
             URL of server which hosts the firmware image. (make sure it matches Kconfig in interface dir)
 
