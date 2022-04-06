@@ -4,16 +4,19 @@ The OPNpool integrates the traditional Pool Controller into our smart home. It k
 
 Features:
 
-  * Visualizes the status of the thermostats, pump, chlorinator, circuits and schedules.
-  * Lets you change the thermostats and toggle circuits
-  * Connects to the internet
-  * MQTT and Home Assistant integration
-  * Over-the-air updates
-  * One time provisioning from an Android phone
-  * Web app UI
-  * IP68 waterproof case and connectors
-  * No power adapter required
-  * *Open source!
+  - [x] Visualizes the status of the thermostats, pump, chlorinator, circuits and schedules.
+  - [x] Lets you change the thermostats and switch circuits
+  - [x] Over-the-air updates [^1]
+  - [x] One time provisioning from a phone [^1]
+  - [x] MQTT and Home Assistant integration
+  - [x] Web UI
+  - [x] IP68 waterproof case and connectors [^1]
+  - [x] No power adapter required [^1]
+  - [x] Open source!
+
+[^1]: Available with the full install as described in [`FULL_INSTALL.md`](FULL_INSTALL.md)
+
+The device was tested with the Pentair&reg; SunTouch&reg; controller running firmware 2.080, connected to an IntelliFlo&reg; pump and IntelliChlor&reg; salt water chlorinator.
 
 > This open source and hardware project is intended to comply with the October 2016 exemption to the Digital Millennium Copyright Act allowing "good-faith" testing," in a controlled environment designed to avoid any harm to individuals or to the public.
 
@@ -35,7 +38,12 @@ Clone the repository and its submodules to a local directory. The `--recursive` 
 git clone --recursive https://github.com/cvonk/OPNpool.git
 ```
 
-From within Microsoft Visual Code (VScode), add the [Microsoft's C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools). Then add the [Espressif IDF extension &ge;4.4](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension). The latter will automatically start its configuration. Answer according to the table below
+or using `ssh`
+```bash
+git clone --recursive git@github.com:cvonk/OPNpool.git
+```
+
+From within Microsoft Visual Code (VScode), add the [Microsoft's C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools). Then add the [Espressif IDF extension &ge;4.4](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension). ESP-IDF will automatically start its configuration. Answer according to the table below
 
 | Question     | Choice             |
 |--------------| ------------------ |
@@ -53,31 +61,31 @@ From VScode:
       * If you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://username:passwd@host.domain:1883`
   * Start the build-upload-monitor cycle (press the F1-key and select "ESP-IDF: Build, Flash and start a monitor on your device").
 
-The device will appear on your network segment as `opnpool.local`.  You can access its web UI through `http://pool.local`. If MQTT is configured, it will publish MQTT messages and if you use the Home Assistant for automation, entities will appears with `.opnpool` in the name.
+The device will appear on your network segment as `opnpool.local`.  You can access its web interface through `http://pool.local`. If MQTT is configured, it will publish MQTT messages. If you also use the [Home Assistant](https://www.home-assistant.io/), entities will appear after a few minutes with  `.opnpool` in their name.
 
 ### Connect
 
-> **:warning PROCEED AT YOUR OWN RISK! At the very least make turn off the power while you work on your pool equipment. Be careful, THERE IS ALWAYS A RISK OF BREAKING YOUR POOL EQUIPMENT.**
+> :warning: **PROCEED AT YOUR OWN RISK! At the very least, turn off the power while you work on your pool equipment. Be careful, THERE IS ALWAYS A RISK OF BREAKING YOUR POOL EQUIPMENT.**
 
-Having said that .. the RS-485 header is on the back of the control board. There are probably already wires connected that go to the devices such as pump and chlorinator.
+Understanding the above warning .. the RS-485 header can be found on the back of the control board. There are probably already wires connected that go to the devices such as pump and chlorinator.
 
-To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 cable to connect the `A`/`B` pair to the 3.3 volt RS-485 adapter as shown in the table below.
+To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 cable to connect the `A`/`B` pair to the RS-485 adapter as shown in the table below.
 
-| Controller     | RS-485 adapter | idle state |         
-|:---------------|:--------------:|:-----------|
-| -DATA (green)  |  A             | negative   |
-| +DATA (yellow) |  B             | positive   |
+| Controller       | RS-485 adapter | idle state |         
+|:-----------------|:--------------:|:-----------|
+| `-DATA` (green)  |  `A`           | negative   |
+| `+DATA` (yellow) |  `B`           | positive   |
 
-Connect the RS-485 adapter to the ESP32 module.  I also pulled GPIO#27 down with 10 k&ohm;, just to make sure it doesn't transmit while the ESP32 is booting.
+Connect the RS-485 adapter to the ESP32 module.  I also pulled `GPIO#27` down with 10 k&ohm;, just to make sure it doesn't transmit while the ESP32 is booting.
 
 | RS-485 adapter | ESP32 module |
 |:---------------|:-------------|
-| RO             | GPIO#25      |
-| DI             | GPIO#26      |
-| DE and RE      | GPIO#27      |
-| GND            | GND          |
+| RO             | `GPIO#25`    |
+| DI             | `GPIO#26`    |
+| DE and RE      | `GPIO#27`    |
+| GND            | `GND`        |
 
-You will now see the decoded messages on the serial monitor such as:
+The serial monitor will show decoded messages such as:
 
 ```json
 I (16670) poolstate_rx: {CTRL_STATE_BCAST: {
@@ -89,7 +97,7 @@ I (16670) poolstate_rx: {CTRL_STATE_BCAST: {
 }
 ```
 
-The web UI, `http://opnpool.local`, will show the pool state and allow you to change the thermostat and circuits.
+The web UI, will show the pool state and allow you to change the thermostat and circuits.
 
 ![Web UI](media/opnpool-web-ui-pool-therm-sml.png)
 
