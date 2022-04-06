@@ -281,7 +281,7 @@ _connect2broker(ipc_t const * const ipc) {
         ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", mqtt_url, &len));
     }
 #endif
-    if (mqtt_url == NULL) {
+    if (mqtt_url == NULL || *mqtt_url == '\0') {
         return NULL;
     }
 

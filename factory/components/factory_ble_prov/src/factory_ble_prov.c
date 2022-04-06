@@ -114,6 +114,9 @@ esp_err_t _mqtt_config_handler(uint32_t session_id, const uint8_t *inbuf, ssize_
         // store values in non volatile storage (flash)
         char * str = strndup((const char * const)inbuf, inlen);
         {
+            if (strcmp(str, "null") == 0) {
+                str = strdup("\0");
+            } 
             ESP_LOGI(TAG, "%s Received MQTT_URL: (%s)", __FUNCTION__, str);
             nvs_handle_t nvs_handle;
             ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &nvs_handle));
