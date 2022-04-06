@@ -48,7 +48,9 @@ ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_
     };
     assert(msg.data);
     if (xQueueSendToBack(ipc->to_mqtt_q, &msg, 0) != pdPASS) {
-        ESP_LOGE(TAG, "to_mqtt_q full");
+        if (CONFIG_OPNPOOL_DBGLVL_IPC > 1) {
+            ESP_LOGW(TAG, "to_mqtt_q full");
+        }
         free(msg.data);
     }
     vTaskDelay(1);  // give `mqtt_task` a chance to catch up
@@ -68,7 +70,9 @@ ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const topic, siz
     };
     assert(msg.data);
     if (xQueueSendToBack(ipc->to_pool_q, &msg, 0) != pdPASS) {
-        ESP_LOGE(TAG, "to_pool_q full");
+        if (CONFIG_OPNPOOL_DBGLVL_IPC > 1) {
+            ESP_LOGW(TAG, "to_pool_q full");
+        }
         free(msg.data);
     }
 }

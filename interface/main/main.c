@@ -110,6 +110,17 @@ _wifi_disconnect_cb(void * const priv_void, bool const auth_err)
     return ESP_OK;
 }
 
+static void
+__attribute__((noreturn)) _delete_task()
+{
+    ESP_LOGI(TAG, "Exiting task ..");
+    (void)vTaskDelete(NULL);
+
+    while (1) {  // FreeRTOS requires that tasks never return
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+}
+
 /*
  * Connect to WiFi accesspoint.
  * Register callbacks when connected or disconnected.
@@ -127,7 +138,30 @@ _connect2wifi_and_start_httpd(ipc_t * const ipc)
         .priv = &priv,
     };
     ESP_ERROR_CHECK(wifi_connect_init(&wifi_connect_config));
-    ESP_ERROR_CHECK(wifi_connect_start(NULL));
+
+    wifi_config_t * wifi_config_addr = NULL;
+#ifdef CONFIG_OPNPOOL_HARDCODED_WIFI_CREDENTIALS
+    if (strlen(CONFIG_OPNPOOL_HARDCODED_WIFI_SSID)) {
+        ESP_LOGW(TAG, "Using SSID from Kconfig");
+        wifi_config_t wifi_config = {
+            .sta = {
+                .ssid = CONFIG_OPNPOOL_HARDCODED_WIFI_SSID,
+                .password = CONFIG_OPNPOOL_HARDCODED_WIFI_PASSWD,
+            }
+        };
+        wifi_config_addr = &wifi_config;
+    } else
+#endif
+    {
+        ESP_LOGW(TAG, "Using SSID from nvram");
+    }
+
+    esp_err_t err = wifi_connect_start(wifi_config_addr);
+    if (err == ESP_ERR_WIFI_SSID) {
+        ESP_LOGE(TAG, "Wi-Fi SSID/passwd not provisioned");
+        _delete_task();
+    }
+    ESP_ERROR_CHECK(err);
 }
 
 #if 0

@@ -90,17 +90,43 @@ menu "OPNpool"
         help
             0 for no debug, 1 for errors only, 2 for all
 
-    config OPNPOOL_USE_HARDCODED_MQTT_URL
+    config OPNPOOL_DBGLVL_IPC
+        int "IPC debug level"
+        default 0
+        help
+            0 for no debug, 1 for errors only, 2 for all
+
+    config OPNPOOL_HARDCODED_WIFI_CREDENTIALS
+        bool "Use hardcoded Wi-Fi credentials"
+        default n
+        help
+            Use a hardcoded Wi-Fi credentials. Defaults to n for BLE provisioning.
+            
+    config OPNPOOL_HARDCODED_WIFI_SSID
+        string "WiFi SSID"
+        default ""
+        depends on OPNPOOL_HARDCODED_WIFI_CREDENTIALS
+        help
+            SSID (network name).
+
+    config OPNPOOL_HARDCODED_WIFI_PASSWD
+        string "WiFi Password"
+        default ""
+        depends on OPNPOOL_HARDCODED_WIFI_CREDENTIALS
+        help
+            WiFi password (WPA or WPA2).
+        
+    config OPNPOOL_HARDCODED_MQTT_CREDENTIALS
         bool "Use hardcoded MQTT URL"
         default n
         help
-            Use a hardcoded MQTT URL instead of the MQTT_URL from flash memory.
+            Use a hardcoded MQTT credentials. Defaults to n for BLE provisioning.
             
-    config OPNPOOL_MQTT_URL
+    config OPNPOOL_HARDCODED_MQTT_URL
         string "Hardcoded MQTT broker url endpoint"
         default "mqtt://mqtt:passwd@host.domain:1883"
-        depends on OPNPOOL_USE_HARDCODED_MQTT_URL
+        depends on OPNPOOL_HARDCODED_MQTT_CREDENTIALS
         help
-            Hardcoded MQTT_URL.  E.g. mqtt://mqtt:passwd@host.domain:1883.        
+            Hardcoded MQTT_URL. E.g. mqtt://mqtt:passwd@host.domain:1883.        
 
 endmenu

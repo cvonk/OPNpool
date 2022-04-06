@@ -41,9 +41,9 @@ To start the build process, from VScode:
 
   * Change to the `OPNpool/interface` folder.
   * Connect your ESP32 module and select the serial port: press the F1-key and select "ESP-IDF: Select port to use"
-  * Edit the configuration: press the F1-key and select "ESP-IDF: SDK configuration editor"
-      * specify the SSID and password of your Wi-Fi access point
-      * select `USE_HARDCODED_MQTT_URL` and specify the hardcoded URL to the MQTT server
+  * Edit the configuration: press the F1-key, select "ESP-IDF: SDK configuration editor" and scroll down to OPNpool
+      * select "Use hardcoded Wi-Fi credentials" and specify the SSID and password of your Wi-Fi access point
+      * if you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://mqtt:passwd@host.domain:1883`
   * Start the build-upload-monitor cycle: press the F1-key and select "ESP-IDF: Build, Flash and start a monitor on your device".
 
 At this point, the device should appear on your Wi-Fi as `opnpool.local`.  You can access its web UI through `http://pool.local`. It will be publishing MQTT messages. If you use the Home Assistant for automation, entities will appears with `.opnpool` in the name.
@@ -75,8 +75,8 @@ I (16670) poolstate_rx: {CTRL_STATE_BCAST: {
 
 The web UI, `http://opnpool.local`, will show the pool state and allow you to change the thermostat and circuits.
 
-![Web UI](media/opnpool-web-ui-pool-therm.png)
+![Web UI](media/opnpool-web-ui-pool-therm-sml.png)
 
-If you are using Home Assistant, the `*.opnpool*` entities will update automatically. There are some YAML files in the `hassio` project to use with the Lovelace dashboard.
+If you are using Home Assistant, the `*.opnpool*` entities will update automatically. There are some YAML files in the `hassio` directory to use with the Lovelace dashboard. Note that they depend on some frontend modules available through HACS.
 
 ![Hassio UI](media/opnpool-readme-hassio-lovelace.png)

@@ -265,20 +265,25 @@ _mqtt_event_cb(esp_mqtt_event_handle_t event) {
 static esp_mqtt_client_handle_t
 _connect2broker(ipc_t const * const ipc) {
 
-    char * mqtt_url;
+    char * mqtt_url = NULL;
 
-#ifdef CONFIG_OPNPOOL_USE_HARDCODED_MQTT_URL
+#ifdef CONFIG_OPNPOOL_HARDCODED_MQTT_CREDENTIALS
     ESP_LOGW(TAG, "Using mqtt_url from Kconfig");
-    mqtt_url = strdup(CONFIG_OPNPOOL_MQTT_URL)
+    mqtt_url = strdup(CONFIG_OPNPOOL_HARDCODED_MQTT_URL);
 #else
     ESP_LOGW(TAG, "Using mqtt_url from nvram");
     nvs_handle_t nvs_handle;
     size_t len;
-    ESP_ERROR_CHECK(nvs_open("storage", NVS_READONLY, &nvs_handle));
-    ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", NULL, &len));
-    mqtt_url = (char *) malloc(len);
-    ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", mqtt_url, &len));
+    if (nvs_open("storage", NVS_READONLY, &nvs_handle) == ESP_OK &&
+        nvs_get_str(nvs_handle, "mqtt_url", NULL, &len) == ESP_OK) {
+            
+        mqtt_url = (char *) malloc(len);
+        ESP_ERROR_CHECK(nvs_get_str(nvs_handle, "mqtt_url", mqtt_url, &len));
+    }
 #endif
+    if (mqtt_url == NULL) {
+        return NULL;
+    }
 
     ESP_LOGW(TAG, "read mqtt_url (%s)", mqtt_url);
 
@@ -297,6 +302,17 @@ _connect2broker(ipc_t const * const ipc) {
 	assert(xEventGroupWaitBits(_mqttEventGrp, MQTT_EVENT_CONNECTED_BIT, pdFALSE, pdFALSE, portMAX_DELAY));
     free(mqtt_url);
     return client;
+}
+
+static void
+__attribute__((noreturn)) _delete_task()
+{
+    ESP_LOGI(TAG, "Exiting task ..");
+    (void)vTaskDelete(NULL);
+
+    while (1) {  // FreeRTOS requires that tasks never return
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 }
 
 /*
@@ -329,6 +345,10 @@ mqtt_task(void * ipc_void)
 
 	_mqttEventGrp = xEventGroupCreate();
     esp_mqtt_client_handle_t const client = _connect2broker(ipc);
+    if (client == NULL) {
+        ESP_LOGE(TAG, "MQTT not provisioned");
+        _delete_task();
+    }
 
     // if there is a coredump in flash memory, then publish it to MQTT
 
