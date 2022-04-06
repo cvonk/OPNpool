@@ -218,7 +218,7 @@
     Rolling out a device to multiple sites introduces challenges. The WiFi credentials can no longer be part of the source code. Applying firmware updates or accessing crash information over USB becomes cumbersome. Even simply finding the IP address of the device on the LAN may be challenging.
 </p>
 <p>
-    To address such challenges we use a three tiered approach, in which the <code>factory</code> image decides what image to boot.
+    To address such challenges we use a three tiered approach, in which the <code>bootloader</code> image decides what image to boot.
     <ol>
         <li>
             As usual, the <code>bootloader</code> image does some minimum initializations. If it finds a valid <code>ota</code> image, it passes control over to that image.  If not, it starts the <code>factory</code> image.

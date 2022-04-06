@@ -16,11 +16,11 @@ Features:
 
 [^1]: Available with the full install as described in [`FULL_INSTALL.md`](FULL_INSTALL.md)
 
-The device was tested with the Pentair&reg; SunTouch&reg; controller running firmware 2.080, connected to an IntelliFlo&reg; pump and IntelliChlor&reg; salt water chlorinator.
+OPNpool was tested with the Pentair&reg; SunTouch&reg; controller running firmware 2.080, connected to an IntelliFlo&reg; pump and IntelliChlor&reg; salt water chlorinator.
 
 > This open source and hardware project is intended to comply with the October 2016 exemption to the Digital Millennium Copyright Act allowing "good-faith" testing," in a controlled environment designed to avoid any harm to individuals or to the public.
 
-The full fledged project installation method is described in the `FULL_INSTALL.md`. Before you go down that road, you may want to give it a quick spin to see what it can do. The remainder of this README will walk you through this.
+The full fledged project installation method is described in the [`FULL_INSTALL.md`](FULL_INSTALL.md). Before you go down that road, you may want to give it a quick spin to see what it can do. The remainder of this README will walk you through this.
 
 ## Parts
 
@@ -76,7 +76,7 @@ To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 ca
 | `-DATA` (green)  |  `A`           | negative   |
 | `+DATA` (yellow) |  `B`           | positive   |
 
-Connect the RS-485 adapter to the ESP32 module.  I also pulled `GPIO#27` down with 10 k&ohm;, just to make sure it doesn't transmit while the ESP32 is booting.
+Connect the RS-485 adapter to the ESP32 module.  I also pulled `GPIO#27` down with a 10 k&ohm; resistor, to keep it from transmiting while the ESP32 is booting.
 
 | RS-485 adapter | ESP32 module |
 |:---------------|:-------------|
