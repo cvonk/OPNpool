@@ -17,14 +17,14 @@ Features:
 
 > This open source and hardware project is intended to comply with the October 2016 exemption to the Digital Millennium Copyright Act allowing "good-faith" testing," in a controlled environment designed to avoid any harm to individuals or to the public.
 
-The full fledged project installation method is described in the `FULL_INSTALL.md`. Before you go down that road, you may want to give it a quick spin to see what it can do. This is described below.
+The full fledged project installation method is described in the `FULL_INSTALL.md`. Before you go down that road, you may want to give it a quick spin to see what it can do. The remainder of this README will walk you through this.
 
 ## Parts
 
-At the core this project requires an ESP32 module and a 3.3 Volt RS-485 adapter. To try the project, you can breadboard it using:
+At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can breadboard this using:
 
-* Any ESP32 module will do that has an USB connection and `GPIO#25` to `GPIO#27` available. Personally, I used a Wemos LOLIN D32.
-* Any "Max485 Module TTL". To make it 3.3 Volt compliant, change the chip to a MAX3485CSA+. While you're at it, you may as well remove the 10 kΩ pullup resistors (`R1` - `R4`).
+* Any ESP32 module that has an USB connector and `GPIO#25` to `GPIO#27` available (such as the Wemos LOLIN D32).
+* Any "Max485 Module TTL". To make it 3.3 Volt compliant, change the chip to a MAX3485CSA+. While you're at it, you may as well remove the 10 kΩ pullup resistors (`R1` to `R4`).
 * A piece of Cat5 ethernet cable to connect to the pool controller.
 
 ## Build
@@ -35,31 +35,47 @@ Clone the repository and its submodules to a local directory. The `--recursive` 
 git clone --recursive https://github.com/cvonk/OPNpool.git
 ```
 
-Fron within Microsoft Visual Code (VScode), add the [Microsoft's C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools).  Then add the [Espressif IDF extension](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension), and during the install specify "Select Advanced mode" with ESP-IDF 4.4 in `C:/espressif` and the GNU tools in `C:/espressif/bin`. Finish by selecting "Download ESP-IDF Tools".
+From within Microsoft Visual Code (VScode), add the [Microsoft's C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools). Then add the [Espressif IDF extension &ge;4.4](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension). The latter will automatically start its configuration. Answer according to the table below
 
-To start the build process, from VScode:
+| Question     | Choice             |
+|--------------| ------------------ |
+| Mode         | Advanced           |
+| ESP-IDF path | `C:/espressif`     |
+| Tools        | `C:/espressif/bin` |
+| Download     | yes                |
+
+From VScode:
 
   * Change to the `OPNpool/interface` folder.
-  * Connect your ESP32 module and select the serial port: press the F1-key and select "ESP-IDF: Select port to use"
-  * Edit the configuration: press the F1-key, select "ESP-IDF: SDK configuration editor" and scroll down to OPNpool
-      * select "Use hardcoded Wi-Fi credentials" and specify the SSID and password of your Wi-Fi access point
-      * if you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://mqtt:passwd@host.domain:1883`
-  * Start the build-upload-monitor cycle: press the F1-key and select "ESP-IDF: Build, Flash and start a monitor on your device".
+  * Connect your ESP32 module, and configure the device and COM port (press the F1-key and select "ESP-IDF: Device configurion")
+  * Edit the configuration (press the F1-key, select "ESP-IDF: SDK configuration editor" and scroll down to OPNpool)
+      * Select "Use hardcoded Wi-Fi credentials" and specify the SSID and password of your Wi-Fi access point.
+      * If you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://username:passwd@host.domain:1883`
+  * Start the build-upload-monitor cycle (press the F1-key and select "ESP-IDF: Build, Flash and start a monitor on your device").
 
-At this point, the device should appear on your Wi-Fi as `opnpool.local`.  You can access its web UI through `http://pool.local`. It will be publishing MQTT messages. If you use the Home Assistant for automation, entities will appears with `.opnpool` in the name.
+The device will appear on your network segment as `opnpool.local`.  You can access its web UI through `http://pool.local`. If MQTT is configured, it will publish MQTT messages and if you use the Home Assistant for automation, entities will appears with `.opnpool` in the name.
 
-### Connecting
+### Connect
 
-**PROCEED AT YOUR OWN RISK! At the very least make turn off the power while you work on your pool equipment. Be careful, THERE IS ALWAYS A RISK OF BREAKING YOUR POOL EQUIPMENT.**
+> **:warning PROCEED AT YOUR OWN RISK! At the very least make turn off the power while you work on your pool equipment. Be careful, THERE IS ALWAYS A RISK OF BREAKING YOUR POOL EQUIPMENT.**
 
 Having said that .. the RS-485 header is on the back of the control board. There are probably already wires connected that go to the devices such as pump and chlorinator.
 
 To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 cable to connect the `A`/`B` pair to the 3.3 volt RS-485 adapter as shown in the table below.
 
-| Controller     | RS-485 | idle state |         
-|:---------------|:------:|:-----------|
-| -DATA (green)  |  A     | negative   |
-| +DATA (yellow) |  B     | positive   |
+| Controller     | RS-485 adapter | idle state |         
+|:---------------|:--------------:|:-----------|
+| -DATA (green)  |  A             | negative   |
+| +DATA (yellow) |  B             | positive   |
+
+Connect the RS-485 adapter to the ESP32 module.  I also pulled GPIO#27 down with 10 k&ohm;, just to make sure it doesn't transmit while the ESP32 is booting.
+
+| RS-485 adapter | ESP32 module |
+|:---------------|:-------------|
+| RO             | GPIO#25      |
+| DI             | GPIO#26      |
+| DE and RE      | GPIO#27      |
+| GND            | GND          |
 
 You will now see the decoded messages on the serial monitor such as:
 
@@ -77,6 +93,8 @@ The web UI, `http://opnpool.local`, will show the pool state and allow you to ch
 
 ![Web UI](media/opnpool-web-ui-pool-therm-sml.png)
 
-If you are using Home Assistant, the `*.opnpool*` entities will update automatically. There are some YAML files in the `hassio` directory to use with the Lovelace dashboard. Note that they depend on some frontend modules available through HACS.
+If you are using Home Assistant, the `*.opnpool*` entities will update automatically. The `hassio` directory has some YAML code to use with the Lovelace dashboard.
+
+If you go that route, also remember to install `modcard`, `button-card`, `bar-card`, `simple-thermostat`, `template-entity-row` and `mini-graph-card` available through the Home Assistant Community Store (HACS).
 
 ![Hassio UI](media/opnpool-readme-hassio-lovelace.png)
