@@ -1,0 +1,61 @@
+sudo: false
+language: bash
+os:
+  - linux
+
+addons:
+  apt:
+    packages:
+      - gperf
+      - python
+      - python-serial
+      - wget
+      - flex
+      - bison
+      - gperf
+      - python3
+      - python3-pip
+      - python3-setuptools
+      - cmake
+      - ninja-build
+      - ccache
+      - libffi-dev
+      - libssl-dev
+      - dfu-util
+      - libusb-1.0-0
+
+before_install:
+  # Save path to the git respository
+  - PROJECT_PATH=$(pwd)
+  # Have to checkout a temp branch for later in tree reference
+  - git checkout --recursive
+  - CI_COMMIT_SHA=$(git rev-parse HEAD)
+  # Test building with latest (stable == v3.3 for now) IDF
+  - LTS_IDF=release/v4.4
+
+install:
+  # Install ESP32 toolchain following steps as desribed
+  # in https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/linux-macos-setup.html
+  #
+  # Get required packages - already done above, see addons: apt: packages:
+  # - sudo apt-get install git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0
+  # Prepare directory for the toolchain
+  - mkdir -p ~/esp
+  - cd ~/esp
+  # Get ESP-IDF
+  - git clone --recursive https://github.com/espressif/esp-idf.git
+  # Download binary toolchain for the ESP32
+  - cd ~/esp/esp-idf
+  - ./install.sh esp32
+  # Set the path to ESP-IDF directory
+  - export IDF_PATH=~/esp/esp-idf
+  - python -m pip install --user -r $IDF_PATH/requirements.txt
+  # Setup build tool: xtensa-esp32-elf and idf.py
+  - export PATH=$PATH:$HOME/esp/xtensa-esp32-elf/bin:$IDF_PATH/tools
+
+script:
+  # Build with v4.4 IDF
+  - cd $PROJECT_PATH/factory
+  - idf.py build
+  - cd $PROJECT_PATH/interface
+  - idf.py build
