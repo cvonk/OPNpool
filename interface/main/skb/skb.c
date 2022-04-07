@@ -1,19 +1,29 @@
 /**
- * @brief OPNpool - socket buf inspired continuous memory for tx
+ * @brief OPNpool - Linux sk_buff inspired continuous memory for tx
  *
- * © Copyright 2014, 2019, 2022, Coert Vonk
+ *   Since this code originated from code which is public domain, I
+ *   hereby declare this code to be public domain as well.
+ *
+ *   Derived more functionality from macros to C++ template.
+ *   Coert Vonk, 2015, 2019
+ *
+ *   loosely based on http://www.keil.com/download/docs/200.asp
+ ****************************************************************************
+ *
+ *   Since this code originated from code which is public domain, I
+ *   hereby declare this code to be public domain as well.
+ *
+ *   Dave Hylands - dhylands@gmail.com
+ *
+ ****************************************************************************
  * 
- * This file is part of OPNpool.
- * OPNpool is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with OPNpool. 
- * If not, see <https://www.gnu.org/licenses/>.
+ * To the extent possible under law, the author(s) have dedicated all copyright
+ * and related and neighboring rights to this software to the public domain
+ * worldwide. This software is distributed without any warranty. You should have
+ * received a copy of the CC0 Public Domain Dedication along with this software.
+ * If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  * 
- * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-License-Identifier: CC0-1.0
  */
 
 #include <esp_system.h>
