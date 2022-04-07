@@ -1,15 +1,20 @@
 /**
-* @brief packet_task, packetizes RS-485 byte stream from Pentair bus
+ * @brief OPNpool, hass_str
  *
- * The Pentair controller uses two different protocols to communicate with its peripherals:
- *   - 	A5 has messages such as 0x00 0xFF <ldb> <sub> <dst> <src> <cfi> <len> [<data>] <chH> <ckL>
- *   -  IC has messages such as 0x10 0x02 <data0> <data1> <data2> .. <dataN> <ch> 0x10 0x03
- *
- * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2020-2022, Coert Vonk
- * All rights reserved. Use of copyright notice does not imply publication.
- * All text above must be included in any redistribution
- **/
+ * © Copyright 2014, 2019, 2022, Coert Vonk
+ * 
+ * This file is part of OPNpool.
+ * OPNpool is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OPNpool. 
+ * If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #include <string.h>
 #include <esp_system.h>

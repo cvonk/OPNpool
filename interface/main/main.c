@@ -1,19 +1,20 @@
 /**
- * @brief Main App: Pool Interface using ESP32
+ * @brief OPNpool, main app: Pool Interface using ESP32
  *
- * Sniffs the Pentair RS-485 bus to collect pool state information.  The pool state is output
- * in JavaScript Object Notation (JSON).  The Arduino program allows sending select parameters
- * to the pool controller.
- *
- * Platform: ESP32
- * Documentation : https://coertvonk.com/sw/embedded/pentair-interface-11554
- * Tested with: Pentair SunTouch running firmware 2.80, connected intelliFlow pump and intelliChlor
+ * © Copyright 2014, 2019, 2022, Coert Vonk
  * 
- * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2015 - 2022, Coert Vonk
- * All rights reserved. Use of copyright notice does not imply publication.
- * All text above must be included in any redistribution
- **/
+ * This file is part of OPNpool.
+ * OPNpool is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OPNpool. 
+ * If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #include <esp_system.h>
 #include <esp_wifi.h>

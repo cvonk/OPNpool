@@ -1,15 +1,24 @@
 /**
-* @brief packet_task, packetizes RS485 byte stream from Pentair bus
+ * @brief OPNpool, packet_task: packetizes RS-485 byte stream from bus
  *
- * The Pentair controller uses two different protocols to communicate with its peripherals:
+ * The Pool controller uses two different protocols to communicate with its peripherals:
  *   - 	A5 has messages such as 0x00 0xFF <ldb> <sub> <dst> <src> <cfi> <len> [<data>] <chH> <ckL>
  *   -  IC has messages such as 0x10 0x02 <data0> <data1> <data2> .. <dataN> <ch> 0x10 0x03
  *
- * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2020-2022, Coert Vonk
- * All rights reserved. Use of copyright notice does not imply publication.
- * All text above must be included in any redistribution
- **/
+ * © Copyright 2014, 2019, 2022, Coert Vonk
+ * 
+ * This file is part of OPNpool.
+ * OPNpool is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OPNpool. 
+ * If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #include <string.h>
 #include <esp_system.h>
@@ -88,30 +97,6 @@ _queue_req(rs485_handle_t const rs485, network_msg_typ_t const typ)
         free(pkt);
     }
 }
-
-#if 0
-static void
-_queue_req1(rs485_handle_t const rs485, network_msg_typ_t const typ, uint8_t schedId)
-{
-    network_msg_t msg = {
-            .typ = typ,
-            .u.bytes = &schedId
-    };
-    datalink_pkt_t * const pkt = malloc(sizeof(datalink_pkt_t));
-
-    if (network_create_msg(&msg, pkt)) {
-        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 1) {
-            ESP_LOGW(TAG, "%s typ=%u", __func__, typ);
-        }
-        datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
-    } else {
-        if (CONFIG_OPNPOOL_DBGLVL_POOLTASK > 0) {
-            ESP_LOGE(TAG, "%s network_tx_typ failed", __func__);
-        }
-        free(pkt);
-    }
-}
-#endif
 
 static void
 _forward_queued_pkt_to_rs485(rs485_handle_t const rs485, ipc_t const * const ipc)

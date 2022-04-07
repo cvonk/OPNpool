@@ -1,21 +1,22 @@
 /**
- * @brief Provision WiFi using BLE and phone app, then start OTA update
- **/
-// Copyright © 2020-2022, Coert Vonk
-// SPDX-License-Identifier: MIT
-/*
-   loosly based on: ...\espressif\esp-idf-v4.1-beta2\examples\provisioning\legacy\ble_prov\main\ble_main.c
-   BLE based Provisioning Example
-
-   To start fresh (instead of jumping to an existing OTA partition), clear the flash mem first
-     ESP-IDF: Erase flash memory from device  (^e r)
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+ * @brief Provision OPNpool using a phone app over BLE
+ *  
+ * Remember to clear the flash memory first.
+ *
+ * © Copyright 2014, 2019, 2022, Coert Vonk
+ * 
+ * This file is part of OPNpool.
+ * OPNpool is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OPNpool. 
+ * If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #include <string.h>
 #include <freertos/FreeRTOS.h>
