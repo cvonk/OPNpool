@@ -18,7 +18,7 @@ Features:
   - [x] No power adapter required
   - [x] Open source!
 
-OPNpool was tested with the Pentair&reg; SunTouch&reg; controller running firmware 2.080, connected to an IntelliFlo&reg; pump and IntelliChlor&reg; salt water chlorinator.
+OPNpool was tested with the Pentair SunTouch controller running firmware 2.080, connected to an IntelliFlo pump and IntelliChlor salt water chlorinator.
 
 > This open source and hardware project is intended to comply with the October 2016 exemption to the Digital Millennium Copyright Act allowing "good-faith" testing," in a controlled environment designed to avoid any harm to individuals or to the public.
 
