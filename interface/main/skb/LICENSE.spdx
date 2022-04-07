@@ -1,0 +1,7 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CC0-1.0
+Creator: Coert Vonk
+PackageName: Linux sk_buff inspired continuous memory for tx
+PackageOriginator: Coert Vonk
+PackageHomePage: https://github.com/cvonk/OPNpool/tree/master/interface/main/skb
+PackageLicenseDeclared: LICENSE
