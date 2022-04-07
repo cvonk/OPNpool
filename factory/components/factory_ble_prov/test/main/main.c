@@ -1,15 +1,15 @@
 /**
- * @brief Provision WiFi using BLE and phone app, then start OTA update
+ * @brief Provision WiFi using BLE and phone app
  *
-   based on: ...\espressif\esp-idf-v4.1-beta2\examples\provisioning\legacy\ble_prov\main\ble_main.c
-   BLE based Provisioning Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+ * Written in 2019, 2022 by Coert Vonk 
+ * 
+ * To the extent possible under law, the author(s) have dedicated all copyright and related and
+ * neighboring rights to this software to the public domain worldwide. This software is
+ * distributed without any warranty. You should have received a copy of the CC0 Public Domain
+ * Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+ * 
+ * SPDX-License-Identifier: CC0-1.0
+ */
 
 #include <string.h>
 #include <esp_system.h>
@@ -21,7 +21,6 @@
 #include <freertos/task.h>
 
 #include <factory_ble_prov.h>
-//#include "ota_update_task.h"
 
 /**
  * _ble_device_name_prefix and BLE_PROV_POP must match build.gradle in the android app;

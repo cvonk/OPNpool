@@ -1,11 +1,20 @@
 /**
- * @brief Pool state: support, state to cJSON
+ * @brief OPNpool - Pool state: support, state to cJSON
  *
- * CLOSED SOURCE, NOT FOR PUBLIC RELEASE
- * (c) Copyright 2020-2022, Coert Vonk
- * All rights reserved. Use of copyright notice does not imply publication.
- * All text above must be included in any redistribution
- **/
+ * © Copyright 2014, 2019, 2022, Coert Vonk
+ * 
+ * This file is part of OPNpool.
+ * OPNpool is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with OPNpool. 
+ * If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #include <string.h>
 #include <esp_system.h>
