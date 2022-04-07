@@ -177,10 +177,10 @@ I (16670) poolstate_rx: {CTRL_STATE_BCAST: {
 
 The web UI, will show the pool state and allow you to change the thermostat and circuits.
 
-![Web UI](design/media/more/opnpool-web-ui-pool-therm-sml.png)
+![Web UI](assets/media/opnpool-web-ui-pool-therm-sml.png)
 
 If you are using Home Assistant, the `*.opnpool*` entities will update automatically. The `hassio` directory has some YAML code to use with the Lovelace dashboard.
 
 If you go that route, also remember to install `modcard`, `button-card`, `bar-card`, `simple-thermostat`, `template-entity-row` and `mini-graph-card` available through the Home Assistant Community Store (HACS).
 
-![Hassio UI](design/media/more/opnpool-readme-hassio-lovelace.png)
+![Hassio UI](assets/media/opnpool-readme-hassio-lovelace.png)
