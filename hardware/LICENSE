@@ -1,0 +1,281 @@
+CERN Open Hardware Licence Version 2 - Strongly Reciprocal
+
+                           User Guide
+
+                         September 2, 2020
+                         Guide version: 1.0
+
+
+
+1 Introduction
+
+This document contains guidelines on how to apply the CERN-OHL-S v2 to a given
+hardware design, and on the use of hardware designs licensed under CERN-OHL-S
+v2. This means we will be talking to you sometimes as a licensor, and other
+times as a licensee.
+As a licensor, there are many ways in which you can make it clear to your
+licensees that you are sharing your designs under the licence. These guidelines
+are only to be taken as advice, illustrating some ways in which we think this
+can be done efficiently.
+To help you distinguish between requirements imposed by the licence (mostly as a
+licensee) and our suggestions to you (mostly as a licensor), we will use the
+word 'rule' for the former and the word 'suggestion' for the latter. Any
+perceived contradiction between these guidelines and the licence text should of
+course be resolved in favour of the licence text.
+
+
+2 How to apply CERN-OHL-S v2 to a hardware design
+
+2.1 Pre-requisite
+
+Authorship/ownership of the design must be clear and undisputed. Only the legal
+owner of the rights in the hardware design may decide under what conditions to
+make it available. Generally, if ownership is vested in more than one
+person/entity, there must be an agreement among the owners (or a chain of
+compatible licences from each of them) to release the hardware design as open
+hardware, and under the CERN-OHL-S v2 in particular.
+
+2.2 Your sources
+
+Nowadays, most designers who intend to share their work do so by hosting their
+design files (sources) in a publicly-accessible repository using version control
+systems such as git. The sites hosting these repositories usually provide users
+with the convenience of downloading a whole repository as a compressed (e.g.
+zip) file. Using these platforms is a very effective way of working: it makes it
+easier for you to receive feedback, shows your users the complete history of the
+project and allows them to easily start using it and contributing improvements.
+
+2.2.1 Suggestion: try to host your design in a publicly-accessible repository
+      using version control. If that is not possible, compress your whole
+      directory structure into one file and publish that file, so users get your
+      whole project in one go.
+
+If your goal is to share, it makes sense to provide enough information to users
+about the contents of the design package they download, and to make it easy for
+them to browse that information. For example, if you have designed your hardware
+using proprietary tools, people who download the design files may not have
+access to the tools you used. Sometimes you can also provide exported versions
+of those files which, although not as useful for modification as the originals,
+will make life easier for people who want to understand your designs. For
+example, PCB schematics and layout can be exported as pdf files, and 3D
+mechanical designs can be exported to the STEP format.
+
+2.2.2 Suggestion: include in your design sources versions of the files exported
+      to formats everybody can read. It would be helpful to specify the tools
+      you used, and, if they are publicly available under free and open source
+      licences, provide information about where the recipient can find them.
+
+It can also be good to let people know that you are following this guide, so
+they see why you are doing things in this or that way.
+
+2.2.3 Suggestion: include a copy of this user guide, in pdf or plain text
+      format, in your sources.
+
+Of course, although not strictly necessary, you should also include a copy of
+the licence text (CERN-OHL-S v2 in this case) in pdf or plain text form. Your
+design files will anyway be identified as licensed under that licence, with a
+URL pointing to the licence text, but it does not hurt to include the licence
+text in the source package for the convenience of the user and to make it very
+visible that the whole design is open source.
+
+2.2.4 Suggestion: include a copy of the CERN-OHL-S v2 licence text, in pdf or
+      plain text format, in your sources, and failing that, provide a link to
+      the licence at https://ohwr.org/cern_ohl_s_v2.txt.
+
+One of the requirements for licensees who make modifications to the design and
+publish those modifications is to make them explicit in a dedicated text file.
+As a licensor, you can make this obligation more easy for licensees to see and
+bear in mind by including a placeholder file called CHANGES.txt in your sources.
+
+2.2.5 Suggestion: include an empty CHANGES.txt file in your sources. You may
+      write a few lines in the beginning of the file stating that anyone
+      modifying the design should provide brief information about the
+      modifications, including the date they were made, and stating that
+      information about the design should be added but never removed from that
+      file. It could also state that, according to section 3.3.b of the licence,
+      licensees should provide a brief entry with a date and the nature of the
+      modification for each design change. For example '26 April 2020: AC/DC
+      power converter circuit removed as AC input no longer necessary'.
+
+Now, as you have seen, as the initial licensor, relatively few rules apply to
+you. We are going to assume that it is your intent to license your design under
+CERN-OHL-S v2 though, and in that sense the minimal requirements are going to be
+described as 'rules' below. Some files can easily include a header or a text box
+with copyright and licensing information which will be easily visible to whoever
+opens them. For file types which do not easily grant that possibility, consider
+using a separate text file taking as its name the name of the original file with
+'.license' appended to it. So if you have e.g. a file called
+`my_3d_design.FCStd', you can add another file in the same directory called
+`my_3d_design.FCStd.license' which is a text file containing copyright and
+licensing information. If the number of files in your project is large and the
+'.license' method is deemed too cumbersome, you can centralise all your
+licensing information in a single text file following the Debian DEP5
+specification. Both the '.license' and the DEP5 methods are suggested in the
+REUSE guidelines. See https://reuse.software/for details.
+
+2.2.6 Rule: include for each source file, either embedded in the file itself or
+      in a separate text file which refers to it:
+       (a) a copyright notice reflecting actual ownership;
+       (b) a notice that the hardware design source is licensed under the CERN-
+           OHL-S v2, possibly with a link to https://ohwr.org/cern_ohl_s_v2.txt:
+             i."Licensed under CERN-OHL-S v2 or any later version" or
+            ii."Licensed under CERN-OHL-S v2";
+       (c) a disclaimer of warranties;
+       (d) a Source Location if you wish to specify one;
+       (e) optionally, a Notice specifying that you wish the Source Location to
+           remain visible on the Product (or its packaging, or in its
+           documentation) even after modifications.
+
+Here is an example for a hypothetical designer called Sam Smith hosting a
+design called Gizmo at https://example_url:
+
+ ------------------------------------------------------------------------------
+| Copyright Sam Smith 2020.                                                    |
+|                                                                              |
+| This source describes Open Hardware and is licensed under the CERN-OHL-S v2. |
+|                                                                              |
+| You may redistribute and modify this source and make products using it under |
+| the terms of the CERN-OHL-S v2 (https://ohwr.org/cern_ohl_s_v2.txt).         |
+|                                                                              |
+| This source is distributed WITHOUT ANY EXPRESS OR IMPLIED WARRANTY,          |
+| INCLUDING OF MERCHANTABILITY, SATISFACTORY QUALITY AND FITNESS FOR A         |
+| PARTICULAR PURPOSE. Please see the CERN-OHL-S v2 for applicable conditions.  |
+|                                                                              |
+| Source location: https://example_url                                         |
+|                                                                              |
+| As per CERN-OHL-S v2 section 4, should You produce hardware based on this    |
+| source, You must where practicable maintain the Source Location visible      |
+| on the external case of the Gizmo or other products you make using this      |
+| source.                                                                      |
+ ------------------------------------------------------------------------------
+
+The first three lines in the example above, containing copyright and licence
+type, can be substituted by a valid SPDX header, like this:
+
+SPDX-FileCopyrightText: 2020 Sam Smith <sam@example.com>
+SPDX-License-Identifier: CERN-OHL-S-2.0
+
+or, in case the 'or any later version' option is preferred:
+
+SPDX-FileCopyrightText: 2020 Sam Smith <sam@example.com>
+SPDX-License-Identifier: CERN-OHL-S-2.0+
+
+2.2.7 Suggestion: use standard SPDX headers whenever possible so that your
+      choice of licence is easy to understand by humans and computers alike.
+
+Why would you license your design under 'CERN-OHL-S v2 or any later version'?
+Imagine we discovered a shortcoming of the licence which made us write a new
+version, let's say version 3.0, to fix it. Let us further imagine that we
+decided to make v3 incompatible with v2 (this actually happened with the GPL).
+If you licensed your design under 'v2 only' that means it could not be combined
+with new designs licensed under v3. If, on the other hand, you license your
+design under 'v2 or any later version', you give future licensees the option of
+interpreting the design as licensed under the hypothetical v3, and there would
+be no compatibility issues. This is quite an important decision to take when you
+use a reciprocal licence, so we thought we'd mention it in this guide. You have
+to make your own judgment as to whether you believe that CERN can be trusted to
+ensure that future versions of the CERN-OHL will be similar in spirit and effect
+to this version.
+
+2.2.8 Suggestion: give some thought to the 'or any later version' option before
+      publishing your design under CERN-OHL-S v2.
+
+We are going to assume that you, as a licensor, want people who receive a
+product based on your design to know that it is Open Hardware and where they can
+find the design files for that product, hence:
+
+2.2.9 Rule: include in a part of the Source corresponding to a visible part of
+      the Product (e.g. silkscreen or top copper for a printed circuit board):
+        (a) the licence notice: "Licensed under CERN-OHL-S v2";
+        (b) the Source Location.
+
+2.2.10 Suggestion: You can optionally include a copyright notice to be printed
+       on the Product (remember you must keep intact any Notices in the source,
+       though). If you do, and your design includes part of other designs, you
+       should at least acknowledge the work is not all your own by using e.g.
+       Copyright Sam Smith and others. In any case, do not include the CERN
+       logo.
+
+2.3 A Note on Components
+
+If your design is modular, consider licensing each of the components you have
+designed separately, and then having an overarching design, also licensed under
+an appropriate variant of CERN-OHL which contains each of the sub-components as
+an Available Component. This will make life easier for licensees who only want
+to make use of one component of your design.
+
+
+3 How to deal with hardware designs licensed under CERN-OHL-S v2
+
+Generally speaking, you must comply with the requirements applying to a
+particular design detailed in the accompanying licence. If you receive hardware
+designs licensed under the CERN-OHL-S v2, the requirements are to:
+
+3.1 Rule: keep intact all the copyright, acknowledgement and trademark notices
+    and Source Location notices that are on the hardware design sources.
+
+3.2 Rule: keep intact the references to the CERN-OHL-S v2.
+
+3.3 Rule: keep intact the disclaimer of warranties.
+
+
+3.1 Design modifications and publication
+
+If you modify a hardware design licensed by someone else under CERN-OHL-S v2,
+and you want to publish your modified design, or you need to publish it e.g. as
+a result of the obligations attached to the production and distribution of
+products, you must:
+
+3.1.1 Rule: keep intact all the notices referred to above, although you may
+      remove notices that are no longer relevant to your design (for example, if
+      the design you are using contains a power supply and a processor board,
+      and you are only using the processor board in your own design, you can
+      remove the notices relating to the power supply, so long as you are sure
+      they only relate to the power supply).
+
+3.1.2 Rule: include notices stating that you have modified the hardware de-
+      signs, giving a date and information about the modifications you have made
+      (e.g. in a CHANGES.txt file).
+
+3.1.3 Rule: add the appropriate copyright notice and Source Location to the
+      modifications that were made.
+
+3.1.4 Rule: license the modifications under the 'CERN-OHL-S v2' (or 'CERN- OHL-S
+      v2 or any later version' if permitted by the original licensor, and all
+      other components of the design allow you to license with the 'or any later
+      version' option).
+
+3.1.5 Rule: if your design is a modification of someone else's design, or
+      incorporates parts of another's design, and in each case the other's
+      design is released under CERN-OHL, CERN-OHL-W or CERN-OHL-S you must (if
+      your tools allow this) include in your design sources versions of the
+      files exported to formats everybody can read using tools available under a
+      free or open source software licence. By CERN-OHL we mean any of the
+      earlier versions of the licence, prior to v2.
+
+
+3.2 Hardware production and distribution
+
+If, as a licensee, you want to produce hardware based on a design licensed under
+CERN-OHL-S v2 and/or distribute that hardware, you need to:
+
+3.2.1 Rule: either provide each recipient with a copy of the Complete Source or
+      ensure that each recipient is notified of the Source Location of the
+      Complete Source.
+
+By Complete Source, we mean all files needed to make the hardware. Please see
+the licence text for details. You also need to respect, if applicable, the
+will expressed by the licensor to have a clear visual indication of the Source
+Location on the hardware:
+
+3.2.2 Rule: if specified in a Notice by the licensor, the Product must visibly
+      and securely display the Source Location on it or its packaging or
+      documentation in the manner specified in that Notice.
+
+
+4 Asking for help
+
+If there is something unclear in this guide, or you have any question on how to
+apply the licence, the best place to ask is the CERN OHL forum at
+https://forums.ohwr.org/c/cernohl. You may also find useful information in the
+FAQs at https://www.ohwr.org/project/cernohl/wikis/faq.
