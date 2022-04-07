@@ -184,3 +184,25 @@ If you are using Home Assistant, the `*.opnpool*` entities will update automatic
 If you go that route, also remember to install `modcard`, `button-card`, `bar-card`, `simple-thermostat`, `template-entity-row` and `mini-graph-card` available through the Home Assistant Community Store (HACS).
 
 ![Hassio UI](assets/media/opnpool-readme-hassio-lovelace.png)
+
+### Hosting the Web UI
+
+To host the Web UI yourself, copy the files from `webui` to your web server. Then reflect this change in the file `interface/main/httpd/httpd_root.c`.
+
+## Design documentation
+
+The design documentation for this project is available at
+> [https://coertvonk.com/category/sw/embedded/opnpool-design](https://coertvonk.com/category/sw/embedded/opnpool-design)
+
+It includes the chapters
+
+- [Introduction](https://coertvonk.com/sw/embedded/opnpool-design/introduction-2-11554)
+- [RS-485 bus](https://coertvonk.com/sw/embedded/opnpool-design/bus-access-31957)
+- [Hardware](https://coertvonk.com/sw/embedded/opnpool-design/hardware-3-31959)
+- [Tools](https://coertvonk.com/sw/embedded/opnpool-design/tools-31961)
+- [Debugging](https://coertvonk.com/sw/embedded/opnpool-design/debugging-31963)
+- [Protocol](https://coertvonk.com/sw/embedded/opnpool-design/protocol-31965)
+- [Deploying](https://coertvonk.com/sw/embedded/opnpool-design/deploying-31984)
+- [Interface](https://coertvonk.com/sw/embedded/opnpool-design/interface-software-31967)
+- [Web UI](https://coertvonk.com/sw/embedded/opnpool-design/web-ui-32000)
+- [Home Automation](https://coertvonk.com/sw/embedded/opnpool-design/home-automation-32008)
