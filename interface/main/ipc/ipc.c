@@ -16,7 +16,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-
 #include <string.h>
 #include <esp_system.h>
 #include <esp_log.h>
