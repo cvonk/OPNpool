@@ -189,7 +189,7 @@ If you go that route, also remember to install `modcard`, `button-card`, `bar-ca
 
 To host the Web UI yourself, copy the files from `webui` to your web server. Then reflect this change in the file `interface/main/httpd/httpd_root.c`.
 
-## Design documentation
+## Design docs
 
 The design documentation for this project is available at
 > [https://coertvonk.com/category/sw/embedded/opnpool-design](https://coertvonk.com/category/sw/embedded/opnpool-design)
