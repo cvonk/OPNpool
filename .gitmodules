@@ -16,12 +16,3 @@
 [submodule "android"]
 	path = android
 	url = git@github.com:cvonk/Android-esp_idf_provisioning.git
-[submodule "research/protocol/nodejs-poolController"]
-	path = research/protocol/nodejs-poolController
-	url = git@github.com:tagyoureit/nodejs-poolController.git
-[submodule "research/protocol/easy-touch-raspberry-pi"]
-	path = research/protocol/easy-touch-raspberry-pi
-	url = git@github.com:dminear/easy-touch-raspberry-pi.git
-[submodule "research/protocol/Arduino.Pentair"]
-	path = research/protocol/Arduino.Pentair
-	url = git@github.com:Zuntara/Arduino.Pentair.git
