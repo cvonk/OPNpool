@@ -1,0 +1,7 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CERN-OHL-S-2.0
+Creator: Coert Vonk
+PackageName: OPNpool Hardware
+PackageOriginator: Coert Vonk
+PackageHomePage: https://github.com/cvonk/OPNpool/tree/master/hardware/schematic
+PackageLicenseDeclared: LICENSE
