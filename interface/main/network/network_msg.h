@@ -400,8 +400,6 @@ typedef network_msg_ctrl_layout_resp_t network_msg_ctrl_layout_set_t;
  * A5 messages, use to communicate with Pump
  */
 
-// there might be more info under `SETTING` at https://github.com/cilynx/pypentair/blob/master/pypentair/__init__.py
-
 // PUMP_REG
 
 typedef struct network_msg_pump_reg_set_t {

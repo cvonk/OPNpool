@@ -28,6 +28,8 @@ If you only want to take this project for a quick spin, refer to the [`README.md
 
 We will build a printed circuit board (PCB) with an ESP32 module, RS-485 adapter and DC/DC converter.
 
+If there is enough interest, I can start a project on Tindie or Crowd Supply to get some bulk pricing.
+
 ### Schematic
 
 A buck converter provides 5 Volts to the battery connector on the LOLIN D32 daughterboard. Using the battery input, helps prevent problems when it is also powered through the USB connector.
@@ -61,8 +63,6 @@ The schematic fits easily on a two layer PCB. Note the cut out for the RF antenn
 | Enclosure | 150x85x35mm clear waterproof project enclosure | [$6.99](https://www.dx.com/s/492680) |
 
 I left the link to my PCB order in with the price for your convienence.
-
-
 
 At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can breadboard this using:
 
