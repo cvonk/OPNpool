@@ -6,7 +6,8 @@
 interface/debug.log
 interface/sdkconfig.old
 interface/main/trace.txt
-hardware/schematic/Pool Interface.s#1
-hardware/schematic/Pool Interface.b#1
+hardware/schematic/*.s#1
+hardware/schematic/*.b#1
+hardware/schematic/*.job
 .vscode/*
 **/.vscode/ssettings.json
