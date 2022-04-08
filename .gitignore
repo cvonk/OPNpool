@@ -10,6 +10,6 @@ hardware/*.s#?
 hardware/*.b#?
 hardware/*.job
 hardware/*.cam
-hardware/libraries/l#?
+hardware/libraries/*.l#?
 .vscode/*
 **/.vscode/ssettings.json
