@@ -6,8 +6,8 @@
 interface/debug.log
 interface/sdkconfig.old
 interface/main/trace.txt
-hardware/*.s#1
-hardware/*.b#1
+hardware/*.s#?
+hardware/*.b#?
 hardware/*.job
 .vscode/*
 **/.vscode/ssettings.json
