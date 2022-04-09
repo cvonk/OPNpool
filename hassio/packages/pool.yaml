@@ -42,9 +42,9 @@ template:
       - name: opnpool_recommended_runtime
         unit_of_measurement: h
         state: |
-          {% set air_temp = states("sensor.opnpool_water_temp") | float(0) %}
-          {% if air_temp > 0 %}
-          {{   (air_temp / 10) | round(0) }}
+          {% set water_temp = states("sensor.opnpool_water_temp") | float(0) %}
+          {% if water_temp > 0 %}
+          {{   (water_temp / 10) | round(0) }}
           {% endif %}
   - binary_sensor:
       - name: opnpool_chlor_status_fault
@@ -60,7 +60,7 @@ template:
 
 sensor:
   - platform: poolmath
-    url: https://api.poolmathapp.com/share/qVWpMm0
+    url: https://api.poolmathapp.com/share/YOUR_ID
 
 # take heater so Google Assistant can read the outside temperature
 input_boolean:
