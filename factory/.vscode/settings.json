@@ -1,6 +1,6 @@
 {
   "cmake.cmakePath": "C:/espressif/bin/tools/cmake/3.20.3/bin/cmake",
-  "idf.portWin": "COM7",
+  "idf.portWin": "COM6",
   "idf.adapterTargetName": "esp32",
   "cmake.configureOnOpen": false,
   "files.associations": {
