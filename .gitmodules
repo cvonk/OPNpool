@@ -15,4 +15,4 @@
 	url = https://github.com/cvonk/ESP32_wifi-connect.git
 [submodule "android"]
 	path = android
-	url = git@github.com:cvonk/Android-esp_idf_provisioning.git
+	url = git@github.com:cvonk/OPNpool_provisioning.git
