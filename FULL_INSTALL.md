@@ -48,21 +48,28 @@ The schematic fits easily on a two layer PCB. Note the cut out for the RF antenn
 
 ### Bill of materials
 
-| Name | Description | Price |
-|------|-------------|-------|
-| LOLIN D32 | [Wemos LOLIN D32, ESP-WROOM-32 4MB](https://wiki.wemos.cc/products:d32:d32") | [$6.50](https://www.aliexpress.com/item/WEMOS-LOLIN32-V1-0-0-wifi-bluetooth-board-based-ESP-32-4MB-FLASH/32808551116.html") |
-| MAX3485CSA+ | Maxim MAX3485CSA+, RS-485/UART interface IC 3.3V | [$2.89](http://www.mouser.com/ProductDetail/Maxim-Integrated/MAX3485CSA+/) |
-| DC1 | DC/DC Converter R-78E5.0-0.5, 5V, 0.5A | [$2.70](http://www.mouser.com/ProductDetail/RECOM-Power/R-78E50-05/) |
-| D2 |  Rectron Schottky Diode, 1N5818 (or MBRS130 1A 0.3V SMB) | [$0.14](https://www.mouser.com/ProductDetail/ON-Semiconductor-Fairchild/SS12) |
-| C1, C2 | Capacitor, 10 µF, 25 V, multi-layer ceramic, 0805 | 2* [$0.34](https://www.mouser.com/ProductDetail/TDK/C2012X5R1E106K125AB) |
-| C3 | Capacitor, 0.1 µF, 6.3 V, multi-layer ceramic, 0805 | [$0.22](https://www.mouser.com/ProductDetail/KEMET/C0805C104K9RACTU) |
-| R1 | Not stuffed, resistor, 120 Ω, 1/4 W, 0805 | [$0.10](https://www.mouser.com/ProductDetail/660-RK73H2ATTD1200F) |
-| RS485-TERM-5MM | Fixed terminal block, 4-pin, screwless, 5 mm pitch | [$1.75](https://www.mouser.com/ProductDetail/Phoenix-Contact/1864451)
-| RS485_CONN | Plug and socket, 5-pin, SD16-5, IP68 waterproof | [$3.29](https://www.aliexpress.com/item/SD16-16mm-5-Pin-Flange-Waterproof-Aviation-Connector-Plug-Socket-Straight-IP68/32401149735.html) |
-| PBC | Printed circuit board | [$9.43](https://oshpark.com/shared_projects/CFBihnoN) |
-| Enclosure | 150x85x35mm clear waterproof project enclosure | [$6.99](https://www.dx.com/s/492680) |
+| Name        | Description                                             | Sugggested mfr/part#       |
+|-------------|---------------------------------------------------------|----------------------------|
+| PBC r2      | Printed circuit board                                   | [OSHPark nS1z3Duu](https://oshpark.com/shared_projects/nS1z3Duu) [^1] |
+| Enclosure   | 158x90x60mm clear plastic project enclosure, IP65       | *white label*              |
+| LOLIN D32   | Wemos LOLIN D32, based on ESP-WROOM-32 4MB</a>          | Wemos LOLIN-D32            |
+| RS485_CONN  | Plug+socket, male+female, 5-pin, 16mm aviation, IP68    | SD 16                      | 
+| MAX3485     | Maxim MAX3485CSA, RS-485/UART interface IC 3.3V, 8-SOIC | Analog-Devices MAX3490ECSA |
+| DC1         | DC/DC Converter R-78E5.0-0.5, 7-28V to 5V, 0.5A, 3-SIP  | RECOM-Power R-78E5.0-0.5   |
+| D1          | Schottky Diode, 1N5818, DO-41                           | ON-Semiconductor 1N5818RLG |
+| LED1        | LED, Green Clear 571nm, 1206                            | Lite-On LTST-C150KGKT      |
+| LED2        | LED, Amber Clear 602nm, 1206                            | Lite-On LTST-C150AKT       |
+| C1, C2      | Capacitor, 10 µF, 25 V, multi-layer ceramic, 0805       | KEMET C0805C106K3PACTU     |
+| C3          | Capacitor, 0.1 µF, 6.3 V, multi-layer ceramic, 0805     | KEMET C0805C104M3RACTU     |
+| R1, R2      | Resistor, 68 Ω, 1/8 W, 0805                             | YAGEO RC0805FR-0768RL      |
+| R3          | Not stuffed, resistor, 120 Ω, 1/4 W, 0805               | KAO SG73S2ATTD121J         |
+| RS485-TERM  | Fixed terminal block, 4-pin, screwless, 5 mm pitch      | Phoenix-Contact 1862291    |
+| SW1         | Tactile Switch, 6x6mm, through hole                     | TE-Connectivity 1825910-4  |
+| PCB Screws  | Machine screw, #6-32 x x 3/16", panhead                 | Keystone-Electronics 9306  |
+| CONN Screws | Machine screw, M2-0.4 x 16 mm, cheese head              | Essentra 50M020040D016     |
+| CONN Nuts   | Hex nut, M2-0.4, nylon                                  | Essentra 04M020040HN       |
 
-I left the link to my PCB order in with the price for your convienence.
+[^1]: I shared my [PCB order](https://oshpark.com/shared_projects/nS1z3Duu) for your convienence.
 
 At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can breadboard this using:
 
@@ -140,13 +147,17 @@ Using an Android phone:
 
   * Install and run the OPNpool app from the [Play Store](https://play.google.com/store/apps/details?id=com.coertvonk.opnpool).
   * Using the overflow menu, select "Provision device".
-  * Click on the "Provision" button and grant it access [^1].
+  * Click on the "Provision" button and grant it access [^2].
   * Click on the name of the OPNpool device one it is detected (`POOL*`).
   * Select the Wi-Fi SSID to connect to and give it the password.
   * If you don't have a MQTT broker press Skip.  Otherwise, specify the broker URL in the format `mqtt://username:passwd@host.domain:1883`.
   * Wait a few minutes for the provisioning to complete.
 
-[^1]: Precise location permission is needed to find and connect to the OPNpool device using Bluetooth LE.
+[^2]: Precise location permission is needed to find and connect to the OPNpool device using Bluetooth LE.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=tHYNv9jL5MY" target="_blank">
+ <img src="http://img.youtube.com/vi/tHYNv9jL5MY/mqdefault.jpg" alt="Watch the video" width="960" border="0" />
+</a>
 
 The device will appear on your network segment as `opnpool.local`.  You can access its web interface through `http://pool.local`. If MQTT is configured, it will publish MQTT messages. If you also use the [Home Assistant](https://www.home-assistant.io/), entities will appear after a few minutes with  `.opnpool` in their name.
 
@@ -155,6 +166,8 @@ The device will appear on your network segment as `opnpool.local`.  You can acce
 > :warning: **THIS PROJECT IS OFFERED AS IS. IF YOU USE IT YOU ASSUME ALL RISKS. NO WARRENTIES. At the very least, turn off the power while you work on your pool equipment. Be careful, THERE IS ALWAYS A RISK OF BREAKING YOUR POOL EQUIPMENT.**
 
 Understanding the above warning .. the RS-485 header can be found on the back of the control board. There are probably already wires connected that go to the devices such as pump and chlorinator.
+
+![Inside of Pool controller](assets/media/opnpool-rs485-inside.jpg)
 
 To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 cable to connect the `A`/`B` pair to the RS-485 adapter as shown in the table below.
 
