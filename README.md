@@ -73,6 +73,8 @@ The device will appear on your network segment as `opnpool.local`.  You can acce
 
 Understanding the above warning .. the RS-485 header can be found on the back of the control board. There are probably already wires connected that go to the devices such as pump and chlorinator.
 
+![Inside of Pool controller](assets/media/opnpool-rs485-inside.jpg)
+
 To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 cable to connect the `A`/`B` pair to the RS-485 adapter as shown in the table below.
 
 | Controller       | RS-485 adapter | idle state |         
