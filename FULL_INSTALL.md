@@ -188,9 +188,86 @@ I (16670) poolstate_rx: {CTRL_STATE_BCAST: {
 }
 ```
 
-The web UI, will show the pool state and allow you to change the thermostat and circuits.
+### Web UI
+
+The web UI at `http://opnpool.lcoal/`, will show the pool state and allow you to change the thermostat and circuits.
 
 ![Web UI](assets/media/opnpool-web-ui-pool-therm-sml.png)
+
+### MQTT publish
+
+When the path to the MQTT broker is provisioned, OPNpool will publish its state to topics
+
+| topic                                                                   | values      |
+| ------------------------------------------------------------------------|-------------|
+| `homeassistant/switch/opnpool/pool_circuit/state`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/spa_circuit/state`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/aux1_circuit/state`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/aux2_circuit/state`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/aux3_circuit/state`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft1_circuit/state`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft2_circuit/state`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft3_circuit/state`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft4_circuit/state`             | (`ON`\|`OFF`) |
+| `homeassistant/climate/opnpool/pool_heater/available`        | (`online`\|`offline`) |
+| `homeassistant/climate/opnpool/pool_heater/state`            | *see below* |
+| `homeassistant/climate/opnpool/spa_heater/available`         | (`online`\|`offline`) |
+| `homeassistant/climate/opnpool/spa_heater/state`             | *see below*         |
+| `homeassistant/sensor/opnpool/pool_sched/state`              | hh:mm - hh:mm |
+| `homeassistant/sensor/opnpool/spa_sched/state`               | hh:mm - hh:mm |
+| `homeassistant/sensor/opnpool/aux1_sched/state`              | hh:mm - hh:mm |
+| `homeassistant/sensor/opnpool/aux2_sched/state`              | hh:mm - hh:mm |
+| `homeassistant/sensor/opnpool/air_temp/state`                | *integer* |
+| `homeassistant/sensor/opnpool/water_temp/state`              | *integer* |
+| `homeassistant/sensor/opnpool/system_time/state`             | *integer* |
+| `homeassistant/sensor/opnpool/ctrl_version/state`            | *integer* |
+| `homeassistant/sensor/opnpool/if_version/state`              | *integer* |
+| `homeassistant/sensor/opnpool/pump_mode/state`               | (`FILTER`\|`MAN`\|`BKWASH`\| `EP1`\|`EP2`\|`EP3`\|`EP4`) |
+| `homeassistant/sensor/opnpool/pump_status/state`             | *integer* |
+| `homeassistant/sensor/opnpool/pump_power/state`              | *integer* |
+| `homeassistant/sensor/opnpool/pump_gpm/state`                | *integer* |
+| `homeassistant/sensor/opnpool/pump_speed/state`              | *integer* |
+| `homeassistant/sensor/opnpool/pump_error/state`              | *integer* |
+| `homeassistant/sensor/opnpool/chlor_name/state`              | *string* |
+| `homeassistant/sensor/opnpool/chlor_pct/state`               | *integer* |
+| `homeassistant/sensor/opnpool/chlor_salt/state`              | *integer* |
+| `homeassistant/sensor/opnpool/chlor_status/state`            | (`OK`\|`LOW_FLOW`\|`LOW_SALT`\| `HIGH_SALT`\|`COLD`\|`CLEAN_CELL`\| `OTHER`) |
+| `homeassistant/binary_sensor/opnpool/pump_running/state`     | (`ON`\|`OFF`) |
+| `homeassistant/binary_sensor/opnpool/mode_service/state`     | (`ON`\|`OFF`) |
+| `homeassistant/binary_sensor/opnpool/mode_temp_inc/state`    | (`ON`\|`OFF`) |
+| `homeassistant/binary_sensor/opnpool/mode_freeze_prot/state` | (`ON`\|`OFF`) |
+| `homeassistant/binary_sensor/opnpool/mode_timeout/state`     | (`ON`\|`OFF`) |
+
+The thermostat state is a JSON string, for example
+```json
+{
+    "mode": "heat",    // static
+    "heatsrc": "None", // None/Heater/SolarPref/Solar
+    "target_temp": 70,
+    "current_temp": 67,
+    "action": "off"    // off/heating/idle
+}
+```
+
+### MQTT subscribe
+
+When the path to the MQTT broker is provisioned, OPNpool will subscribe to the topics
+
+| topic                                                                   | accepts     |
+| ------------------------------------------------------------------------|-------------|
+| `homeassistant/switch/opnpool/pool_circuit/config`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/spa_circuit/config`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/aux1_circuit/config`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/aux2_circuit/config`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/aux3_circuit/config`            | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft1_circuit/config`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft2_circuit/config`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft3_circuit/config`             | (`ON`\|`OFF`) |
+| `homeassistant/switch/opnpool/ft4_circuit/config`             | (`ON`\|`OFF`) |
+| `homeassistant/climate/opnpool/pool_heater/set_temp`          | *integer*     |
+| `homeassistant/climate/opnpool/pool_heater/set_heatsrc`       | (`None`\|`Heater`\|`SolarPref`\|`Solar`) |
+
+### Home Assistant
 
 If you are using Home Assistant, the `*.opnpool*` entities will update automatically. The `hassio` directory has some YAML code to use with the Lovelace dashboard.
 
