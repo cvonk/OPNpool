@@ -69,7 +69,7 @@ The schematic fits easily on a two layer PCB. Note the cut out for the RF antenn
 | CONN Screws | Machine screw, M2-0.4 x 16 mm, cheese head              | Essentra 50M020040D016     |
 | CONN Nuts   | Hex nut, M2-0.4, nylon                                  | Essentra 04M020040HN       |
 
-[^1]: I shared my [PCB order](https://oshpark.com/shared_projects/nS1z3Duu) for your convienence.
+[^1]: We shared our [PCB order](https://oshpark.com/shared_projects/nS1z3Duu) for your convienence.
 
 At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can breadboard this using:
 
@@ -194,6 +194,14 @@ The web UI at `http://opnpool.lcoal/`, will show the pool state and allow you to
 
 ![Web UI](assets/media/opnpool-web-ui-pool-therm-sml.png)
 
+### Home Assistant
+
+If you are using Home Assistant, the `*.opnpool*` entities will update automatically. The `hassio` directory has some YAML code to use with the Lovelace dashboard.
+
+If you go that route, also remember to install `modcard`, `button-card`, `bar-card`, `simple-thermostat`, `template-entity-row` and `mini-graph-card` available through the Home Assistant Community Store (HACS).
+
+![Hassio UI](assets/media/opnpool-readme-hassio-lovelace.png)
+
 ### MQTT publish
 
 When the path to the MQTT broker is provisioned, OPNpool will publish its state to topics
@@ -251,7 +259,7 @@ The thermostat state is a JSON string, for example
 
 ### MQTT subscribe
 
-When the path to the MQTT broker is provisioned, OPNpool will subscribe to the topics
+When the path to the MQTT broker is provisioned, OPNpool will subscribe to the topics listed below
 
 | topic                                                                   | accepts     |
 | ------------------------------------------------------------------------|-------------|
@@ -266,14 +274,6 @@ When the path to the MQTT broker is provisioned, OPNpool will subscribe to the t
 | `homeassistant/switch/opnpool/ft4_circuit/config`             | (`ON`\|`OFF`) |
 | `homeassistant/climate/opnpool/pool_heater/set_temp`          | *integer*     |
 | `homeassistant/climate/opnpool/pool_heater/set_heatsrc`       | (`None`\|`Heater`\|`SolarPref`\|`Solar`) |
-
-### Home Assistant
-
-If you are using Home Assistant, the `*.opnpool*` entities will update automatically. The `hassio` directory has some YAML code to use with the Lovelace dashboard.
-
-If you go that route, also remember to install `modcard`, `button-card`, `bar-card`, `simple-thermostat`, `template-entity-row` and `mini-graph-card` available through the Home Assistant Community Store (HACS).
-
-![Hassio UI](assets/media/opnpool-readme-hassio-lovelace.png)
 
 ### Hosting the Web UI
 
