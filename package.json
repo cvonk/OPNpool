@@ -1,0 +1,13 @@
+{
+  "name": "opnpool",
+  "version": "1.2.4",
+  "description": "OPNpool integrates the traditional Pool Controller into our smart hom",
+  "dependencies": {
+    "esp-idf": "4.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cvonk/OPNpool"
+  },
+  "author": "Coert Vonk"
+}
