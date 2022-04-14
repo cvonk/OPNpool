@@ -1,24 +1,26 @@
 # OPNpool
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/OPNpool_provisioning)](https://github.com/cvonk/OPNpool/discussions) 
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool?include_prereleases&logo=DocuSign&logoColor=%23fff) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf) `[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-The OPNpool integrates the traditional Pool Controller into our smart home. It keeps a tab on the status of the controller, the pool pump and the chlorinator. It is not only more convenient than walking over to the pool equipment, but will also tell you about problems with e.g. the chlorinator or pump. 
+The OPNpool integrates the functionality of a traditional Pool Controller into the modern smart home. It keeps tabs on the status of the connected controller, pool pump and chlorinator. This provides not only a more convenient solution than physically interacting with the pool equipment, but the ability to create automations that runs the pump for a duration depending on the temperature.
 
 Features:
 
-  - [x] Visualizes the status of the thermostats, pump, chlorinator, circuits and schedules.
-  - [x] Lets you change the thermostats and switch circuits
-  - [x] Over-the-air updates [^1]
-  - [x] One time provisioning from a phone [^1]
-  - [x] MQTT and Home Assistant integration
-  - [x] Web UI
-  - [x] IP68 waterproof case and connectors [^1]
-  - [x] No power adapter required [^1]
+  - [x] Visualizes the status of the thermostats, pump, chlorinator, circuits, and schedules.
+  - [x] Allows you adjust the thermostats and toggle circuits
+  - [x] No physical connection to your LAN
+  - [x] Supports over-the-air updates [^1]
+  - [x] Easily one-time provisioning from an Android phone [^1]
+  - [x] Integrates with MQTT and Home Assistant
+  - [x] Accessible as a webapp
+  - [x] Protected with IP68 waterproof case and connectors [^1]
+  - [x] Does not require a power adapter [^1]
   - [x] Open source!
 
 [^1]: Available with the full install as described in [`FULL_INSTALL.md`](FULL_INSTALL.md)
 
-OPNpool was tested with the Pentair&reg; SunTouch&reg; controller running firmware 2.080, connected to an IntelliFlo&reg; pump and IntelliChlor&reg; salt water chlorinator.
+This device was tested with the Pentair SunTouch controller with firmware 2.080, connected to an IntelliFlo pump and IntelliChlor salt water chlorinator.
 
 > This open source and hardware project is intended to comply with the October 2016 exemption to the Digital Millennium Copyright Act allowing "good-faith" testing," in a controlled environment designed to avoid any harm to individuals or to the public.
 
