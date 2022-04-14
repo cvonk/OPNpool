@@ -96,7 +96,7 @@ Connect the RS-485 adapter to the ESP32 module.  I also pulled `GPIO#27` down wi
 The serial monitor will show decoded messages such as:
 
 ```json
-I (16670) poolstate_rx: {CTRL_STATE_BCAST: {
+{
     "state":{"system":{"tod":{"time":"14:01","date":"2022-04-05"},"firmware":"v0.000"},"temps":{"air":69,"solar":80},
     "thermos":{"pool":{"temp":68,"src":"None","heating":false},"spa":{"temp":69,"src":"None","heating":false}},
     "scheds":{"pool":{"start":"08:00","stop":"10:00"}},
