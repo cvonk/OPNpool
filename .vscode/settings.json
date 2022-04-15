@@ -1,3 +1,4 @@
 {
-    "idf.portWin": "COM7"
+    "idf.portWin": "COM7",
+    "cmake.configureOnOpen": false
 }
