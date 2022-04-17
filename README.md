@@ -84,7 +84,7 @@ To minimize electromagnetic interference, use a twisted pairs from e.g. CAT-5 ca
 | `-DATA` (green)  |  `A`           | negative   |
 | `+DATA` (yellow) |  `B`           | positive   |
 
-Connect the RS-485 adapter to the ESP32 module.  I also pulled `GPIO#27` down with a 10 k&ohm; resistor, to keep it from transmiting while the ESP32 is booting.
+Connect the RS-485 adapter to the ESP32 module.  I also pulled `GPIO#27` down with a 10 k&ohm; resistor, to keep it from transmitting while the ESP32 is booting.
 
 | RS-485 adapter | ESP32 module |
 |:---------------|:-------------|
