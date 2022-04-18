@@ -1,7 +1,7 @@
 # OPNpool
 
 [![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/OPNpool_provisioning)](https://github.com/cvonk/OPNpool/discussions) 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool?include_prereleases&logo=DocuSign&logoColor=%23fff) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf) `[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool?include_prereleases&logo=DocuSign&logoColor=%23fff) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf) ![GitHub](https://img.shields.io/github/license/cvonk/ESP32_factory-ble-prov)
 
 The OPNpool integrates the functionality of a traditional Pool Controller into the modern smart home. It keeps tabs on the status of the connected controller, pool pump and chlorinator. This provides not only a more convenient solution than physically interacting with the pool equipment, but the ability to create automations that runs the pump for a duration depending on the temperature.
 
