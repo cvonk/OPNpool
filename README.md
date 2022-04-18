@@ -120,9 +120,7 @@ If you go that route, also remember to install `modcard`, `button-card`, `bar-ca
 ## Design documentation
 
 The design documentation for this project is available at
-[https://coertvonk.com/category/sw/embedded/opnpool-design](https://coertvonk.com/category/sw/embedded/opnpool-design)
-
-It includes the chapters
+[https://coertvonk.com/category/sw/embedded/opnpool-design](https://coertvonk.com/category/sw/embedded/opnpool-design). It includes the chapters
 
 - [Introduction](https://coertvonk.com/sw/embedded/opnpool-design/introduction-2-11554)
 - [RS-485 bus](https://coertvonk.com/sw/embedded/opnpool-design/bus-access-31957)
