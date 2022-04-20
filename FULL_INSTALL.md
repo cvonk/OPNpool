@@ -126,10 +126,10 @@ To host your own `interface` image, you will need to place it on your LAN or on 
 
 From VScode:
 
-  * Change to the `OPNpool/interface` folder.
-  * Connect your ESP32 module, and once more select the serial port (`^e p`) 
-  * Edit the SDK configuration (`^e g`) and scroll down to OPNpool and specify your "Firmware upgrade url endpoint" (e.g. http://host.domain/path/interface.bin).
-  * Start the build cycle (`^e b`).
+  * Change to the `OPNpool/interface` folder, using `File > Open`.
+  * Connect your ESP32 module, and once more select the serial port using `ctrl-e p`. 
+  * Edit the SDK configuration (`ctrl-e g`) and scroll down to OPNpool and specify your "Firmware upgrade url endpoint" (e.g. http://host.domain/path/interface.bin).
+  * Start the build cycle using `ctrl-e b`.
   * Upload `OPNpool/interface/build/interface.bin` to your site.
 
 ### The `factory` image
@@ -138,14 +138,15 @@ We will build the `factory` image and provision it using an Android phone app.
 
 > If you have an iPhone, or you have problems running the Android app, you can extend `esp_prov.py` to include `mqtt_url` similar to what is shown [here](https://github.com/espressif/esp-idf-provisioning-android/issues/11#issuecomment-586973381). Sorry, I don't have the iOS development environment.
 
-In the last step of provisioning, this `factory` image will download the `interface` image from an external site. If you rather use your own site, you need to build the `interface` image first as shown later in this document.
+In the last step of provisioning, this `factory` image will download the `interface` image from an external site.
 
 From VScode:
 
-  * Change to the `OPNpool/factory` folder.
-  * Connect your ESP32 module, and select the serial port (`^e p`)
-  * If you built and host your own `interface` image, you need to specify the path by editing the SDK configuration (`^e g`) and scroll down to OPNpool and specify your "Firmware upgrade url endpoint" (e.g. http://host.domain/path/interface.bin).
-  * Start the build-upload-monitor cycle (`e d`).
+  * Change to the `OPNpool/factory` folder, using `File > Open`.
+  * Connect your ESP32 module, and select the serial port using `ctrl-e p`.
+  * Erase the NVRAM in flash using `ctrl-e r`.
+  * If you built and host your own `interface` image, you need to specify the path by editing the SDK configuration (`ctrl-e g`) and scroll down to OPNpool and specify your "Firmware upgrade url endpoint" (e.g. http://host.domain/path/interface.bin).
+  * Start the build-upload-monitor cycle using `ctrl-e d`.
 
 Using an Android phone:
 
@@ -154,7 +155,7 @@ Using an Android phone:
   * Click on the "Provision" button and grant it access [^2].
   * Click on the name of the OPNpool device one it is detected (`POOL*`).
   * Select the Wi-Fi SSID to connect to and give it the password.
-  * If you don't have a MQTT broker press Skip.  Otherwise, specify the broker URL in the format `mqtt://username:passwd@host.domain:1883`.
+  * If you don't have a MQTT broker press `Skip`. Otherwise, specify the broker URL in the format `mqtt://username:passwd@host.domain:1883`.
   * Wait a few minutes for the provisioning to complete.
 
 [^2]: Precise location permission is needed to find and connect to the OPNpool device using Bluetooth LE.
