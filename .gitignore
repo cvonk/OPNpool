@@ -12,4 +12,4 @@ hardware/*.job
 hardware/*.cam
 hardware/libraries/*.l#?
 .vscode/*
-**/.vscode/ssettings.json
+**/.vscode/settings.json
