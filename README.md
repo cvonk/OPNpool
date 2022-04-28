@@ -1,7 +1,9 @@
 # OPNpool
 
-[![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/OPNpool_provisioning)](https://github.com/cvonk/OPNpool/discussions) 
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool?include_prereleases&logo=DocuSign&logoColor=%23fff) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf) `[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/OPNpool)](https://github.com/cvonk/OPNpool/discussions)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool?include_prereleases&logo=DocuSign&logoColor=%23fff)
+![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf)
+![GitHub](https://img.shields.io/github/license/cvonk/OPNpool)
 
 The OPNpool integrates the functionality of a traditional Pool Controller into the modern smart home. It keeps tabs on the status of the connected controller, pool pump and chlorinator. This provides not only a more convenient solution than physically interacting with the pool equipment, but the ability to create automations that runs the pump for a duration depending on the temperature.
 
@@ -36,7 +38,7 @@ At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You c
 
 ## Build
 
-> We proudly acklowledge the work of reverse engineering pioneers [Joshua Bloch](https://docs.google.com/document/d/1M0KMfXfvbszKeqzu6MUF_7yM6KDHk8cZ5nrH1_OUcAc/edit), [Michael Russe](http://cocoontech.com/forums/files/file/173-pab014sharezip/), and [George Saw](http://cocoontech.com/forums/topic/27864-download-pitzip/). (Drop me a line if if I forgot you.)
+> We proudly acknowledge the work of reverse engineering pioneers [Joshua Bloch](https://docs.google.com/document/d/1M0KMfXfvbszKeqzu6MUF_7yM6KDHk8cZ5nrH1_OUcAc/edit), [Michael Russe](http://cocoontech.com/forums/files/file/173-pab014sharezip/), and [George Saw](http://cocoontech.com/forums/topic/27864-download-pitzip/). (Drop me a line if if I forgot you.)
 
 Clone the repository and its submodules to a local directory. The `--recursive` flag automatically initializes and updates the submodules in the repository,.
 
@@ -61,7 +63,7 @@ From within Microsoft Visual Code (VScode), add the [Microsoft's C/C++ extension
 From VScode:
 
   * Change to the `OPNpool/interface` folder.
-  * Connect your ESP32 module, and configure the device and COM port (press the F1-key and select "ESP-IDF: Device configurion")
+  * Connect your ESP32 module, and configure the device and COM port (press the F1-key and select "ESP-IDF: Device configuration")
   * Edit the configuration (press the F1-key, select "ESP-IDF: SDK configuration editor" and scroll down to OPNpool)
       * Select "Use hardcoded Wi-Fi credentials" and specify the SSID and password of your Wi-Fi access point.
       * If you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://username:passwd@host.domain:1883`
@@ -118,17 +120,15 @@ If you go that route, also remember to install `modcard`, `button-card`, `bar-ca
 ## Design documentation
 
 The design documentation for this project is available at
-[https://coertvonk.com/category/sw/embedded/opnpool-design](https://coertvonk.com/category/sw/embedded/opnpool-design)
-
-It includes the chapters
+[https://coertvonk.com/category/sw/embedded/opnpool-design](https://coertvonk.com/category/sw/embedded/opnpool-design). It includes the chapters
 
 - [Introduction](https://coertvonk.com/sw/embedded/opnpool-design/introduction-2-11554)
 - [RS-485 bus](https://coertvonk.com/sw/embedded/opnpool-design/bus-access-31957)
-- [Hardware](https://coertvonk.com/sw/embedded/opnpool-design/hardware-3-31959) (NOT YET)
+- [Hardware](https://coertvonk.com/sw/embedded/opnpool-design/hardware-3-31959)
 - [Tools](https://coertvonk.com/sw/embedded/opnpool-design/tools-31961)
 - [Debugging](https://coertvonk.com/sw/embedded/opnpool-design/debugging-31963)
 - [Protocol](https://coertvonk.com/sw/embedded/opnpool-design/protocol-31965)
-- [Deploying](https://coertvonk.com/sw/embedded/opnpool-design/deploying-31984) (NOT YET)
-- [Interface](https://coertvonk.com/sw/embedded/opnpool-design/interface-software-31967) (NOT YET)
+- [Deploying](https://coertvonk.com/sw/embedded/opnpool-design/deploying-31984)
+- [Interface](https://coertvonk.com/sw/embedded/opnpool-design/interface-software-31967)
 - [Web UI](https://coertvonk.com/sw/embedded/opnpool-design/web-ui-32000)
 - [Home Automation](https://coertvonk.com/sw/embedded/opnpool-design/home-automation-32008)

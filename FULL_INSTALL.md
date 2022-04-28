@@ -1,6 +1,6 @@
 # OPNpool Full Install
 
-[![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/OPNpool_provisioning)](https://github.com/cvonk/OPNpool/discussions) 
+[![GitHub Discussions](https://img.shields.io/github/discussions/cvonk/OPNpool)](https://github.com/cvonk/OPNpool/discussions) 
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool?include_prereleases&logo=DocuSign&logoColor=%23fff) ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf) `[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
@@ -56,7 +56,7 @@ The schematic fits easily on a two layer PCB. Note the cut out for the RF antenn
 |-------------|---------------------------------------------------------|----------------------------|
 | PBC r2      | Printed circuit board                                   | [OSHPark nS1z3Duu](https://oshpark.com/shared_projects/nS1z3Duu) [^1] |
 | Enclosure   | 158x90x60mm clear plastic project enclosure, IP65       | *white label*              |
-| LOLIN D32   | Wemos LOLIN D32, based on ESP-WROOM-32 4MB</a>          | Wemos LOLIN-D32            |
+| LOLIN D32   | Wemos LOLIN D32, based on ESP-WROOM-32 4MB              | Wemos LOLIN-D32            |
 | RS485_CONN  | Plug+socket, male+female, 5-pin, 16mm aviation, IP68    | SD 16                      | 
 | MAX3485     | Maxim MAX3485CSA, RS-485/UART interface IC 3.3V, 8-SOIC | Analog-Devices MAX3490ECSA |
 | DC1         | DC/DC Converter R-78E5.0-0.5, 7-28V to 5V, 0.5A, 3-SIP  | RECOM-Power R-78E5.0-0.5   |
@@ -138,7 +138,7 @@ We will build the `factory` image and provision it using an Android phone app.
 
 > If you have an iPhone, or you have problems running the Android app, you can extend `esp_prov.py` to include `mqtt_url` similar to what is shown [here](https://github.com/espressif/esp-idf-provisioning-android/issues/11#issuecomment-586973381). Sorry, I don't have the iOS development environment.
 
-In the last step of provisioning, this `factory` image will download the `interface` image from an external site. If you rather use your own site, you need to build the `interface` image first as shown later in this document.
+In the last step of provisioning, this `factory` image will download the `interface` image from an external site. If you rather use your own site, you need to build the `interface` image first.
 
 From VScode:
 
@@ -292,11 +292,11 @@ It includes the chapters
 
 - [Introduction](https://coertvonk.com/sw/embedded/opnpool-design/introduction-2-11554)
 - [RS-485 bus](https://coertvonk.com/sw/embedded/opnpool-design/bus-access-31957)
-- [Hardware](https://coertvonk.com/sw/embedded/opnpool-design/hardware-3-31959) (NOT YET)
+- [Hardware](https://coertvonk.com/sw/embedded/opnpool-design/hardware-3-31959)
 - [Tools](https://coertvonk.com/sw/embedded/opnpool-design/tools-31961)
 - [Debugging](https://coertvonk.com/sw/embedded/opnpool-design/debugging-31963)
 - [Protocol](https://coertvonk.com/sw/embedded/opnpool-design/protocol-31965)
-- [Deploying](https://coertvonk.com/sw/embedded/opnpool-design/deploying-31984) (NOT YET)
-- [Interface](https://coertvonk.com/sw/embedded/opnpool-design/interface-software-31967) (NOT YET)
+- [Deploying](https://coertvonk.com/sw/embedded/opnpool-design/deploying-31984)
+- [Interface](https://coertvonk.com/sw/embedded/opnpool-design/interface-software-31967)
 - [Web UI](https://coertvonk.com/sw/embedded/opnpool-design/web-ui-32000)
 - [Home Automation](https://coertvonk.com/sw/embedded/opnpool-design/home-automation-32008)
