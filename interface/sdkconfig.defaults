@@ -1,3 +1,5 @@
+# to propegate changes in this file, delete `sdkconfig`
+
 # factory binary is larger than default size
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
