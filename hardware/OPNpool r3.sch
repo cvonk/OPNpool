@@ -67,6 +67,8 @@
 <layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
 <layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
 <layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="88" name="SimResults" color="9" fill="1" visible="no" active="no"/>
+<layer number="89" name="SimProbes" color="9" fill="1" visible="no" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -94,7 +96,10 @@
 <layer number="114" name="Badge_Outline" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="115" name="ReferenceISLANDS" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="116" name="Patch_BOT" color="9" fill="4" visible="no" active="yes"/>
+<layer number="117" name="PM_Ref" color="7" fill="1" visible="no" active="no"/>
 <layer number="118" name="Rect_Pads" color="7" fill="1" visible="no" active="no"/>
+<layer number="119" name="PF_Ref" color="7" fill="1" visible="no" active="no"/>
+<layer number="120" name="WFL_Ref" color="7" fill="1" visible="no" active="no"/>
 <layer number="121" name="_tsilk" color="7" fill="1" visible="no" active="yes"/>
 <layer number="122" name="_bsilk" color="7" fill="1" visible="no" active="yes"/>
 <layer number="123" name="tTestmark" color="7" fill="1" visible="no" active="yes"/>
@@ -104,15 +109,40 @@
 <layer number="127" name="_tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="128" name="_bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="129" name="Mask" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="130" name="SMDSTROOK" color="7" fill="1" visible="no" active="no"/>
 <layer number="131" name="tAdjust" color="7" fill="1" visible="no" active="yes"/>
 <layer number="132" name="bAdjust" color="7" fill="1" visible="no" active="yes"/>
+<layer number="133" name="bottom_silk" color="7" fill="1" visible="no" active="no"/>
+<layer number="134" name="silk_top" color="7" fill="1" visible="no" active="no"/>
+<layer number="135" name="silk_bottom" color="7" fill="1" visible="no" active="no"/>
+<layer number="136" name="silktop" color="7" fill="1" visible="no" active="no"/>
+<layer number="137" name="silkbottom" color="7" fill="1" visible="no" active="no"/>
+<layer number="138" name="EEE" color="7" fill="1" visible="no" active="no"/>
+<layer number="139" name="_tKeepout" color="7" fill="1" visible="no" active="no"/>
+<layer number="140" name="mbKeepout" color="7" fill="1" visible="no" active="no"/>
+<layer number="141" name="ASSEMBLY_TOP" color="7" fill="1" visible="no" active="no"/>
+<layer number="142" name="mbRestrict" color="7" fill="1" visible="no" active="no"/>
+<layer number="143" name="PLACE_BOUND_TOP" color="7" fill="1" visible="no" active="no"/>
 <layer number="144" name="Drill_legend" color="7" fill="1" visible="no" active="yes"/>
+<layer number="145" name="DrillLegend_01-16" color="7" fill="1" visible="no" active="no"/>
+<layer number="146" name="DrillLegend_01-20" color="7" fill="1" visible="no" active="no"/>
+<layer number="147" name="PIN_NUMBER" color="7" fill="1" visible="no" active="no"/>
+<layer number="148" name="DrillLegend_01-20" color="7" fill="1" visible="no" active="no"/>
+<layer number="149" name="DrillLegend_02-15" color="7" fill="1" visible="no" active="no"/>
 <layer number="150" name="Notes" color="7" fill="1" visible="no" active="yes"/>
 <layer number="151" name="HeatSink" color="7" fill="1" visible="no" active="yes"/>
 <layer number="152" name="_bDocu" color="7" fill="1" visible="no" active="yes"/>
 <layer number="153" name="FabDoc1" color="6" fill="1" visible="no" active="no"/>
 <layer number="154" name="FabDoc2" color="2" fill="1" visible="no" active="no"/>
 <layer number="155" name="FabDoc3" color="7" fill="15" visible="no" active="no"/>
+<layer number="166" name="AntennaArea" color="7" fill="1" visible="no" active="no"/>
+<layer number="168" name="4mmHeightArea" color="7" fill="1" visible="no" active="no"/>
+<layer number="191" name="mNets" color="7" fill="1" visible="no" active="no"/>
+<layer number="192" name="mBusses" color="7" fill="1" visible="no" active="no"/>
+<layer number="193" name="mPins" color="7" fill="1" visible="no" active="no"/>
+<layer number="194" name="mSymbols" color="7" fill="1" visible="no" active="no"/>
+<layer number="195" name="mNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="196" name="mValues" color="7" fill="1" visible="no" active="no"/>
 <layer number="199" name="Contour" color="7" fill="1" visible="no" active="yes"/>
 <layer number="200" name="200bmp" color="1" fill="10" visible="no" active="yes"/>
 <layer number="201" name="201bmp" color="2" fill="1" visible="no" active="no"/>
@@ -326,56 +356,6 @@ Mouser #: 538-70246-1004, about $1.19, &lt;a href="https://www.mouser.com/datash
 <rectangle x1="-0.889" y1="1.9558" x2="-0.381" y2="3.0988" layer="51"/>
 <rectangle x1="-2.159" y1="1.9558" x2="-1.651" y2="3.0988" layer="51"/>
 </package>
-<package name="LOLIN-D32">
-<hole x="25.908" y="11.938" drill="2.54"/>
-<hole x="25.908" y="-9.398" drill="2.54"/>
-<pad name="GND@2" x="-21.082" y="-9.398" drill="2.032" diameter="3.302"/>
-<pad name="12" x="-7.62" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="14" x="-5.08" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="27" x="-2.54" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="26" x="0" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="25" x="2.54" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="33" x="5.08" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="32" x="7.62" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="34" x="10.16" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="VN" x="12.7" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="VP" x="15.24" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="RS" x="17.78" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="3V3" x="20.32" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="4" x="-7.62" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="16" x="-5.08" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="17" x="-2.54" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="5" x="0" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="18" x="2.54" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="19" x="5.08" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="21" x="7.62" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="RX" x="10.16" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="TX" x="12.7" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="22" x="15.24" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="23" x="17.78" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="GND@1" x="20.32" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="0" x="-10.16" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="2" x="-12.7" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="15" x="-15.24" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="GND" x="-17.78" y="-10.16" drill="1.016" diameter="1.778"/>
-<pad name="13" x="-10.16" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="EN" x="-12.7" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="USB_5V" x="-15.24" y="12.7" drill="1.016" diameter="1.778"/>
-<pad name="BAT" x="-17.78" y="12.7" drill="1.016" diameter="1.778"/>
-<text x="-20.32" y="0" size="2.54" layer="21">LOLIN D32</text>
-<polygon width="0.0762" layer="21" pour="hatch">
-<vertex x="-29.21" y="11.43"/>
-<vertex x="-29.21" y="-8.89" curve="90"/>
-<vertex x="-26.67" y="-11.43"/>
-<vertex x="25.4" y="-11.43" curve="90"/>
-<vertex x="27.94" y="-8.89"/>
-<vertex x="27.94" y="11.43" curve="90"/>
-<vertex x="25.4" y="13.97"/>
-<vertex x="-26.67" y="13.97" curve="90"/>
-</polygon>
-<rectangle x1="20.32" y1="-7.62" x2="27.94" y2="10.16" layer="39"/>
-<rectangle x1="20.32" y1="-7.62" x2="27.94" y2="10.16" layer="40"/>
-</package>
 </packages>
 <symbols>
 <symbol name="FRAME_LETTER_L">
@@ -583,73 +563,6 @@ Mouser: 651-1864451&lt;/p&gt;</description>
 <text x="0" y="-0.762" size="1.778" layer="95" align="bottom-center">&gt;PART</text>
 <pin name="VCC" x="0" y="7.62" visible="pad" length="middle" direction="pas" rot="R270"/>
 <pin name="GND" x="0" y="-7.62" visible="pad" length="middle" direction="sup" rot="R90"/>
-</symbol>
-<symbol name="LOLIN-D32-IO">
-<wire x1="7.62" y1="0" x2="27.94" y2="0" width="0.254" layer="94"/>
-<wire x1="27.94" y1="0" x2="27.94" y2="45.72" width="0.254" layer="94"/>
-<wire x1="27.94" y1="45.72" x2="0" y2="45.72" width="0.254" layer="94"/>
-<pin name="!RST/!JTAG_!RST" x="-5.08" y="33.02" length="middle" direction="in"/>
-<pin name="IO0" x="33.02" y="43.18" length="middle" rot="R180"/>
-<pin name="IO12/JTAG_DI" x="-5.08" y="35.56" length="middle"/>
-<pin name="IO13/JTAG_CK" x="-5.08" y="40.64" length="middle"/>
-<pin name="IO14/JTAG_MS" x="-5.08" y="43.18" length="middle"/>
-<pin name="IO32" x="33.02" y="30.48" length="middle" rot="R180"/>
-<pin name="I34" x="33.02" y="25.4" length="middle" direction="in" rot="R180"/>
-<pin name="IO21/I2C_SDA" x="-5.08" y="12.7" length="middle"/>
-<pin name="IO22/I2C_SCL" x="-5.08" y="10.16" length="middle"/>
-<pin name="IO16" x="33.02" y="35.56" length="middle" rot="R180"/>
-<pin name="IO17" x="33.02" y="33.02" length="middle" rot="R180"/>
-<wire x1="0" y1="45.72" x2="0" y2="7.62" width="0.254" layer="94"/>
-<wire x1="0" y1="7.62" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="7.62" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
-<text x="4.318" y="1.27" size="1.778" layer="94" rot="R90">USB</text>
-<text x="0" y="46.99" size="1.778" layer="95">&gt;PART</text>
-<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
-<wire x1="7.62" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="7.62" y1="7.62" x2="7.62" y2="0" width="0.254" layer="94"/>
-<wire x1="6.096" y1="5.08" x2="7.366" y2="5.08" width="0.6096" layer="94"/>
-<wire x1="6.096" y1="2.54" x2="7.366" y2="2.54" width="0.6096" layer="94"/>
-<wire x1="6.096" y1="3.81" x2="7.366" y2="3.81" width="0.6096" layer="94"/>
-<wire x1="6.096" y1="6.35" x2="7.366" y2="6.35" width="0.6096" layer="94"/>
-<wire x1="6.096" y1="1.27" x2="7.366" y2="1.27" width="0.6096" layer="94"/>
-<pin name="IO2" x="33.02" y="40.64" length="middle" rot="R180"/>
-<pin name="IO4" x="33.02" y="38.1" length="middle" rot="R180"/>
-<pin name="RX2/IO25" x="33.02" y="7.62" length="middle" rot="R180"/>
-<pin name="TX2/IO26" x="33.02" y="5.08" length="middle" rot="R180"/>
-<pin name="RTS2/IO27" x="33.02" y="2.54" length="middle" rot="R180"/>
-<pin name="IO33" x="33.02" y="27.94" length="middle" rot="R180"/>
-<pin name="VP/I36" x="33.02" y="22.86" length="middle" direction="in" rot="R180"/>
-<pin name="VN/I39" x="33.02" y="20.32" length="middle" direction="in" rot="R180"/>
-<pin name="RX0/IO3" x="33.02" y="15.24" length="middle" rot="R180"/>
-<pin name="TX0/IO1" x="33.02" y="12.7" length="middle" rot="R180"/>
-<text x="0" y="-8.636" size="1.27" layer="94">I2C pins don't have pull-up resistors
-USB Serial uses IO3 for RX0, and IO1 for TX0
-Read the BAT voltage from IO35 and double it</text>
-<pin name="IO15/JTAG_DO" x="-5.08" y="38.1" length="middle"/>
-<pin name="IO23/VSPI_MOSI" x="-5.08" y="25.4" length="middle"/>
-<pin name="IO19/VSPI_MISO" x="-5.08" y="22.86" length="middle"/>
-<pin name="IO18/VSPI_CLK" x="-5.08" y="20.32" length="middle"/>
-<pin name="IO5/VSPI_CS/LED" x="-5.08" y="17.78" length="middle"/>
-</symbol>
-<symbol name="LOLIN-D32-PWR">
-<wire x1="0" y1="0" x2="7.62" y2="0" width="0.254" layer="94"/>
-<wire x1="7.62" y1="0" x2="20.32" y2="0" width="0.254" layer="94"/>
-<wire x1="20.32" y1="0" x2="20.32" y2="15.24" width="0.254" layer="94"/>
-<wire x1="20.32" y1="15.24" x2="0" y2="15.24" width="0.254" layer="94"/>
-<pin name="3V3" x="25.4" y="12.7" length="middle" direction="sup" rot="R180"/>
-<pin name="GND" x="25.4" y="2.54" length="middle" direction="sup" rot="R180"/>
-<pin name="EN" x="-5.08" y="10.16" length="middle" direction="pas"/>
-<pin name="USB" x="25.4" y="7.62" length="middle" direction="sup" rot="R180"/>
-<pin name="BAT" x="-5.08" y="12.7" length="middle" direction="pwr"/>
-<wire x1="0" y1="15.24" x2="0" y2="7.62" width="0.254" layer="94"/>
-<wire x1="0" y1="7.62" x2="0" y2="0" width="0.254" layer="94"/>
-<text x="4.318" y="1.524" size="1.778" layer="94" rot="R90">BAT</text>
-<text x="0" y="16.51" size="1.778" layer="95">&gt;PART</text>
-<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
-<wire x1="7.62" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
-<wire x1="6.096" y1="2.54" x2="7.366" y2="2.54" width="0.6096" layer="94"/>
-<wire x1="6.096" y1="5.08" x2="7.366" y2="5.08" width="0.6096" layer="94"/>
-<wire x1="7.62" y1="7.62" x2="7.62" y2="0" width="0.254" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -859,63 +772,6 @@ Mouser: 919-R-78E5.0-0.5, abt. $2.70, &lt;a href=https://www.mouser.com/ProductD
 <attribute name="OC_FARNELL" value="unknown" constant="no"/>
 <attribute name="OC_NEWARK" value="90C3817" constant="no"/>
 </technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="LOLIN-D32" prefix="PCB">
-<description>&lt;b&gt;Wemos LOLIN D32&lt;/b&gt;, ESP-WROOM-32
-&lt;p&gt;Technical specifications:
-&lt;ul&gt;
-&lt;li&gt;Manufacturer: Wemos&lt;/li&gt;
-&lt;li&gt;SoC: ESP32-WROOM-32, 4 MByte flash, max 240MHz&lt;/li&gt;
-&lt;li&gt;Optional battery: 3.7V Lipo, connector PH-2(2.0mm)&lt;/li&gt;
-&lt;li&gt;UART: CH340, micro-USB connector&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/p&gt;
-&lt;p&gt;Mfr.#: LOLIN D32, &lt;a href="https://wiki.wemos.cc/products:d32:d32"&gt;data sheet&lt;/a&gt;&lt;br /&gt;
-Alibaba: 32808551116, about $6.50&lt;/p&gt;</description>
-<gates>
-<gate name="G$1" symbol="LOLIN-D32-IO" x="-22.86" y="0"/>
-<gate name="P" symbol="LOLIN-D32-PWR" x="27.94" y="15.24"/>
-</gates>
-<devices>
-<device name="" package="LOLIN-D32">
-<connects>
-<connect gate="G$1" pin="!RST/!JTAG_!RST" pad="RS"/>
-<connect gate="G$1" pin="I34" pad="34"/>
-<connect gate="G$1" pin="IO0" pad="0"/>
-<connect gate="G$1" pin="IO12/JTAG_DI" pad="12"/>
-<connect gate="G$1" pin="IO13/JTAG_CK" pad="13"/>
-<connect gate="G$1" pin="IO14/JTAG_MS" pad="14"/>
-<connect gate="G$1" pin="IO15/JTAG_DO" pad="15"/>
-<connect gate="G$1" pin="IO16" pad="16"/>
-<connect gate="G$1" pin="IO17" pad="17"/>
-<connect gate="G$1" pin="IO18/VSPI_CLK" pad="18"/>
-<connect gate="G$1" pin="IO19/VSPI_MISO" pad="19"/>
-<connect gate="G$1" pin="IO2" pad="2"/>
-<connect gate="G$1" pin="IO21/I2C_SDA" pad="21"/>
-<connect gate="G$1" pin="IO22/I2C_SCL" pad="22"/>
-<connect gate="G$1" pin="IO23/VSPI_MOSI" pad="23"/>
-<connect gate="G$1" pin="IO32" pad="32"/>
-<connect gate="G$1" pin="IO33" pad="33"/>
-<connect gate="G$1" pin="IO4" pad="4"/>
-<connect gate="G$1" pin="IO5/VSPI_CS/LED" pad="5"/>
-<connect gate="G$1" pin="RTS2/IO27" pad="27"/>
-<connect gate="G$1" pin="RX0/IO3" pad="RX"/>
-<connect gate="G$1" pin="RX2/IO25" pad="25"/>
-<connect gate="G$1" pin="TX0/IO1" pad="TX"/>
-<connect gate="G$1" pin="TX2/IO26" pad="26"/>
-<connect gate="G$1" pin="VN/I39" pad="VN"/>
-<connect gate="G$1" pin="VP/I36" pad="VP"/>
-<connect gate="P" pin="3V3" pad="3V3"/>
-<connect gate="P" pin="BAT" pad="BAT"/>
-<connect gate="P" pin="EN" pad="EN"/>
-<connect gate="P" pin="GND" pad="GND GND@1 GND@2"/>
-<connect gate="P" pin="USB" pad="USB_5V"/>
-</connects>
-<technologies>
-<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -10977,6 +10833,188 @@ Source: www.kingbright.com</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="Coert-Vonk">
+<packages>
+<package name="LOLIN-D32">
+<hole x="25.908" y="11.938" drill="2.54"/>
+<hole x="25.908" y="-9.398" drill="2.54"/>
+<pad name="GND@2" x="-21.082" y="-9.398" drill="2.032" diameter="3.302"/>
+<pad name="12" x="-7.62" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="14" x="-5.08" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="27" x="-2.54" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="26" x="0" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="25" x="2.54" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="33" x="5.08" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="32" x="7.62" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="34" x="10.16" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="VN" x="12.7" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="VP" x="15.24" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="RS" x="17.78" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="3V3" x="20.32" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="4" x="-7.62" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="16" x="-5.08" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="17" x="-2.54" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="5" x="0" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="18" x="2.54" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="19" x="5.08" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="21" x="7.62" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="RX" x="10.16" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="TX" x="12.7" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="22" x="15.24" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="23" x="17.78" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="GND@1" x="20.32" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="0" x="-10.16" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="2" x="-12.7" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="15" x="-15.24" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="GND" x="-17.78" y="-10.16" drill="1.016" diameter="1.778"/>
+<pad name="13" x="-10.16" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="EN" x="-12.7" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="USB_5V" x="-15.24" y="12.7" drill="1.016" diameter="1.778"/>
+<pad name="BAT" x="-17.78" y="12.7" drill="1.016" diameter="1.778"/>
+<text x="-20.32" y="0" size="2.54" layer="21">LOLIN D32</text>
+<polygon width="0.0762" layer="21" pour="hatch">
+<vertex x="-29.21" y="11.43"/>
+<vertex x="-29.21" y="-8.89" curve="90"/>
+<vertex x="-26.67" y="-11.43"/>
+<vertex x="25.4" y="-11.43" curve="90"/>
+<vertex x="27.94" y="-8.89"/>
+<vertex x="27.94" y="11.43" curve="90"/>
+<vertex x="25.4" y="13.97"/>
+<vertex x="-26.67" y="13.97" curve="90"/>
+</polygon>
+<rectangle x1="20.32" y1="-8.89" x2="27.94" y2="11.43" layer="39"/>
+<rectangle x1="20.32" y1="-8.89" x2="27.94" y2="11.43" layer="40"/>
+</package>
+</packages>
+<symbols>
+<symbol name="LOLIN-D32-IO">
+<wire x1="7.62" y1="0" x2="27.94" y2="0" width="0.254" layer="94"/>
+<wire x1="27.94" y1="0" x2="27.94" y2="45.72" width="0.254" layer="94"/>
+<wire x1="27.94" y1="45.72" x2="0" y2="45.72" width="0.254" layer="94"/>
+<pin name="!RST/!JTAG_!RST" x="-5.08" y="33.02" length="middle" direction="in"/>
+<pin name="IO0" x="33.02" y="43.18" length="middle" rot="R180"/>
+<pin name="IO12/JTAG_DI" x="-5.08" y="35.56" length="middle"/>
+<pin name="IO13/JTAG_CK" x="-5.08" y="40.64" length="middle"/>
+<pin name="IO14/JTAG_MS" x="-5.08" y="43.18" length="middle"/>
+<pin name="IO32" x="33.02" y="30.48" length="middle" rot="R180"/>
+<pin name="I34" x="33.02" y="25.4" length="middle" direction="in" rot="R180"/>
+<pin name="IO21/I2C_SDA" x="-5.08" y="12.7" length="middle"/>
+<pin name="IO22/I2C_SCL" x="-5.08" y="10.16" length="middle"/>
+<pin name="IO16" x="33.02" y="35.56" length="middle" rot="R180"/>
+<pin name="IO17" x="33.02" y="33.02" length="middle" rot="R180"/>
+<wire x1="0" y1="45.72" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="0" y1="7.62" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
+<text x="4.318" y="1.27" size="1.778" layer="94" rot="R90">USB</text>
+<text x="0" y="46.99" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
+<wire x1="7.62" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="7.62" y2="0" width="0.254" layer="94"/>
+<wire x1="6.096" y1="5.08" x2="7.366" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="2.54" x2="7.366" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="3.81" x2="7.366" y2="3.81" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="6.35" x2="7.366" y2="6.35" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="1.27" x2="7.366" y2="1.27" width="0.6096" layer="94"/>
+<pin name="IO2" x="33.02" y="40.64" length="middle" rot="R180"/>
+<pin name="IO4" x="33.02" y="38.1" length="middle" rot="R180"/>
+<pin name="RX2/IO25" x="33.02" y="7.62" length="middle" rot="R180"/>
+<pin name="TX2/IO26" x="33.02" y="5.08" length="middle" rot="R180"/>
+<pin name="RTS2/IO27" x="33.02" y="2.54" length="middle" rot="R180"/>
+<pin name="IO33" x="33.02" y="27.94" length="middle" rot="R180"/>
+<pin name="VP/I36" x="33.02" y="22.86" length="middle" direction="in" rot="R180"/>
+<pin name="VN/I39" x="33.02" y="20.32" length="middle" direction="in" rot="R180"/>
+<pin name="RX0/IO3" x="33.02" y="15.24" length="middle" rot="R180"/>
+<pin name="TX0/IO1" x="33.02" y="12.7" length="middle" rot="R180"/>
+<text x="0" y="-8.636" size="1.27" layer="94">I2C pins don't have pull-up resistors
+USB Serial uses IO3 for RX0, and IO1 for TX0
+Read the BAT voltage from IO35 and double it</text>
+<pin name="IO15/JTAG_DO" x="-5.08" y="38.1" length="middle"/>
+<pin name="IO23/VSPI_MOSI" x="-5.08" y="25.4" length="middle"/>
+<pin name="IO19/VSPI_MISO" x="-5.08" y="22.86" length="middle"/>
+<pin name="IO18/VSPI_CLK" x="-5.08" y="20.32" length="middle"/>
+<pin name="IO5/VSPI_CS/LED" x="-5.08" y="17.78" length="middle"/>
+</symbol>
+<symbol name="LOLIN-D32-PWR">
+<wire x1="0" y1="0" x2="7.62" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="0" x2="20.32" y2="0" width="0.254" layer="94"/>
+<wire x1="20.32" y1="0" x2="20.32" y2="15.24" width="0.254" layer="94"/>
+<wire x1="20.32" y1="15.24" x2="0" y2="15.24" width="0.254" layer="94"/>
+<pin name="3V3" x="25.4" y="12.7" length="middle" direction="sup" rot="R180"/>
+<pin name="GND" x="25.4" y="2.54" length="middle" direction="sup" rot="R180"/>
+<pin name="EN" x="-5.08" y="10.16" length="middle" direction="pas"/>
+<pin name="USB" x="25.4" y="7.62" length="middle" direction="sup" rot="R180"/>
+<pin name="BAT" x="-5.08" y="12.7" length="middle" direction="pwr"/>
+<wire x1="0" y1="15.24" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="0" y1="7.62" x2="0" y2="0" width="0.254" layer="94"/>
+<text x="4.318" y="1.524" size="1.778" layer="94" rot="R90">BAT</text>
+<text x="0" y="16.51" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
+<wire x1="7.62" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="6.096" y1="2.54" x2="7.366" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="5.08" x2="7.366" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="7.62" y2="0" width="0.254" layer="94"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="LOLIN-D32" prefix="PCB">
+<description>&lt;h3&gt;Footprint of Wemos LOLIN D32 (ESP-WROOM-32)&lt;/h3&gt;
+&lt;p&gt;Technical specifications:
+&lt;ul&gt;
+&lt;li&gt;Manufacturer: Wemos&lt;/li&gt;
+&lt;li&gt;SoC: ESP32-WROOM-32, 4 MByte flash, max 240MHz&lt;/li&gt;
+&lt;li&gt;Optional battery: 3.7V Lipo, connector PH-2(2.0mm)&lt;/li&gt;
+&lt;li&gt;UART: CH340, micro-USB connector&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
+&lt;p&gt;Mfr.#: LOLIN D32, &lt;a href="https://wiki.wemos.cc/products:d32:d32"&gt;data sheet&lt;/a&gt;&lt;br /&gt;
+Alibaba: 32808551116, about $6.50&lt;/p&gt;</description>
+<gates>
+<gate name=".IO" symbol="LOLIN-D32-IO" x="-22.86" y="0"/>
+<gate name=".P" symbol="LOLIN-D32-PWR" x="27.94" y="15.24"/>
+</gates>
+<devices>
+<device name="" package="LOLIN-D32">
+<connects>
+<connect gate=".IO" pin="!RST/!JTAG_!RST" pad="RS"/>
+<connect gate=".IO" pin="I34" pad="34"/>
+<connect gate=".IO" pin="IO0" pad="0"/>
+<connect gate=".IO" pin="IO12/JTAG_DI" pad="12"/>
+<connect gate=".IO" pin="IO13/JTAG_CK" pad="13"/>
+<connect gate=".IO" pin="IO14/JTAG_MS" pad="14"/>
+<connect gate=".IO" pin="IO15/JTAG_DO" pad="15"/>
+<connect gate=".IO" pin="IO16" pad="16"/>
+<connect gate=".IO" pin="IO17" pad="17"/>
+<connect gate=".IO" pin="IO18/VSPI_CLK" pad="18"/>
+<connect gate=".IO" pin="IO19/VSPI_MISO" pad="19"/>
+<connect gate=".IO" pin="IO2" pad="2"/>
+<connect gate=".IO" pin="IO21/I2C_SDA" pad="21"/>
+<connect gate=".IO" pin="IO22/I2C_SCL" pad="22"/>
+<connect gate=".IO" pin="IO23/VSPI_MOSI" pad="23"/>
+<connect gate=".IO" pin="IO32" pad="32"/>
+<connect gate=".IO" pin="IO33" pad="33"/>
+<connect gate=".IO" pin="IO4" pad="4"/>
+<connect gate=".IO" pin="IO5/VSPI_CS/LED" pad="5"/>
+<connect gate=".IO" pin="RTS2/IO27" pad="27"/>
+<connect gate=".IO" pin="RX0/IO3" pad="RX"/>
+<connect gate=".IO" pin="RX2/IO25" pad="25"/>
+<connect gate=".IO" pin="TX0/IO1" pad="TX"/>
+<connect gate=".IO" pin="TX2/IO26" pad="26"/>
+<connect gate=".IO" pin="VN/I39" pad="VN"/>
+<connect gate=".IO" pin="VP/I36" pad="VP"/>
+<connect gate=".P" pin="3V3" pad="3V3"/>
+<connect gate=".P" pin="BAT" pad="BAT"/>
+<connect gate=".P" pin="EN" pad="EN"/>
+<connect gate=".P" pin="GND" pad="GND GND@1 GND@2"/>
+<connect gate=".P" pin="USB" pad="USB_5V"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 <attribute name="REV" value="0.1"/>
@@ -11077,11 +11115,6 @@ Source: www.kingbright.com</description>
 <attribute name="MANF#" value="MAX3485CSA+"/>
 <attribute name="MOUSER#" value="700-MAX3485CSA"/>
 </part>
-<part name="PCB1" library="Coert Vonk" deviceset="LOLIN-D32" device="">
-<attribute name="ALIEXPRESS#" value="32808551116"/>
-<attribute name="MANF" value="WEMOS Electronics"/>
-<attribute name="MANF#" value="D32"/>
-</part>
 <part name="R2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:23553/2" value="68Ω">
 <spice>
 <pinmapping spiceprefix="R">
@@ -11110,6 +11143,7 @@ Source: www.kingbright.com</description>
 <part name="LED2" library="OPNpool" deviceset="LED" device="CHIPLED_0805" package3d_urn="urn:adsk.eagle:package:15821/2" value="TX"/>
 <part name="+3V4" library="Coert Vonk" deviceset="3V3" device=""/>
 <part name="+3V5" library="Coert Vonk" deviceset="3V3" device=""/>
+<part name="PCB1" library="Coert-Vonk" deviceset="LOLIN-D32" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -11237,17 +11271,6 @@ Controller</text>
 <instance part="U1" gate="P" x="175.26" y="147.32" smashed="yes">
 <attribute name="PART" x="175.26" y="146.558" size="1.778" layer="95" align="bottom-center"/>
 </instance>
-<instance part="PCB1" gate="G$1" x="68.58" y="58.42" smashed="yes">
-<attribute name="PART" x="68.58" y="105.41" size="1.778" layer="95"/>
-<attribute name="VALUE" x="68.58" y="55.88" size="1.778" layer="96"/>
-<attribute name="MANF" x="68.58" y="58.42" size="1.778" layer="96" display="off"/>
-<attribute name="MANF#" x="68.58" y="58.42" size="1.778" layer="96" display="off"/>
-<attribute name="ALIEXPRESS#" x="68.58" y="58.42" size="1.778" layer="96" display="off"/>
-</instance>
-<instance part="PCB1" gate="P" x="119.38" y="139.7" smashed="yes">
-<attribute name="PART" x="119.38" y="156.21" size="1.778" layer="95"/>
-<attribute name="VALUE" x="119.38" y="137.16" size="1.778" layer="96"/>
-</instance>
 <instance part="R2" gate="G$1" x="124.46" y="96.52" smashed="yes" rot="MR90">
 <attribute name="MANF" x="124.46" y="96.52" size="1.778" layer="96" rot="MR90" display="off"/>
 <attribute name="MANF#" x="124.46" y="96.52" size="1.778" layer="96" rot="MR90" display="off"/>
@@ -11282,6 +11305,14 @@ Controller</text>
 </instance>
 <instance part="+3V5" gate="G$1" x="124.46" y="106.68" smashed="yes">
 <attribute name="VALUE" x="124.46" y="107.95" size="1.778" layer="96" align="bottom-center"/>
+</instance>
+<instance part="PCB1" gate=".IO" x="68.58" y="58.42" smashed="yes">
+<attribute name="NAME" x="68.58" y="105.41" size="1.778" layer="95"/>
+<attribute name="VALUE" x="68.58" y="55.88" size="1.778" layer="96"/>
+</instance>
+<instance part="PCB1" gate=".P" x="119.38" y="139.7" smashed="yes">
+<attribute name="NAME" x="119.38" y="156.21" size="1.778" layer="95"/>
+<attribute name="VALUE" x="119.38" y="137.16" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -11330,7 +11361,7 @@ Controller</text>
 <segment>
 <pinref part="GND14" gate="1" pin="GND"/>
 <wire x1="144.78" y1="142.24" x2="144.78" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="PCB1" gate="P" pin="GND"/>
+<pinref part="PCB1" gate=".P" pin="GND"/>
 </segment>
 <segment>
 <pinref part="GND15" gate="1" pin="GND"/>
@@ -11351,9 +11382,9 @@ Controller</text>
 <wire x1="101.6" y1="83.82" x2="106.68" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="83.82" x2="106.68" y2="81.28" width="0.1524" layer="91"/>
 <junction x="106.68" y="81.28"/>
-<pinref part="PCB1" gate="G$1" pin="I34"/>
-<pinref part="PCB1" gate="G$1" pin="VP/I36"/>
-<pinref part="PCB1" gate="G$1" pin="VN/I39"/>
+<pinref part="PCB1" gate=".IO" pin="I34"/>
+<pinref part="PCB1" gate=".IO" pin="VP/I36"/>
+<pinref part="PCB1" gate=".IO" pin="VN/I39"/>
 </segment>
 <segment>
 <pinref part="SW1" gate="G$1" pin="2"/>
@@ -11389,7 +11420,7 @@ Controller</text>
 <pinref part="J3" gate="G$1" pin="TMS"/>
 <wire x1="48.26" y1="101.6" x2="63.5" y2="101.6" width="0.1524" layer="91"/>
 <label x="50.8" y="101.6" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="IO14/JTAG_MS"/>
+<pinref part="PCB1" gate=".IO" pin="IO14/JTAG_MS"/>
 </segment>
 </net>
 <net name="JTAG_CK" class="0">
@@ -11397,7 +11428,7 @@ Controller</text>
 <pinref part="J3" gate="G$1" pin="TCK"/>
 <wire x1="48.26" y1="99.06" x2="63.5" y2="99.06" width="0.1524" layer="91"/>
 <label x="50.8" y="99.06" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="IO13/JTAG_CK"/>
+<pinref part="PCB1" gate=".IO" pin="IO13/JTAG_CK"/>
 </segment>
 </net>
 <net name="JTAG_DO" class="0">
@@ -11405,7 +11436,7 @@ Controller</text>
 <pinref part="J3" gate="G$1" pin="TDO"/>
 <wire x1="48.26" y1="96.52" x2="63.5" y2="96.52" width="0.1524" layer="91"/>
 <label x="50.8" y="96.52" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="IO15/JTAG_DO"/>
+<pinref part="PCB1" gate=".IO" pin="IO15/JTAG_DO"/>
 </segment>
 </net>
 <net name="JTAG_DI" class="0">
@@ -11413,7 +11444,7 @@ Controller</text>
 <pinref part="J3" gate="G$1" pin="TDI"/>
 <wire x1="48.26" y1="93.98" x2="63.5" y2="93.98" width="0.1524" layer="91"/>
 <label x="50.8" y="93.98" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="IO12/JTAG_DI"/>
+<pinref part="PCB1" gate=".IO" pin="IO12/JTAG_DI"/>
 </segment>
 </net>
 <net name="JTAG_!RST" class="0">
@@ -11421,20 +11452,20 @@ Controller</text>
 <pinref part="J3" gate="G$1" pin="NC"/>
 <wire x1="48.26" y1="91.44" x2="63.5" y2="91.44" width="0.1524" layer="91"/>
 <label x="50.8" y="91.44" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="!RST/!JTAG_!RST"/>
+<pinref part="PCB1" gate=".IO" pin="!RST/!JTAG_!RST"/>
 </segment>
 </net>
 <net name="RX2" class="0">
 <segment>
 <wire x1="101.6" y1="66.04" x2="114.3" y2="66.04" width="0.1524" layer="91"/>
 <label x="104.14" y="66.04" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="RX2/IO25"/>
 <pinref part="U1" gate="G$1" pin="RO"/>
 <wire x1="134.62" y1="71.12" x2="114.3" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="LED1" gate="G$1" pin="C"/>
 <wire x1="114.3" y1="81.28" x2="114.3" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="71.12" x2="114.3" y2="66.04" width="0.1524" layer="91"/>
 <junction x="114.3" y="71.12"/>
+<pinref part="PCB1" gate=".IO" pin="RX2/IO25"/>
 </segment>
 </net>
 <net name="B" class="0">
@@ -11469,7 +11500,7 @@ Controller</text>
 <pinref part="DC1" gate="G$1" pin="VOUT"/>
 <wire x1="104.14" y1="152.4" x2="114.3" y2="152.4" width="0.1524" layer="91"/>
 <junction x="104.14" y="152.4"/>
-<pinref part="PCB1" gate="P" pin="BAT"/>
+<pinref part="PCB1" gate=".P" pin="BAT"/>
 </segment>
 </net>
 <net name="VIN" class="0">
@@ -11488,12 +11519,12 @@ Controller</text>
 <wire x1="101.6" y1="63.5" x2="124.46" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="63.5" x2="124.46" y2="55.88" width="0.1524" layer="91"/>
 <label x="104.14" y="63.5" size="1.778" layer="95"/>
-<pinref part="PCB1" gate="G$1" pin="TX2/IO26"/>
 <pinref part="U1" gate="G$1" pin="DI"/>
 <wire x1="134.62" y1="55.88" x2="124.46" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="LED2" gate="G$1" pin="C"/>
 <wire x1="124.46" y1="81.28" x2="124.46" y2="63.5" width="0.1524" layer="91"/>
 <junction x="124.46" y="63.5"/>
+<pinref part="PCB1" gate=".IO" pin="TX2/IO26"/>
 </segment>
 </net>
 <net name="RTS" class="0">
@@ -11506,14 +11537,14 @@ Controller</text>
 <label x="104.14" y="60.96" size="1.778" layer="95"/>
 <pinref part="U1" gate="G$1" pin="RE/"/>
 <pinref part="U1" gate="G$1" pin="DE"/>
-<pinref part="PCB1" gate="G$1" pin="RTS2/IO27"/>
+<pinref part="PCB1" gate=".IO" pin="RTS2/IO27"/>
 </segment>
 </net>
 <net name="3V3" class="0">
 <segment>
 <wire x1="144.78" y1="157.48" x2="144.78" y2="152.4" width="0.1524" layer="91"/>
 <pinref part="+3V3" gate="G$1" pin="3V3"/>
-<pinref part="PCB1" gate="P" pin="3V3"/>
+<pinref part="PCB1" gate=".P" pin="3V3"/>
 </segment>
 <segment>
 <pinref part="J3" gate="G$1" pin="3V3"/>
@@ -11543,7 +11574,6 @@ Controller</text>
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="PCB1" gate="G$1" pin="IO0"/>
 <pinref part="SW1" gate="G$1" pin="4"/>
 <wire x1="101.6" y1="101.6" x2="101.6" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="101.6" y1="114.3" x2="101.6" y2="116.84" width="0.1524" layer="91"/>
@@ -11551,6 +11581,7 @@ Controller</text>
 <pinref part="SW1" gate="G$1" pin="3"/>
 <wire x1="96.52" y1="114.3" x2="101.6" y2="114.3" width="0.1524" layer="91"/>
 <junction x="101.6" y="114.3"/>
+<pinref part="PCB1" gate=".IO" pin="IO0"/>
 </segment>
 </net>
 <net name="N$1" class="0">
