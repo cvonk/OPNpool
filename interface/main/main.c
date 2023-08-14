@@ -143,7 +143,7 @@ _connect2wifi_and_start_httpd(ipc_t * const ipc)
         .priv = &priv,
     };
     ESP_ERROR_CHECK(wifi_connect_init(&wifi_connect_config));
-    esp_err_t err = NULL;
+    esp_err_t err = 0;
 #ifdef CONFIG_OPNPOOL_HARDCODED_WIFI_CREDENTIALS
     if (strlen(CONFIG_OPNPOOL_HARDCODED_WIFI_SSID)) {
         ESP_LOGW(TAG, "Using SSID from Kconfig");

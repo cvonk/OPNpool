@@ -5,7 +5,7 @@
     "typeinfo": "cpp",
     "network.h": "c"
   },
-  "idf.portWin": "COM7",
+  "idf.portWin": "COM3",
   "idf.adapterTargetName": "esp32",
   "cmake.configureOnOpen": false
 }
