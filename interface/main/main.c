@@ -143,8 +143,7 @@ _connect2wifi_and_start_httpd(ipc_t * const ipc)
         .priv = &priv,
     };
     ESP_ERROR_CHECK(wifi_connect_init(&wifi_connect_config));
-
-    wifi_config_t * wifi_config_addr = NULL;
+    esp_err_t err = NULL;
 #ifdef CONFIG_OPNPOOL_HARDCODED_WIFI_CREDENTIALS
     if (strlen(CONFIG_OPNPOOL_HARDCODED_WIFI_SSID)) {
         ESP_LOGW(TAG, "Using SSID from Kconfig");
@@ -154,14 +153,13 @@ _connect2wifi_and_start_httpd(ipc_t * const ipc)
                 .password = CONFIG_OPNPOOL_HARDCODED_WIFI_PASSWD,
             }
         };
-        wifi_config_addr = &wifi_config;
+        err = wifi_connect_start(&wifi_config);
     } else
 #endif
     {
         ESP_LOGW(TAG, "Using SSID from nvram");
+        err = wifi_connect_start(NULL);
     }
-
-    esp_err_t err = wifi_connect_start(wifi_config_addr);
     if (err == ESP_ERR_WIFI_SSID) {
         ESP_LOGE(TAG, "Wi-Fi SSID/passwd not provisioned");
         _delete_task();
