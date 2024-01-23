@@ -64,6 +64,7 @@ From VScode:
 
   * Change to the `OPNpool/interface` folder.
   * Connect your ESP32 module, and configure the device and COM port (press the F1-key and select "ESP-IDF: Device configuration")
+  * If you are using ESP-IDF version 5.0 or greater you need to add the mDNS component by running ```idf.py add-dependency espressif/mdns``` in the terminal.
   * Edit the configuration (press the F1-key, select "ESP-IDF: SDK configuration editor" and scroll down to OPNpool)
       * Select "Use hardcoded Wi-Fi credentials" and specify the SSID and password of your Wi-Fi access point.
       * If you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://username:passwd@host.domain:1883`
