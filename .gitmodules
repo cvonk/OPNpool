@@ -7,8 +7,8 @@
 [submodule "interface/components/factory_reset_task"]
 	path = interface/components/factory_reset_task
 	url = https://github.com/cvonk/ESP32_factory-reset-task.git
-[submodule "interface/factory/components/factory_ble_prov"]
-	path = interface/factory/components/factory_ble_prov
+[submodule "factory/components/factory_ble_prov"]
+	path = factory/components/factory_ble_prov
 	url = https://github.com/cvonk/ESP32_factory-ble-prov.git
 [submodule "interface/components/wifi_connect"]
 	path = interface/components/wifi_connect
