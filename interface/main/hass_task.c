@@ -171,12 +171,20 @@ _switch_set(char const * const subtopic, poolstate_get_params_t const * const pa
 static void
 _sensor_init(char const * const base, dispatch_hass_t const * const hass, char * * set_topics, char * * const cfg)
 {
-    assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
-                     "\"~\":\"%s\","
-                     "\"name\":\"OPNpool %s\","
-                     "\"stat_t\":\"~/state\","
-                     "\"unit_of_meas\":\"%s\"}",
-                     base, base, hass->name, hass->unit ? hass->unit : "") >= 0 );
+    if (hass->unit) {
+        assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                        "\"~\":\"%s\","
+                        "\"name\":\"OPNpool %s\","
+                        "\"stat_t\":\"~/state\","
+                        "\"unit_of_meas\":\"%s\"}",
+                        base, base, hass->name, hass->unit) >= 0 );
+    } else {
+        assert( asprintf(cfg, "%s/config" "\t{"  // '\t' separates the topic and the message
+                        "\"~\":\"%s\","
+                        "\"name\":\"OPNpool %s\","
+                        "\"stat_t\":\"~/state\"}",
+                        base, base, hass->name) >= 0 );
+    }
 }
 
 /*

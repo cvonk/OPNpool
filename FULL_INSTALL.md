@@ -54,7 +54,7 @@ The schematic fits easily on a two layer PCB. Note the cut out for the RF antenn
 
 | Name        | Description                                             | Sugggested mfr/part#       |
 |-------------|---------------------------------------------------------|----------------------------|
-| PBC r2      | Printed circuit board                                   | [OSHPark nS1z3Duu](https://oshpark.com/shared_projects/nS1z3Duu) [^1] |
+| PBC r2      | Printed circuit board                                   | OSHPark                    |
 | Enclosure   | 158x90x60mm clear plastic project enclosure, IP65       | *white label*              |
 | LOLIN D32   | Wemos LOLIN D32, based on ESP-WROOM-32 4MB              | Wemos LOLIN-D32            |
 | RS485_CONN  | Plug+socket, male+female, 5-pin, 16mm aviation, IP68    | SD 16                      | 
