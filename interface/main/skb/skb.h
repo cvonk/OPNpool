@@ -2,16 +2,13 @@
 
 /**
  * @brief OPNpool - Linux sk_buff inspired continuous memory
- *
- * Rather than copying packet data at every layer (datalink, network), it passes a
+ * the removed header. The assertion ensures that the data pointer doesn't move before
+ * the head pointer, preventing underflow and preserving the reserved headroom boundary.
  * pointer to a single `skb`, modifying its internal pointers to "strip" or "add"
  * headers.
  */
 
 #include <esp_system.h>
-
-namespace esphome {
-namespace opnpool {
 
 typedef struct skb_priv_t {
     uint8_t * head;  // start of the pkt
@@ -214,6 +211,3 @@ void skb_reset(skb_handle_t skb);
  */
 
 size_t skb_print(char const * const tag, skb_handle_t const skb, char * const buf, size_t const buf_size);
-
-} // namespace opnpool
-} // namespace esphome

@@ -31,9 +31,6 @@
 
 #include "skb.h"
 
-namespace esphome {
-namespace opnpool {
-
 static char const * const TAG = "skb";
 
 skb_handle_t
@@ -98,9 +95,9 @@ skb_push(skb_handle_t const skb, size_t const header_len)
 uint8_t *
 skb_pull(skb_handle_t const skb, size_t const header_len)
 {
-    assert(skb->priv.data - header_len >= skb->priv.head);  // prevent underflow
+    assert(skb->priv.data + header_len <= skb->priv.tail);  // ensure we don't pull beyond available data
     skb->len -= header_len;
-    return skb->priv.data -= header_len;
+    return skb->priv.data += header_len;
 }
 
 void
@@ -122,6 +119,3 @@ skb_print(char const * const tag, skb_handle_t const skb, char * const buf, size
     }
     return len;
 }
-
-} // namespace opnpool
-} // namespace esphome
