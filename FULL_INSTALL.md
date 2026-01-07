@@ -150,15 +150,16 @@ From VScode:
 
 Using an Android phone:
 
-  * Install and run the OPNpool app from the [Play Store](https://play.google.com/store/apps/details?id=com.coertvonk.opnpool).
+  * Install and run the OPNpool app. Previously, this was available through the [Play Store](https://play.google.com/store/apps/details?id=com.coertvonk.opnpool), but now can be found under releases on GitHub. [^2]
   * Using the overflow menu, select "Provision device".
-  * Click on the "Provision" button and grant it access [^2].
+  * Click on the "Provision" button and grant it access [^3].
   * Click on the name of the OPNpool device one it is detected (`POOL*`).
   * Select the Wi-Fi SSID to connect to and give it the password.
   * If you don't have a MQTT broker press `Skip`. Otherwise, specify the broker URL in the format `mqtt://username:passwd@host.domain:1883`.
   * Wait a few minutes for the provisioning to complete.
 
-[^2]: Precise location permission is needed to find and connect to the OPNpool device using Bluetooth LE.
+[^2]: On newer Android versions, it will take several attempts before WiFi networks are found.
+[^3]: Precise location permission is needed to find and connect to the OPNpool device using Bluetooth LE.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=tHYNv9jL5MY" target="_blank">
  <img src="http://img.youtube.com/vi/tHYNv9jL5MY/mqdefault.jpg" alt="Watch the video" width="960" border="0" />
