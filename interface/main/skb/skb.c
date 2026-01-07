@@ -4,8 +4,8 @@
  *   Since this code originated from code which is public domain, I
  *   hereby declare this code to be public domain as well.
  *
- *   Derived more functionality from macros to C++ template.
- *   Coert Vonk, 2015, 2019
+ *   Write as C code instead of macros.
+ *   Coert Vonk, 2015, 2019, 2026.
  *
  *   loosely based on http://www.keil.com/download/docs/200.asp
  ****************************************************************************
@@ -27,17 +27,23 @@
  */
 
 #include <esp_system.h>
-#include <esp_log.h>
+#include <esphome/core/log.h>
 
 #include "skb.h"
 
-//static char const * const TAG = "skb";
+namespace esphome {
+namespace opnpool {
+
+static char const * const TAG = "skb";
 
 skb_handle_t
 skb_alloc(size_t size)
 {
-    skb_t * const skb = malloc(sizeof(skb_t) + size);
-    assert(skb);
+    skb_t * const skb = static_cast<skb_t *>(calloc(1, sizeof(skb_t) + size));
+    if (skb == nullptr) {
+        ESP_LOGE(TAG, "skb_alloc: allocation failed");
+        return nullptr;
+    }
     skb->len = 0;
     skb->size = size;
     skb->priv.head =
@@ -53,17 +59,15 @@ skb_free(skb_handle_t const skb)
     free(skb);
 }
 
-// reserve headroom for protocol headers
 void
 skb_reserve(skb_handle_t const skb, size_t const header_len)
 {
-    assert(skb->priv.head == skb->priv.tail);  // only once after skb_alloc()
-    assert(skb->priv.tail + header_len <= skb->priv.end);
+    assert(skb->priv.head == skb->priv.tail);  // ensure no data has been added yet
+    assert(skb->priv.tail + header_len <= skb->priv.end); // ensures buffer capacity is not exceeded
     skb->priv.data += header_len;
     skb->priv.tail += header_len;
 }
 
-// returns pointer to write user data
 uint8_t *
 skb_put(skb_handle_t const skb, size_t const user_data_len)
 {
@@ -74,7 +78,6 @@ skb_put(skb_handle_t const skb, size_t const user_data_len)
     return ret;
 }
 
-// reclaims user_data, and returns pointer to user data
 uint8_t *
 skb_call(skb_handle_t const skb, size_t const user_data_adj)
 {
@@ -84,7 +87,6 @@ skb_call(skb_handle_t const skb, size_t const user_data_adj)
     return skb->priv.data;
 }
 
-// returns pointer to write header protocol data
 uint8_t *
 skb_push(skb_handle_t const skb, size_t const header_len)
 {
@@ -93,11 +95,10 @@ skb_push(skb_handle_t const skb, size_t const header_len)
     return skb->priv.data -= header_len;
 }
 
-// reclaims header, and returns pointer to user data
 uint8_t *
 skb_pull(skb_handle_t const skb, size_t const header_len)
 {
-    assert(skb->priv.data - header_len >= skb->priv.head);
+    assert(skb->priv.data - header_len >= skb->priv.head);  // prevent underflow
     skb->len -= header_len;
     return skb->priv.data -= header_len;
 }
@@ -121,3 +122,6 @@ skb_print(char const * const tag, skb_handle_t const skb, char * const buf, size
     }
     return len;
 }
+
+} // namespace opnpool
+} // namespace esphome
