@@ -638,6 +638,6 @@ typedef struct network_msg_t {
         network_msg_chlor_level_set_t * chlor_level_set;
         network_msg_chlor_level_resp_t * chlor_level_resp;
         network_msg_chlor_name_req_t * chlor_name_req;
-        uint8_t * bytes;
+        uint8_t bytes[]; // was: uint8_t * bytes;
     } u;
 } network_msg_t;
