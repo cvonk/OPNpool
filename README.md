@@ -5,7 +5,7 @@
 ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf)
 ![GitHub](https://img.shields.io/github/license/cvonk/OPNpool)
 
-> 🤯 I just released the spinoff [OPNpool meets ESPHome](https://github.com/cvonk/OPNpool_meets_ESPHome)
+> 🤯 For those already using Home Assistant, I just released the spinoff [OPNpool meets ESPHome](https://github.com/cvonk/OPNpool_meets_ESPHome).
 
 The OPNpool integrates the functionality of a traditional Pool Controller into the modern smart home. It keeps tabs on the status of the connected controller, pool pump and chlorinator. This provides not only a more convenient solution than physically interacting with the pool equipment, but the ability to create automations that runs the pump for a duration depending on the temperature.
 
