@@ -5,6 +5,8 @@
 ![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/cvonk/OPNpool/esp-idf)
 ![GitHub](https://img.shields.io/github/license/cvonk/OPNpool)
 
+> **🤯 For those already using Home Assistant, I just released the spinoff [OPNpool meets ESPHome](https://github.com/cvonk/OPNpool_meets_ESPHome).  The same functionality using defensive programming in a more modern C++ jacket **
+
 The OPNpool integrates the functionality of a traditional Pool Controller into the modern smart home. It keeps tabs on the status of the connected controller, pool pump and chlorinator. This provides not only a more convenient solution than physically interacting with the pool equipment, but the ability to create automations that runs the pump for a duration depending on the temperature.
 
 Features:
@@ -64,6 +66,7 @@ From VScode:
 
   * Change to the `OPNpool/interface` folder.
   * Connect your ESP32 module, and configure the device and COM port (press the F1-key and select "ESP-IDF: Device configuration")
+  * If you are using ESP-IDF version 5.0 or greater you need to add the mDNS component by running ```idf.py add-dependency espressif/mdns``` in the terminal.
   * Edit the configuration (press the F1-key, select "ESP-IDF: SDK configuration editor" and scroll down to OPNpool)
       * Select "Use hardcoded Wi-Fi credentials" and specify the SSID and password of your Wi-Fi access point.
       * If you have a MQTT broker set up, select "Use hardcoded MQTT URL" and specify the URL in the format `mqtt://username:passwd@host.domain:1883`
