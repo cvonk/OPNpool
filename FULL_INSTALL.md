@@ -32,7 +32,6 @@ If you only want to take this project for a quick spin, refer to the [`README.md
 We will build a printed circuit board (PCB) with an ESP32 module, RS-485 adapter and DC/DC converter.
 
 If you're in Silicon Valley, give me a ping to avoid long lead times. I have extra (partly) assenmbled units and will provide them at cost.
-If there is enough interest, I can start a project on Tindie or Crowd Supply to get some volume pricing.
 
 ### Schematic
 
