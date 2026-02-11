@@ -2,17 +2,17 @@
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool_meets_ESPHome?include_prereleases&logo=DocuSign&logoColor=%23fff)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-> OPNpool moved to a ESPHome/PlatformIO based build system.  If you are looking for the last standalone version, you will find that in the `standalone` branch, or download the most recent v1 release zip file.
+> OPNpool moved to a ESPHome/PlatformIO based build system.  If you are looking for the last standalone version, you will find that in the `standalone` branch, or download the most recent `v1` release.
 
 Ever dreamed of making your pool smarter and easier to manage? If you’ve ever owned a backyard pool, you know it’s not just about swimming—there’s a whole world of chemicals, covers, vacuums, brushes, and fiddling with thermostats and circuits. Even with a saltwater pool, you’ve got to keep a close eye on things!
 
 Enter OPNpool: your pool’s new best friend. It takes all the classic pool controller features and brings them into your smart home. OPNpool keeps track of your controller, pump, and chlorinator, so you don’t have to run outside every time you want to check or change something. Even better, you can set up automations—like running the pump longer when it’s hot out—all from the comfort of your phone or smart home dashboard.
 
-Thanks to some clever folks who reverse engineered the RS485 protocol, OPNpool can eavesdrop on the chatter between your pool’s components. The ESP32 inside shares all that state info as JSON/HTTP and can publish it via MQTT. And if you’re a Home Assistant fan, you’ll love how easily it integrates using MQTT Discovery.
+Thanks to some clever folks who reverse engineered the RS485 protocol, OPNpool can eavesdrop on the chatter between your pool’s components. The ESP32 inside shares all that state info with Home Assistant.
 
-# OPNpool meets ESPHome
+# OPNpool
 
-OPNpool meets ESPHome is an open-source hardware and software solution that brings advanced pool automation to your smart home. By bridging legacy pool controllers with modern IoT platforms, OPNpool enables real-time monitoring, remote control, and seamless integration with Home Assistant. Whether you want to automate your pool pump based on temperature, monitor chlorinator status, or simply enjoy the convenience of remote access, OPNpool provides a robust and extensible platform for pool management.
+OPNpool is an open-source hardware and software solution that brings advanced pool automation to your smart home. By bridging legacy pool controllers with modern IoT platforms, OPNpool enables real-time monitoring, remote control, and seamless integration with Home Assistant. Whether you want to automate your pool pump based on temperature, monitor chlorinator status, or simply enjoy the convenience of remote access, OPNpool provides a robust and extensible platform for pool management.
 
 ## How it works
 
