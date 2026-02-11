@@ -2,17 +2,29 @@
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cvonk/OPNpool_meets_ESPHome?include_prereleases&logo=DocuSign&logoColor=%23fff)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+<<<<<<< HEAD
 > OPNpool moved to a ESPHome/PlatformIO based build system.  If you are looking for the last standalone version, you will find that in the `standalone` branch, or download the most recent `v1` release.
+=======
+> This is a port of my [original OPNpool](https://github.com/cvonk/OPNpool) to the ESPHome platform.
+>>>>>>> 21796d13785588e28b2d920e231e2d6940bcb9e6
 
 Ever dreamed of making your pool smarter and easier to manage? If you’ve ever owned a backyard pool, you know it’s not just about swimming—there’s a whole world of chemicals, covers, vacuums, brushes, and fiddling with thermostats and circuits. Even with a saltwater pool, you’ve got to keep a close eye on things!
 
 Enter OPNpool: your pool’s new best friend. It takes all the classic pool controller features and brings them into your smart home. OPNpool keeps track of your controller, pump, and chlorinator, so you don’t have to run outside every time you want to check or change something. Even better, you can set up automations—like running the pump longer when it’s hot out—all from the comfort of your phone or smart home dashboard.
 
+<<<<<<< HEAD
 Thanks to some clever folks who reverse engineered the RS485 protocol, OPNpool can eavesdrop on the chatter between your pool’s components. The ESP32 inside shares all that state info with Home Assistant.
 
 # OPNpool
 
 OPNpool is an open-source hardware and software solution that brings advanced pool automation to your smart home. By bridging legacy pool controllers with modern IoT platforms, OPNpool enables real-time monitoring, remote control, and seamless integration with Home Assistant. Whether you want to automate your pool pump based on temperature, monitor chlorinator status, or simply enjoy the convenience of remote access, OPNpool provides a robust and extensible platform for pool management.
+=======
+Thanks to some clever folks who reverse engineered the RS485 protocol, OPNpool can eavesdrop on the chatter between your pool’s components. The ESP32 inside shares all that state info as JSON/HTTP and can publish it via MQTT. And if you’re a Home Assistant fan, you’ll love how easily it integrates using MQTT Discovery.
+
+# OPNpool meets ESPHome
+
+OPNpool meets ESPHome is an open-source hardware and software solution that brings advanced pool automation to your smart home. By bridging legacy pool controllers with modern IoT platforms, OPNpool enables real-time monitoring, remote control, and seamless integration with Home Assistant. Whether you want to automate your pool pump based on temperature, monitor chlorinator status, or simply enjoy the convenience of remote access, OPNpool provides a robust and extensible platform for pool management.
+>>>>>>> 21796d13785588e28b2d920e231e2d6940bcb9e6
 
 ## How it works
 
@@ -32,6 +44,7 @@ No prior experience with pool automation or ESPHome is required. The documentati
 This device was tested with the Pentair SunTouch controller with firmware **2.080** (2013-07-15), connected to an IntelliFlo pump and IntelliChlor saltwater chlorinator.
 
 > This open source and hardware project is intended to comply with the October 2016 exemption to the Digital Millennium Copyright Act allowing "good-faith" testing," in a controlled environment designed to avoid any harm to individuals or to the public.
+<<<<<<< HEAD
 
 ## Acknowledgements
 
@@ -93,6 +106,69 @@ opnpool:
 
 Specify your own secrets in `secrets.yaml`
 
+=======
+
+## Acknowledgements
+
+> We proudly acknowledge the work of reverse engineering pioneers [Joshua Bloch](https://docs.google.com/document/d/1M0KMfXfvbszKeqzu6MUF_7yM6KDHk8cZ5nrH1_OUcAc/edit), [Michael Russe](http://cocoontech.com/forums/files/file/173-pab014sharezip/), and [George Saw](http://cocoontech.com/forums/topic/27864-download-pitzip/). (Drop me a line if I forgot you.)
+
+## Usage
+
+Start with [installing the ESPHome environment](https://esphome.io/guides/installing_esphome/) on a beefy computer. In my case, this cut the compilation time to a minute, compared to half an hour when running it as an add-on to Home Assistant.
+
+In an empty directory, create a `opnpool-1.yaml` configuration file as shown below.
+```yaml
+substitutions:
+  device_name: opnpool-1
+  friendly_name: "OPNpool meets ESPHome"
+  description: "External component, see https://github.com/cvonk/OPNpool_meets_ESPHome"
+
+esphome:
+  name: ${device_name}
+  comment: ${description}
+  friendly_name: ${friendly_name}
+
+esp32:
+  variant: esp32c6          # or esp32     for <= r3 boards
+  board: esp32-c6-devkitc-1 # or lolin_d32 for <= r3 boards
+  framework:
+    type: esp-idf
+
+wifi:
+  domain: !secret domain_name # only needed if not on the same subnet
+  min_auth_mode: WPA2
+  reboot_timeout: 0s
+  networks:
+  - ssid: !secret wifi_ssid
+    password: !secret wifi_password
+
+api:
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+external_components:
+  - source: github://cvonk/OPNpool_meets_ESPHome
+    components: [ opnpool ]
+
+logger:
+  level: VERBOSE          # build includes ESP_LOGx up to VERBOSE
+  initial_level: WARN     # only show up to WARN globally
+  logs:
+    poolstate_rx: VERBOSE # show decoded messages
+
+opnpool:
+  id: opnpool_1
+  RS-485:
+    tx_pin:  21  # or 26 for <= r3 boards 
+    rx_pin:  22  # or 25 for <= r3 boards
+    rts_pin: 23  # or 27 for <= r3 boards
+```
+
+Specify your own secrets in `secrets.yaml`
+
+>>>>>>> 21796d13785588e28b2d920e231e2d6940bcb9e6
 ```yaml
 wifi_ssid: "REDACTED"
 wifi_password: "REDACTED"
@@ -127,6 +203,7 @@ In the above trace, the `tx_q full` indicates that it can't transmit to the pool
 If you haven't already, add the ESPHome integration to Home Assistant.
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome)
+<<<<<<< HEAD
 
 Under Integrations, you will find now notice that Home Assistant auto discovered your new device.
 
@@ -141,6 +218,22 @@ Add it, and specify your API key.  Name the device and assign it an area. You sh
 At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can
 breadboard this using:
 
+=======
+
+Under Integrations, you will find now notice that Home Assistant auto discovered your new device.
+
+[![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/)
+
+![Discovered](assets/media/opnpool-discovered.png){: style="display: block; margin-left: auto; margin-right: auto; width:300px;}
+
+Add it, and specify your API key.  Name the device and assign it an area. You should then see the enities although their values are `unknown`.  Time to populate those entities by connecting it to the pool controller ;-)
+
+## Connect
+
+At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can
+breadboard this using:
+
+>>>>>>> 21796d13785588e28b2d920e231e2d6940bcb9e6
 * Any ESP32 module that has an USB connector and three GPIO pins available.
 * Any "Max485 Module TTL". To make it 3.3 Volt compliant, change the chip to a `MAX3485CSA+`. While you're at it, you may as well remove the 10 kΩ pullup resistors (typically labeled `R1` to `R4`).
 * A piece of Cat5 ethernet cable to connect to the pool controller.
