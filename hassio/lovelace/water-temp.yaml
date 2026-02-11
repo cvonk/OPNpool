@@ -1,8 +1,0 @@
-type: custom:mini-graph-card
-aggregate_func: max
-entities:
-  - entity: sensor.opnpool_water_temp
-group_by: date
-hour24: true
-hours_to_show: 8760
-name: Pool water temp (yr)
