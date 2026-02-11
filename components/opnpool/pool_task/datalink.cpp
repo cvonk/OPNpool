@@ -1,54 +1,73 @@
 /**
- * @brief OPNpool - Data Link layer: bytes from the RS485 transceiver to/from data packets
+ * @file datalink.cpp
+ * @brief Data Link layer: bytes from the RS485 transceiver to/from data packets
  *
- * © Copyright 2014, 2019, 2022, Coert Vonk
- * 
- * This file is part of OPNpool.
- * OPNpool is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with OPNpool. 
- * If not, see <https://www.gnu.org/licenses/>.
- * 
- * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright 2014,2019,2022 Coert Vonk
+ * @details
+ * This file implements core functions for the OPNpool data link layer, facilitating the
+ * conversion between raw RS485 byte streams and structured protocol data packets. It
+ * provides utilities for handling protocol preambles and postambles, address group
+ * extraction and composition, and checksum calculation for packet integrity. These
+ * foundational routines are used by both the transmitter and receiver to ensure reliable
+ * communication between the ESPHome component and pool equipment over the RS485 bus.
+ *
+ * ESPHome operates in a single-threaded environment, so explicit thread safety measures
+ * are not required within the pool_task context.
+ *
+ * @author Coert Vonk (@cvonk on GitHub)
+ * @copyright Copyright (c) 2014, 2019, 2022, 2026 Coert Vonk
+ * @license SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 #include <esp_system.h>
-#include <esp_log.h>
-#include <time.h>
+#include <esp_types.h>
 
-#include "../rs485/rs485.h"
-#include "skb/skb.h"
 #include "datalink.h"
+#pragma GCC diagnostic error "-Wall"
+#pragma GCC diagnostic error "-Wextra"
+#pragma GCC diagnostic error "-Wunused-parameter"
 
-// static char const * const TAG = "datalink";
+namespace esphome {
+namespace opnpool {
 
-datalink_preamble_a5_t datalink_preamble_a5 = { 0x00, 0xFF, 0xA5 };  // use 0xA5 in the preamble to detection more reliable
-datalink_preamble_ic_t datalink_preamble_ic = { 0x10, 0x02 };
+datalink_preamble_a5_t datalink_preamble_a5  = { 0x00, 0xFF, 0xA5 };  // use of 0xA5 in the preamble makes the detection more reliable
+datalink_preamble_ic_t datalink_preamble_ic  = { 0x10, 0x02 };
 datalink_preamble_ic_t datalink_postamble_ic = { 0x10, 0x03 };
 
-datalink_addrgroup_t
-datalink_groupaddr(uint16_t const addr)
+#if 0
+/**
+ * @brief               Composes a device address from an address group and device ID.
+ *
+ * @param[in] group     The address group (high nibble).
+ * @param[in] device_id The device ID within the group (low nibble).
+ * @return              The composed 8-bit device address.
+ */
+datalink_addr_t
+datalink_addr(datalink_group_addr_t const group, datalink_pump_id_t const device_id)
 {
-	return (datalink_addrgroup_t)(addr >> 4);
-}
+    datalink_addr_t addr = {};
+    addr.set_group_addr(group);
+    addr.set_pump_id(device_id);
 
-uint8_t
-datalink_devaddr(uint8_t group, uint8_t const id)
-{
-	return (group << 4) | id;
+    return addr;
 }
+#endif
 
+/**
+ * @brief           Calculates the checksum for a data buffer.
+ *
+ * @param[in] start Pointer to the start of the data buffer.
+ * @param[in] stop  Pointer to one past the end of the data buffer (exclusive).
+ * @return          The calculated 16-bit checksum (sum of all bytes).
+ */
 uint16_t
-datalink_calc_crc(uint8_t const * const start, uint8_t const * const stop)
+datalink_calc_checksum(uint8_t const * const start, uint8_t const * const stop)
 {
-    uint16_t crc = 0;
+    uint16_t checksum = 0;
     for (uint8_t const * byte = start; byte < stop; byte++) {
-        crc += *byte;
+        checksum += *byte;
     }
-    return crc;
+    return checksum;
 }
+
+} // namespace opnpool
+} // namespace esphome

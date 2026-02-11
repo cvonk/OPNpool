@@ -1,0 +1,4 @@
+secrets.yaml
+.esphome/
+components/opnpool/__pycache__/
+components/opnpool/tmp.py

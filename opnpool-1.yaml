@@ -1,0 +1,203 @@
+# For better development experience: in VS Code, install the ESPHome extension.
+# Compile with ctrl-shift-b, or on mac use cmd-shift-b.  
+# The `tasks.json` file defines the build tasks. It will map the compile
+# pathnames back from the build directory to the project directory.
+# You can then inspect the build output in the PROBLEMS tab in VS Code.
+#
+# To compile & upload: ctrl-shift-p → "Run Task" → "ESPHome Upload"
+# To view logs: ctrl-shift-p → "Run Task" → "ESPHome Monitor"
+
+substitutions:
+  device_name: opnpool-1
+  friendly_name: "OPNpool meets ESPHome esp32c6"
+  description: "External component, see https://github.com/cvonk/OPNpool_meets_ESPHome"
+
+esphome:
+  name: ${device_name}
+  comment: ${description}
+  friendly_name: ${friendly_name}
+      
+esp32:
+  variant: esp32c6           # esp32c6            for >= r4 boards, esp32     for <= r3 boards
+  board: esp32-c6-devkitc-1  # esp32-c6-devkitc-1 for >= r4 boards, lolin_d32 for <= r3 boards
+  framework:
+    type: esp-idf
+
+logger:
+  level: VERBOSE           # build includes ESP_LOGx up to VERBOSE
+  initial_level: WARN      # only show up to WARN globally
+  logs:
+    rs485: VERBOSE
+    datalink_rx: WARN      # VERBOSE to see the raw bytes
+    datalink_tx: WARN      # VERBOSE to see the raw bytes
+    network_rx: WARN
+    network_create: WARN
+    pool_task: WARN
+    ipc: WARN
+    poolstate: WARN
+    poolstate_rx: VERBOSE  # VERBOSE to see the decoded messages
+    opnpool: WARN
+    opnpool_climate: WARN
+    opnpool_switch: WARN
+    opnpool_sensor: WARN
+    opnpool_binary_sensor: WARN
+    opnpool_text_sensor: WARN
+    enum_helpers: WARN
+
+debug:
+  update_interval: 5s  # for exception decoding in logs
+
+## OpenThread configuration (requires ESP32-C6 or ESP32-H2)
+#openthread:
+#  device_type: FTD  # full thread device
+#  tlv: !secret thread_tlv
+## Enable IPv6 for Thread networking
+#network:
+#  enable_ipv6: true
+
+wifi:
+  domain: !secret domain_name
+  min_auth_mode: WPA2
+  reboot_timeout: 0s
+  networks:
+  - ssid: !secret wifi_ssid
+    password: !secret wifi_password
+  ap: # enable fallback ap captive portal in case wifi connection fails
+    ssid: "${device_name} Config"
+    password: !secret wifi_password
+
+captive_portal:
+
+api:
+  encryption:
+    key: !secret api_encryption_key 
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+time:
+  - platform: homeassistant
+    id: ha_time  
+
+web_server:
+  port: 80
+  include_internal: true
+
+external_components:
+  - source: 
+      type: local
+      path: components
+
+opnpool:
+  id: opnpool_1
+  flash_size: "8MB"  # options: "4MB", "8MB", "16MB"
+
+  # RS485 configuration for >= r4 boards
+  rs485:
+    tx_pin:  21  # default 21 (GPIO21)
+    rx_pin:  22  # default 22 (GPIO22)
+    rts_pin: 23  # default 23 (GPIO23)
+
+  # RS485 configuration for <= r3 boards
+  #rs485:
+  #  tx_pin:  26  # default 21 (GPIO21)
+  #  rx_pin:  25  # default 22 (GPIO22)
+  #  rts_pin: 27  # default 23 (GPIO23)
+
+  matter:
+    enabled: false                               # waiting for native ESPHome support
+    discriminator: !secret matter_discriminator  # For QR code pairing (0-4095)
+    passcode: !secret matter_passcode            # Setup code (1-99999998)
+
+  # climate thermostats
+  pool_climate:
+    name: "Pool Heater"
+  spa_climate:
+    name: "Spa Heater"
+
+  # circuit/feature switches
+  pool:
+    name: "Pool Mode"
+  spa:
+    name: "Spa Mode"
+  aux1:
+    name: "Vacuum"
+  aux2:
+    name: "Light"
+  feature1:
+    name: "Feature 1"
+  feature2:
+    name: "Feature 2"
+  feature3:
+    name: "Feature 3"
+  feature4:
+    name: "Feature 4"
+
+  # analog sensors
+  water_temperature:
+    name: "Pool water"
+    state_class: "measurement"
+    device_class: "temperature"
+    unit_of_measurement: "°F"
+  air_temperature:
+    name: "Outside air"
+    state_class: "measurement"
+    device_class: "temperature"
+    unit_of_measurement: "°F"
+  primary_pump_power:
+    name: "Pump power"
+    state_class: "measurement"
+    device_class: "power"
+    unit_of_measurement: "W"
+  primary_pump_flow:
+    name: "Pump flow"
+    state_class: "measurement"
+    device_class: "volume_flow_rate"
+    unit_of_measurement: "gal/min"
+  primary_pump_speed:
+    name: "Pump speed"
+    state_class: "measurement"
+    unit_of_measurement: "rpm"
+  chlorinator_level:
+    name: "Chlorinator level"
+    unit_of_measurement: "%"
+  chlorinator_salt:
+    name: "Chlorinator salt"
+    state_class: "measurement"
+    unit_of_measurement: "ppm"
+
+  # binary sensors
+  primary_pump_running:
+    name: "Pump running"
+    device_class: "running"
+  mode_service:
+    name: "Service mode"
+  mode_temperature_inc:
+    name: "Temperature increase mode"
+  mode_freeze_protection:
+    name: "Freeze protection mode"
+  mode_timeout:
+    name: "Timeout mode"
+
+  # text sensors
+  pool_sched:
+    name: "Pool schedule"
+  spa_sched:
+    name: "Spa schedule"
+  primary_pump_mode:
+    name: "Pump mode"
+  primary_pump_state:
+    name: "Pump state"
+  primary_pump_error:
+    name: "Pump error"
+  chlorinator_name:
+    name: "Chlorinator name"
+  chlorinator_status:
+    name: "Chlorinator status"
+  system_time:
+    name: "Controller system time"
+  controller_type:
+    name: "Controller type"
+  interface_firmware:
+    name: "Interface firmware"

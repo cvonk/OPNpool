@@ -1,0 +1,93 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ESPHome Build opnpool-1",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "compile",
+                "${workspaceFolder}/opnpool-1.yaml"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(?:.*src/esphome/)?(components/.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "ESPHome Upload opnpool-1",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "run",
+                "${workspaceFolder}/opnpool-1.yaml",
+                "--device",
+                "OTA"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(?:.*src/esphome/)?(components/.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "ESPHome Clean opnpool-1",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "clean",
+                "${workspaceFolder}/opnpool-1.yaml"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "ESPHome Logs opnpool-1",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "logs",
+                "${workspaceFolder}/opnpool-1.yaml"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+}

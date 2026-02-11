@@ -1,34 +1,69 @@
+/**
+ * @file network.h
+ * @brief Network Layer Definitions for OPNpool component
+ *
+ * @details
+ * This header defines the interface for the network layer of the OPNpool component. The
+ * network layer abstracts protocol translation and message construction, enabling
+ * reliable communication between the ESP32 and pool controller over RS-485.
+ *
+ * The network layer provides two main functions:
+ * 1. `network_rx_msg()`: overlays a raw datalink packet with a network message structure.
+ * 2. `network_create_pkt()`: Creates a datalink packet from a network message.
+ *
+ * The design supports multiple protocol variants and is intended for use in a
+ * single-threaded ESPHome environment. Forward declarations are used to avoid
+ * circular dependencies.
+ *
+ * @author Coert Vonk (@cvonk on GitHub)
+ * @copyright Copyright (c) 2014, 2019, 2022, 2026 Coert Vonk
+ * @license SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #pragma once
+#ifndef __cplusplus
+# error "Requires C++ compilation"
+#endif
+
 #include <esp_system.h>
+#include <esp_types.h>
 
-#include "../datalink/datalink.h"
-#include "../datalink/datalink_pkt.h"
+namespace esphome {
+namespace opnpool {
 
-#include "network_msg.h"
+    // forward declarations (to avoid circular dependencies)
+struct datalink_pkt_t;
+struct network_msg_t;
 
-/* network.c */
-uint8_t network_ic_len(uint8_t const ic_typ);
+/**
+ * @brief Decode a datalink packet into a network message for higher-level processing.
+ *
+ * @details
+ * Translates a validated datalink packet (from RS-485) into a structured network message,
+ * supporting multiple protocol types (A5/CTRL, A5/PUMP, IC/Chlorinator). Determines the
+ * message type, populates the network message fields, and sets the transmission opportunity
+ * flag if the decoded message allows for a response.
+ *
+ * @param[in]  pkt           Pointer to the datalink packet to decode.
+ * @param[out] msg           Pointer to the network message structure to populate.
+ * @param[out] txOpportunity Pointer to a boolean set true if message provides a transmission opportunity.
+ * @return                   ESP_OK if the message was successfully decoded, ESP_FAIL otherwise.
+ */
+[[nodiscard]] esp_err_t network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity);
 
-/* network_rx.c */
-esp_err_t network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity);
+/**
+ * @brief Creates a datalink packet from a network message.
+ *
+ * @details
+ * Allocates a socket buffer, sets protocol headers based on message type, and copies
+ * the message payload into the packet data area. The packet is ready for transmission
+ * after this function returns successfully.
+ *
+ * @param[in]  msg Pointer to the network message to convert.
+ * @param[out] pkt Pointer to the datalink packet structure to fill.
+ * @return         ESP_OK on success, ESP_FAIL if message type is unknown or allocation fails.
+ */
+[[nodiscard]] esp_err_t network_create_pkt(network_msg_t const * const msg, datalink_pkt_t * const pkt);
 
-/* network_tx.c */
-bool network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt);
-
-/* network_str.c */
-char const * network_date_str(uint8_t const year, uint8_t const month, uint8_t const day);
-char const * network_time_str(uint8_t const hours, uint8_t const minutes);
-char const * network_version_str(uint8_t const major, uint8_t const minor);
-const char * network_mode_str(network_mode_t const mode);
-const char * network_circuit_str(network_circuit_t const circuit);
-const char * network_pump_mode_str(network_pump_mode_t const pump_mode);
-const char * network_pump_state_str(network_pump_state_t const pump_state);
-char const * network_pump_prg_str(uint16_t const address);
-const char * network_heat_src_str(network_heat_src_t const heat_src);
-char const * network_typ_pump_str(network_typ_pump_t typ);
-char const * network_typ_ctrl_str(network_typ_ctrl_t typ);
-char const * network_typ_chlor_str(network_typ_chlor_t typ);
-const char * network_msg_typ_str(network_msg_typ_t const typ);
-int network_heat_src_nr(char const * const heat_src_str);
-int network_circuit_nr(char const * const circuit_str);
-int network_msg_typ_nr(char const * const msg_typ_str);
+}  // namespace opnpool
+}  // namespace esphome

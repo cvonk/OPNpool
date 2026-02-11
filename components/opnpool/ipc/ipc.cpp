@@ -1,88 +1,81 @@
 /**
- * @brief OPNpool - Inter Process Communication: mailbox messages exchanged between the tasks
+ * @file ipc.cpp
+ * @brief Inter-Process Communication (IPC) implementation for OPNpool ESPHome Component
  *
- * © Copyright 2014, 2019, 2022, Coert Vonk
- * 
- * This file is part of OPNpool.
- * OPNpool is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with OPNpool. 
- * If not, see <https://www.gnu.org/licenses/>.
- * 
- * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright 2014,2019,2022 Coert Vonk
+ * @details
+ * This file implements the IPC mechanisms for the OPNpool ESPHome component, providing
+ * message queues for communication between FreeRTOS tasks. It defines functions for
+ * sending and receiving network messages between the main task and pool task, using
+ * FreeRTOS queues for safe and efficient message passing. The IPC layer abstracts
+ * inter-task communication, enabling modular separation of protocol handling and
+ * application logic.
+ *
+ * ESPHome operates in a single-threaded environment, so explicit thread safety measures
+ * are not required beyond FreeRTOS queue guarantees.
+ *
+ * @author Coert Vonk (@cvonk on GitHub)
+ * @copyright Copyright (c) 2014, 2019, 2022, 2026 Coert Vonk
+ * @license SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <string.h>
 #include <esp_system.h>
-#include <esp_log.h>
+#include <esp_types.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
+#include <esphome/core/log.h>
 
-#include "utils/utils.h"
-#include "ipc/ipc.h"
-#include "skb/skb.h"
+#include "ipc.h"
+#include "pool_task/skb.h"
+#include "pool_task/network_msg.h"
+#pragma GCC diagnostic error "-Wall"
+#pragma GCC diagnostic error "-Wextra"
+#pragma GCC diagnostic error "-Wunused-parameter"
 
-static char const * const TAG = "ipc";
+namespace esphome {
+namespace opnpool {
 
-/**
- * network_heat_src_t
- **/
-
-static const char * const _ipc_to_mqtt_typs[] = {
-#define XX(num, name) #name,
-  IPC_TO_MQTT_TYP_MAP(XX)
-#undef XX
-};
-
-const char *
-ipc_to_mqtt_typ_str(ipc_to_mqtt_typ_t const typ)
-{
-    return ELEM_AT(_ipc_to_mqtt_typs, typ, hex8_str(typ));
-}
+constexpr char TAG[] = "ipc";
 
 /**
- * ipc_send_to_mqtt
- **/
+ * @brief                  Send a network message to the main task
+ *
+ * @param[in] network_msg  Pointer to the network message to send
+ * @param[in] ipc          Pointer to the IPC structure containing the queue handles
+ * @return                 ESP_OK if the message was successfully queued, ESP_FAIL otherwise
+ */
 
-void
-ipc_send_to_mqtt(ipc_to_mqtt_typ_t const dataType, char const * const data, ipc_t const * const ipc)
+esp_err_t
+ipc_send_network_msg_to_main_task(network_msg_t const * const network_msg, ipc_t const * const ipc)
 {
-    ipc_to_mqtt_msg_t msg = {
-        .dataType = dataType,
-        .data = strdup(data)
-    };
-    assert(msg.data);
-    if (xQueueSendToBack(ipc->to_mqtt_q, &msg, 0) != pdPASS) {
-        if (CONFIG_OPNPOOL_DBGLVL_IPC > 1) {
-            ESP_LOGW(TAG, "to_mqtt_q full");
-        }
-        free(msg.data);
+    ESP_LOGV(TAG, "Queueing %s to main task", enum_str(network_msg->typ));
+
+    if (xQueueSendToBack(ipc->to_main_q, network_msg, 0) != pdPASS) {
+        ESP_LOGW(TAG, "to_main_q full");
+        return ESP_FAIL;
     }
-    vTaskDelay(1);  // give `mqtt_task` a chance to catch up
+    return ESP_OK;
 }
 
 /**
- * ipc_send_to_pool
- **/
+ * @brief                  Send a network message to the pool task
+ *
+ * @param[in] network_msg  Pointer to the network message to send
+ * @param[in] ipc          Pointer to the IPC structure containing the queue handles
+ * @return                 ESP_OK if the message was successfully queued, ESP_FAIL otherwise
+ */
 
-void
-ipc_send_to_pool(ipc_to_pool_typ_t const dataType, char const * const topic, size_t const topic_len, char const * const data, size_t const data_len, ipc_t const * const ipc)
+esp_err_t
+ipc_send_network_msg_to_pool_task(network_msg_t const * const network_msg, ipc_t const * const ipc)
 {
-    ipc_to_pool_msg_t msg = {
-        .dataType = dataType,
-        .topic = strndup(topic, topic_len),
-        .data = strndup(data, data_len),
-    };
-    assert(msg.data);
-    if (xQueueSendToBack(ipc->to_pool_q, &msg, 0) != pdPASS) {
-        if (CONFIG_OPNPOOL_DBGLVL_IPC > 1) {
-            ESP_LOGW(TAG, "to_pool_q full");
-        }
-        free(msg.data);
+    ESP_LOGV(TAG, "Queueing %s to pool task", enum_str(network_msg->typ));
+
+    if (xQueueSendToBack(ipc->to_pool_q, network_msg, 0) != pdPASS) {
+        ESP_LOGW(TAG, "to_pool_q full");
+        return ESP_FAIL;
     }
+    return ESP_OK;
 }
+
+
+} // namespace opnpool
+} // namespace esphome

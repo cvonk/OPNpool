@@ -4474,6 +4474,136 @@ No mounting holes, no silk labels on pins.
 <smd name="C_2" x="6.35" y="0" dx="2.7" dy="1" layer="1"/>
 <smd name="8" x="6.35" y="2.54" dx="2.7" dy="1" layer="1"/>
 </package>
+<package name="ESP32-C6-DEVKITC-1-N8(OLD)">
+<hole x="25.908" y="11.938" drill="2.54"/>
+<hole x="25.908" y="-9.398" drill="2.54"/>
+<pad name="2" x="-7.62" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="11" x="-5.08" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="10" x="-2.54" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="8" x="0" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="1" x="2.54" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="0" x="5.08" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="7" x="7.62" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="6" x="10.16" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="5" x="12.7" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="4" x="15.24" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="!RST" x="17.78" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="3V3" x="20.32" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="GND@1" x="-7.62" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="9" x="-5.08" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="18" x="-2.54" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="19" x="0" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="20" x="2.54" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="21" x="5.08" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="22" x="7.62" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="23" x="10.16" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="15" x="12.7" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="17" x="15.24" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="16" x="17.78" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="GND@2" x="20.32" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="13" x="-10.16" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="12" x="-12.7" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="GND" x="-15.24" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270"/>
+<pad name="NC1" x="-17.78" y="-10.16" drill="1.016" diameter="1.778" shape="offset" rot="R270" first="yes"/>
+<pad name="3" x="-10.16" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="5V0" x="-12.7" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="GND@3" x="-15.24" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<pad name="NC2" x="-17.78" y="12.7" drill="1.016" diameter="1.778" shape="offset" rot="R90"/>
+<text x="-20.32" y="0" size="2.54" layer="21">ESP32-C6-DevKitC-1-N8</text>
+<polygon width="0.0762" layer="21" pour="hatch">
+<vertex x="-29.21" y="11.43"/>
+<vertex x="-29.21" y="-8.89" curve="90"/>
+<vertex x="-26.67" y="-11.43"/>
+<vertex x="25.4" y="-11.43" curve="90"/>
+<vertex x="27.94" y="-8.89"/>
+<vertex x="27.94" y="11.43" curve="90"/>
+<vertex x="25.4" y="13.97"/>
+<vertex x="-26.67" y="13.97" curve="90"/>
+</polygon>
+<rectangle x1="20.32" y1="-8.89" x2="27.94" y2="11.43" layer="39" rot="R90"/>
+<rectangle x1="20.32" y1="-8.89" x2="27.94" y2="11.43" layer="40" rot="R90"/>
+</package>
+<package name="MODULE_ESP32-C6-DEVKITC-1-N8">
+<text x="-12.75" y="32.75" size="1.27" layer="25">&gt;NAME</text>
+<text x="-12.75" y="-28" size="1.27" layer="27">&gt;VALUE</text>
+<wire x1="-12.7" y1="25.9" x2="-9" y2="25.9" width="0.127" layer="51"/>
+<wire x1="9" y1="25.9" x2="12.7" y2="25.9" width="0.127" layer="51"/>
+<wire x1="12.7" y1="25.9" x2="12.7" y2="-25.9" width="0.127" layer="51"/>
+<wire x1="12.7" y1="-25.9" x2="11.525" y2="-25.9" width="0.127" layer="51"/>
+<wire x1="2.875" y1="-25.9" x2="-2.875" y2="-25.9" width="0.127" layer="51"/>
+<wire x1="-11.525" y1="-25.9" x2="-12.7" y2="-25.9" width="0.127" layer="51"/>
+<wire x1="-12.7" y1="-25.9" x2="-12.7" y2="25.9" width="0.127" layer="51"/>
+<wire x1="-11.525" y1="-25.9" x2="-11.525" y2="-26.3" width="0.127" layer="51"/>
+<wire x1="-11.525" y1="-26.3" x2="-2.875" y2="-26.3" width="0.127" layer="51"/>
+<wire x1="-2.875" y1="-26.3" x2="-2.875" y2="-25.9" width="0.127" layer="51"/>
+<wire x1="2.875" y1="-25.9" x2="2.875" y2="-26.3" width="0.127" layer="51"/>
+<wire x1="2.875" y1="-26.3" x2="11.525" y2="-26.3" width="0.127" layer="51"/>
+<wire x1="11.525" y1="-26.3" x2="11.525" y2="-25.9" width="0.127" layer="51"/>
+<wire x1="-9" y1="25.9" x2="-9" y2="32.25" width="0.127" layer="51"/>
+<wire x1="-9" y1="32.25" x2="9" y2="32.25" width="0.127" layer="51"/>
+<wire x1="9" y1="32.25" x2="9" y2="25.9" width="0.127" layer="51"/>
+<wire x1="-12.7" y1="25.9" x2="-9" y2="25.9" width="0.127" layer="21"/>
+<wire x1="9" y1="25.9" x2="12.7" y2="25.9" width="0.127" layer="21"/>
+<wire x1="12.7" y1="25.9" x2="12.7" y2="-25.9" width="0.127" layer="21"/>
+<wire x1="12.7" y1="-25.9" x2="11.525" y2="-25.9" width="0.127" layer="21"/>
+<wire x1="2.875" y1="-25.9" x2="-2.875" y2="-25.9" width="0.127" layer="21"/>
+<wire x1="-11.525" y1="-25.9" x2="-12.7" y2="-25.9" width="0.127" layer="21"/>
+<wire x1="-12.7" y1="-25.9" x2="-12.7" y2="25.9" width="0.127" layer="21"/>
+<wire x1="-11.525" y1="-25.9" x2="-11.525" y2="-26.3" width="0.127" layer="21"/>
+<wire x1="-11.525" y1="-26.3" x2="-2.875" y2="-26.3" width="0.127" layer="21"/>
+<wire x1="-2.875" y1="-26.3" x2="-2.875" y2="-25.9" width="0.127" layer="21"/>
+<wire x1="2.875" y1="-25.9" x2="2.875" y2="-26.3" width="0.127" layer="21"/>
+<wire x1="2.875" y1="-26.3" x2="11.525" y2="-26.3" width="0.127" layer="21"/>
+<wire x1="11.525" y1="-26.3" x2="11.525" y2="-25.9" width="0.127" layer="21"/>
+<wire x1="-9" y1="25.9" x2="-9" y2="32.25" width="0.127" layer="21"/>
+<wire x1="-9" y1="32.25" x2="9" y2="32.25" width="0.127" layer="21"/>
+<wire x1="9" y1="32.25" x2="9" y2="25.9" width="0.127" layer="21"/>
+<wire x1="-12.95" y1="26.15" x2="-9.25" y2="26.15" width="0.05" layer="39"/>
+<wire x1="9.25" y1="26.15" x2="12.95" y2="26.15" width="0.05" layer="39"/>
+<wire x1="12.95" y1="26.15" x2="12.95" y2="-26.55" width="0.05" layer="39"/>
+<wire x1="12.95" y1="-26.55" x2="-12.95" y2="-26.55" width="0.05" layer="39"/>
+<wire x1="-12.95" y1="-26.55" x2="-12.95" y2="26.15" width="0.05" layer="39"/>
+<wire x1="-9.25" y1="26.15" x2="-9.25" y2="32.5" width="0.05" layer="39"/>
+<wire x1="-9.25" y1="32.5" x2="9.25" y2="32.5" width="0.05" layer="39"/>
+<wire x1="9.25" y1="32.5" x2="9.25" y2="26.15" width="0.05" layer="39"/>
+<circle x="-13.25" y="24.325" radius="0.1" width="0.2" layer="21"/>
+<circle x="-13.25" y="24.325" radius="0.1" width="0.2" layer="51"/>
+<pad name="3V3" x="-11.43" y="24.325" drill="1.016" shape="square"/>
+<pad name="GND@1" x="11.43" y="24.325" drill="1.016"/>
+<pad name="!RST" x="-11.43" y="21.785" drill="1.016"/>
+<pad name="IO16" x="11.43" y="21.785" drill="1.016"/>
+<pad name="IO4" x="-11.43" y="19.245" drill="1.016"/>
+<pad name="IO17" x="11.43" y="19.245" drill="1.016"/>
+<pad name="IO5" x="-11.43" y="16.705" drill="1.016"/>
+<pad name="IO15" x="11.43" y="16.705" drill="1.016"/>
+<pad name="IO6" x="-11.43" y="14.165" drill="1.016"/>
+<pad name="IO23" x="11.43" y="14.165" drill="1.016"/>
+<pad name="IO7" x="-11.43" y="11.625" drill="1.016"/>
+<pad name="IO22" x="11.43" y="11.625" drill="1.016"/>
+<pad name="IO0" x="-11.43" y="9.085" drill="1.016"/>
+<pad name="IO21" x="11.43" y="9.085" drill="1.016"/>
+<pad name="IO1" x="-11.43" y="6.545" drill="1.016"/>
+<pad name="IO20" x="11.43" y="6.545" drill="1.016"/>
+<pad name="IO8" x="-11.43" y="4.005" drill="1.016"/>
+<pad name="IO19" x="11.43" y="4.005" drill="1.016"/>
+<pad name="IO10" x="-11.43" y="1.465" drill="1.016"/>
+<pad name="IO18" x="11.43" y="1.465" drill="1.016"/>
+<pad name="IO11" x="-11.43" y="-1.075" drill="1.016"/>
+<pad name="IO9" x="11.43" y="-1.075" drill="1.016"/>
+<pad name="IO2" x="-11.43" y="-3.615" drill="1.016"/>
+<pad name="GND@2" x="11.43" y="-3.615" drill="1.016"/>
+<pad name="IO3" x="-11.43" y="-6.155" drill="1.016"/>
+<pad name="IO13" x="11.43" y="-6.155" drill="1.016"/>
+<pad name="5V0" x="-11.43" y="-8.695" drill="1.016"/>
+<pad name="IO12" x="11.43" y="-8.695" drill="1.016"/>
+<pad name="GND" x="-11.43" y="-11.235" drill="1.016"/>
+<pad name="GND@3" x="11.43" y="-11.235" drill="1.016"/>
+<pad name="NC1" x="-11.43" y="-13.775" drill="1.016"/>
+<pad name="NC2" x="11.43" y="-13.775" drill="1.016"/>
+<text x="1.27" y="-11.43" size="1.778" layer="21" rot="R90">ESP32-C6-DevKitC-1-N8</text>
+<rectangle x1="-9.017" y1="23.368" x2="8.763" y2="32.258" layer="39"/>
+<rectangle x1="-9.017" y1="23.368" x2="8.763" y2="32.258" layer="40"/>
+</package>
 </packages>
 <packages3d>
 <package3d name="1206" urn="urn:adsk.eagle:package:15796/2" type="model" library_version="5">
@@ -6337,6 +6467,75 @@ Read the BAT voltage from IO35 and double it</text>
 <wire x1="0" y1="1.27" x2="2.032" y2="3.302" width="0.1524" layer="94"/>
 <wire x1="2.032" y1="3.302" x2="2.032" y2="2.286" width="0.1524" layer="94"/>
 <wire x1="2.032" y1="3.302" x2="1.016" y2="3.302" width="0.1524" layer="94"/>
+</symbol>
+<symbol name="ESP32-C6-DEVKITC-1-NB:IO">
+<wire x1="7.62" y1="0" x2="27.94" y2="0" width="0.254" layer="94"/>
+<wire x1="27.94" y1="0" x2="27.94" y2="43.18" width="0.254" layer="94"/>
+<wire x1="27.94" y1="43.18" x2="0" y2="43.18" width="0.254" layer="94"/>
+<pin name="IO9/ADC_CH9" x="-5.08" y="30.48" length="middle"/>
+<pin name="IO10" x="33.02" y="40.64" length="middle" rot="R180"/>
+<pin name="IO8/ADC_CH8/LED" x="-5.08" y="33.02" length="middle"/>
+<pin name="IO1/ADC_CH1" x="-5.08" y="38.1" length="middle"/>
+<pin name="IO0/ADC_CH0" x="-5.08" y="40.64" length="middle"/>
+<pin name="IO4/I2C_SDA" x="-5.08" y="12.7" length="middle"/>
+<pin name="IO5/I2C_SCL" x="-5.08" y="10.16" length="middle"/>
+<pin name="IO19" x="33.02" y="33.02" length="middle" rot="R180"/>
+<pin name="IO20" x="33.02" y="30.48" length="middle" direction="in" rot="R180"/>
+<wire x1="0" y1="43.18" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="0" y1="7.62" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
+<text x="0.762" y="3.81" size="1.778" layer="94" rot="R270" align="bottom-center">USB
+J4</text>
+<text x="0" y="44.45" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
+<wire x1="7.62" y1="0" x2="0" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="7.62" y2="0" width="0.254" layer="94"/>
+<wire x1="6.096" y1="5.08" x2="7.366" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="2.54" x2="7.366" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="3.81" x2="7.366" y2="3.81" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="6.35" x2="7.366" y2="6.35" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="1.27" x2="7.366" y2="1.27" width="0.6096" layer="94"/>
+<pin name="IO11" x="33.02" y="38.1" length="middle" rot="R180"/>
+<pin name="IO15" x="33.02" y="35.56" length="middle" rot="R180"/>
+<pin name="RX1/IO21" x="33.02" y="7.62" length="middle" rot="R180"/>
+<pin name="TX1/IO22" x="33.02" y="5.08" length="middle" rot="R180"/>
+<pin name="RTS1/IO23" x="33.02" y="2.54" length="middle" rot="R180"/>
+<pin name="RX0/IO16" x="33.02" y="15.24" length="middle" rot="R180"/>
+<pin name="TX0/IO17" x="33.02" y="12.7" length="middle" rot="R180"/>
+<text x="0.254" y="-11.43" size="1.27" layer="94">Strappng uses IO8 and IO9
+USB Mon/JTAG uses IO12 and IO13
+USB UART uses IO16 and IO17
+I2C pins don't have pull-up resistors</text>
+<pin name="IO3/ADC_CH3" x="-5.08" y="35.56" length="middle"/>
+<pin name="IO7/SPI_MOSI" x="-5.08" y="25.4" length="middle"/>
+<pin name="IO2/SPI_MISO" x="-5.08" y="22.86" length="middle"/>
+<pin name="IO6/SPI_CLK" x="-5.08" y="20.32" length="middle"/>
+<pin name="IO18/SPI_CS" x="-5.08" y="17.78" length="middle"/>
+<pin name="!RST" x="33.02" y="25.4" length="middle" direction="in" rot="R180"/>
+<pin name="D+/IO12" x="33.02" y="22.86" length="middle" direction="in" rot="R180"/>
+<pin name="D-/IO13" x="33.02" y="20.32" length="middle" direction="in" rot="R180"/>
+</symbol>
+<symbol name="ESP32-C6-DEVKITC-1-NB:PWR">
+<wire x1="0" y1="0" x2="7.62" y2="0" width="0.254" layer="94"/>
+<wire x1="7.62" y1="0" x2="20.32" y2="0" width="0.254" layer="94"/>
+<wire x1="20.32" y1="0" x2="20.32" y2="15.24" width="0.254" layer="94"/>
+<wire x1="20.32" y1="15.24" x2="0" y2="15.24" width="0.254" layer="94"/>
+<pin name="3V3" x="25.4" y="12.7" length="middle" direction="sup" rot="R180"/>
+<pin name="GND" x="25.4" y="2.54" length="middle" direction="sup" rot="R180"/>
+<pin name="5V0" x="-5.08" y="12.7" length="middle" direction="pwr"/>
+<wire x1="0" y1="15.24" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="0" y1="7.62" x2="0" y2="0" width="0.254" layer="94"/>
+<text x="0" y="16.51" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
+<wire x1="7.62" y1="7.62" x2="0" y2="7.62" width="0.254" layer="94"/>
+<wire x1="7.62" y1="7.62" x2="7.62" y2="0" width="0.254" layer="94"/>
+<wire x1="6.096" y1="5.08" x2="7.366" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="2.54" x2="7.366" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="3.81" x2="7.366" y2="3.81" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="6.35" x2="7.366" y2="6.35" width="0.6096" layer="94"/>
+<wire x1="6.096" y1="1.27" x2="7.366" y2="1.27" width="0.6096" layer="94"/>
+<text x="0.762" y="3.81" size="1.778" layer="94" rot="R270" align="bottom-center">USB
+J2</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -8588,6 +8787,60 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.</de
 <attribute name="PRICE" value="None"/>
 <attribute name="PURCHASE-URL" value="https://pricing.snapeda.com/search/part/RDS-16S-1045-SMT-TR/?ref=eda"/>
 </technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="ESP32-C6-DEVKITC-1-N8" prefix="PCB">
+<description>&lt;h3&gt;Footprint of Espresiff ESP32-C6-DevKitC-1-N8 (ESP32-C6-WROOM-1-N8 )&lt;/h3&gt;
+&lt;p&gt;Technical specifications:
+&lt;ul&gt;
+&lt;li&gt;Manufacturer: Espressif&lt;/li&gt;
+&lt;li&gt;SoC: ESP32-C6-WROOM-1-N8, 32-bit RISC-V, max 160 MHz&lt;/li&gt;
+&lt;li&gt;Connectivity: 2.4G Wi-Fi 6, Bluetooth 5.3 LE, Zigbee 3.0 and Thread 1.3&lt;/li&gt;
+&lt;li&gt;USB-C connectors: UART0 via CP2102, Serial/JTAG&lt;/li&gt;
+&lt;li&gt;Memory: 8 MB Flash, 512 kB SRAM, 320 kB ROM
+&lt;/ul&gt;
+&lt;/p&gt;
+&lt;p&gt;Mfr.#: ESP32-C6-DevKitC-1-N8, &lt;a href="https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5528/ESP32-C6-DEVKITC-1-N8.pdf"&gt;data sheet&lt;/a&gt;, &lt;a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"&gt;documentation&lt;/a&gt;, &lt;a href="https://documentation.espressif.com/esp32-c6_technical_reference_manual_en.pdf"&gt;reference&lt;/a&gt;&lt;br /&gt;
+DigiKey: 1965-ESP32-C6-DEVKITC-1-N8-ND, about $9.00&lt;/p&gt;</description>
+<gates>
+<gate name=".IO" symbol="ESP32-C6-DEVKITC-1-NB:IO" x="-40.64" y="-17.78"/>
+<gate name=".PWR" symbol="ESP32-C6-DEVKITC-1-NB:PWR" x="25.4" y="10.16"/>
+</gates>
+<devices>
+<device name="" package="MODULE_ESP32-C6-DEVKITC-1-N8">
+<connects>
+<connect gate=".IO" pin="!RST" pad="!RST"/>
+<connect gate=".IO" pin="D+/IO12" pad="IO12"/>
+<connect gate=".IO" pin="D-/IO13" pad="IO13"/>
+<connect gate=".IO" pin="IO0/ADC_CH0" pad="IO0"/>
+<connect gate=".IO" pin="IO1/ADC_CH1" pad="IO1"/>
+<connect gate=".IO" pin="IO10" pad="IO10"/>
+<connect gate=".IO" pin="IO11" pad="IO11"/>
+<connect gate=".IO" pin="IO15" pad="IO15"/>
+<connect gate=".IO" pin="IO18/SPI_CS" pad="IO18"/>
+<connect gate=".IO" pin="IO19" pad="IO19"/>
+<connect gate=".IO" pin="IO2/SPI_MISO" pad="IO2"/>
+<connect gate=".IO" pin="IO20" pad="IO20"/>
+<connect gate=".IO" pin="IO3/ADC_CH3" pad="IO3"/>
+<connect gate=".IO" pin="IO4/I2C_SDA" pad="IO4"/>
+<connect gate=".IO" pin="IO5/I2C_SCL" pad="IO5"/>
+<connect gate=".IO" pin="IO6/SPI_CLK" pad="IO6"/>
+<connect gate=".IO" pin="IO7/SPI_MOSI" pad="IO7"/>
+<connect gate=".IO" pin="IO8/ADC_CH8/LED" pad="IO8"/>
+<connect gate=".IO" pin="IO9/ADC_CH9" pad="IO9"/>
+<connect gate=".IO" pin="RTS1/IO23" pad="IO23"/>
+<connect gate=".IO" pin="RX0/IO16" pad="IO16"/>
+<connect gate=".IO" pin="RX1/IO21" pad="IO21"/>
+<connect gate=".IO" pin="TX0/IO17" pad="IO17"/>
+<connect gate=".IO" pin="TX1/IO22" pad="IO22"/>
+<connect gate=".PWR" pin="3V3" pad="3V3"/>
+<connect gate=".PWR" pin="5V0" pad="5V0"/>
+<connect gate=".PWR" pin="GND" pad="GND GND@1 GND@2 GND@3"/>
+</connects>
+<technologies>
+<technology name=""/>
 </technologies>
 </device>
 </devices>

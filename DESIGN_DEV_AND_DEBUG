@@ -1,0 +1,159 @@
+> I'm in the progress of moving to an ESPHome/PlatformIO based build.  If you are looking for the last standalone version, you will find that in the branch `standalone`, or download the the last release zip file.
+
+# Design, development and debugging
+
+This software is designed for robustness, reliability, and long-term maintainability. The architecture emphasizes modularity and extensibility through protocol abstraction helpers and FreeRTOS primitives for cooperative task scheduling and inter-task communication. Comprehensive logging enables diagnostics, troubleshooting, and protocol analysis.
+
+## Design
+
+ESPHome provides a single-threaded environment, so explicit thread safety measures are not required.
+
+### Protocol stack
+
+The software follows a layered architecture where each component builds upon the one below it, creating a clean path from raw electrical signals to Home Assistant entities. Here's how data flows through the system:
+
+1. **MAX3485CSA+** — At the physical layer, this integrated circuit performs the critical job of converting between the ESP32's logic-level signals and the differential signaling used by RS-485. This conversion enables robust, noise-resistant communication over long twisted-pair cable runs to your pool equipment.
+
+2. **UART** — The ESP32's Universal Asynchronous Receiver/Transmitter bridges the gap between bit streams and bytes. It frames each byte with start and stop bits, manages precise timing at the configured baud rate, and delivers clean byte streams to the software layers above.
+
+3. **RS-485 driver** — This layer wraps the UART hardware with a practical interface for half-duplex RS-485 communication. Beyond basic UART configuration and GPIO control, it maintains a transmit queue for outgoing packets and exposes function pointers that let higher layers easily interact with the bus. The driver's two essential operations are reading incoming bytes and queueing outgoing byte streams for transmission.
+
+4. **Data Link Layer (DLL)** — Here's where raw bytes become structured packets. On reception, the DLL strips headers and tails from RS-485 byte streams and validates their integrity. On transmission, it wraps outgoing data with the proper framing to ensure packets arrive intact.
+
+5. **Network Layer** — This layer speaks the pool controller's language, translating between raw datalink packets and meaningful network messages. Incoming packets become structured messages the application can understand; outgoing messages get encapsulated into properly formatted datalink packets ready for the wire.
+
+6. **PoolState** — Think of this as the software's digital twin of your pool system. This class maintains a complete model of the pool controller and all its peripherals—pump, chlorinator, circuits, sensors, and more. Every incoming network message updates this state, keeping it synchronized with the actual equipment. This real-time model forms the foundation for all sensor readings and control operations.
+
+7. **OpnPool** — The final layer bridges the protocol stack to the ESPHome world. It continuously synchronizes the PoolState with ESPHome entities, ensuring your Home Assistant dashboard accurately reflects your pool's status. When you flip a switch or adjust the temperature in Home Assistant, this layer translates your intent into commands for the pool controller. Conversely, it publishes state changes as updates to climate controls, switches, sensors, binary sensors, and text sensors.
+
+### Tasks
+
+Rather than cramming everything into a single execution thread, the software leverages FreeRTOS to divide responsibilities between two cooperative tasks that communicate through message-passing mailboxes:
+
+* The **main task** orchestrates the high-level application logic, running OpnPool and PoolState to manage state and interact with ESPHome.
+* The **pool task** handles the nitty-gritty details of RS-485 communication, protocol parsing, and network message processing. It even spawns its own helper task dedicated to periodically requesting updates from the pool controller.
+
+This separation keeps low-level communication concerns isolated from application logic, making the codebase easier to reason about and maintain.
+
+### More info
+
+Want to dive deeper into the protocol and architecture? The [original OPNpool project](https://github.com/cvonk/OPNpool) has comprehensive design documentation that applies equally well to this ESPHome port:
+
+- [OPNpool Design Documentation Overview](https://coertvonk.com/category/sw/embedded/opnpool-design)
+
+These chapters are particularly relevant:
+
+- [RS-485 bus](https://coertvonk.com/sw/embedded/opnpool-design/bus-access-31957) — Low-level bus access and timing
+- [Hardware](https://coertvonk.com/sw/embedded/opnpool-design/hardware-3-31959) — Circuit design and interfacing
+- [Protocol](https://coertvonk.com/sw/embedded/opnpool-design/protocol-31965) — Message format and state machine details
+
+## Development
+
+For the best development experience, install the C/C++ and [ESPHome extension](https://marketplace.visualstudio.com/items?itemName=ESPHome.esphome-VSCode) in VS Code.
+
+Clone the repository to a local directory:
+```bash
+git clone https://github.com/cvonk/OPNpool_meets_ESPHome.git
+```
+
+Or using SSH:
+```bash
+git clone git@github.com:cvonk/OPNpool_meets_ESPHome.git
+```
+
+The included `tasks.json` file provides pre-configured build and upload tasks that integrate seamlessly with VS Code. Build output maps directly to your project files, letting you jump straight to errors and warnings from the `Problems` tab.
+
+**Common shortcuts:**
+
+- **Build:** <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (or <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> on Mac)
+- **Compile & Upload:** <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → "Run Task" → "ESPHome Upload opnpool-1"
+- **Clean:** <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → "Run Task" → "ESPHome Clean opnpool-1"
+- **View Logs:** <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → "Run Task" → "ESPHome Logs opnpool-1"
+
+![VSCode_ide](assets/media/VSCode-ide.png){: style="display: block; margin-left: auto; margin-right: auto; width:500px;}
+
+## JTAG debugging (on &ge; r4 boards)
+
+The newer r4 boards feature the ESP32-C6 module with built-in JTAG debugging capability. This eliminates the need for external debugging hardware—just connect directly via USB. The configuration is straightforward:
+
+```
+build_type = debug
+monitor_speed = 115200
+debug_tool = esp-builtin
+debug_init_break = tbreak setup ; or e.g. app_main
+```
+
+You may also want to disable optimizations for clearer debugging:
+```
+debug_build_flags = -O0 -g -ggdb
+```
+
+On Windows, Zadig might need to reassign Interface 2 to WinUSB 6.xx for proper operation.
+
+
+## JTAG debugging (on &le; r3 boards)
+
+While `ESP_LOGx` logging serves its purpose, it traps you in an endless cycle of adding print statements, recompiling, uploading, and hoping you logged the right thing. JTAG debugging with GDB breaks this cycle completely. You get direct, real-time access to your ESP32's internal state—set breakpoints anywhere, inspect the full call stack, examine local variables, and watch memory locations change, all without modifying a single line of code or recompiling.
+
+Memory corruption bugs that take hours to track down with logging? Set a watchpoint on the corrupted address and GDB will halt execution the instant something writes to it, showing you exactly what code is responsible. This is the difference between guessing and knowing—JTAG transforms ESP32 development from a frustrating debug-by-printf experience into professional source-level debugging.
+
+### ESP-Prog
+
+The ESP-Prog is your gateway to JTAG debugging on r3 and earlier boards. This compact debugging tool connects the 10-pin JTAG header on your OPNpool PCB to your computer, unlocking hardware-level debugging and programming capabilities that simply aren't available through the standard USB serial connection.
+
+![ESP-Prog](assets/media/esp-prog.jpg){: style="display: block; margin-left: auto; margin-right: auto; width:200px;}
+
+Beyond debugging, the ESP-Prog can also flash firmware and provide serial communication—meaning you can disconnect your regular USB cable entirely during debug sessions.
+
+At its heart, the ESP-Prog uses an FTDI FT2232HL chip that exposes two independent USB channels: one for JTAG and another for serial communication. Getting started requires installing the FTDI driver per the [PlatformIO instructions](https://docs.platformio.org/en/stable/plus/debug-tools/esp-prog.html#drivers)—read them carefully, as there's a crucial driver modification step.[^1]
+
+[^1]: The driver exposes both channels as serial ports. Channel 1 handles standard serial communication, while channel 0 serves JTAG. For JTAG to work, you must unload the serial driver from channel 0—on Windows, this means using Zadig to replace the FTDI driver with the Microsoft WinUSB generic driver.
+
+### VSCode
+
+Start by cloning the code from GitHub and performing a regular compile as described in the Development section. This generates a PlatformIO build directory at `.esphome/build/opnpool-1` containing all the generated C++ code, component sources, and ESPHome dependencies.
+
+Open a fresh VS Code window and install the `PlatformIO IDE` extension if you haven't already. Navigate to the `.esphome/build/opnpool-1` folder and open it in VS Code. Then append these configuration lines to your `platformio.ini` file:
+
+```
+build_type = debug
+monitor_speed = 115200
+debug_init_break = tbreak setup
+debug_tool = custom
+debug_port = localhost:3333
+```
+
+Give VS Code a moment to update its metadata—proceeding too quickly will trigger a "Could not find the specified task" error. Once ready, connect your ESP-Prog to the computer and attach the 10-pin ribbon cable to the OPNpool PCB (keep the cable short to minimize signal integrity issues).
+
+> **Note:** Theoretically, `debug_tool = esp-prog` should work without the `custom` override and manual OpenOCD startup. In practice, you'll likely encounter `.pioinit:11: Error in sourced command file` errors. The `.pioinit` file is auto-generated with target-specific defaults, and PlatformIO's automatic configuration doesn't always get it right.
+
+OpenOCD (Open On-Chip Debugger) acts as the bridge between your IDE and the ESP32 hardware. Launch it manually and wait for the connection to establish:
+
+```bash
+cd ".platformio\packages\tool-openocd-esp32\bin"
+./openocd -f board/esp32-wrover-kit-3.3v.cfg
+```
+
+Now for the fun part. Open the source file you want to debug in VS Code and click next to a line number to set a breakpoint—you'll see a red circle appear. For this example, we'll break in the PoolState constructor.
+
+Click the "Run and Debug" icon in the activity bar, then hit the green play button in the top-left corner. Watch the `Terminal` panel as compilation proceeds. Once complete, switch to the `Debug Console` and wait while it connects to OpenOCD and loads all the symbolic debugging information.
+
+When everything's ready, you'll see something like:
+
+```
+Thread 2 "loopTask" hit Temporary breakpoint 1.15, setup () at src/main.cpp:67
+67	void setup() {
+```
+
+You're now wielding the full power of GDB. Inspect variables, navigate the call stack, and use the `Debug` view to explore program state interactively. Want to catch memory corruption? Set a watchpoint on the specific address you suspect is being corrupted:
+
+```gdb
+print &last_
+   $4 = (esphome::opnpool::poolstate_t *) 0x3ffc19c0
+watch *(0x3ffc19c0)
+   Hardware watchpoint 4: *(0x3ffc19c0)
+continue
+```
+
+Execution will halt the instant anything writes to that memory location, showing you exactly what code is responsible. This is debugging as it should be.
+

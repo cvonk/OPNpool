@@ -1,5 +1,12 @@
 {
-    "idf.portWin": "COM7",
-    "cmake.configureOnOpen": false,
-    "idf.pythonInstallPath": "C:\\espressif\\bin\\tools\\idf-python\\3.8.7\\python.exe"
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.rulers": [90]
+    "[cpp]": {
+        "editor.tabSize": 4
+    },
+    "[yaml]": {
+        "editor.tabSize": 2
+    }
 }
