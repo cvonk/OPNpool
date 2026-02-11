@@ -124,7 +124,7 @@ menu "OPNpool"
             
     config OPNPOOL_HARDCODED_MQTT_URL
         string "Hardcoded MQTT broker url endpoint"
-        default "mqtt://mqtt:passwd@host.domain:1883"
+        default "mqtt://hass:passwd@host.domain:1883"
         depends on OPNPOOL_HARDCODED_MQTT_CREDENTIALS
         help
             Hardcoded MQTT_URL. E.g. mqtt://mqtt:passwd@host.domain:1883.        

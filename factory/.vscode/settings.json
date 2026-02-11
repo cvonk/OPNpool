@@ -1,9 +1,10 @@
 {
   "cmake.cmakePath": "C:/espressif/bin/tools/cmake/3.20.3/bin/cmake",
-  "idf.portWin": "COM6",
+  "idf.portWin": "COM17",
   "idf.adapterTargetName": "esp32",
   "cmake.configureOnOpen": false,
   "files.associations": {
     "*.inc": "c"
-  }
+  },
+  "idf.pythonInstallPath": "C:\\espressif\\bin\\tools\\idf-python\\3.8.7\\python.exe"
 }

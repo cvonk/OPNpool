@@ -1,4 +1,5 @@
 {
     "idf.portWin": "COM7",
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "idf.pythonInstallPath": "C:\\espressif\\bin\\tools\\idf-python\\3.8.7\\python.exe"
 }
