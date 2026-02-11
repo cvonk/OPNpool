@@ -1,82 +1,80 @@
 /**
- * @brief OPNpool - Network layer: create datalink_pkt from network_msg
+ * @file network_create.cpp
+ * @brief Network layer: create datalink_pkt from network_msg
  *
- * © Copyright 2014, 2019, 2022, Coert Vonk
- * 
- * This file is part of OPNpool.
- * OPNpool is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with OPNpool. 
- * If not, see <https://www.gnu.org/licenses/>.
- * 
- * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright 2014,2019,2022 Coert Vonk
+ * @details
+ * This file implements the logic for constructing datalink packets from higher-level
+ * network messages within the OPNpool component. It provides functions to allocate
+ * buffers, set protocol headers, and serialize network message data into the appropriate
+ * datalink packet format for transmission over RS-485.
+ *
+ * ESPHome operates in a single-threaded environment, so explicit thread safety measures
+ * are not required within the pool_task context.
+ *
+ * @author Coert Vonk (@cvonk on GitHub)
+ * @copyright Copyright (c) 2014, 2019, 2022, 2026 Coert Vonk
+ * @license SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <string.h>
 #include <esp_system.h>
-#include <esp_log.h>
+#include <esp_types.h>
+#include <string.h>
+#include <esphome/core/log.h>
 
-#include "../datalink/datalink.h"
-#include "../datalink/datalink_pkt.h"
-#include "../utils/utils.h"
-#include "../skb/skb.h"
+#include "utils/to_str.h"
+#include "utils/enum_helpers.h"
+#include "datalink.h"
+#include "datalink_pkt.h"
+#include "skb.h"
 #include "network.h"
+#include "network_msg.h"
+#pragma GCC diagnostic error "-Wall"
+#pragma GCC diagnostic error "-Wextra"
+#pragma GCC diagnostic error "-Wunused-parameter"
 
-static char const * const TAG = "network_create";
+namespace esphome {
+namespace opnpool {
 
-skb_handle_t
-_skb_alloc_a5(size_t const msg_size)
-{
-    skb_handle_t const txb = skb_alloc(sizeof(datalink_head_a5_t) + msg_size + sizeof(datalink_tail_a5_t));
-    skb_reserve(txb, sizeof(datalink_head_a5_t));
-    return txb;
-}
+constexpr char TAG[] = "network_create";
 
-typedef struct network_datalink_map_t {
-    struct {
-        network_msg_typ_t  typ;
-        size_t             data_len;
-    } network;
-    struct {
-        datalink_prot_t    prot;
-        uint8_t            prot_typ;
-    } datalink;
-} network_datalink_map_t;
-
-static const network_datalink_map_t _msg_typ_map[] = {
-#define XX(num, name, typ, proto, prot_typ) { { MSG_TYP_##name, sizeof(typ)}, {proto, prot_typ} },
-  NETWORK_MSG_TYP_MAP(XX)
-#undef XX
-};
-
-/*
- * Create datalink_pkt from network_msg.
+/**
+ * @brief Creates a datalink packet from a network message.
+ *
+ * Allocates a socket buffer, sets protocol headers based on message type, and copies
+ * the message payload into the packet data area. The packet is ready for transmission
+ * after this function returns successfully.
+ *
+ * @param[in]  msg Pointer to the network message to convert.
+ * @param[out] pkt Pointer to the datalink packet structure to fill.
+ * @return         ESP_OK on success, ESP_FAIL if message type is unknown or allocation fails.
  */
-
-bool
-network_create_msg(network_msg_t const * const msg, datalink_pkt_t * const pkt)
+esp_err_t
+network_create_pkt(network_msg_t const * const msg, datalink_pkt_t * const pkt)
 {
-    network_datalink_map_t const * map = _msg_typ_map;
-    for (uint ii = 0; ii < ARRAY_SIZE(_msg_typ_map); ii++, map++) {
-        if (msg->typ == map->network.typ) {
+    // get protocol info from the lookup table network_msg_typ_info[] in network_msg.h
+    const network_msg_typ_info_t * info = network_msg_typ_get_info(msg->typ);
+    if (info == nullptr) {
+        ESP_LOGE(TAG, "unknown msg typ(%s)", enum_str(msg->typ));
+        return ESP_FAIL;
+    }
 
-            pkt->prot = map->datalink.prot;
-            pkt->prot_typ = map->datalink.prot_typ;
-            pkt->data_len = map->network.data_len;
-            pkt->skb = skb_alloc(DATALINK_MAX_HEAD_SIZE + map->network.data_len + DATALINK_MAX_TAIL_SIZE);
-            skb_reserve(pkt->skb, DATALINK_MAX_HEAD_SIZE);
-            pkt->data = skb_put(pkt->skb, map->network.data_len);
-            memcpy(pkt->data, msg->u.bytes, map->network.data_len);
-            return true;
-        }
+    uint32_t const data_len = info->size;
+
+    pkt->src      = msg->src;
+    pkt->dst      = msg->dst;
+    pkt->prot     = info->proto;
+    pkt->typ      = info->datalink_typ;
+    pkt->data_len = data_len;
+    pkt->skb      = skb_alloc(DATALINK_MAX_HEAD_SIZE + data_len + DATALINK_MAX_TAIL_SIZE);
+    if (!pkt->skb) {
+        ESP_LOGW(TAG, "Failed to allocate socket buffer");
+        return ESP_FAIL;
     }
-    if (CONFIG_OPNPOOL_DBGLVL_NETWORK > 1) {
-        ESP_LOGE(TAG, "unknown msg typ (%u)", msg->typ);
-    }
-    return false;
+    skb_reserve(pkt->skb, DATALINK_MAX_HEAD_SIZE);
+    pkt->data = skb_put(pkt->skb, data_len);
+    memcpy(pkt->data, msg->u.raw, data_len);
+    return ESP_OK;
 }
+
+} // namespace opnpool
+} // namespace esphome

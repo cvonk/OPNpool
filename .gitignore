@@ -1,15 +1,10 @@
-/.idea
-**/build
-**/sdkconfig
-.#*
-#*#
-interface/debug.log
-interface/sdkconfig.old
-interface/main/trace.txt
-hardware/*.s#?
-hardware/*.b#?
-hardware/*.job
-hardware/*.cam
-hardware/libraries/*.l#?
-.vscode/*
-**/.vscode/settings.json
+# Gitignore settings for ESPHome
+# This is an example and may include too much for your use-case.
+# You can modify this file to suit your needs.
+/.esphome/
+/.claude/
+/secrets.yaml
+/hardware/libraries/Coert-Vonk.l#*
+/hardware/OPNpool r?.b#*
+/hardware/OPNpool r?.s#*
+components/opnpool/__pycache__/__init__.cpython-313.pyc

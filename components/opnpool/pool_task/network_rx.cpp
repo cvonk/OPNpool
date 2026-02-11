@@ -1,404 +1,205 @@
 /**
- * @brief OPNpool - Network layer: decode datalink_pkt to network_msg
- *
- * © Copyright 2014, 2019, 2022, Coert Vonk
+ * @file network_rx.cpp
+ * @brief Network layer: decode a datalink packet, to form a network message
  * 
- * This file is part of OPNpool.
- * OPNpool is free software: you can redistribute it and/or modify it under the terms of
- * the GNU General Public License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- * OPNpool is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with OPNpool. 
- * If not, see <https://www.gnu.org/licenses/>.
+ * @details
+ * This file implements the decoding logic for the network layer of the OPNpool component.
+ * It translates lower-level datalink packets (from RS-485) into higher-level network
+ * messages, supporting multiple protocol types (A5/CTRL, A5/PUMP, IC/Chlorinator).
  * 
- * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: Copyright 2014,2019,2022 Coert Vonk
+ * ESPHome operates in a single-threaded environment, so explicit thread safety measures
+ * are not required within the pool_task context.
+ * 
+ * @author Coert Vonk (@cvonk on GitHub)
+ * @copyright Copyright (c) 2014, 2019, 2022, 2026 Coert Vonk
+ * @license SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 #include <esp_system.h>
-#include <esp_log.h>
+#include <esp_types.h>
+#include <esphome/core/log.h>
 
-#include "../datalink/datalink.h"
-#include "../datalink/datalink_pkt.h"
-#include "../utils/utils.h"
+#include "utils/to_str.h"
+
+#include "utils/enum_helpers.h"
+#include "datalink.h"
+#include "datalink_pkt.h"
 #include "network.h"
+#include "network_msg.h"
+#pragma GCC diagnostic error "-Wall"
+#pragma GCC diagnostic error "-Wextra"
+#pragma GCC diagnostic error "-Wunused-parameter"
 
-static char const * const TAG = "network_rx";
+namespace esphome {
+namespace opnpool {
 
-typedef struct hdr_data_hdr_copy_t {
-    uint8_t dst;  // destination
-    uint8_t src;  // source
-    uint8_t typ;  // message type
-} hdr_data_hdr_copy_t;
+constexpr char TAG[] = "network_rx";
 
-/*
+/**
+ * @brief          Decode an A5_PUMP datalink packet to form a network message.
  *
+ * @param[in]  pkt Pointer to the datalink packet to decode.
+ * @param[out] msg Pointer to the network message structure to populate.
+ * @return         ESP_OK if the message was successfully decoded, ESP_FAIL otherwise.
  */
-
-static void
-_decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const network)
+[[nodiscard]] static esp_err_t
+_decode_msg_a5_pump(datalink_pkt_t const * const pkt, network_msg_t * const msg)
 {
-    network->typ = MSG_TYP_NONE;
+    bool is_to_pump = pkt->dst.is_pump();
 
-    switch (pkt->prot_typ) {
+    datalink_pump_typ_t const datalink_pump_typ = pkt->typ.pump;
 
-        case NETWORK_TYP_CTRL_SET_ACK:
-            if (pkt->data_len == sizeof(network_msg_ctrl_set_ack_t)) {
-                network->typ = MSG_TYP_CTRL_SET_ACK;
-                network->u.ctrl_set_ack = (network_msg_ctrl_set_ack_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_CIRCUIT_SET:
-            if (pkt->data_len == sizeof(network_msg_ctrl_circuit_set_t)) {
-                network->typ = MSG_TYP_CTRL_CIRCUIT_SET;
-                network->u.ctrl_circuit_set = (network_msg_ctrl_circuit_set_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_SCHED_REQ:
-            if (pkt->data_len == 0) {
-                network->typ = MSG_TYP_CTRL_SCHED_REQ;
-            }
-            break;
-        case NETWORK_TYP_CTRL_SCHED_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_sched_resp_t)) {
-                network->typ = MSG_TYP_CTRL_SCHED_RESP;
-                network->u.ctrl_sched_resp = (network_msg_ctrl_sched_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_STATE_BCAST:
-            if (pkt->data_len == sizeof(network_msg_ctrl_state_bcast_t)) {
-                network->typ = MSG_TYP_CTRL_STATE_BCAST;
-                network->u.ctrl_state = (network_msg_ctrl_state_bcast_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_TIME_REQ:
-            if (pkt->data_len == 0) {
-                network->typ = MSG_TYP_CTRL_TIME_REQ;
-            }
-            break;
-        case NETWORK_TYP_CTRL_TIME_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_time_resp_t)) {
-                network->typ = MSG_TYP_CTRL_TIME_RESP;
-                network->u.ctrl_time_resp = (network_msg_ctrl_time_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_TIME_SET:
-            if (pkt->data_len == sizeof(network_msg_ctrl_time_set_t)) {
-                network->typ = MSG_TYP_CTRL_TIME_SET;
-                network->u.ctrl_time_set = (network_msg_ctrl_time_set_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_HEAT_REQ:
-            if (pkt->data_len == 0) {
-                network->typ = MSG_TYP_CTRL_HEAT_REQ;
-            }
-            break;
-        case NETWORK_TYP_CTRL_HEAT_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_heat_resp_t)) {
-                network->typ = MSG_TYP_CTRL_HEAT_RESP;
-                network->u.ctrl_heat_resp = (network_msg_ctrl_heat_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_HEAT_SET:
-            if (pkt->data_len == sizeof(network_msg_ctrl_heat_set_t)) {
-                network->typ = MSG_TYP_CTRL_HEAT_SET;
-                network->u.ctrl_heat_set = (network_msg_ctrl_heat_set_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_LAYOUT_REQ:
-            if (pkt->data_len == 0) {
-                network->typ = MSG_TYP_CTRL_LAYOUT_REQ;
-            }
-            break;
-        case NETWORK_TYP_CTRL_LAYOUT_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_layout_resp_t)) {
-                network->typ = MSG_TYP_CTRL_LAYOUT;
-                network->u.ctrl_layout_resp = (network_msg_ctrl_layout_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_LAYOUT_SET:
-            if (pkt->data_len == sizeof(network_msg_ctrl_layout_set_t)) {
-                network->typ = MSG_TYP_CTRL_LAYOUT_SET;
-                network->u.ctrl_layout_set = (network_msg_ctrl_layout_set_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_VERSION_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_version_req_t)) {
-                network->typ = MSG_TYP_CTRL_VERSION_REQ;
-                network->u.ctrl_version_req = (network_msg_ctrl_version_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_VERSION_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_version_resp_t)) {
-                network->typ = MSG_TYP_CTRL_VERSION_RESP;
-                network->u.ctrl_version_resp = (network_msg_ctrl_version_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_VALVE_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_valve_req_t)) {
-                network->typ = MSG_TYP_CTRL_VALVE_REQ;
-                network->u.ctrl_valve_req = (network_msg_ctrl_valve_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_VALVE_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_valve_resp_t)) {
-                network->typ = MSG_TYP_CTRL_VALVE_RESP;
-                network->u.ctrl_valve_resp = (network_msg_ctrl_valve_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_SOLARPUMP_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_solarpump_req_t)) {
-                network->typ = MSG_TYP_CTRL_SOLARPUMP_REQ;
-                network->u.ctrl_solarpump_req = (network_msg_ctrl_solarpump_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_SOLARPUMP_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_solarpump_resp_t)) {
-                network->typ = MSG_TYP_CTRL_SOLARPUMP_RESP;
-                network->u.ctrl_solarpump_resp = (network_msg_ctrl_solarpump_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_DELAY_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_delay_req_t)) {
-                network->typ = MSG_TYP_CTRL_DELAY_REQ;
-                network->u.ctrl_delay_req = (network_msg_ctrl_delay_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_DELAY_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_delay_resp_t)) {
-                network->typ = MSG_TYP_CTRL_DELAY_RESP;
-                network->u.ctrl_delay_resp = (network_msg_ctrl_delay_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_HEAT_SETPT_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_heat_setpt_req_t)) {
-                network->typ = MSG_TYP_CTRL_HEAT_SETPT_REQ;
-                network->u.ctrl_heat_set_req = (network_msg_ctrl_heat_setpt_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_HEAT_SETPT_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_heat_setpt_resp_t)) {
-                network->typ = MSG_TYP_CTRL_HEAT_SETPT_RESP;
-                network->u.ctrl_heat_set_resp = (network_msg_ctrl_heat_setpt_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_SCHEDS_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_scheds_req_t)) {
-                network->typ = MSG_TYP_CTRL_SCHEDS_REQ;
-                network->u.ctrl_scheds_req = (network_msg_ctrl_scheds_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_SCHEDS_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_scheds_resp_t)) {
-                network->typ = MSG_TYP_CTRL_SCHEDS_RESP;
-                network->u.ctrl_scheds_resp = (network_msg_ctrl_scheds_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_CIRC_NAMES_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_circ_names_req_t)) {
-                network->typ = MSG_TYP_CTRL_CIRC_NAMES_REQ;
-                network->u.ctrl_circ_names_req = (network_msg_ctrl_circ_names_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_CIRC_NAMES_RESP:
-            if (pkt->data_len == sizeof(network_msg_ctrl_circ_names_resp_t)) {
-                network->typ = MSG_TYP_CTRL_CIRC_NAMES_RESP;
-                network->u.ctrl_circ_names_resp = (network_msg_ctrl_circ_names_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CTRL_CHEM_REQ:
-            if (pkt->data_len == sizeof(network_msg_ctrl_chem_req_t)) {
-                network->typ = MSG_TYP_CTRL_CHEM_REQ;
-                network->u.ctrl_chem_req = (network_msg_ctrl_chem_req_t *) pkt->data;
-            }
-            break;
-        default:
-            if (CONFIG_OPNPOOL_DBGLVL_NETWORK >0) {
-                ESP_LOGW(TAG, "unknown A5_CTRL pkt->prot_typ (0x%02X)", pkt->prot_typ);
-            }
-            break;
+    network_msg_typ_info_t const * const info = network_msg_typ_get_info(datalink_pump_typ, is_to_pump);
+    if (info == nullptr) {
+        ESP_LOGW(TAG, "unsupported pump_typ (%s) ", enum_str(datalink_pump_typ));
+        return ESP_FAIL;
     }
-};
 
-/*
- *
- */
+    if (pkt->data_len != info->size) {
 
-static void
-_decode_msg_a5_pump(datalink_pkt_t const * const pkt, network_msg_t * const network)
-{
-    network->typ = MSG_TYP_NONE;
-	bool toPump = (datalink_groupaddr(pkt->dst) == DATALINK_ADDRGROUP_PUMP);
-
-    switch (pkt->prot_typ) {
-        case NETWORK_TYP_PUMP_REG:
-            if (toPump) {
-                if (pkt->data_len == sizeof(network_msg_pump_reg_set_t)) {
-                    network->typ = MSG_TYP_PUMP_REG_SET;
-                    network->u.pump_reg_set = (network_msg_pump_reg_set_t *) pkt->data;
-                }
-            } else {
-                if (pkt->data_len == sizeof(network_msg_pump_reg_resp_t)) {
-                    network->typ = MSG_TYP_PUMP_REG_RESP;
-                    network->u.pump_reg_set_resp = (network_msg_pump_reg_resp_t *) pkt->data;
-                }
-            }
-            break;
-        case NETWORK_TYP_PUMP_CTRL:
-            if (toPump) {
-                if (pkt->data_len == sizeof(network_msg_pump_ctrl_t)) {
-                    network->typ = MSG_TYP_PUMP_CTRL_SET;
-                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) pkt->data;
-                }
-            } else {
-                if (pkt->data_len == sizeof(network_msg_pump_ctrl_t)) {
-                    network->typ = MSG_TYP_PUMP_CTRL_RESP;
-                    network->u.pump_ctrl = (network_msg_pump_ctrl_t *) pkt->data;
-                }
-            }
-            break;
-        case NETWORK_TYP_PUMP_MODE:
-            if (toPump) {
-                if (pkt->data_len == sizeof(network_msg_pump_mode_t)) {
-                    network->typ = MSG_TYP_PUMP_MODE_SET;
-                    network->u.pump_mode = (network_msg_pump_mode_t *) pkt->data;
-                }
-            } else {
-                if (pkt->data_len == sizeof(network_msg_pump_mode_t)) {
-                    network->typ = MSG_TYP_PUMP_MODE_RESP;
-                    network->u.pump_mode = (network_msg_pump_mode_t *) pkt->data;
-                }
-            }
-            break;
-        case NETWORK_TYP_PUMP_RUN:
-            if (toPump) {
-                if (pkt->data_len == sizeof(network_msg_pump_run_t)) {
-                    network->typ = MSG_TYP_PUMP_RUN_SET;
-                    network->u.pump_run = (network_msg_pump_run_t *) pkt->data;
-                }
-            } else {
-                if (pkt->data_len == sizeof(network_msg_pump_run_t)) {
-                    network->typ = MSG_TYP_PUMP_RUN_RESP;
-                    network->u.pump_run = (network_msg_pump_run_t *) pkt->data;
-                }
-            }
-            break;
-        case NETWORK_TYP_PUMP_STATUS:
-            if (toPump) {
-                if (pkt->data_len == 0) {
-                    network->typ = MSG_TYP_PUMP_STATUS_REQ;
-                }
-            } else {
-                if (pkt->data_len == sizeof(network_msg_pump_status_resp_t)) {
-                    network->typ = MSG_TYP_PUMP_STATUS_RESP;
-                    network->u.pump_status_resp = (network_msg_pump_status_resp_t *) pkt->data;
-                }
-            }
-            break;
-        case NETWORK_TYP_PUMP_FF:
-            // silently ignore
-            break;
-        default:
-            if (CONFIG_OPNPOOL_DBGLVL_NETWORK >0) {
-                ESP_LOGW(TAG, "unknown A5 pump typ %u", pkt->prot_typ);
-            }
-            break;
+        ESP_LOGW(TAG, "{%s %u} => %s invalid length: expected %lu, got %u", enum_str(datalink_pump_typ), is_to_pump, enum_str(msg->typ), info->size, pkt->data_len);
+        return ESP_FAIL;
     }
+
+    msg->typ       = info->network_msg_typ;
+    msg->src       = pkt->src;
+    msg->dst       = pkt->dst;
+    memcpy(msg->u.raw, pkt->data, pkt->data_len);  // saves lots of code to using a union-aware switch
+
+    ESP_LOGVV(TAG, "%s: decoded A5_PUMP msg typ %s", __FUNCTION__, enum_str(msg->typ));
+    return ESP_OK;
 }
 
-/*
+
+/**
+ * @brief         Decode an A5_CTRL datalink packet to form a network message.
  *
+ * @param[in]  pkt Pointer to the datalink packet to decode.
+ * @param[out] msg Pointer to the network message structure to populate.
+ * @return         ESP_OK if the message was successfully decoded, ESP_FAIL otherwise.
  */
-
-static void
-_decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const network)
+[[nodiscard]] static esp_err_t
+_decode_msg_a5_ctrl(datalink_pkt_t const * const pkt, network_msg_t * const msg)
 {
-    network->typ = MSG_TYP_NONE;
+    datalink_ctrl_typ_t const datalink_ctrl_typ = pkt->typ.ctrl;
 
-    switch (pkt->prot_typ) {
-        case NETWORK_TYP_CHLOR_PING_REQ:
-            if (pkt->data_len == sizeof(network_msg_chlor_ping_req_t)) {
-                network->typ = MSG_TYP_CHLOR_PING_REQ;
-                network->u.chlor_ping_req = (network_msg_chlor_ping_req_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CHLOR_PING_RESP:
-            if (pkt->data_len == sizeof(network_msg_chlor_ping_resp_t)) {
-                network->typ = MSG_TYP_CHLOR_PING_RESP;
-                network->u.chlor_ping = (network_msg_chlor_ping_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CHLOR_NAME_RESP:
-            if (pkt->data_len == sizeof(network_msg_chlor_name_resp_t)) {
-                network->typ = MSG_TYP_CHLOR_NAME_RESP;
-                network->u.chlor_name_resp = (network_msg_chlor_name_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CHLOR_LEVEL_SET:
-            if (pkt->data_len == sizeof(network_msg_chlor_level_set_t)) {
-                network->typ = MSG_TYP_CHLOR_LEVEL_SET;
-                network->u.chlor_level_set = (network_msg_chlor_level_set_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CHLOR_LEVEL_RESP:
-            if (pkt->data_len == sizeof(network_msg_chlor_level_resp_t)) {
-                network->typ = MSG_TYP_CHLOR_LEVEL_RESP;
-                network->u.chlor_level_resp = (network_msg_chlor_level_resp_t *) pkt->data;
-            }
-            break;
-        case NETWORK_TYP_CHLOR_NAME_REQ:
-            if (pkt->data_len == sizeof(network_msg_chlor_name_req_t)) {
-                network->typ = MSG_TYP_CHLOR_NAME_REQ;
-                network->u.chlor_name_req = (network_msg_chlor_name_req_t *) pkt->data;
-            }
-            break;
-        default:
-            if (CONFIG_OPNPOOL_DBGLVL_NETWORK >0) {
-                ESP_LOGW(TAG, "unknown IC typ %u", pkt->prot_typ);
-            }
-            break;
+    network_msg_typ_info_t const * const info = network_msg_typ_get_info(datalink_ctrl_typ);
+    if (info == nullptr) {
+        ESP_LOGW(TAG, "unsupported ctrl_typ (%s) ", enum_str(datalink_ctrl_typ));
+        return ESP_FAIL;
     }
+
+    if (pkt->data_len != info->size) {
+        ESP_LOGW(TAG, "%s => %s invalid length: expected %lu, got %u", enum_str(datalink_ctrl_typ), enum_str(msg->typ), info->size, pkt->data_len);
+        return ESP_FAIL;
+    }
+
+    msg->typ       = info->network_msg_typ;
+    msg->src       = pkt->src;
+    msg->dst       = pkt->dst;
+    memcpy(msg->u.raw, pkt->data, pkt->data_len);  // saves lots of code to using a union-aware switch
+
+    ESP_LOGVV(TAG, "%s: decoded A5_CTRL msg typ %s", __FUNCTION__, enum_str(msg->typ));
+    return ESP_OK;
 }
 
-/*
- * 
+
+/**
+ * @brief         Decode an IC datalink packet to form a network message.
+ *
+ * @param[in]  pkt Pointer to the datalink packet to decode.
+ * @param[out] msg Pointer to the network message structure to populate.
+ * @return         ESP_OK if the message was successfully decoded, ESP_FAIL otherwise.
+ */
+[[nodiscard]] static esp_err_t
+_decode_msg_ic_chlor(datalink_pkt_t const * const pkt, network_msg_t * const msg)
+{
+    datalink_chlor_typ_t const datalink_chlor_typ = pkt->typ.chlor;
+
+    network_msg_typ_info_t const * const info = network_msg_typ_get_info(datalink_chlor_typ);
+    if (info == nullptr) {
+        ESP_LOGW(TAG, "unsupported chlor_typ (%s) ", enum_str(datalink_chlor_typ));
+        return ESP_FAIL;
+    }
+
+    if (pkt->data_len != info->size) {
+        ESP_LOGW(TAG, "%s => %s invalid length: expected %lu, got %u", enum_str(datalink_chlor_typ), enum_str(msg->typ), info->size, pkt->data_len);
+        return ESP_FAIL;
+    }
+
+    msg->typ       = info->network_msg_typ;
+    msg->src       = pkt->src;
+    msg->dst       = pkt->dst;
+    memcpy(msg->u.raw, pkt->data, pkt->data_len);  // saves lots of code to using a union-aware switch
+
+    ESP_LOGVV(TAG, "%s: decoded IC msg typ %s", __FUNCTION__, enum_str(msg->typ));
+    return ESP_OK;
+}
+
+
+/**
+ * @brief Decode a datalink packet into a network message for higher-level processing.
+ *
+ * This function translates a validated datalink packet (from RS-485) into a structured
+ * network message, supporting multiple protocol types (A5/CTRL, A5/PUMP, IC/Chlorinator).
+ * It determines the message type, populates the network message fields, and sets the
+ * transmission opportunity flag if the decoded message allows for a response.
+ *
+ * Packets with unsupported or irrelevant destination groups are ignored. The function
+ * resets the string conversion mechanism for entity names and logs decoding results for
+ * debugging.
+ *
+ * @param[in]  pkt           Pointer to the datalink packet to decode.
+ * @param[out] msg           Pointer to the network message structure to populate.
+ * @param[out] txOpportunity Pointer to a boolean set true if message provides a transmission opportunity.
+ * @return                   ESP_OK if the message was successfully decoded, ESP_FAIL otherwise.
  */
 
 esp_err_t
 network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool * const txOpportunity)
 {
-    // reset mechanism that converts various formats to string
-	name_reset_idx();
+        // reset mechanism that converts various formats to string
+    name_reset_idx();
 
-#if 1
-    // silently ignore packets that we can't decode
-    datalink_addrgroup_t const dst = datalink_groupaddr(pkt->dst);
-    if ((pkt->prot == DATALINK_PROT_A5_CTRL && dst == DATALINK_ADDRGROUP_X09) ||
-        (pkt->prot == DATALINK_PROT_IC && dst != DATALINK_ADDRGROUP_ALL && dst != DATALINK_ADDRGROUP_CHLOR)) {
-        return ESP_FAIL;
+#if 0
+        (pkt->prot == datalink_prot_t::IC && dst != datalink_group_addr_t::ALL && dst != datalink_group_addr_t::CHLOR)) {
+#endif    
+
+        // silently ignore packets that we don't know how to decode
+    datalink_addr_t const dst = pkt->dst;
+    if ((pkt->prot == datalink_prot_t::A5_CTRL && dst.is_unknown_90()) ||
+        (pkt->prot == datalink_prot_t::IC && !dst.is_broadcast() && !dst.is_chlorinator() )) {
+
+        *txOpportunity = false;
+        msg->typ = network_msg_typ_t::IGNORE;
+        ESP_LOGV(TAG, "Ignoring packet with prot %s and dst addr %u", enum_str(pkt->prot), dst.addr);
+        return ESP_OK;
     }
-#endif
-	switch (pkt->prot) {
-		case DATALINK_PROT_A5_CTRL:
-            _decode_msg_a5_ctrl(pkt, msg);
-			break;
-		case DATALINK_PROT_A5_PUMP:
-            _decode_msg_a5_pump(pkt, msg);
-			break;
-		case DATALINK_PROT_IC:
-            _decode_msg_ic_chlor(pkt, msg);
-			break;
-        default:
-            if (CONFIG_OPNPOOL_DBGLVL_NETWORK >0) {
-                ESP_LOGW(TAG, "unknown prot %u", pkt->prot);
-            }
-	}
-    *txOpportunity =
-        pkt->prot == DATALINK_PROT_A5_CTRL &&
-        datalink_groupaddr(pkt->src) == DATALINK_ADDRGROUP_CTRL &&
-        datalink_groupaddr(pkt->dst) == DATALINK_ADDRGROUP_ALL;
 
-    return msg->typ == MSG_TYP_NONE ? ESP_FAIL : ESP_OK;
+    esp_err_t result = ESP_FAIL;
+
+    switch (pkt->prot) {
+        case datalink_prot_t::A5_CTRL:
+            result = _decode_msg_a5_ctrl(pkt, msg);
+            break;
+        case datalink_prot_t::A5_PUMP:
+            result = _decode_msg_a5_pump(pkt, msg);
+            break;
+        case datalink_prot_t::IC:
+            result = _decode_msg_ic_chlor(pkt, msg);
+            break;
+        default:
+            ESP_LOGW(TAG, "unknown prot %u", enum_index(pkt->prot));
+    }
+    ESP_LOGV(TAG, "Decoded pkt (prot=%s dst=%u) to %s", enum_str(pkt->prot), dst.addr, enum_str(msg->typ));
+
+    *txOpportunity =
+        pkt->prot == datalink_prot_t::A5_CTRL &&
+        pkt->src.is_controller() &&
+        pkt->dst.is_broadcast();
+
+    return result;
 }
+
+} // namespace opnpool
+} // namespace esphome

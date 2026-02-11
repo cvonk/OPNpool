@@ -1,0 +1,46 @@
+{
+    "configurations": [
+        {
+            "name": "ESP-IDF",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/components/opnpool",
+                "${workspaceFolder}/.esphome/build/opnpool-1/src",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/**/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/freertos/FreeRTOS-Kernel/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/freertos/FreeRTOS-Kernel/portable/riscv/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/freertos/config/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/freertos/config/riscv/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/freertos/esp_additions/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/heap/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/soc/esp32c6/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/esp_rom/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/hal/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/hal/esp32c6/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/hal/platform_port/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/esp_common/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/esp_system/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/esp_hw_support/include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/newlib/platform_include",
+                "C:/Users/Coert/.platformio/packages/framework-espidf/components/log/include",
+                "${workspaceFolder}/.esphome/build/opnpool-1/.pioenvs/opnpool-1/config"
+            ],
+            "defines": [
+                "__cplusplus",
+                "ESP_PLATFORM",
+                "IDF_VER=\"5.5.2\"",
+                "USE_ESP32",
+                "USE_ESP_IDF"
+            ],
+            "compilerPath": "C:/Users/Coert/.platformio/packages/toolchain-riscv32-esp/bin/riscv32-esp-elf-g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++23",
+            "intelliSenseMode": "linux-gcc-arm",
+            "forcedInclude": [
+                "${workspaceFolder}/.esphome/build/opnpool-1/.pioenvs/opnpool-1/config/sdkconfig.h",
+                "${workspaceFolder}/.esphome/build/opnpool-1/src/esphome/core/defines.h"
+            ]
+        }
+    ],
+    "version": 4
+}
