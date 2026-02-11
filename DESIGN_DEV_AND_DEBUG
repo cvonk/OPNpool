@@ -1,5 +1,3 @@
-> I'm in the progress of moving to an ESPHome/PlatformIO based build.  If you are looking for the last standalone version, you will find that in the branch `standalone`, or download the the last release zip file.
-
 # Design, development and debugging
 
 This software is designed for robustness, reliability, and long-term maintainability. The architecture emphasizes modularity and extensibility through protocol abstraction helpers and FreeRTOS primitives for cooperative task scheduling and inter-task communication. Comprehensive logging enables diagnostics, troubleshooting, and protocol analysis.
