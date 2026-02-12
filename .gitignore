@@ -4,8 +4,13 @@
 /.esphome/
 /.claude/
 /secrets.yaml
-/hardware/libraries/Coert-Vonk.l#*
-/hardware/OPNpool r?.b#*
-/hardware/OPNpool r?.s#*
-components/opnpool/__pycache__/__init__.cpython-313.pyc
+/hardware/EAGLE/libraries/Coert-Vonk.l#*
+/hardware/EAGLE/OPNpool r?.b#*
+/hardware/EAGLE/OPNpool r?.s#*
+/hardware/**/fp-info-cache/
+/hardware/**/fp-lib-table/
+/hardware/**/*-backups/
+/hardware/**/*.lck
+/hardware/**/*.kicad_prl
+/components/opnpool/__pycache__/
 /changes.txt

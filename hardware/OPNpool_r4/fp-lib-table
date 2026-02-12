@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "OPNpool r4")(type "KiCad")(uri "$(KIPRJMOD)/OPNpool_r4.pretty")(options "")(descr ""))
+)
