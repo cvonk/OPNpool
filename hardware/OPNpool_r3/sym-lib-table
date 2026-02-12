@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 0)
+  (lib (name "OPNpool_r3-eagle-import")(type "KiCad")(uri "${KIPRJMOD}/OPNpool_r3-eagle-import.kicad_sym")(options "")(descr ""))
+)
