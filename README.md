@@ -74,7 +74,7 @@ ota:
     password: !secret ota_password
 
 external_components:
-  - source: github://cvonk/OPNpool_meets_ESPHome
+  - source: github://cvonk/OPNpool
     components: [ opnpool ]
 
 logger:
@@ -127,7 +127,6 @@ In the above trace, the `tx_q full` indicates that it can't transmit to the pool
 If you haven't already, add the ESPHome integration to Home Assistant.
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome)
-<<<<<<< HEAD
 
 Under Integrations, you will find now notice that Home Assistant auto discovered your new device.
 
@@ -142,22 +141,6 @@ Add it, and specify your API key.  Name the device and assign it an area. You sh
 At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can
 breadboard this using:
 
-=======
-
-Under Integrations, you will find now notice that Home Assistant auto discovered your new device.
-
-[![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/)
-
-![Discovered](assets/media/opnpool-discovered.png){: style="display: block; margin-left: auto; margin-right: auto; width:300px;}
-
-Add it, and specify your API key.  Name the device and assign it an area. You should then see the enities although their values are `unknown`.  Time to populate those entities by connecting it to the pool controller ;-)
-
-## Connect
-
-At the core this project is an ESP32 module and a 3.3 Volt RS-485 adapter. You can
-breadboard this using:
-
->>>>>>> 21796d13785588e28b2d920e231e2d6940bcb9e6
 * Any ESP32 module that has an USB connector and three GPIO pins available.
 * Any "Max485 Module TTL". To make it 3.3 Volt compliant, change the chip to a `MAX3485CSA+`. While you're at it, you may as well remove the 10 kΩ pullup resistors (typically labeled `R1` to `R4`).
 * A piece of Cat5 ethernet cable to connect to the pool controller.
