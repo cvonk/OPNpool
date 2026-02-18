@@ -1,0 +1,180 @@
+(footprint "SML0603"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "SML0603-XXX (HIGH INTENSITY) LED\n\nAG3KAQUA GREEN B1KSUPER BLUE R1KSUPER RED R3KULTRA RED O3KSUPER ORANGE O3KHSOFT ORANGE Y3KHSUPER YELLOW Y3KSUPER YELLOW 2CWWHITE  Source: http://www.ledtronics.com/ds/smd-0603/Dstr0092.pdf")
+	(property "Reference" "REF**"
+		(at -1 -1 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "d9302980-8a2c-4713-b045-fc6e27ce6e62")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "SML0603"
+		(at -1 2 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "466bdb41-136a-43a8-aa5a-d97bd999e116")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "27f7fba5-89b3-4a40-97c2-f6b6b6bfd9be")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "29938c4a-8964-4336-a556-a57735a347ed")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_line
+		(start -0.2 -0.35)
+		(end 0.2 -0.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "66d26036-3032-4d20-b892-f54e865e8b4e")
+	)
+	(fp_line
+		(start -0.2 0.35)
+		(end 0.2 0.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "61aff671-9167-4234-9865-06b013de6b10")
+	)
+	(fp_poly
+		(pts
+			(xy -0.25 -0.175) (xy 0 -0.175) (xy 0 -0.4) (xy -0.25 -0.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "df78f7cc-e529-4684-ba90-9683e49310c1")
+	)
+	(fp_line
+		(start -0.75 -0.35)
+		(end 0.75 -0.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "907db880-3611-4b3a-883d-922001b6768a")
+	)
+	(fp_line
+		(start -0.75 0.35)
+		(end -0.75 -0.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "b070ac8e-9393-4c0d-accd-e4b614255c09")
+	)
+	(fp_line
+		(start -0.45 -0.3)
+		(end -0.45 0.3)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "c9fb5254-d212-4062-aec0-2150b6807197")
+	)
+	(fp_line
+		(start 0.45 -0.3)
+		(end 0.45 0.3)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "77859eba-b375-4db8-ae65-6508737c4ef8")
+	)
+	(fp_line
+		(start 0.75 -0.35)
+		(end 0.75 0.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "85622337-d762-47cd-9b66-eead25f9ddcb")
+	)
+	(fp_line
+		(start 0.75 0.35)
+		(end -0.75 0.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d0cabf4b-1a79-4b45-b5ca-db0a2b659aab")
+	)
+	(fp_poly
+		(pts
+			(xy -0.4 -0.175) (xy 0 -0.175) (xy 0 -0.4) (xy -0.4 -0.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "5cdd6123-5465-43ff-94d3-2494036b0314")
+	)
+	(pad "A" smd rect
+		(at 0.75 0)
+		(size 0.8 0.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.1016)
+		(solder_paste_margin 0)
+		(thermal_bridge_angle 0)
+		(uuid "8a6f4a1a-3681-48c7-8b8d-8631bf18fe4e")
+	)
+	(pad "C" smd rect
+		(at -0.75 0)
+		(size 0.8 0.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.1016)
+		(solder_paste_margin 0)
+		(thermal_bridge_angle 0)
+		(uuid "90239ba5-0dc8-43a3-a281-bd4ffa42b9f4")
+	)
+	(embedded_fonts no)
+)

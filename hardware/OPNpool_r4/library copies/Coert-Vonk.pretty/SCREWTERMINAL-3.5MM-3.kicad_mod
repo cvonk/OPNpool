@@ -1,0 +1,217 @@
+(footprint "SCREWTERMINAL-3.5MM-3"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at -1.27 -2.54 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "f87d11b5-6a8f-4bf1-9a28-6393f41e26ea")
+		(effects
+			(font
+				(size 0.373888 0.373888)
+				(thickness 0.032512)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "SCREWTERMINAL-3.5MM-3"
+		(at -1.27 -1.27 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "efee2859-21a8-4f59-9e86-142394da4327")
+		(effects
+			(font
+				(size 0.373888 0.373888)
+				(thickness 0.032512)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "7f65fdb3-9acb-4cce-a185-48150307be3f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "318da7a4-6f86-46b0-ae6e-eda9457e6b72")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_line
+		(start -1.75 -3.4)
+		(end 8.75 -3.4)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "0c6babce-e3b0-4ef5-bad3-83f22451a09f")
+	)
+	(fp_line
+		(start -1.75 2.8)
+		(end -1.75 -3.4)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8e532c78-7f1e-457d-a93f-3d4dd9ee4838")
+	)
+	(fp_line
+		(start -1.75 3.6)
+		(end -1.75 2.8)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "45cf5177-1da9-48a6-a8f9-69d6406114fe")
+	)
+	(fp_line
+		(start 8.75 -3.4)
+		(end 8.75 2.8)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "7459d460-f592-4056-a724-1691c73e9472")
+	)
+	(fp_line
+		(start 8.75 2.8)
+		(end -1.75 2.8)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "2d3ded74-dfd6-4ccf-9147-2c02810f0675")
+	)
+	(fp_line
+		(start 8.75 2.8)
+		(end 8.75 3.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8ba2c7b1-1a52-4182-b9d3-1f3b08d04cd2")
+	)
+	(fp_line
+		(start 8.75 3.6)
+		(end -1.75 3.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "400f535c-eddc-469f-adc5-c7113fca2ea1")
+	)
+	(fp_line
+		(start -2.25 1.35)
+		(end -2.25 2.35)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "f4d2fb5d-58bb-4889-a939-02071f312f9f")
+	)
+	(fp_line
+		(start -2.25 2.35)
+		(end -1.75 2.35)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "01d51f4c-dd2d-42a0-9215-0ee2036a0b79")
+	)
+	(fp_line
+		(start -1.75 1.35)
+		(end -2.25 1.35)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "b7629040-550e-4147-8cef-5bad42d44b6e")
+	)
+	(fp_line
+		(start 8.75 -3.15)
+		(end 9.25 -3.15)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "45f8c6d8-bf17-41de-a51f-c1f82a8a34c4")
+	)
+	(fp_line
+		(start 9.25 -3.15)
+		(end 9.25 -2.15)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "8d9ac6e4-ea03-4d27-9346-e2ceab03e4a2")
+	)
+	(fp_line
+		(start 9.25 -2.15)
+		(end 8.75 -2.15)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "10630a68-4a7a-429b-9bd1-826d31a2684e")
+	)
+	(pad "1" thru_hole rect
+		(at 0 0)
+		(size 2.413 2.413)
+		(drill 1.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "a360e164-784d-4728-8a86-cabfe18124a9")
+	)
+	(pad "2" thru_hole circle
+		(at 3.5 0)
+		(size 2.413 2.413)
+		(drill 1.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "cec2e7ca-0df6-4c36-85df-4398c0f40575")
+	)
+	(pad "3" thru_hole circle
+		(at 7 0)
+		(size 2.413 2.413)
+		(drill 1.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "f15787cc-d2e2-49fc-8a99-d9f244dbb95e")
+	)
+	(embedded_fonts no)
+)

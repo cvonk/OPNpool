@@ -449,7 +449,9 @@
   },
   "libraries": {
     "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_symbol_libs": [
+      "Coert-Vonk"
+    ]
   },
   "meta": {
     "filename": "OPNpool_r4.kicad_pro",

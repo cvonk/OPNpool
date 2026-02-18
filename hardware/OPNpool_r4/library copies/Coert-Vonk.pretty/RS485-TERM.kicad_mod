@@ -1,0 +1,330 @@
+(footprint "RS485-TERM"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Molex polarized 4-pin header Standard 4-pin 0.1\" header. Use with straight break away headers (SKU : PRT-00116), right angle break away headers (PRT-00553), swiss pins (PRT-00743), machine pins (PRT-00117), and female headers (PRT-00115). Molex polarized connector foot print use with SKU : PRT-08232 with associated crimp pins and housings.")
+	(property "Reference" "REF**"
+		(at 1.27 2.54 180)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "3a962603-3b6e-4355-8228-eaa0956fa4f1")
+		(effects
+			(font
+				(size 0.373888 0.373888)
+				(thickness 0.032512)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "RS485-TERM"
+		(at 1.27 1.27 180)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "8fa565dd-6c50-45be-9bc5-35982a29dddd")
+		(effects
+			(font
+				(size 0.373888 0.373888)
+				(thickness 0.032512)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "c4e531e7-3299-4af9-aae3-77eaba0650bf")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "1a6bc796-85e0-4185-abc3-4ff991f63af4")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_line
+		(start -17.5 -8)
+		(end -17.5 4)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "9b8381f8-e20e-466d-9809-6bf5df3d5e7f")
+	)
+	(fp_line
+		(start -17.5 4)
+		(end 2.5 4)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "39510232-b78e-4a48-be17-8c3bbea8f2a5")
+	)
+	(fp_line
+		(start 2.5 -8)
+		(end -17.5 -8)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "399b63f7-fe06-4883-9e1b-da0d37c9f2c8")
+	)
+	(fp_line
+		(start 2.5 4)
+		(end 2.5 -8)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "9db1aa75-bc97-40c4-9447-9830e3e13881")
+	)
+	(fp_poly
+		(pts
+			(xy -14 3) (xy -16 3) (xy -16 4) (xy -14 4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "ffaf8a00-03ba-4f8b-8afb-ebe5b12aac02")
+	)
+	(fp_poly
+		(pts
+			(xy -9 3) (xy -11 3) (xy -11 4) (xy -9 4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "0ff5cc3a-ad39-40a6-9c74-0b48c00372f1")
+	)
+	(fp_poly
+		(pts
+			(xy -4 3) (xy -6 3) (xy -6 4) (xy -4 4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "2d025249-a8d2-46b4-aac4-9717955600ae")
+	)
+	(fp_poly
+		(pts
+			(xy 1 3) (xy -1 3) (xy -1 4) (xy 1 4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "d43ab13a-d174-43dd-8517-4a912014d2b4")
+	)
+	(fp_text user "Red"
+		(at 0 7 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "1c348d6e-ae90-43be-b86d-99a777b6c07c")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "B"
+		(at -10 -9 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "1ec67121-ea6c-4274-a3cc-8090cd65fa31")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "Grn"
+		(at -5 7 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "276aaeda-f45b-490f-815d-e084befb7c08")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "15V"
+		(at 0 -9 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "3231c5f6-955b-4cb0-9833-3fa934facf00")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "Blk"
+		(at -15 7 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "538c2936-7553-4223-94d0-adda553fdfaf")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "Yel"
+		(at -10 7 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "6df2ca6f-5ad8-4a53-b105-18c03f9dd70b")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "A"
+		(at -5 -9 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "a006cbb1-344a-4a36-8df7-e8ee22d7c0e8")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(fp_text user "GND"
+		(at -15 -9 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "b202afd0-546b-4329-9e24-a14a0e91417e")
+		(effects
+			(font
+				(size 1.63576 1.63576)
+				(thickness 0.14224)
+			)
+			(justify bottom)
+		)
+	)
+	(pad "15V" thru_hole rect
+		(at 0 0 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "ad3fe24e-2af4-4ab8-bd45-c16d021e4203")
+	)
+	(pad "15V@1" thru_hole rect
+		(at 0 -5 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "c04f1ae3-6aa7-4041-875d-0241a69b75a0")
+	)
+	(pad "A" thru_hole circle
+		(at -5 0 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "b759898f-192b-4cce-80a9-8b92ea9d2b3c")
+	)
+	(pad "A@1" thru_hole circle
+		(at -5 -5 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "10368d39-b6e7-4e62-aae1-3f2ef9916a0d")
+	)
+	(pad "B" thru_hole circle
+		(at -10 0 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "d5e3bb34-18a3-49b2-bdb6-7efd183d51be")
+	)
+	(pad "B@1" thru_hole circle
+		(at -10 -5 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "e7601bed-d1d5-4537-bfc2-00dffa464b79")
+	)
+	(pad "GND" thru_hole circle
+		(at -15 0 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "818a7b13-6516-493e-8eae-ce76a1edc9d0")
+	)
+	(pad "GND@1" thru_hole circle
+		(at -15 -5 180)
+		(size 3.5 3.5)
+		(drill 1.1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "53fdd553-6cf4-4748-a18c-1aebd04639b4")
+	)
+	(embedded_fonts no)
+)

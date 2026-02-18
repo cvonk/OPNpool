@@ -1,0 +1,221 @@
+(footprint "KA-3528ASYC"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "SURFACE MOUNT LED LAMP 3.5x2.8mm\n\nSource: http://www.kingbright.com/manager/upload/pdf/KA-3528ASYC(Ver1189474662.1)")
+	(property "Reference" "REF**"
+		(at -1.905 -1.905 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "6cce90dd-abf6-40ec-9772-aade75f0af06")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "KA-3528ASYC"
+		(at -1.905 3.175 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "481708e5-310f-43b6-8f90-405872fa4867")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "5ceae270-4a7a-441f-977e-037153ba260f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "8a212133-5b1e-4aeb-bb8e-cefc25777a7b")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_line
+		(start -1.55 -1.35)
+		(end 1.55 -1.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "354b6dc1-fc60-4cb1-bedc-45e735483b56")
+	)
+	(fp_line
+		(start 1.55 1.35)
+		(end -1.55 1.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "e4f8090c-7c19-4e49-ae93-79b1366e5377")
+	)
+	(fp_arc
+		(start -0.65 -0.95)
+		(mid 0 -1.149991)
+		(end 0.65 -0.95)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "b944b7af-68d8-4ea7-a36e-3677026f52a1")
+	)
+	(fp_arc
+		(start 0.65 0.95)
+		(mid 0 1.149991)
+		(end -0.65 0.95)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "6dada186-fae0-4b44-ad71-17372e8bfff2")
+	)
+	(fp_poly
+		(pts
+			(xy 1.6008 1.4008) (xy 0.702358 1.4008) (xy 0.978958 1.1242) (xy 1.6008 1.1242)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "dd4fecf2-d80f-4c8c-81e2-f6f2b684e75f")
+	)
+	(fp_line
+		(start -1.55 1.35)
+		(end -1.55 -1.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "4144a43c-9b37-468b-a8d5-a77bc7a630de")
+	)
+	(fp_line
+		(start 1.55 -1.35)
+		(end 1.55 1.35)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "ec680247-89f0-4337-bac5-ce7068f24c94")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 1.15 0)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "394a0766-103c-47a5-b2bb-952202631c51")
+	)
+	(fp_poly
+		(pts
+			(xy 1.6008 1.4008) (xy 0.702358 1.4008) (xy 1.6008 0.502358)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "64b0c6e4-0cbf-4fab-9a60-ae975902e337")
+	)
+	(fp_poly
+		(pts
+			(xy -1.75 -0.6) (xy -1.6 -0.6) (xy -1.6 -1.1) (xy -1.75 -1.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "d3bd7849-72e2-4fe9-b999-c696178220a3")
+	)
+	(fp_poly
+		(pts
+			(xy -1.75 1.1) (xy -1.6 1.1) (xy -1.6 0.6) (xy -1.75 0.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "9b877258-f05e-4ef6-ae2a-b19dc6134940")
+	)
+	(fp_poly
+		(pts
+			(xy 1.75 -1.1) (xy 1.6 -1.1) (xy 1.6 -0.6) (xy 1.75 -0.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "a55f4f53-358d-4fbd-aa18-93bf554e24d9")
+	)
+	(fp_poly
+		(pts
+			(xy 1.75 0.6) (xy 1.6 0.6) (xy 1.6 1.1) (xy 1.75 1.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Fab")
+		(uuid "5d1c84ec-23d8-4b02-b0f6-b2ff1c57f552")
+	)
+	(pad "A" smd rect
+		(at -1.55 0)
+		(size 1.5 2.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.1016)
+		(solder_paste_margin 0)
+		(thermal_bridge_angle 0)
+		(uuid "634d2bde-3590-4c82-82c0-8b0798911a1b")
+	)
+	(pad "C" smd rect
+		(at 1.55 0)
+		(size 1.5 2.2)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(solder_mask_margin 0.1016)
+		(solder_paste_margin 0)
+		(thermal_bridge_angle 0)
+		(uuid "83b8a306-09de-4023-a4dc-8672c167d3ca")
+	)
+	(embedded_fonts no)
+)

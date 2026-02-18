@@ -1,0 +1,207 @@
+(footprint "JST-3-PTH-VERT"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "This 3-pin connector mates with the JST cable sold on SparkFun.")
+	(property "Reference" "REF**"
+		(at -3 -3 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "e2991eed-be86-47ee-85c2-e8b33fa3245c")
+		(effects
+			(font
+				(size 0.373888 0.373888)
+				(thickness 0.032512)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "JST-3-PTH-VERT"
+		(at 1 -3 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "0bbc1bd5-709d-43f9-b017-b2dee29f25cb")
+		(effects
+			(font
+				(size 0.373888 0.373888)
+				(thickness 0.032512)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "4865445e-6b43-411c-8cee-68df42489ed2")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "67f681e9-1db3-4d42-9a78-2f46ff7c8ff0")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_line
+		(start -3.95 -2.25)
+		(end 3.95 -2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f0f6e2c3-2161-43cb-a1cf-04c5e2607190")
+	)
+	(fp_line
+		(start -3.95 2.25)
+		(end -3.95 -2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "859f955f-cc16-44c7-bb8c-aec68db1b3fe")
+	)
+	(fp_line
+		(start -1 1.75)
+		(end -1 2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "bb0f7128-53c7-488c-b6cf-5bd0ce57fb39")
+	)
+	(fp_line
+		(start -1 1.75)
+		(end 1 1.75)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "242e6797-46ae-4f42-9ef3-159514840768")
+	)
+	(fp_line
+		(start -1 2.25)
+		(end -3.95 2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "3c961908-adc3-47a5-a574-1562048c96ba")
+	)
+	(fp_line
+		(start 1 1.75)
+		(end 1 2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "715bec5c-4392-4e7c-b50a-988e3838b73c")
+	)
+	(fp_line
+		(start 3.95 -2.25)
+		(end 3.95 2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "c418f33a-1c51-491c-b509-f890bbe98205")
+	)
+	(fp_line
+		(start 3.95 2.25)
+		(end 1 2.25)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "78455cb9-b68d-4119-9919-062787db1e51")
+	)
+	(fp_text user "+"
+		(at -2.4 -0.75 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "1ec9550f-c43e-4374-a1a5-a5980756ddc6")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "S"
+		(at 1.7 -0.95 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "669f6839-84ae-42b7-af53-135ff3e0d425")
+		(effects
+			(font
+				(size 0.736 0.736)
+				(thickness 0.064)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "-"
+		(at -0.4 -0.75 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "9178ee98-9cda-4172-a5d0-9c87d95c0054")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(pad "1" thru_hole circle
+		(at -2 0.55)
+		(size 1.6 1.6)
+		(drill 0.7)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "f08422af-2d17-43f9-8a51-cf430124ee31")
+	)
+	(pad "2" thru_hole circle
+		(at 0 0.55)
+		(size 1.6 1.6)
+		(drill 0.7)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "e1e9bff8-4157-4e7b-a888-0796d9d27bbf")
+	)
+	(pad "3" thru_hole circle
+		(at 2 0.55)
+		(size 1.6 1.6)
+		(drill 0.7)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.1016)
+		(thermal_bridge_angle 0)
+		(uuid "9bdd5288-1139-4f45-8697-5ac8b0f07656")
+	)
+	(embedded_fonts no)
+)

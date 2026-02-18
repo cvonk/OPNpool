@@ -1,0 +1,343 @@
+(footprint "P-LCC-2"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "TOPLED® High-optical Power LED (HOP)\n\nSource: http://www.osram.convergy.de/ ... ls_t675.pdf")
+	(property "Reference" "REF**"
+		(at -2.54 1.905 90)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "7df162e0-7de0-4d75-b799-488e09d1b938")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "P-LCC-2"
+		(at 3.81 1.905 90)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "9785bd43-e7be-4584-aafd-cd8c226731ed")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "2e8a01da-5c37-4d0d-9b48-56f96ea32491")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "ff7890fb-3c7a-4923-9508-c68ab2350379")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_poly
+		(pts
+			(xy -1.4 -0.65) (xy 1.4 -0.65) (xy 1.4 -2.35) (xy -1.4 -2.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Mask")
+		(uuid "9a7d77da-01d9-48a4-88d3-c7a2c535244f")
+	)
+	(fp_poly
+		(pts
+			(xy -1.4 2.35) (xy 1.4 2.35) (xy 1.4 0.65) (xy -1.4 0.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Mask")
+		(uuid "df592791-ad7a-44ff-be6b-223a42cb785c")
+	)
+	(fp_poly
+		(pts
+			(xy -0.25 0.25) (xy 0.25 0.25) (xy 0.25 -0.25) (xy -0.25 -0.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "b35d3b8a-5f8f-476d-83a5-b96506308271")
+	)
+	(fp_poly
+		(pts
+			(xy -1.3 -0.75) (xy 1.3 -0.75) (xy 1.3 -2.25) (xy -1.3 -2.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Paste")
+		(uuid "184403fa-2fc6-4908-8b7d-b93b1211eff6")
+	)
+	(fp_poly
+		(pts
+			(xy -1.3 2.25) (xy 1.3 2.25) (xy 1.3 0.75) (xy -1.3 0.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.Paste")
+		(uuid "fe51c042-d590-46b3-8a9b-c2692c17278e")
+	)
+	(fp_line
+		(start -1.4 -1.6)
+		(end -1.4 1.05)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "7d0ba9a8-712f-4bf7-9485-74093bd481c3")
+	)
+	(fp_line
+		(start -1.4 1.05)
+		(end -1.4 1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "2d6c4a4b-f5d9-47ac-b5a4-0826228727f7")
+	)
+	(fp_line
+		(start -1.4 1.6)
+		(end -1.1 1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "68490037-953d-43b9-a0d0-69bd5e7b6052")
+	)
+	(fp_line
+		(start -1.1 -1.8)
+		(end 1.1 -1.8)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "4c8ac9f1-ee89-4eb4-8878-284e93386d13")
+	)
+	(fp_line
+		(start -1.1 -1.6)
+		(end -1.4 -1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "2ffaac58-6d50-469c-b5f0-c02ee3320f7f")
+	)
+	(fp_line
+		(start -1.1 -1.6)
+		(end -1.1 -1.8)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "486555f1-5b18-44d8-9567-d7d10b1f190d")
+	)
+	(fp_line
+		(start -1.1 1.6)
+		(end -1.1 1.8)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "188aaf84-68a6-494c-b8b5-034cd9fe2233")
+	)
+	(fp_line
+		(start -1.1 1.6)
+		(end -0.85 1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "075ebab9-51b3-4068-9a17-244e27eba1e3")
+	)
+	(fp_line
+		(start -1.1 1.8)
+		(end 1.1 1.8)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "35a8bcd2-585e-425b-b3ac-8854527132da")
+	)
+	(fp_line
+		(start -0.85 1.6)
+		(end -1.4 1.05)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "b6b7ba9c-c416-461f-ba84-f9b4208b4055")
+	)
+	(fp_line
+		(start -0.85 1.6)
+		(end 1.1 1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "24ed44cd-99ec-4923-9692-ff09622d0681")
+	)
+	(fp_line
+		(start 1.1 -1.8)
+		(end 1.1 -1.6)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e7b41b30-0ee2-49ba-bea7-2ae5a2c86d4f")
+	)
+	(fp_line
+		(start 1.1 -1.6)
+		(end -1.1 -1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "6a20936a-ba27-4029-b406-f9484bb5a5c0")
+	)
+	(fp_line
+		(start 1.1 1.6)
+		(end 1.4 1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "016224c0-d4c7-48a3-9542-8e85b181a77e")
+	)
+	(fp_line
+		(start 1.1 1.8)
+		(end 1.1 1.6)
+		(stroke
+			(width 0.1016)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "2e1425df-4ca1-47e8-924a-2db0aaae5a98")
+	)
+	(fp_line
+		(start 1.4 -1.6)
+		(end 1.1 -1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "bc92bd3d-c609-4a17-aa93-f495c0d5135c")
+	)
+	(fp_line
+		(start 1.4 1.6)
+		(end 1.4 -1.6)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9b5ca279-0a17-4122-8005-1a760b5a2d9a")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 1.1 0)
+		(stroke
+			(width 0.2032)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "f5559f5f-f6c6-402f-95d1-a7724a273964")
+	)
+	(fp_text user "A"
+		(at -0.635 -2.54 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "1015bd4d-7c78-4f4d-b82f-fc5a0dbb4562")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "C"
+		(at -0.635 3.81 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "ed4225d9-209b-49a8-ae85-54e60b3e8ce3")
+		(effects
+			(font
+				(size 1.1684 1.1684)
+				(thickness 0.1016)
+			)
+			(justify left bottom)
+		)
+	)
+	(pad "A" smd rect
+		(at 0 -2.75)
+		(size 4 4)
+		(layers "F.Cu")
+		(solder_mask_margin 0.1016)
+		(solder_paste_margin 0)
+		(thermal_bridge_angle 0)
+		(uuid "411a9372-bf39-4877-ab06-7016e4505794")
+	)
+	(pad "C" smd rect
+		(at 0 2.75)
+		(size 4 4)
+		(layers "F.Cu")
+		(solder_mask_margin 0.1016)
+		(solder_paste_margin 0)
+		(thermal_bridge_angle 0)
+		(uuid "19ac70e9-1c96-41f9-9447-09a72f33317d")
+	)
+	(embedded_fonts no)
+)
