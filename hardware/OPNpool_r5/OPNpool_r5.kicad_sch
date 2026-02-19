@@ -6,8 +6,8 @@
 	(paper "User" 313.182 224.536)
 	(title_block
 		(title "OPNpool")
-		(date "2026-02-18")
-		(rev "r4")
+		(date "2026-02-19")
+		(rev "r5")
 		(company "https://github.com/cvonk/OPNpool")
 		(comment 2 "outside every time you want to check or change something.")
 		(comment 3 "OPNpool keeps track of your controller, pump, and chlorinator, so you don’t have to run")
