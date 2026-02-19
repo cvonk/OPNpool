@@ -227,7 +227,16 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      [
+        "power_pin_not_driven|1117600|508000|56ce0cf8-75a5-405e-80f1-e272db752243|00000000-0000-0000-0000-000000000000|/df405e78-03a0-4faa-8ec6-becc89e56e2c|/df405e78-03a0-4faa-8ec6-becc89e56e2c|",
+        "Power passes through the zener diode"
+      ],
+      [
+        "power_pin_not_driven|1549400|508000|de53d638-2d4d-4c9f-89b5-6f9696781251|00000000-0000-0000-0000-000000000000|/df405e78-03a0-4faa-8ec6-becc89e56e2c|/df405e78-03a0-4faa-8ec6-becc89e56e2c|",
+        "Power passes through the zener diode"
+      ]
+    ],
     "meta": {
       "version": 0
     },
