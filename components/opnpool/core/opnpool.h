@@ -102,13 +102,14 @@ class OpnPool : public Component
     // ========== Sensor Setters ==========
     void set_air_temperature_sensor(OpnPoolSensor * const s);
     void set_water_temperature_sensor(OpnPoolSensor * const s);
+    void set_solar1_temperature_sensor(OpnPoolSensor * const s);
+    void set_solar2_temperature_sensor(OpnPoolSensor * const s);
     void set_primary_pump_power_sensor(OpnPoolSensor * const s);
     void set_primary_pump_flow_sensor(OpnPoolSensor * const s);
     void set_primary_pump_speed_sensor(OpnPoolSensor * const s);
     void set_primary_pump_error_sensor(OpnPoolSensor * const s);
     void set_chlorinator_level_sensor(OpnPoolSensor * const s);
     void set_chlorinator_salt_sensor(OpnPoolSensor * const s);
-    void set_solar_temperature_sensor(OpnPoolSensor * const s);
 
     // ========== Binary Sensor Setters ==========
     void set_primary_pump_running_binary_sensor(OpnPoolBinarySensor * const bs);

@@ -143,6 +143,16 @@ opnpool:
     state_class: "measurement"
     device_class: "temperature"
     unit_of_measurement: "°F"
+  solar1_temperature:
+    name: "Solar1 water"
+    state_class: "measurement"
+    device_class: "temperature"
+    unit_of_measurement: "°F"
+  solar2_temperature:
+    name: "Solar2 water"
+    state_class: "measurement"
+    device_class: "temperature"
+    unit_of_measurement: "°F"
   air_temperature:
     name: "Outside air"
     state_class: "measurement"

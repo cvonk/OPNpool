@@ -192,7 +192,8 @@ struct poolstate_sched_detail_t {
 enum class poolstate_temp_typ_t : uint8_t {
     AIR     = 0,  ///< Air temperature sensor.
     WATER   = 1,  ///< Water temperature sensor.
-    SOLAR = 2   ///< Solar sensor temperature.
+    SOLAR_1 = 2,  ///< Solar sensor 1 temperature.
+    SOLAR_2 = 3   ///< Solar sensor 2 temperature.
 };
 
 /// @}

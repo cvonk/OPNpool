@@ -198,16 +198,19 @@ _update_temps(cJSON * const dbg, network_ctrl_state_bcast_t const * const msg, p
 {
     uint8_t const air_idx     = enum_index(poolstate_temp_typ_t::AIR);
     uint8_t const water_idx   = enum_index(poolstate_temp_typ_t::WATER);
-    uint8_t const solar_idx   = enum_index(poolstate_temp_typ_t::SOLAR);
-    static_assert(air_idx   < enum_count<poolstate_temp_typ_t>(), "size err for air_idx");
-    static_assert(water_idx < enum_count<poolstate_temp_typ_t>(), "size err for water_idx");
-    static_assert(solar_idx < enum_count<poolstate_temp_typ_t>(), "size err for solar_idx");
+    uint8_t const solar1_idx  = enum_index(poolstate_temp_typ_t::SOLAR_1);
+    uint8_t const solar2_idx  = enum_index(poolstate_temp_typ_t::SOLAR_2);
+    static_assert(air_idx    < enum_count<poolstate_temp_typ_t>(), "size err for air_idx");
+    static_assert(water_idx  < enum_count<poolstate_temp_typ_t>(), "size err for water_idx");
+    static_assert(solar1_idx < enum_count<poolstate_temp_typ_t>(), "size err for solar1_idx");
+    static_assert(solar2_idx < enum_count<poolstate_temp_typ_t>(), "size err for solar2_idx");
 
-    temps[air_idx]   = { .valid = true, .value = msg->air_temp     };
-    temps[water_idx] = { .valid = true, .value = msg->pool_temp    };
-    temps[solar_idx] = { .valid = true, .value = msg->solar_temp_1 };
+    temps[air_idx]    = { .valid = true, .value = msg->air_temp     };
+    temps[water_idx]  = { .valid = true, .value = msg->pool_temp    };
+    temps[solar1_idx] = { .valid = true, .value = msg->solar_temp_1 };
+    temps[solar2_idx] = { .valid = true, .value = msg->solar_temp_2 };
 
-    ESP_LOGVV(TAG, "Air %u, Spa %u, Water %u Solar1 %u", msg->air_temp, msg->spa_temp, msg->pool_temp, msg->solar_temp_1);
+    ESP_LOGVV(TAG, "Air %u, Spa %u, Water %u Solar1 %u Solar2 %u", msg->air_temp, msg->spa_temp, msg->pool_temp, msg->solar_temp_1, msg->solar_temp_2);
 
     if (ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE) {
         poolstate_rx_log::add_temps(dbg, poolstate_rx_log::KEY_TEMPS, temps);

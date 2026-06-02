@@ -59,7 +59,8 @@ enum class sensor_id_t : uint8_t {
     CHLORINATOR_LEVEL    = 5,  ///< Chlorinator output level sensor.
     CHLORINATOR_SALT     = 6,  ///< Chlorinator salt level sensor.
     PRIMARY_PUMP_ERROR   = 7,  ///< Primary pump error code sensor.
-    SOLAR_TEMPERATURE  = 8   ///< Solar sensor temperature.
+    SOLAR1_TEMPERATURE   = 8,  ///< Solar sensor 1 temperature.
+    SOLAR2_TEMPERATURE   = 9   ///< Solar sensor 2 temperature.
 };
 
     /// @brief Binary sensor entity identifiers for pool status indicators.
