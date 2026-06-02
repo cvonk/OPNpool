@@ -595,12 +595,6 @@ OpnPool::update_analog_sensors(poolstate_t const * const state)
         state->chlor.salt
     );
 
-    OpnPoolSensor * const solar_sensor = this->sensors_[enum_index(sensor_id_t::SOLAR_TEMPERATURE)];
-    auto const solar_temp = state->temps[enum_index(poolstate_temp_typ_t::SOLAR)];
-    if (solar_sensor != nullptr && solar_temp.valid && solar_temp.value != 0) {
-        solar_sensor->publish_value_if_changed(std::round(solar_temp.value * 10.0f) / 10.0f);
-    }
-
 }
 
 /**
@@ -827,12 +821,6 @@ void
 OpnPool::set_chlorinator_salt_sensor(OpnPoolSensor * const s)
 { 
     this->sensors_[enum_index(sensor_id_t::CHLORINATOR_SALT)] = s; 
-}
-
-void
-OpnPool::set_solar_temperature_sensor(OpnPoolSensor * const s)
-{
-    this->sensors_[enum_index(sensor_id_t::SOLAR_TEMPERATURE)] = s;
 }
 
 void
