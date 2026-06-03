@@ -8,7 +8,7 @@
  * the following three-message sequence is queued to the pool_task:
  *
  *   1. PUMP_REMOTE_CTRL_SET (0xFF) – enables external (remote) control mode.
- *   2. PUMP_REG_VS_SET – writes the requested RPM to the VS speed register.
+ *   2. PUMP_REG_SET – writes the requested RPM to register 0x02C4.
  *   3. PUMP_RUN_SET (0x0A) – commands the pump to start/keep running.
  *
  * State updates flow in the opposite direction: the pool_task receives periodic
@@ -107,14 +107,19 @@ OpnPoolNumber::control_pump_speed_(float value)
         ipc_send_network_msg_to_pool_task(&msg, parent_->get_ipc());
     }
 
-    // 2. Write the requested RPM to the VS speed register.
+    // 2. Write the requested RPM to the pump's RPM register (0x02C4) via a
+    //    "set register" command (action REG, 0x01): payload {0x02, 0xC4, hi, lo}.
     {
+        constexpr uint16_t rpm_reg = static_cast<uint16_t>(network_pump_reg_addr_t::RPM);
+
         network_msg_t msg;
         msg.src                        = controller_addr;
         msg.dst                        = pump_addr;
-        msg.typ                        = network_msg_typ_t::PUMP_REG_VS_SET;
-        msg.u.a5.pump_reg_set.address  = network_pump_reg_addr_t::RPM;
-        msg.u.a5.pump_reg_set.operation.raw = network_pump_reg_operation_t::WRITE;
+        msg.typ                        = network_msg_typ_t::PUMP_REG_SET;
+        msg.u.a5.pump_reg_set.address  = {
+            .high = static_cast<uint8_t>(rpm_reg >> 8),
+            .low  = static_cast<uint8_t>(rpm_reg & 0xFF)
+        };
         msg.u.a5.pump_reg_set.value    = {
             .high = static_cast<uint8_t>(rpm >> 8),
             .low  = static_cast<uint8_t>(rpm & 0xFF)
