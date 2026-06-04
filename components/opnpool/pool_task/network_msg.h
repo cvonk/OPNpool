@@ -378,28 +378,30 @@ struct network_intellichem_t {
  * @note  Details at https://github.com/tagyoureit/nodejs-poolController/blob/master/controller/comms/messages/status/PumpStateMessage.ts#L27
  */
 
-enum class network_pump_reg_addr_t : uint8_t {
-    RPM        = 0x01,  // program RPM
-    POWER      = 0x02,  // program Power [Watt]
-    CURRENT    = 0x03,  // program Current [A]
-    STATUS     = 0x04,  // 0=off, 4=on, 10=running
-    SETPOINT   = 0x05,
-    TIMER_PROG = 0x06,
+/**
+ * @brief 16-bit pump register addresses (big-endian on the wire).
+ *
+ * @details A "set register" command (action REG, 0x01) carries the 2-byte
+ * register address followed by a 2-byte value. To set the running speed of an
+ * IntelliFlo VS pump the controller writes the RPM register 0x02C4, e.g. the
+ * payload {0x02, 0xC4, 0x05, 0xDC} commands 1500 RPM.
+ *
+ * @note These values are outside magic_enum's default range, so don't use
+ *       enum_str() on them; log them as a number instead.
+ */
+enum class network_pump_reg_addr_t : uint16_t {
+    RPM = 0x02C4,  ///< program/run RPM
 };
 
-struct network_pump_reg_operation_t {
-    uint8_t raw;
-
-    static constexpr uint8_t WRITE = 0xC4;
-    constexpr bool is_write() const { return raw == WRITE; }
-    constexpr char const * to_str() const { return raw == WRITE ? "WRITE" : "READ"; }
-} PACK8;
-
-
+/**
+ * @brief Pump "set register" payload (action REG, 0x01).
+ *
+ * @details The controller writes @ref value to the register at @ref address.
+ * Wire layout is 4 bytes: address.high, address.low, value.high, value.low.
+ */
 struct network_pump_reg_set_t {
-    network_pump_reg_addr_t      address;    // 0
-    network_pump_reg_operation_t operation;  // 1
-    network_hi_lo_t              value;      // 2..3  0x0000 for read operation
+    network_hi_lo_t address;  // 0..1  register address (e.g. 0x02C4 for RPM)
+    network_hi_lo_t value;    // 2..3  value to write
 } PACK8;
 
 struct network_pump_reg_resp_t {
