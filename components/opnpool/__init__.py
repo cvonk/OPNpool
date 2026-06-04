@@ -105,6 +105,10 @@ CONF_ANALOG_SENSORS = { # keys are used to overwrite sensor_id_t enum in opnpool
     "solar1_temperature": {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
     "solar2_temperature": {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
 }
+# Opt-in analog sensors: only created if the user explicitly lists them in YAML
+# (most systems lack solar sensors, and SuperFlo/IntelliFlo VS pumps never report flow).
+# Their sensor_id_t enum slots still exist; the C++ leaves the entity nullptr when unlisted.
+OPT_IN_ANALOG_SENSORS = {"solar1_temperature", "solar2_temperature", "primary_pump_flow"}
 CONF_BINARY_SENSORS = [  # used to overwrite binary_sensor_id_t enum in opnpool.h
     "primary_pump_running",
     "mode_service",
@@ -160,7 +164,8 @@ CONFIG_SCHEMA = cv.Schema({
         }) for key in CONF_SWITCHES
     },
     **{
-        cv.Optional(key, default={"name": key.replace("_", " ").title()}): sensor.sensor_schema(OpnPoolSensor).extend({
+        (cv.Optional(key) if key in OPT_IN_ANALOG_SENSORS
+         else cv.Optional(key, default={"name": key.replace("_", " ").title()})): sensor.sensor_schema(OpnPoolSensor).extend({
             cv.GenerateID(): cv.declare_id(OpnPoolSensor),
             cv.Optional(CONF_UNIT_OF_MEASUREMENT, default=CONF_ANALOG_SENSORS[key]["unit"]): cv.string,
             cv.Optional(CONF_DEVICE_CLASS, default=CONF_ANALOG_SENSORS[key][CONF_DEVICE_CLASS]): cv.string,
@@ -317,6 +322,8 @@ async def to_code(config):
 
     # register analog sensors (constructor injection)
     for id, sensor_key in enumerate(CONF_ANALOG_SENSORS):
+        if sensor_key not in config:
+            continue  # opt-in sensor not listed -> leave its enum slot unbound (nullptr in C++)
         entity_cfg = config[sensor_key]
         if CONF_ID not in entity_cfg:
             entity_cfg[CONF_ID] = cg.new_id()
