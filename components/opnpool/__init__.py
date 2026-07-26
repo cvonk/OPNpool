@@ -209,9 +209,6 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
 
-    # add all source files to build
-    cg.add_library("ESP32", None, "freertos")
-
     # component directory (used for include path and source file discovery)
     component_dir = os.path.dirname(os.path.abspath(__file__))
     component_dir_cmake = component_dir.replace("\\", "/")
