@@ -141,16 +141,17 @@ opnpool:
     state_class: "measurement"
     device_class: "temperature"
     unit_of_measurement: "°F"
-  solar1_temperature:
-    name: "Solar1 water"
-    state_class: "measurement"
-    device_class: "temperature"
-    unit_of_measurement: "°F"
-  solar2_temperature:
-    name: "Solar2 water"
-    state_class: "measurement"
-    device_class: "temperature"
-    unit_of_measurement: "°F"
+  # opt-in: uncomment only if you actually have solar temperature sensor(s)
+  #solar1_temperature:
+  #  name: "Solar1 water"
+  #  state_class: "measurement"
+  #  device_class: "temperature"
+  #  unit_of_measurement: "°F"
+  #solar2_temperature:
+  #  name: "Solar2 water"
+  #  state_class: "measurement"
+  #  device_class: "temperature"
+  #  unit_of_measurement: "°F"
   air_temperature:
     name: "Outside air"
     state_class: "measurement"
@@ -161,11 +162,13 @@ opnpool:
     state_class: "measurement"
     device_class: "power"
     unit_of_measurement: "W"
-  primary_pump_flow:
-    name: "Pump flow"
-    state_class: "measurement"
-    device_class: "volume_flow_rate"
-    unit_of_measurement: "gal/min"
+  # opt-in: variable-speed pumps (SuperFlo/IntelliFlo VS) always report 0 flow.
+  # uncomment only for a VF/VSF pump that actually reports GPM.
+  #primary_pump_flow:
+  #  name: "Pump flow"
+  #  state_class: "measurement"
+  #  device_class: "volume_flow_rate"
+  #  unit_of_measurement: "gal/min"
   primary_pump_speed:
     name: "Pump speed"
     state_class: "measurement"
