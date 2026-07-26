@@ -78,6 +78,11 @@ enum class number_id_t : uint8_t {
     CHLORINATOR_SETPOINT        = 1,  ///< Chlorinator output level setpoint (%).
 };
 
+    /// @brief Select entity identifiers for pool dropdown controls.
+enum class select_id_t : uint8_t {
+    LIGHT_COLOR = 0,  ///< Light color/show mode select.
+};
+
     /// @brief Text sensor entity identifiers for pool status strings.
 enum class text_sensor_id_t : uint8_t {
     POOL_SCHED          = 0,  ///< Pool schedule information.

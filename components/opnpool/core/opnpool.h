@@ -46,6 +46,7 @@ class OpnPoolSensor;
 class OpnPoolBinarySensor;
 class OpnPoolTextSensor;
 class OpnPoolNumber;
+class OpnPoolSelect;
 
 /// @brief RS-485 GPIO pin configuration.
 struct rs485_pins_t {
@@ -111,6 +112,9 @@ class OpnPool : public Component {
     void set_primary_pump_speed_setpoint_number(OpnPoolNumber * const n);
     void set_chlorinator_setpoint_number(OpnPoolNumber * const n);
 
+    // ========== Select Setters ==========
+    void set_light_color_select(OpnPoolSelect * const s);
+
     // ========== Text Sensor Setters ==========
     void set_pool_sched_text_sensor(OpnPoolTextSensor * const ts);
     void set_spa_sched_text_sensor(OpnPoolTextSensor * const ts);
@@ -163,6 +167,7 @@ class OpnPool : public Component {
     OpnPoolBinarySensor * binary_sensors_[enum_count<binary_sensor_id_t>()]{nullptr}; ///< Binary sensor pointers.
     OpnPoolTextSensor * text_sensors_[enum_count<text_sensor_id_t>()]{nullptr};   ///< Text sensor pointers.
     OpnPoolNumber * numbers_[enum_count<number_id_t>()]{nullptr};                 ///< Number entity pointers.
+    OpnPoolSelect * selects_[enum_count<select_id_t>()]{nullptr};                 ///< Select entity pointers.
 
 #ifdef USE_MATTER
     // ========== Matter Integration ==========

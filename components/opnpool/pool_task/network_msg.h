@@ -141,6 +141,11 @@ struct network_ctrl_set_ack_t {
     datalink_ctrl_typ_t  typ;  // type that it is ACK'ing
 } PACK8;
 
+struct network_ctrl_light_color_set_t {
+    uint8_t  color;    ///< Color mode byte (e.g. 0xC1=Blue, 0xB1=Party)
+    uint8_t  padding;  ///< Padding byte (0x00)
+} PACK8;
+
 struct network_ctrl_circuit_set_t {
     uint8_t  circuit_plus_1;
     uint8_t  value;
@@ -525,6 +530,7 @@ union network_data_a5_t {
     network_pump_status_resp_t     pump_status_resp;
     network_ctrl_set_ack_t         ctrl_set_ack;
     network_ctrl_circuit_set_t     ctrl_circuit_set;
+    network_ctrl_light_color_set_t ctrl_light_color_set;
     network_ctrl_sched_resp_t      ctrl_sched_resp;
     network_ctrl_state_bcast_t     ctrl_state_bcast;
     network_ctrl_time_t            ctrl_time;         // set or resp
@@ -599,6 +605,7 @@ union network_data_t {
     X(PUMP_STATUS_RESP,      sizeof(network_pump_status_resp_t),    false, A5_PUMP, datalink_pump_typ_t::STATUS)       \
     X(CTRL_SET_ACK,          sizeof(network_ctrl_set_ack_t),        false, A5_CTRL, datalink_ctrl_typ_t::SET_ACK)      \
     X(CTRL_CIRCUIT_SET,      sizeof(network_ctrl_circuit_set_t),    false, A5_CTRL, datalink_ctrl_typ_t::CIRCUIT_SET)  \
+    X(CTRL_LIGHT_COLOR_SET,  sizeof(network_ctrl_light_color_set_t),false, A5_CTRL, datalink_ctrl_typ_t::LIGHT_COLOR_SET) \
     X(CTRL_SCHED_REQ,        0,                                     false, A5_CTRL, datalink_ctrl_typ_t::SCHED_REQ)    \
     X(CTRL_SCHED_RESP,       sizeof(network_ctrl_sched_resp_t),     false, A5_CTRL, datalink_ctrl_typ_t::SCHED_RESP)   \
     X(CTRL_STATE_BCAST,      sizeof(network_ctrl_state_bcast_t),    false, A5_CTRL, datalink_ctrl_typ_t::STATE_BCAST)  \

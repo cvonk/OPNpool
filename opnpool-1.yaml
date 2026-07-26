@@ -185,6 +185,10 @@ opnpool:
     state_class: "measurement"
     unit_of_measurement: "ppm"
 
+  # light color mode select
+  light_color:
+    name: "Light Color"
+
   # number controls
   primary_pump_speed_setpoint:
     name: "Pump speed setpoint"

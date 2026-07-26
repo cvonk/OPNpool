@@ -49,6 +49,7 @@
 #include "entities/opnpool_binary_sensor.h"
 #include "entities/opnpool_text_sensor.h"
 #include "entities/opnpool_number.h"
+#include "entities/opnpool_select.h"
 #include "opnpool_ids.h"
 #include "pool_task/network.h"
 #include "pool_task/network_msg.h"
@@ -822,6 +823,12 @@ void
 OpnPool::set_chlorinator_setpoint_number(OpnPoolNumber * const n)
 {
     this->numbers_[enum_index(number_id_t::CHLORINATOR_SETPOINT)] = n;
+}
+
+void
+OpnPool::set_light_color_select(OpnPoolSelect * const s)
+{
+    this->selects_[enum_index(select_id_t::LIGHT_COLOR)] = s;
 }
 
 void

@@ -68,6 +68,7 @@ enum class datalink_ctrl_typ_t : uint8_t {
     TIME_REQ         = 0xC5,
     CIRCUIT_RESP     = 0x06,
     CIRCUIT_SET      = 0x86,
+    LIGHT_COLOR_SET  = 0x60,  ///< Set light color/show mode (ScreenLogic command)
     CIRCUIT_REQ      = 0xC6,
     HEAT_RESP        = 0x08,
     HEAT_SET         = 0x88,
