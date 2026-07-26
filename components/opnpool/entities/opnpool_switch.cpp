@@ -94,7 +94,7 @@ OpnPoolSwitch::write_state(bool value)
     uint8_t const circuit_idx = enum_index(circuit);
 
     network_msg_t msg;
-    msg.src = datalink_addr_t::remote();
+    msg.src = datalink_addr_t::wireless_remote();  // 0x22 (ScreenLogic/wireless remote)
     msg.dst = controller_addr;
     msg.typ = network_msg_typ_t::CTRL_CIRCUIT_SET;
     msg.u.a5 = {
@@ -104,7 +104,7 @@ OpnPoolSwitch::write_state(bool value)
         }
     };
 
-    ESP_LOGVV(TAG, "Sending CIRCUIT_SET command: circuit+1=%u to %u", msg.u.a5.ctrl_circuit_set.circuit_plus_1, msg.u.ctrl_circuit_set.value);
+    ESP_LOGV(TAG, "Sending CIRCUIT_SET: circuit+1=%u value=%u src=0x%02X dst=0x%02X", msg.u.a5.ctrl_circuit_set.circuit_plus_1, msg.u.a5.ctrl_circuit_set.value, msg.src.addr, msg.dst.addr);
     if (ipc_send_network_msg_to_pool_task(&msg, this->parent_->get_ipc()) != ESP_OK) {
         ESP_LOGW(TAG, "Failed to send CIRCUIT_SET message to pool task");
     }

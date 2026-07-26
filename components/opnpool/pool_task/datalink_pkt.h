@@ -210,6 +210,7 @@ struct datalink_pkt_t {
     datalink_typ_t     typ;       ///< Message type from datalink_hdr_a5->typ.
     datalink_addr_t    src;       ///< Source address from datalink_hdr_a5->src.
     datalink_addr_t    dst;       ///< Destination address from datalink_hdr_a5->dst.
+    uint8_t            ver;       ///< A5 protocol version byte (e.g. 0x01=EasyTouch, 0x31=SunTouch).
     datalink_data_t *  data;      ///< Pointer to the data payload buffer.
     size_t             data_len;  ///< Length of the data payload.
     skb_handle_t       skb;       ///< Handle to the socket buffer containing the packet data.

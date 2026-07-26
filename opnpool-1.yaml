@@ -29,19 +29,20 @@ logger:
   logs:
     rs485: VERBOSE
     datalink_rx: WARN      # VERBOSE to see the raw bytes
-    datalink_tx: WARN      # VERBOSE to see the raw bytes
+    datalink_tx: VERBOSE   # VERBOSE to see the raw bytes sent
     network_rx: WARN
     network_create: WARN
     pool_task: WARN
-    ipc: WARN
+    ipc: VERBOSE           # VERBOSE to see when commands are queued
     poolstate: WARN
     poolstate_rx: VERBOSE  # VERBOSE to see the decoded messages
     opnpool: WARN
     opnpool_climate: WARN
-    opnpool_switch: WARN
+    opnpool_switch: VERBOSE
     opnpool_sensor: WARN
     opnpool_binary_sensor: WARN
     opnpool_text_sensor: WARN
+    opnpool_number: WARN
     enum_helpers: WARN
 
 debug:
@@ -70,7 +71,7 @@ captive_portal:
 
 api:
   encryption:
-    key: !secret api_encryption_key 
+    key: !secret api_encryption_key
 
 ota:
   - platform: esphome
@@ -169,6 +170,13 @@ opnpool:
     name: "Pump speed"
     state_class: "measurement"
     unit_of_measurement: "rpm"
+  # optional: uncomment if a solar heater is connected
+  #solar_temperature:
+  #  name: "Solar temperature"
+  #  state_class: "measurement"
+  #  device_class: "temperature"
+  #  unit_of_measurement: "°F"
+
   chlorinator_level:
     name: "Chlorinator level"
     unit_of_measurement: "%"
@@ -176,6 +184,12 @@ opnpool:
     name: "Chlorinator salt"
     state_class: "measurement"
     unit_of_measurement: "ppm"
+
+  # number controls
+  primary_pump_speed_setpoint:
+    name: "Pump speed setpoint"
+  chlorinator_setpoint:
+    name: "Chlorinator setpoint"
 
   # binary sensors
   primary_pump_running:

@@ -14,3 +14,4 @@
 /hardware/**/*.kicad_prl
 /components/opnpool/__pycache__/
 /changes.txt
+/.venv/

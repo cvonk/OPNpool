@@ -171,7 +171,7 @@ network_rx_msg(datalink_pkt_t const * const pkt, network_msg_t * const msg, bool
         // silently ignore packets that we don't know how to decode
     datalink_addr_t const dst = pkt->dst;
     if ((pkt->prot == datalink_prot_t::A5_CTRL && dst.is_unknown_90()) ||
-        (pkt->prot == datalink_prot_t::IC && !dst.is_broadcast() && !dst.is_chlorinator() )) {
+        (pkt->prot == datalink_prot_t::IC && !dst.is_all() && !dst.is_broadcast() && !dst.is_chlorinator() )) {
 
         *txOpportunity = false;
         msg->typ = network_msg_typ_t::IGNORE;

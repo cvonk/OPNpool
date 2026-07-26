@@ -196,32 +196,21 @@ _update_system_time(cJSON * const dbg, network_ctrl_state_bcast_t const * const 
 static void
 _update_temps(cJSON * const dbg, network_ctrl_state_bcast_t const * const msg, poolstate_uint8_t * const temps)
 {
-    uint8_t const air_idx = enum_index(poolstate_temp_typ_t::AIR);
-    uint8_t const water_idx = enum_index(poolstate_temp_typ_t::WATER);
-    static_assert(air_idx < enum_count<poolstate_temp_typ_t>(), "size err for air_idx");
-    static_assert(water_idx < enum_count<poolstate_temp_typ_t>(), "size err for water_idx");
+    uint8_t const air_idx     = enum_index(poolstate_temp_typ_t::AIR);
+    uint8_t const water_idx   = enum_index(poolstate_temp_typ_t::WATER);
+    uint8_t const solar1_idx  = enum_index(poolstate_temp_typ_t::SOLAR_1);
+    uint8_t const solar2_idx  = enum_index(poolstate_temp_typ_t::SOLAR_2);
+    static_assert(air_idx    < enum_count<poolstate_temp_typ_t>(), "size err for air_idx");
+    static_assert(water_idx  < enum_count<poolstate_temp_typ_t>(), "size err for water_idx");
+    static_assert(solar1_idx < enum_count<poolstate_temp_typ_t>(), "size err for solar1_idx");
+    static_assert(solar2_idx < enum_count<poolstate_temp_typ_t>(), "size err for solar2_idx");
 
-    temps[air_idx] = {
-        .valid = true,
-        .value = msg->air_temp
-    };
-    temps[water_idx] = {
-        .valid = true,
-        .value = msg->pool_temp
-    };
+    temps[air_idx]    = { .valid = true, .value = msg->air_temp     };
+    temps[water_idx]  = { .valid = true, .value = msg->pool_temp    };
+    temps[solar1_idx] = { .valid = true, .value = msg->solar_temp_1 };
+    temps[solar2_idx] = { .valid = true, .value = msg->solar_temp_2 };
 
-    uint8_t const solar1_idx = enum_index(poolstate_temp_typ_t::SOLAR_1);
-    uint8_t const solar2_idx = enum_index(poolstate_temp_typ_t::SOLAR_2);
-    temps[solar1_idx] = {
-        .valid = true,
-        .value = msg->solar_temp_1
-    };
-    temps[solar2_idx] = {
-        .valid = true,
-        .value = msg->solar_temp_2
-    };
-
-    ESP_LOGVV(TAG, "Air %u, Spa %u, Water %u Solar1 %u, Solar2 %u", msg->air_temp, msg->spa_temp, msg->pool_temp, msg->solar_temp_1, msg->solar_temp_2);
+    ESP_LOGVV(TAG, "Air %u, Spa %u, Water %u Solar1 %u Solar2 %u", msg->air_temp, msg->spa_temp, msg->pool_temp, msg->solar_temp_1, msg->solar_temp_2);
 
     if (ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE) {
         poolstate_rx_log::add_temps(dbg, poolstate_rx_log::KEY_TEMPS, temps);
@@ -859,28 +848,25 @@ _chlor_model_req(cJSON * const dbg, network_chlor_model_req_t const * const msg)
  * @param msg   Pointer to the received network_chlor_model_resp_t message.
  * @param chlor Pointer to the poolstate_chlor_t structure to update.
  *
- * This function updates the chlorine generator name and salt level in the pool state and
- * logs the status to the debug JSON object if verbose logging is enabled.
+ * This function updates the chlorine generator name in the pool state and logs it to the
+ * debug JSON object if verbose logging is enabled. Salt is not carried by this message;
+ * it is reported by LEVEL_RESP (0x12).
  */
 static void
 _chlor_model_resp(cJSON * const dbg, network_chlor_model_resp_t const * const msg, poolstate_chlor_t * const chlor)
 {
     if (!msg || !chlor) { ESP_LOGW(TAG, "null to %s", __func__); return; }
 
-    chlor->salt = {
-        .valid = true,
-        .value = static_cast<uint16_t>(msg->salt * 50)
-    };
-
+        // this message carries only the name; the leading byte is not salt.
+        // salt is reported separately by LEVEL_RESP (0x12).
     uint32_t name_size = sizeof(chlor->name.value);
     strncpy(chlor->name.value, msg->name, name_size);
     chlor->name.value[name_size - 1] = '\0';
     chlor->name.valid = true;
 
     if (ESPHOME_LOG_LEVEL >= ESPHOME_LOG_LEVEL_VERBOSE) {
-        cJSON_AddNumberToObject(dbg, poolstate_rx_log::KEY_SALT, chlor->salt.value);
         cJSON_AddStringToObject(dbg, poolstate_rx_log::KEY_NAME, chlor->name.value);
-        ESP_LOGV(TAG, "Chlorine status updated: salt=%u, name=%s", chlor->salt.value, chlor->name.value);
+        ESP_LOGV(TAG, "Chlorinator name updated: name=%s", chlor->name.value);
     }
 }
 

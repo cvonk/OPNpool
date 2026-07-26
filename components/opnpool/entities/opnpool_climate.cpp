@@ -268,7 +268,7 @@ OpnPoolClimate::control(const climate::ClimateCall &call)
     if (thermos_changed) {
 
         network_msg_t msg = {};
-        msg.src = datalink_addr_t::remote();
+        msg.src = datalink_addr_t::wireless_remote();  // 0x22 (ScreenLogic/wireless remote)
         msg.dst = controller_addr;
         msg.typ = network_msg_typ_t::CTRL_HEAT_SET;
         msg.u.a5.ctrl_heat_set.pool_set_point = thermos_new[thermo_pool_idx].set_point_in_f.value;

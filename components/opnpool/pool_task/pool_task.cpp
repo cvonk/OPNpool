@@ -67,6 +67,9 @@ constexpr uint32_t POOL_REQ_TASK_STACK_SIZE = 2 * 4096;   ///< Stack size for po
 /// Controller address learned from broadcast messages. Used as destination for outgoing requests.
 static datalink_addr_t _controller_addr = datalink_addr_t::unknown();
 
+/// A5 protocol version learned from controller broadcasts (0x01=EasyTouch, 0x31=SunTouch).
+static uint8_t _a5_ctrl_version = 0x01;
+
 
 /**
  * @brief Processes incoming packets from the RS-485 bus and relays messages to the main task.
@@ -96,7 +99,8 @@ _service_pkts_from_rs485(rs485_handle_t const rs485, ipc_t const * const ipc)
                 // snoop to find the controller address to use as the dst in _queue_req()
             if (msg.src.is_controller()) {
                 _controller_addr = msg.src;
-                ESP_LOGV(TAG, "learned controller address: 0x%02X", msg.src.addr);
+                _a5_ctrl_version = pkt.ver;
+                ESP_LOGV(TAG, "learned controller address: 0x%02X version: 0x%02X", msg.src.addr, pkt.ver);
             }
 
             if( ipc_send_network_msg_to_main_task(&msg, ipc) != ESP_OK) {
@@ -136,6 +140,7 @@ _service_requests_from_main(rs485_handle_t rs485, ipc_t const * const ipc)
 
         if (network_create_pkt(&msg, pkt) == ESP_OK) {
 
+            pkt->ver = _a5_ctrl_version;  // use learned controller version
             datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by recipient
             return;
         }
@@ -169,6 +174,7 @@ _queue_req(rs485_handle_t const rs485, network_msg_typ_t const typ)
 
     if (network_create_pkt(&msg, pkt) == ESP_OK) {
 
+        pkt->ver = _a5_ctrl_version;  // use learned controller version
         datalink_tx_pkt_queue(rs485, pkt);  // pkt and pkt->skb freed by mailbox recipient
 
     } else {

@@ -64,6 +64,7 @@ network_create_pkt(network_msg_t const * const msg, datalink_pkt_t * const pkt)
     pkt->dst      = msg->dst;
     pkt->prot     = info->proto;
     pkt->typ      = info->datalink_typ;
+    pkt->ver      = 0x01;  // default; overridden by pool_task with learned controller version
     pkt->data_len = data_len;
     pkt->skb      = skb_alloc(DATALINK_MAX_HEAD_SIZE + data_len + DATALINK_MAX_TAIL_SIZE);
     if (!pkt->skb) {
