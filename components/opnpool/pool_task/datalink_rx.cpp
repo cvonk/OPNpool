@@ -264,6 +264,7 @@ _read_head(rs485_handle_t const rs485, local_data_t * const local, datalink_pkt_
                 if ( hdr->src.is_pump() || hdr->dst.is_pump() ) {
                     pkt->prot = datalink_prot_t::A5_PUMP;
                 }
+                pkt->ver      = hdr->ver;
                 pkt->typ.raw  = hdr->typ;
                 pkt->src      = hdr->src;
                 pkt->dst      = hdr->dst;

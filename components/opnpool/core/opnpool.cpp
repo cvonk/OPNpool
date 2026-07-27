@@ -48,6 +48,8 @@
 #include "entities/opnpool_sensor.h"
 #include "entities/opnpool_binary_sensor.h"
 #include "entities/opnpool_text_sensor.h"
+#include "entities/opnpool_number.h"
+#include "entities/opnpool_select.h"
 #include "opnpool_ids.h"
 #include "pool_task/network.h"
 #include "pool_task/network_msg.h"
@@ -185,9 +187,9 @@ _publish_date_and_time_if(OpnPoolTextSensor * const sensor, poolstate_tod_t cons
 static void
 _publish_version_if(OpnPoolTextSensor * const sensor, poolstate_system_t const * const system)
 {
-    if (sensor != nullptr && system != nullptr && system->addr.valid && system->version.valid) {
-        static char fw_str[18];  // 2.80\0
-        snprintf(fw_str, sizeof(fw_str), "%s %d.%d", system->addr.value.to_str(), system->version.major, system->version.minor);
+    if (sensor != nullptr && system != nullptr && system->version.valid) {
+        static char fw_str[24];  // "Easy/Sun Touch 99.999\0"
+        snprintf(fw_str, sizeof(fw_str), "Easy/Sun Touch %d.%03d", system->version.major, system->version.minor);
         sensor->publish_value_if_changed(fw_str);
     }
 }
@@ -390,6 +392,7 @@ OpnPool::loop() {
                 this->update_text_sensors(&new_state);
                 this->update_analog_sensors(&new_state);
                 this->update_binary_sensors(&new_state);
+                this->update_numbers(&new_state);
             }
  
             ESP_LOGVV(TAG, "FYI Poolstate changed");
@@ -578,9 +581,10 @@ OpnPool::update_analog_sensors(poolstate_t const * const state)
         state->chlor.level
     );
     _publish_if(
-        this->sensors_[enum_index(sensor_id_t::CHLORINATOR_SALT)],  
+        this->sensors_[enum_index(sensor_id_t::CHLORINATOR_SALT)],
         state->chlor.salt
     );
+
 }
 
 /**
@@ -599,6 +603,27 @@ OpnPool::update_binary_sensors(poolstate_t const * const state)
     _publish_modes_if(
         this->binary_sensors_,
         state->system.modes);
+}
+
+/**
+ * @brief Updates number entities with current pool state.
+ *
+ * @param[in] state Pointer to the current pool state.
+ */
+void
+OpnPool::update_numbers(poolstate_t const * const state)
+{
+    OpnPoolNumber * const speed_number = this->numbers_[enum_index(number_id_t::PRIMARY_PUMP_SPEED_SETPOINT)];
+    auto const & speed = state->pumps[enum_index(datalink_pump_id_t::PRIMARY)].speed;
+    if (speed_number != nullptr && speed.valid) {
+        speed_number->publish_value_if_changed(static_cast<float>(speed.value));
+    }
+
+    OpnPoolNumber * const chlor_number = this->numbers_[enum_index(number_id_t::CHLORINATOR_SETPOINT)];
+    auto const & chlor_level = state->chlor.level;
+    if (chlor_number != nullptr && chlor_level.valid) {
+        chlor_number->publish_value_if_changed(static_cast<float>(chlor_level.value));
+    }
 }
 
 /**
@@ -786,6 +811,24 @@ void
 OpnPool::set_chlorinator_salt_sensor(OpnPoolSensor * const s)
 { 
     this->sensors_[enum_index(sensor_id_t::CHLORINATOR_SALT)] = s; 
+}
+
+void
+OpnPool::set_primary_pump_speed_setpoint_number(OpnPoolNumber * const n)
+{
+    this->numbers_[enum_index(number_id_t::PRIMARY_PUMP_SPEED_SETPOINT)] = n;
+}
+
+void
+OpnPool::set_chlorinator_setpoint_number(OpnPoolNumber * const n)
+{
+    this->numbers_[enum_index(number_id_t::CHLORINATOR_SETPOINT)] = n;
+}
+
+void
+OpnPool::set_light_color_select(OpnPoolSelect * const s)
+{
+    this->selects_[enum_index(select_id_t::LIGHT_COLOR)] = s;
 }
 
 void

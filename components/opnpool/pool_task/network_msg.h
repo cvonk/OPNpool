@@ -141,6 +141,11 @@ struct network_ctrl_set_ack_t {
     datalink_ctrl_typ_t  typ;  // type that it is ACK'ing
 } PACK8;
 
+struct network_ctrl_light_color_set_t {
+    uint8_t  color;    ///< Color mode byte (e.g. 0xC1=Blue, 0xB1=Party)
+    uint8_t  padding;  ///< Padding byte (0x00)
+} PACK8;
+
 struct network_ctrl_circuit_set_t {
     uint8_t  circuit_plus_1;
     uint8_t  value;
@@ -357,28 +362,30 @@ struct network_intellichem_t {
  * @note  Details at https://github.com/tagyoureit/nodejs-poolController/blob/master/controller/comms/messages/status/PumpStateMessage.ts#L27
  */
 
-enum class network_pump_reg_addr_t : uint8_t {
-    RPM        = 0x01,  // program RPM
-    POWER      = 0x02,  // program Power [Watt]
-    CURRENT    = 0x03,  // program Current [A]
-    STATUS     = 0x04,  // 0=off, 4=on, 10=running
-    SETPOINT   = 0x05,
-    TIMER_PROG = 0x06,
+/**
+ * @brief 16-bit pump register addresses (big-endian on the wire).
+ *
+ * @details A "set register" command (action REG, 0x01) carries the 2-byte
+ * register address followed by a 2-byte value. To set the running speed of an
+ * IntelliFlo VS pump the controller writes the RPM register 0x02C4, e.g. the
+ * payload {0x02, 0xC4, 0x05, 0xDC} commands 1500 RPM.
+ *
+ * @note These values are outside magic_enum's default range, so don't use
+ *       enum_str() on them; log them as a number instead.
+ */
+enum class network_pump_reg_addr_t : uint16_t {
+    RPM = 0x02C4,  ///< program/run RPM
 };
 
-struct network_pump_reg_operation_t {
-    uint8_t raw;
-
-    static constexpr uint8_t WRITE = 0xC4;
-    constexpr bool is_write() const { return raw == WRITE; }
-    constexpr char const * to_str() const { return raw == WRITE ? "WRITE" : "READ"; }
-} PACK8;
-
-
+/**
+ * @brief Pump "set register" payload (action REG, 0x01).
+ *
+ * @details The controller writes @ref value to the register at @ref address.
+ * Wire layout is 4 bytes: address.high, address.low, value.high, value.low.
+ */
 struct network_pump_reg_set_t {
-    network_pump_reg_addr_t      address;    // 0
-    network_pump_reg_operation_t operation;  // 1
-    network_hi_lo_t              value;      // 2..3  0x0000 for read operation
+    network_hi_lo_t address;  // 0..1  register address (e.g. 0x02C4 for RPM)
+    network_hi_lo_t value;    // 2..3  value to write
 } PACK8;
 
 struct network_pump_reg_resp_t {
@@ -479,8 +486,8 @@ struct network_chlor_model_req_t {
 } PACK8;
 
 struct network_chlor_model_resp_t {
-    uint8_t              salt;  ///< parts per million /50
-    network_chlor_name_t name;  ///< non-\0 terminated chlorinator name
+    uint8_t              unknown;  ///< leading byte; NOT salt (name string starts at offset 1)
+    network_chlor_name_t name;     ///< non-\0 terminated chlorinator name
 } PACK8;
 
 struct network_chlor_level_set_t {
@@ -523,6 +530,7 @@ union network_data_a5_t {
     network_pump_status_resp_t     pump_status_resp;
     network_ctrl_set_ack_t         ctrl_set_ack;
     network_ctrl_circuit_set_t     ctrl_circuit_set;
+    network_ctrl_light_color_set_t ctrl_light_color_set;
     network_ctrl_sched_resp_t      ctrl_sched_resp;
     network_ctrl_state_bcast_t     ctrl_state_bcast;
     network_ctrl_time_t            ctrl_time;         // set or resp
@@ -597,6 +605,7 @@ union network_data_t {
     X(PUMP_STATUS_RESP,      sizeof(network_pump_status_resp_t),    false, A5_PUMP, datalink_pump_typ_t::STATUS)       \
     X(CTRL_SET_ACK,          sizeof(network_ctrl_set_ack_t),        false, A5_CTRL, datalink_ctrl_typ_t::SET_ACK)      \
     X(CTRL_CIRCUIT_SET,      sizeof(network_ctrl_circuit_set_t),    false, A5_CTRL, datalink_ctrl_typ_t::CIRCUIT_SET)  \
+    X(CTRL_LIGHT_COLOR_SET,  sizeof(network_ctrl_light_color_set_t),false, A5_CTRL, datalink_ctrl_typ_t::LIGHT_COLOR_SET) \
     X(CTRL_SCHED_REQ,        0,                                     false, A5_CTRL, datalink_ctrl_typ_t::SCHED_REQ)    \
     X(CTRL_SCHED_RESP,       sizeof(network_ctrl_sched_resp_t),     false, A5_CTRL, datalink_ctrl_typ_t::SCHED_RESP)   \
     X(CTRL_STATE_BCAST,      sizeof(network_ctrl_state_bcast_t),    false, A5_CTRL, datalink_ctrl_typ_t::STATE_BCAST)  \

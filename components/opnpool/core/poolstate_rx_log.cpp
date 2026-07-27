@@ -371,12 +371,8 @@ add_pump_reg_set(cJSON * const obj, char const * const key, datalink_pump_id_t c
     cJSON * const item = _create_item(obj, key);
 
     cJSON_AddStringToObject(item, KEY_ID, enum_str(pump_id));
-    cJSON_AddStringToObject(item, KEY_ADDRESS, enum_str(reg->address));
-    cJSON_AddStringToObject(item, KEY_OPERATION, reg->operation.to_str());
-
-    if (reg->operation.is_write()) {
-        cJSON_AddNumberToObject(item, KEY_VALUE, reg->value.to_uint16());
-    }
+    cJSON_AddNumberToObject(item, KEY_ADDRESS, reg->address.to_uint16());
+    cJSON_AddNumberToObject(item, KEY_VALUE, reg->value.to_uint16());
 }
 
 void

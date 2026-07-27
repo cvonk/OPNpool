@@ -34,7 +34,7 @@ import re
 import subprocess
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import climate, switch, sensor, binary_sensor, text_sensor
+from esphome.components import climate, switch, sensor, binary_sensor, text_sensor, number, select
 from esphome.const import (
     CONF_ID,
     CONF_DEVICE_CLASS, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_POWER, DEVICE_CLASS_VOLUME_FLOW_RATE, DEVICE_CLASS_EMPTY,
@@ -42,8 +42,8 @@ from esphome.const import (
     CONF_STATE_CLASS, STATE_CLASS_MEASUREMENT
 )
 
-DEPENDENCIES = ["climate", "switch", "sensor", "binary_sensor", "text_sensor"]
-AUTO_LOAD = ["climate", "switch", "sensor", "binary_sensor", "text_sensor"]
+DEPENDENCIES = ["climate", "switch", "sensor", "binary_sensor", "text_sensor", "number", "select"]
+AUTO_LOAD = ["climate", "switch", "sensor", "binary_sensor", "text_sensor", "number", "select"]
 
 # namespace and class definitions
 opnpool_ns = cg.esphome_ns.namespace("opnpool")
@@ -53,6 +53,8 @@ OpnPoolSwitch       = opnpool_ns.class_("OpnPoolSwitch", switch.Switch, cg.Compo
 OpnPoolSensor       = opnpool_ns.class_("OpnPoolSensor", sensor.Sensor, cg.Component)
 OpnPoolBinarySensor = opnpool_ns.class_("OpnPoolBinarySensor", binary_sensor.BinarySensor, cg.Component)
 OpnPoolTextSensor   = opnpool_ns.class_("OpnPoolTextSensor", text_sensor.TextSensor, cg.Component)
+OpnPoolNumber       = opnpool_ns.class_("OpnPoolNumber", number.Number, cg.Component)
+OpnPoolSelect       = opnpool_ns.class_("OpnPoolSelect", select.Select, cg.Component)
 
 CONF_RS485         = "rs485"
 CONF_RS485_RX_PIN  = "rx_pin"
@@ -91,17 +93,21 @@ CONF_SWITCHES = [  # used to overwrite switch_id_t enum in opnpool.h
     "feature4"
 ]
 CONF_ANALOG_SENSORS = { # keys are used to overwrite sensor_id_t enum in opnpool.h
-    "air_temperature":     {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "water_temperature":   {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "solar1_temperature":  {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "solar2_temperature":  {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "primary_pump_power":  {"unit": UNIT_WATT, CONF_DEVICE_CLASS: DEVICE_CLASS_POWER, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "primary_pump_flow":   {"unit": "gal/min", CONF_DEVICE_CLASS: DEVICE_CLASS_VOLUME_FLOW_RATE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "primary_pump_speed":  {"unit": UNIT_REVOLUTIONS_PER_MINUTE, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "chlorinator_level":   {"unit": UNIT_PERCENT, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
-    "chlorinator_salt":    {"unit": UNIT_PARTS_PER_MILLION, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "air_temperature":    {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "water_temperature":  {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "primary_pump_power": {"unit": UNIT_WATT, CONF_DEVICE_CLASS: DEVICE_CLASS_POWER, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "primary_pump_flow":  {"unit": "gal/min", CONF_DEVICE_CLASS: DEVICE_CLASS_VOLUME_FLOW_RATE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "primary_pump_speed": {"unit": UNIT_REVOLUTIONS_PER_MINUTE, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "chlorinator_level":  {"unit": UNIT_PERCENT, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "chlorinator_salt":   {"unit": UNIT_PARTS_PER_MILLION, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
     "primary_pump_error":  {"unit": UNIT_EMPTY, CONF_DEVICE_CLASS: DEVICE_CLASS_EMPTY, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "solar1_temperature": {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
+    "solar2_temperature": {"unit": UNIT_CELSIUS, CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE, CONF_STATE_CLASS: STATE_CLASS_MEASUREMENT},
 }
+# Opt-in analog sensors: only created if the user explicitly lists them in YAML
+# (most systems lack solar sensors, and SuperFlo/IntelliFlo VS pumps never report flow).
+# Their sensor_id_t enum slots still exist; the C++ leaves the entity nullptr when unlisted.
+OPT_IN_ANALOG_SENSORS = {"solar1_temperature", "solar2_temperature", "primary_pump_flow"}
 CONF_BINARY_SENSORS = [  # used to overwrite binary_sensor_id_t enum in opnpool.h
     "primary_pump_running",
     "mode_service",
@@ -109,6 +115,14 @@ CONF_BINARY_SENSORS = [  # used to overwrite binary_sensor_id_t enum in opnpool.
     "mode_freeze_protection",
     "mode_timeout"
 ]
+CONF_NUMBERS = {  # used to overwrite number_id_t enum in opnpool.h
+    "primary_pump_speed_setpoint": {"min": 450.0, "max": 3450.0, "step": 1.0, "unit": UNIT_REVOLUTIONS_PER_MINUTE},
+    "chlorinator_setpoint":        {"min": 0.0,   "max": 100.0,  "step": 1.0, "unit": UNIT_PERCENT},
+}
+CONF_SELECTS = {  # used to overwrite select_id_t enum in opnpool.h
+    "light_color": ["Party", "Romance", "Caribbean", "American", "Sunset", "Royal",
+                    "Blue", "Green", "Red", "White", "Magenta"],
+}
 CONF_TEXT_SENSORS = [  # used to overwrite text_sensor_id_t enum in opnpool.h
     "pool_sched",
     "spa_sched",
@@ -149,7 +163,8 @@ CONFIG_SCHEMA = cv.Schema({
         }) for key in CONF_SWITCHES
     },
     **{
-        cv.Optional(key, default={"name": key.replace("_", " ").title()}): sensor.sensor_schema(OpnPoolSensor).extend({
+        (cv.Optional(key) if key in OPT_IN_ANALOG_SENSORS
+         else cv.Optional(key, default={"name": key.replace("_", " ").title()})): sensor.sensor_schema(OpnPoolSensor).extend({
             cv.GenerateID(): cv.declare_id(OpnPoolSensor),
             cv.Optional(CONF_UNIT_OF_MEASUREMENT, default=CONF_ANALOG_SENSORS[key]["unit"]): cv.string,
             cv.Optional(CONF_DEVICE_CLASS, default=CONF_ANALOG_SENSORS[key][CONF_DEVICE_CLASS]): cv.string,
@@ -164,6 +179,16 @@ CONFIG_SCHEMA = cv.Schema({
         cv.Optional(key, default={"name": key.replace("_", " ").title()}): text_sensor.text_sensor_schema(OpnPoolTextSensor).extend({
             cv.GenerateID(): cv.declare_id(OpnPoolTextSensor)
         }) for key in CONF_TEXT_SENSORS
+    },
+    **{
+        cv.Optional(key, default={"name": key.replace("_", " ").title()}): number.number_schema(OpnPoolNumber).extend({
+            cv.GenerateID(): cv.declare_id(OpnPoolNumber),
+        }) for key in CONF_NUMBERS
+    },
+    **{
+        cv.Optional(key, default={"name": key.replace("_", " ").title()}): select.select_schema(OpnPoolSelect).extend({
+            cv.GenerateID(): cv.declare_id(OpnPoolSelect),
+        }) for key in CONF_SELECTS
     },
 }).extend(cv.COMPONENT_SCHEMA)
 
@@ -296,6 +321,8 @@ async def to_code(config):
 
     # register analog sensors (constructor injection)
     for id, sensor_key in enumerate(CONF_ANALOG_SENSORS):
+        if sensor_key not in config:
+            continue  # opt-in sensor not listed -> leave its enum slot unbound (nullptr in C++)
         entity_cfg = config[sensor_key]
         if CONF_ID not in entity_cfg:
             entity_cfg[CONF_ID] = cg.new_id()
@@ -321,6 +348,31 @@ async def to_code(config):
         await text_sensor.register_text_sensor(ts_entity, entity_cfg)
         cg.add(getattr(var, f"set_{text_sensor_key}_text_sensor")(ts_entity))
 
+    # register number entities (constructor injection)
+    for id, number_key in enumerate(CONF_NUMBERS):
+        entity_cfg = config[number_key]
+        if CONF_ID not in entity_cfg:
+            entity_cfg[CONF_ID] = cg.new_id()
+        num_entity = cg.new_Pvariable(entity_cfg[CONF_ID], var, id)
+        await cg.register_component(num_entity, entity_cfg)
+        await number.register_number(
+            num_entity, entity_cfg,
+            min_value=CONF_NUMBERS[number_key]["min"],
+            max_value=CONF_NUMBERS[number_key]["max"],
+            step=CONF_NUMBERS[number_key]["step"],
+        )
+        cg.add(getattr(var, f"set_{number_key}_number")(num_entity))
+
+    # register select entities (constructor injection)
+    for id, select_key in enumerate(CONF_SELECTS):
+        entity_cfg = config[select_key]
+        if CONF_ID not in entity_cfg:
+            entity_cfg[CONF_ID] = cg.new_id()
+        sel_entity = cg.new_Pvariable(entity_cfg[CONF_ID], var, id)
+        await cg.register_component(sel_entity, entity_cfg)
+        await select.register_select(sel_entity, entity_cfg, options=CONF_SELECTS[select_key])
+        cg.add(getattr(var, f"set_{select_key}_select")(sel_entity))
+
 # replace the enums in opnpool_ids.h to keep them consistent with CONF_* in this file
 
 ENTITY_ENUMS = {
@@ -329,6 +381,8 @@ ENTITY_ENUMS = {
     "sensor_id_t":        CONF_ANALOG_SENSORS,
     "binary_sensor_id_t": CONF_BINARY_SENSORS,
     "text_sensor_id_t":   CONF_TEXT_SENSORS,
+    "number_id_t":        CONF_NUMBERS,
+    "select_id_t":        CONF_SELECTS,
 }
 
 def generate_enum(enum_name, items):

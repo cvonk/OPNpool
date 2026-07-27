@@ -83,6 +83,7 @@ struct datalink_addr_t {
     static constexpr datalink_addr_t remote()               { return datalink_addr_t{REMOTE}; }
     static constexpr datalink_addr_t wireless_remote()      { return datalink_addr_t{WIRELESS_REMOTE}; }
     static constexpr datalink_addr_t quicktouch_remote()    { return datalink_addr_t{QUICKTOUCH_REMOTE}; }
+    static constexpr datalink_addr_t chlorinator()          { return datalink_addr_t{CHLORINATOR}; }
 
     static constexpr datalink_addr_t pump(datalink_pump_id_t const pump_id) { 
         return datalink_addr_t{ static_cast<uint8_t>(PUMP_BASE | (static_cast<uint8_t>(pump_id) & PUMP_ID_MASK)) };
@@ -94,8 +95,9 @@ struct datalink_addr_t {
     constexpr bool is_pump()        const { return (addr & 0xF0) == PUMP_BASE; }
     constexpr bool is_heater()      const { return (addr & 0xF0) == HEATER_BASE; }
     constexpr bool is_unknown_90()  const { return addr == UNKNOWN_90; }
-    constexpr bool is_chlorinator() const { return addr == CHLORINATOR; } 
+    constexpr bool is_chlorinator() const { return addr == CHLORINATOR; }
     constexpr bool is_broadcast()   const { return addr == BROADCAST; }
+    constexpr bool is_all()         const { return addr == ALL; }  ///< IC responses to the controller use dst 0x00
     constexpr char const * to_str() const { return addr == SUNTOUCH_CONTROLLER  ? "Suntouch" :
                                                    addr == EASYTOUCH_CONTROLLER ? "EasyTouch" : "unknown"; }
 

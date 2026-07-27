@@ -29,19 +29,20 @@ logger:
   logs:
     rs485: VERBOSE
     datalink_rx: WARN      # VERBOSE to see the raw bytes
-    datalink_tx: WARN      # VERBOSE to see the raw bytes
+    datalink_tx: VERBOSE   # VERBOSE to see the raw bytes sent
     network_rx: WARN
     network_create: WARN
     pool_task: WARN
-    ipc: WARN
+    ipc: VERBOSE           # VERBOSE to see when commands are queued
     poolstate: WARN
     poolstate_rx: VERBOSE  # VERBOSE to see the decoded messages
     opnpool: WARN
     opnpool_climate: WARN
-    opnpool_switch: WARN
+    opnpool_switch: VERBOSE
     opnpool_sensor: WARN
     opnpool_binary_sensor: WARN
     opnpool_text_sensor: WARN
+    opnpool_number: WARN
     enum_helpers: WARN
 
 debug:
@@ -70,7 +71,7 @@ captive_portal:
 
 api:
   encryption:
-    key: !secret api_encryption_key 
+    key: !secret api_encryption_key
 
 ota:
   - platform: esphome
@@ -140,16 +141,17 @@ opnpool:
     state_class: "measurement"
     device_class: "temperature"
     unit_of_measurement: "°F"
-  solar1_temperature:
-    name: "Solar1 water"
-    state_class: "measurement"
-    device_class: "temperature"
-    unit_of_measurement: "°F"
-  solar2_temperature:
-    name: "Solar2 water"
-    state_class: "measurement"
-    device_class: "temperature"
-    unit_of_measurement: "°F"
+  # opt-in: uncomment only if you actually have solar temperature sensor(s)
+  #solar1_temperature:
+  #  name: "Solar1 water"
+  #  state_class: "measurement"
+  #  device_class: "temperature"
+  #  unit_of_measurement: "°F"
+  #solar2_temperature:
+  #  name: "Solar2 water"
+  #  state_class: "measurement"
+  #  device_class: "temperature"
+  #  unit_of_measurement: "°F"
   air_temperature:
     name: "Outside air"
     state_class: "measurement"
@@ -160,15 +162,24 @@ opnpool:
     state_class: "measurement"
     device_class: "power"
     unit_of_measurement: "W"
-  primary_pump_flow:
-    name: "Pump flow"
-    state_class: "measurement"
-    device_class: "volume_flow_rate"
-    unit_of_measurement: "gal/min"
+  # opt-in: variable-speed pumps (SuperFlo/IntelliFlo VS) always report 0 flow.
+  # uncomment only for a VF/VSF pump that actually reports GPM.
+  #primary_pump_flow:
+  #  name: "Pump flow"
+  #  state_class: "measurement"
+  #  device_class: "volume_flow_rate"
+  #  unit_of_measurement: "gal/min"
   primary_pump_speed:
     name: "Pump speed"
     state_class: "measurement"
     unit_of_measurement: "rpm"
+  # optional: uncomment if a solar heater is connected
+  #solar_temperature:
+  #  name: "Solar temperature"
+  #  state_class: "measurement"
+  #  device_class: "temperature"
+  #  unit_of_measurement: "°F"
+
   chlorinator_level:
     name: "Chlorinator level"
     unit_of_measurement: "%"
@@ -176,6 +187,16 @@ opnpool:
     name: "Chlorinator salt"
     state_class: "measurement"
     unit_of_measurement: "ppm"
+
+  # light color mode select
+  light_color:
+    name: "Light Color"
+
+  # number controls
+  primary_pump_speed_setpoint:
+    name: "Pump speed setpoint"
+  chlorinator_setpoint:
+    name: "Chlorinator setpoint"
 
   # binary sensors
   primary_pump_running:
